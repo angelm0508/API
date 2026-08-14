@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "WjuFANafDwM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Transversal.Common\\API.Transversal.Common.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Miguel\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\7.0.20\\microsoft.windowsdesktop.app.ref.7.0.20.nupkg.sha512",
+    "C:\\Users\\Miguel\\.nuget\\packages\\microsoft.netcore.app.ref\\7.0.20\\microsoft.netcore.app.ref.7.0.20.nupkg.sha512",
+    "C:\\Users\\Miguel\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\7.0.20\\microsoft.aspnetcore.app.ref.7.0.20.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,11 @@
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\bin\Debug\net7.0\API.Infraestructure.Interface.deps.json
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\bin\Debug\net7.0\API.Infraestructure.Interface.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\bin\Debug\net7.0\API.Infraestructure.Interface.pdb
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.AssemblyInfoInputs.cache
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.AssemblyInfo.cs
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.csproj.CoreCompileInputs.cache
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\refint\API.Infraestructure.Interface.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.pdb
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Interface\obj\Debug\net7.0\ref\API.Infraestructure.Interface.dll

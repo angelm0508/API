@@ -1,0 +1,79 @@
+﻿using API.Domain.Entity.Models;
+using API.Domain.Interface;
+using API.Infraestructure.Interface;
+using Microsoft.EntityFrameworkCore;
+
+namespace API.Domain.Core
+{
+    public class GrupoArticuloDomain : IGrupoArticuloDomain
+    {
+        private readonly IRepositorioGenerico<GrupoArticulo> _repoGenericoGrupoArticulo;
+
+        public GrupoArticuloDomain(IRepositorioGenerico<GrupoArticulo> repoGenericoGrupoArticulo)
+        {
+            _repoGenericoGrupoArticulo = repoGenericoGrupoArticulo;
+        }
+
+        #region async methods
+        public async Task<int> InsertarAsync(GrupoArticulo obj)
+        {
+            if (await ObtenerAsync(obj.Nombre) != null)
+            {
+                throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
+            }
+
+            return await _repoGenericoGrupoArticulo.InsertarAsync(obj);
+        }
+
+        // public async Task<>
+        public async Task<bool> ActualizarAsync(int codigo, GrupoArticulo obj)
+        {
+            if (await ObtenerAsync(obj.Nombre) != null)
+            {
+                throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
+            }
+
+            return await _repoGenericoGrupoArticulo.ActualizarAsync(codigo, obj);
+        }
+        public async Task<bool> EliminarAsync(int codigo)
+        {
+            return await _repoGenericoGrupoArticulo.EliminarAsync(codigo);
+        }
+
+        public async Task<IQueryable<GrupoArticulo>> ObtenerTodoAsync()
+        {
+            return await _repoGenericoGrupoArticulo.ObtenerTodoAsync();
+        }
+
+        public async Task<GrupoArticulo> ObtenerAsync(int codigo)
+        {
+            var queryable = await _repoGenericoGrupoArticulo.ObtenerTodoAsync();
+
+            var grupoArticulo = await queryable.FirstOrDefaultAsync(x => x.Codigo == codigo);
+
+            return grupoArticulo;
+        }
+
+        public async Task<GrupoArticulo> ObtenerAsync(string name)
+        {
+            var queryable = await _repoGenericoGrupoArticulo.ObtenerTodoAsync();
+
+            var grupoArticulo = await queryable.FirstOrDefaultAsync(x => x.Nombre == name);
+
+            return grupoArticulo;
+        }
+
+        public async Task<IEnumerable<GrupoArticulo>> ObtenerContengaNombreAsync(string name)
+        {
+            var queryable = await _repoGenericoGrupoArticulo.ObtenerTodoAsync();
+
+            var grupoArticulo = await queryable.Where(x => x.Nombre.Contains(name)).ToListAsync();
+
+            return grupoArticulo;
+        }
+
+
+
+        #endregion
+    }
+}

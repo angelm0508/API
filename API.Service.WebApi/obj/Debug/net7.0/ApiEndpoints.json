@@ -1,0 +1,1434 @@
+[
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/Articulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "Post",
+    "RelativePath": "api/Articulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "producto",
+        "Type": "API.Application.DTO.articulo.articulo.ArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "Articulo",
+    "RelativePath": "api/Articulo/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.articulo.ArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "Update",
+    "RelativePath": "api/Articulo/{codigo}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.articulo.ArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "Delete",
+    "RelativePath": "api/Articulo/{codigo}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "ArticulosContenganCodigo",
+    "RelativePath": "api/Articulo/ContengaCodigo/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "ArticulosContenganNombre",
+    "RelativePath": "api/Articulo/ContengaNombre/{nombre}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombre",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
+    "Method": "ArticuloPorNombre",
+    "RelativePath": "api/Articulo/Nombre/{nombre}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nombre",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.articulo.ArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/FabricanteArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/FabricanteArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/FabricanteArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/FabricanteArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/FabricanteArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/FabricanteArticulo/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
+    "Method": "ObtenerPorNombre",
+    "RelativePath": "api/FabricanteArticulo/PorNombre/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/GrupoArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/GrupoArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_articulo.GrupoArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/GrupoArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/GrupoArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_articulo.GrupoArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/GrupoArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/GrupoArticulo/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
+    "Method": "ObtenerPorNombre",
+    "RelativePath": "api/GrupoArticulo/PorNombre/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/GrupoMedidaArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/GrupoMedidaArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/GrupoMedidaArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/GrupoMedidaArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/GrupoMedidaArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/GrupoMedidaArticulo/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
+    "Method": "ObtenerPorNombre",
+    "RelativePath": "api/GrupoMedidaArticulo/PorNombre/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/GrupoMedidaDetArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/GrupoMedidaDetArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/GrupoMedidaDetArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/GrupoMedidaDetArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/GrupoMedidaDetArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/GrupoSN",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/GrupoSN",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_sn.GrupoSnCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "Obtener",
+    "RelativePath": "api/GrupoSN/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_sn.GrupoSnDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/GrupoSN/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_sn.GrupoSnActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/GrupoSN/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/GrupoSN/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
+    "Method": "ObtenerPorNombre",
+    "RelativePath": "api/GrupoSN/PorNombre/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.grupo_sn.GrupoSnDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/ListadoPrecio",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/ListadoPrecio",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.precio.listado_precio.ListadoPrecioCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "Obtener",
+    "RelativePath": "api/ListadoPrecio/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.precio.listado_precio.ListadoPrecioDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/ListadoPrecio/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.precio.listado_precio.ListadoPrecioActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/ListadoPrecio/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/ListadoPrecio/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
+    "Method": "ObtenerPorNombre",
+    "RelativePath": "api/ListadoPrecio/PorNombre/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.precio.listado_precio.ListadoPrecioDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/MedidaArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/MedidaArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/MedidaArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/MedidaArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/MedidaArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/MedidaArticulo/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
+    "Method": "ObtenerPorCodigo",
+    "RelativePath": "api/MedidaArticulo/PorCodigo/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/NumeracionDocumentoDet",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/NumeracionDocumentoDet",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "Obtener",
+    "RelativePath": "api/NumeracionDocumentoDet/{codigoObj}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigoObj",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/NumeracionDocumentoDet/{codigoObj}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigoObj",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/NumeracionDocumentoDet/{codigoObj}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigoObj",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/Usuario",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/Usuario",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.usuario.usuario.UsuarioCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "Obtener",
+    "RelativePath": "api/Usuario/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.usuario.usuario.UsuarioDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/Usuario/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.usuario.usuario.UsuarioActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/Usuario/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/Usuario/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
+    "Method": "ObtenerPorCodigo",
+    "RelativePath": "api/Usuario/PorCodigo/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.usuario.usuario.UsuarioDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+C:\Users\Miguel\source\repos\API\API.Application.DTO\bin\Debug\net7.0\API.Application.DTO.deps.json
+C:\Users\Miguel\source\repos\API\API.Application.DTO\bin\Debug\net7.0\API.Application.DTO.dll
+C:\Users\Miguel\source\repos\API\API.Application.DTO\bin\Debug\net7.0\API.Application.DTO.pdb
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.AssemblyInfoInputs.cache
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.AssemblyInfo.cs
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.csproj.CoreCompileInputs.cache
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.dll
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\refint\API.Application.DTO.dll
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.pdb
+C:\Users\Miguel\source\repos\API\API.Application.DTO\obj\Debug\net7.0\ref\API.Application.DTO.dll

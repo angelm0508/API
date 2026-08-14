@@ -1,0 +1,2 @@
+﻿Scaffold-DbContext "Server=localhost; Database=API_DB_TEST; User=sa; Password=contra1234; TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models 
+Scaffold-DbContext "Server=localhost; Database=API_DB_TEST; User=sa; Password=contra1234; TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models

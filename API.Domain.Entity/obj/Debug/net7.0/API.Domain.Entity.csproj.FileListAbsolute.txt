@@ -1,0 +1,14 @@
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\bin\Debug\net7.0\API.Domain.Entity.deps.json
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\bin\Debug\net7.0\API.Domain.Entity.runtimeconfig.json
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\bin\Debug\net7.0\API.Domain.Entity.dll
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\bin\Debug\net7.0\API.Domain.Entity.pdb
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.csproj.AssemblyReference.cache
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.AssemblyInfoInputs.cache
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.AssemblyInfo.cs
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.csproj.CoreCompileInputs.cache
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.dll
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\refint\API.Domain.Entity.dll
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.pdb
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.genruntimeconfig.cache
+C:\Users\Miguel\source\repos\API\API.Domain.Entity\obj\Debug\net7.0\ref\API.Domain.Entity.dll

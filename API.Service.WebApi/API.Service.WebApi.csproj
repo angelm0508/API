@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\API.Application.Interface\API.Application.Interface.csproj" />
+    <ProjectReference Include="..\API.Application.Main\API.Application.Main.csproj" />
+    <ProjectReference Include="..\API.Domain.Core\API.Domain.Core.csproj" />
+    <ProjectReference Include="..\API.Domain.Entity\API.Domain.Entity.csproj" />
+    <ProjectReference Include="..\API.Domain.Interface\API.Domain.Interface.csproj" />
+    <ProjectReference Include="..\API.Infraestructure.Interface\API.Infraestructure.Interface.csproj" />
+    <ProjectReference Include="..\API.Infraestructure.Repository\API.Infraestructure.Repository.csproj" />
+    <ProjectReference Include="..\API.Transversal.Common\API.Transversal.Common.csproj" />
+    <ProjectReference Include="..\API.Transversal.Mapper\API.Transversal.Mapper.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Infraestructure.Repository.deps.json
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Infraestructure.Repository.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Infraestructure.Repository.pdb
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.csproj.AssemblyReference.cache
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.AssemblyInfoInputs.cache
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.AssemblyInfo.cs
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\refint\API.Infraestructure.Repository.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.pdb
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\ref\API.Infraestructure.Repository.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Domain.Entity.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Infraestructure.Interface.dll
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Domain.Entity.pdb
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\bin\Debug\net7.0\API.Infraestructure.Interface.pdb
+C:\Users\Miguel\source\repos\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infr.71E95071.Up2Date

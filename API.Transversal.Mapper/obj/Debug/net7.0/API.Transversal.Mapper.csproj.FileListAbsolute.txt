@@ -1,0 +1,17 @@
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Transversal.Mapper.deps.json
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Transversal.Mapper.dll
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Transversal.Mapper.pdb
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.csproj.AssemblyReference.cache
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.AssemblyInfoInputs.cache
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.AssemblyInfo.cs
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.csproj.CoreCompileInputs.cache
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.dll
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\refint\API.Transversal.Mapper.dll
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.pdb
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\ref\API.Transversal.Mapper.dll
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Application.DTO.dll
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Domain.Entity.dll
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Application.DTO.pdb
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\bin\Debug\net7.0\API.Domain.Entity.pdb
+C:\Users\Miguel\source\repos\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Tran.3B3F0E28.Up2Date
