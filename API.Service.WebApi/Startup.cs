@@ -48,6 +48,7 @@ namespace API.Service.WebApi
             });
 
             services.AddAuthorization();
+
             */
             #endregion
 
@@ -88,6 +89,42 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<NumeracionDocumentoDet>, NumeracionDocumentoDetRepositorio>();
             services.AddTransient<INumeracionDocumentoDetDomain, NumeracionDocumentoDetDomain>();
             services.AddTransient<INumeracionDocumentoDetApplication, NumeracionDocumentoDetApplication>();
+
+            // Nuevas tablas
+            services.AddTransient<IRepositorioGenericoDos<Pai>, PaisRepositorio>();
+            services.AddTransient<IPaisDomain, PaisDomain>();
+            services.AddTransient<IPaisApplication, PaisApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<Departamento>, DepartamentoRepositorio>();
+            services.AddTransient<IDepartamentoDomain, DepartamentoDomain>();
+            services.AddTransient<IDepartamentoApplication, DepartamentoApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<Municipio>, MunicipioRepositorio>();
+            services.AddTransient<IMunicipioDomain, MunicipioDomain>();
+            services.AddTransient<IMunicipioApplication, MunicipioApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<Almacen>, AlmacenRepositorio>();
+            services.AddTransient<IAlmacenDomain, AlmacenDomain>();
+            services.AddTransient<IAlmacenApplication, AlmacenApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<SocioNegocio>, SocioNegocioRepositorio>();
+            services.AddTransient<ISocioNegocioDomain, SocioNegocioDomain>();
+            services.AddTransient<ISocioNegocioApplication, SocioNegocioApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<DireccionSocioNegocio>, DireccionSocioNegocioRepositorio>();
+            services.AddTransient<IDireccionSocioNegocioDomain, DireccionSocioNegocioDomain>();
+            services.AddTransient<IDireccionSocioNegocioApplication, DireccionSocioNegocioApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<NumeracionDocumento>, NumeracionDocumentoRepositorio>();
+            services.AddTransient<INumeracionDocumentoDomain, NumeracionDocumentoDomain>();
+            services.AddTransient<INumeracionDocumentoApplication, NumeracionDocumentoApplication>();
+
+            services.AddTransient<IRepositorioGenericoDos<Monedum>, MonedaRepositorio>();
+            services.AddTransient<IMonedaDomain, MonedaDomain>();
+            services.AddTransient<IMonedaApplication, MonedaApplication>();
+
+            // Servicios de autenticación
+            //services.AddTransient<ITokenService, TokenService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

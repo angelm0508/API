@@ -1,0 +1,123 @@
+﻿using API.Application.DTO.moneda;
+using API.Application.Interface;
+using API.Transversal.Common;
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Service.WebApi.Controllers
+{
+    [ApiController]
+    [Route("api/Moneda")]
+    public class MonedaController : ControllerBase
+    {
+        private readonly IMonedaApplication _monedaApplication;
+
+        public MonedaController(IMonedaApplication monedaApplication)
+        {
+            _monedaApplication = monedaApplication;
+        }
+
+        [HttpGet("{codigo}")]
+        public async Task<ActionResult<MonedaDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        {
+            var moneda = await _monedaApplication.ObtenerPorCodigoAsync(codigo);
+
+            if (!moneda.Resultado)
+                return BadRequest(new RespuestaError(moneda.Mensaje));
+
+            if (moneda.Dato == null)
+                return NotFound(new RespuestaError("Código de moneda no encontrado."));
+
+            return Ok(moneda.Dato);
+        }
+
+        [HttpGet("Nombre/{nombre}")]
+        public async Task<ActionResult<MonedaDTO>> ObtenerPorNombre([FromRoute] string nombre)
+        {
+            var moneda = await _monedaApplication.ObtenerPorNombreAsync(nombre);
+
+            if (!moneda.Resultado)
+                return BadRequest(new RespuestaError(moneda.Mensaje));
+
+            if (moneda.Dato == null)
+                return NotFound(new RespuestaError("Nombre de moneda no encontrado."));
+
+            return Ok(moneda.Dato);
+        }
+
+        [HttpGet("ContengaNombre/{nombre}")]
+        public async Task<ActionResult<List<MonedaDTO>>> ObtenerContengaNombre([FromRoute] string nombre)
+        {
+            var monedas = await _monedaApplication.ObtenerContengaNombreAsync(nombre);
+
+            if (!monedas.Resultado)
+                return BadRequest(new RespuestaError(monedas.Mensaje));
+
+            return Ok(monedas.Dato);
+        }
+
+        [HttpGet("ContengaCodigo/{codigo}")]
+        public async Task<ActionResult<List<MonedaDTO>>> ObtenerContengaCodigo([FromRoute] string codigo)
+        {
+            var monedas = await _monedaApplication.ObtenerContengaCodigoAsync(codigo);
+
+            if (!monedas.Resultado)
+                return BadRequest(new RespuestaError(monedas.Mensaje));
+
+            return Ok(monedas.Dato);
+        }
+
+        [HttpGet()]
+        public async Task<ActionResult<List<MonedaDTO>>> ObtenerTodo()
+        {
+            var monedas = await _monedaApplication.ObtenerAsync();
+
+            if (!monedas.Resultado)
+                return BadRequest(new RespuestaError(monedas.Mensaje));
+
+            return Ok(monedas.Dato);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Crear([FromBody] MonedaCrearDTO obj)
+        {
+            var insertar = await _monedaApplication.InsertarAsync(obj);
+
+            if (!insertar.Resultado)
+                return BadRequest(new RespuestaError(insertar.Mensaje));
+
+            return Ok();
+        }
+
+        [HttpPut("{codigo}")]
+        public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] MonedaActualizarDTO obj)
+        {
+            var moneda = await _monedaApplication.ObtenerPorCodigoAsync(codigo);
+
+            if (moneda.Dato == null)
+                return NotFound(new RespuestaError("Código de moneda no encontrado."));
+
+            var actualizar = await _monedaApplication.ActualizarAsync(codigo, obj);
+
+            if (!actualizar.Resultado)
+                return BadRequest(new RespuestaError(actualizar.Mensaje));
+
+            return Ok();
+        }
+
+        [HttpDelete("{codigo}")]
+        public async Task<ActionResult> Eliminar([FromRoute] string codigo)
+        {
+            var moneda = await _monedaApplication.ObtenerPorCodigoAsync(codigo);
+
+            if (moneda.Dato == null)
+                return NotFound(new RespuestaError("Código de moneda no encontrado."));
+
+            var eliminar = await _monedaApplication.EliminarAsync(codigo);
+
+            if (!eliminar.Resultado)
+                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+
+            return Ok();
+        }
+    }
+}

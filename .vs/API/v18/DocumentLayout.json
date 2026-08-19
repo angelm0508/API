@@ -1,0 +1,1287 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\usuarioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\usuarioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D3776FCD-AFAB-4E2A-B3AC-B70F3562E893}|API.Transversal.Mapper\\API.Transversal.Mapper.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.transversal.mapper\\perfilmapeo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D3776FCD-AFAB-4E2A-B3AC-B70F3562E893}|API.Transversal.Mapper\\API.Transversal.Mapper.csproj|solutionrelative:api.transversal.mapper\\perfilmapeo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\pais\\paiscreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\pais\\paiscreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\pais\\paisactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\pais\\paisactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\pais\\paisdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\pais\\paisdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\departamento\\departamentocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\departamento\\departamentocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\departamento\\departamentodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\departamento\\departamentodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\departamento\\departamentoactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\departamento\\departamentoactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\municipio\\municipiodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\municipio\\municipiodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\municipio\\municipioactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\municipio\\municipioactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\municipio\\municipiocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\municipio\\municipiocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\almacen\\almacenactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\almacen\\almacenactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\almacen\\almacencreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\almacen\\almacencreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\almacen\\almacendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\almacen\\almacendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\socionegocio\\socionegociodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\socionegocio\\socionegociodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\socionegocio\\socionegocioactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\socionegocio\\socionegocioactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\socionegocio\\socionegociocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\socionegocio\\socionegociocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\direccionsocionegocio\\direccionsocionegociocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\direccionsocionegocio\\direccionsocionegociocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\direccionsocionegocio\\direccionsocionegociodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\direccionsocionegocio\\direccionsocionegociodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\direccionsocionegocio\\direccionsocionegocioactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\direccionsocionegocio\\direccionsocionegocioactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\numeraciondocumento\\numeraciondocumentocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\numeraciondocumento\\numeraciondocumentocreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\numeraciondocumento\\numeraciondocumentoactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\numeraciondocumento\\numeraciondocumentoactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\numeraciondocumento\\numeraciondocumentodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\numeraciondocumento\\numeraciondocumentodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\moneda\\monedadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\moneda\\monedadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\moneda\\monedaactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\moneda\\monedaactualizardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\moneda\\monedacreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\moneda\\monedacreardto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\almacenrepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\almacenrepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\paisrepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\paisrepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\municipiorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\municipiorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\departamentorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\departamentorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\socionegociorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\socionegociorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\direccionsocionegociorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\direccionsocionegociorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\numeraciondocumentorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\numeraciondocumentorepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.infraestructure.repository\\monedarepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF00262D-A257-4C18-95BA-8ECC90B26CAF}|API.Infraestructure.Repository\\API.Infraestructure.Repository.csproj|solutionrelative:api.infraestructure.repository\\monedarepositorio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\imunicipiodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\imunicipiodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\inumeraciondocumentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\inumeraciondocumentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\idireccionsocionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\idireccionsocionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\imonedadomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\imonedadomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\idepartamentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\idepartamentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\ipaisdomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\ipaisdomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\isocionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\isocionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.interface\\ialmacendomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{914FE756-E093-4D00-9BAF-14F975C1BD85}|API.Domain.Interface\\API.Domain.Interface.csproj|solutionrelative:api.domain.interface\\ialmacendomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\paisdomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\paisdomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\monedadomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\monedadomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\departamentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\departamentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\municipiodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\municipiodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\direccionsocionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\direccionsocionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\numeraciondocumentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\numeraciondocumentodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\almacendomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\almacendomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\socionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\socionegociodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\inumeraciondocumentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\inumeraciondocumentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\ialmacenapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\ialmacenapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\ipaisapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\ipaisapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\idepartamentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\idepartamentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\imonedaapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\imonedaapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\imunicipioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\imunicipioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\idireccionsocionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\idireccionsocionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.interface\\isocionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D46EC601-3910-4B90-B221-AA4A55A68279}|API.Application.Interface\\API.Application.Interface.csproj|solutionrelative:api.application.interface\\isocionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\paisapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\paisapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\almacenapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\almacenapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\municipioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\municipioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\socionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\socionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\direccionsocionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\direccionsocionegocioapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\departamentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\departamentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\numeraciondocumentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\numeraciondocumentoapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\monedaapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\monedaapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\paiscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\paiscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\monedacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\monedacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\numeraciondocumentocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\numeraciondocumentocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\municipiocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\municipiocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\direccionsocionegociocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\direccionsocionegociocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\socionegociocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\socionegociocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\departamentocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\departamentocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\almacencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\almacencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\autenticacion\\loginresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\autenticacion\\loginresponsedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\autenticacion\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\autenticacion\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 171,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Startup.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Startup.cs",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAAAIEAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:54.455Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UsuarioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\UsuarioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\UsuarioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\UsuarioApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\UsuarioApplication.cs",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAAwH4AAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T09:04:44.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 77,
+              "Title": "LoginResponseDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T09:07:55.955Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 75,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\appsettings.json",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\appsettings.json",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\appsettings.json",
+              "RelativeToolTip": "API.Service.WebApi\\appsettings.json",
+              "ViewState": "AgIAAA0AAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-08-14T09:07:13.628Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 78,
+              "Title": "LoginDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\autenticacion\\LoginDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\autenticacion\\LoginDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T09:07:56.029Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PerfilMapeo.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Transversal.Mapper\\PerfilMapeo.cs",
+              "RelativeDocumentMoniker": "API.Transversal.Mapper\\PerfilMapeo.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Transversal.Mapper\\PerfilMapeo.cs",
+              "RelativeToolTip": "API.Transversal.Mapper\\PerfilMapeo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:56:04.476Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 76,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\appsettings.Development.json",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\appsettings.Development.json",
+              "RelativeToolTip": "API.Service.WebApi\\appsettings.Development.json",
+              "ViewState": "AgIAAAoAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-08-14T09:07:18.55Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 63,
+              "Title": "DireccionSocioNegocioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\DireccionSocioNegocioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\DireccionSocioNegocioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\DireccionSocioNegocioApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\DireccionSocioNegocioApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:37.822Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 62,
+              "Title": "SocioNegocioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\SocioNegocioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\SocioNegocioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\SocioNegocioApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\SocioNegocioApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:37.726Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 61,
+              "Title": "MunicipioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\MunicipioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\MunicipioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\MunicipioApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\MunicipioApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:37.651Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 60,
+              "Title": "AlmacenApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\AlmacenApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\AlmacenApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\AlmacenApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\AlmacenApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:37.565Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 59,
+              "Title": "PaisApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\PaisApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\PaisApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\PaisApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\PaisApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAK8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:54:15.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 74,
+              "Title": "AlmacenController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\AlmacenController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\AlmacenController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\AlmacenController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\AlmacenController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:36.093Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 73,
+              "Title": "DepartamentoController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\DepartamentoController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\DepartamentoController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\DepartamentoController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\DepartamentoController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:36.002Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 72,
+              "Title": "SocioNegocioController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\SocioNegocioController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\SocioNegocioController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\SocioNegocioController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\SocioNegocioController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:35.921Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 71,
+              "Title": "DireccionSocioNegocioController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\DireccionSocioNegocioController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\DireccionSocioNegocioController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\DireccionSocioNegocioController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\DireccionSocioNegocioController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:35.843Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 70,
+              "Title": "MunicipioController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\MunicipioController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\MunicipioController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\MunicipioController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\MunicipioController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:35.768Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 69,
+              "Title": "NumeracionDocumentoController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\NumeracionDocumentoController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\NumeracionDocumentoController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\NumeracionDocumentoController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\NumeracionDocumentoController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:35.687Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 68,
+              "Title": "MonedaController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\MonedaController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\MonedaController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\MonedaController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\MonedaController.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAABBwHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:57:35.543Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 67,
+              "Title": "PaisController.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\PaisController.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\PaisController.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\PaisController.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Controllers\\PaisController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:56:33.855Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 66,
+              "Title": "MonedaApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\MonedaApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\MonedaApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\MonedaApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\MonedaApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:38.115Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 65,
+              "Title": "NumeracionDocumentoApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\NumeracionDocumentoApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\NumeracionDocumentoApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\NumeracionDocumentoApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\NumeracionDocumentoApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:37.989Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 64,
+              "Title": "DepartamentoApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\DepartamentoApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\DepartamentoApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\DepartamentoApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\DepartamentoApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:37.889Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MunicipioDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\municipio\\MunicipioDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\municipio\\MunicipioDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:11.135Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DepartamentoActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\departamento\\DepartamentoActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\departamento\\DepartamentoActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:04.482Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "DepartamentoDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\departamento\\DepartamentoDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\departamento\\DepartamentoDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:04.421Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DepartamentoCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\departamento\\DepartamentoCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\departamento\\DepartamentoCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:04.356Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PaisDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\pais\\PaisDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\pais\\PaisDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:46:56.683Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PaisActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\pais\\PaisActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\pais\\PaisActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:46:56.612Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "PaisCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\pais\\PaisCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\pais\\PaisCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:46:56.01Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 58,
+              "Title": "ISocioNegocioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\ISocioNegocioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\ISocioNegocioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\ISocioNegocioApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\ISocioNegocioApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.738Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 57,
+              "Title": "IDireccionSocioNegocioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IDireccionSocioNegocioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\IDireccionSocioNegocioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IDireccionSocioNegocioApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\IDireccionSocioNegocioApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.617Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 56,
+              "Title": "IMunicipioApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IMunicipioApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\IMunicipioApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IMunicipioApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\IMunicipioApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.428Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "IMonedaApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IMonedaApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\IMonedaApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IMonedaApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\IMonedaApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.329Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 54,
+              "Title": "IDepartamentoApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IDepartamentoApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\IDepartamentoApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IDepartamentoApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\IDepartamentoApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.239Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 53,
+              "Title": "IPaisApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IPaisApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\IPaisApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IPaisApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\IPaisApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.152Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 52,
+              "Title": "IAlmacenApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IAlmacenApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\IAlmacenApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IAlmacenApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\IAlmacenApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:58.065Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 51,
+              "Title": "INumeracionDocumentoApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\INumeracionDocumentoApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Interface\\INumeracionDocumentoApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\INumeracionDocumentoApplication.cs",
+              "RelativeToolTip": "API.Application.Interface\\INumeracionDocumentoApplication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:57.979Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "SocioNegocioDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\SocioNegocioDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\SocioNegocioDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\SocioNegocioDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\SocioNegocioDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:26.107Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "AlmacenDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\AlmacenDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\AlmacenDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\AlmacenDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\AlmacenDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:26.011Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "NumeracionDocumentoDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\NumeracionDocumentoDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\NumeracionDocumentoDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\NumeracionDocumentoDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\NumeracionDocumentoDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:25.802Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "DireccionSocioNegocioDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\DireccionSocioNegocioDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\DireccionSocioNegocioDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\DireccionSocioNegocioDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\DireccionSocioNegocioDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:25.718Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "MunicipioDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\MunicipioDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\MunicipioDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\MunicipioDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\MunicipioDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:25.636Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "DepartamentoDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\DepartamentoDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\DepartamentoDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\DepartamentoDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\DepartamentoDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:25.55Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "MonedaDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\MonedaDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\MonedaDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\MonedaDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\MonedaDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:50:25.46Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "PaisDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\PaisDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\PaisDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\PaisDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\PaisDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:47.516Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "IAlmacenDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IAlmacenDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\IAlmacenDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IAlmacenDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\IAlmacenDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:30.552Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "ISocioNegocioDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\ISocioNegocioDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\ISocioNegocioDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\ISocioNegocioDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\ISocioNegocioDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:30.438Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "IPaisDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IPaisDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\IPaisDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IPaisDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\IPaisDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:30.31Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "IDepartamentoDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IDepartamentoDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\IDepartamentoDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IDepartamentoDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\IDepartamentoDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:30.226Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "IMonedaDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IMonedaDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\IMonedaDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IMonedaDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\IMonedaDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:30.071Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "IDireccionSocioNegocioDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IDireccionSocioNegocioDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\IDireccionSocioNegocioDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IDireccionSocioNegocioDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\IDireccionSocioNegocioDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:29.99Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "INumeracionDocumentoDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\INumeracionDocumentoDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\INumeracionDocumentoDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\INumeracionDocumentoDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\INumeracionDocumentoDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:29.915Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "IMunicipioDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IMunicipioDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Interface\\IMunicipioDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IMunicipioDomain.cs",
+              "RelativeToolTip": "API.Domain.Interface\\IMunicipioDomain.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:49:29.808Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "MonedaRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\MonedaRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\MonedaRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\MonedaRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\MonedaRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:59.781Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "NumeracionDocumentoRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\NumeracionDocumentoRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\NumeracionDocumentoRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\NumeracionDocumentoRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\NumeracionDocumentoRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:59.701Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "DireccionSocioNegocioRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\DireccionSocioNegocioRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\DireccionSocioNegocioRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\DireccionSocioNegocioRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\DireccionSocioNegocioRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:59.62Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "SocioNegocioRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\SocioNegocioRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\SocioNegocioRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\SocioNegocioRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\SocioNegocioRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:59.53Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "DepartamentoRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\DepartamentoRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\DepartamentoRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\DepartamentoRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\DepartamentoRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:34.816Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "MunicipioRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\MunicipioRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\MunicipioRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\MunicipioRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\MunicipioRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:34.739Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "PaisRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\PaisRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\PaisRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\PaisRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\PaisRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:34.661Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "AlmacenRepositorio.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\AlmacenRepositorio.cs",
+              "RelativeDocumentMoniker": "API.Infraestructure.Repository\\AlmacenRepositorio.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\AlmacenRepositorio.cs",
+              "RelativeToolTip": "API.Infraestructure.Repository\\AlmacenRepositorio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:48:34.584Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "MonedaCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\moneda\\MonedaCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\moneda\\MonedaCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:54.341Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "MonedaActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\moneda\\MonedaActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\moneda\\MonedaActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:54.266Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "MonedaDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\moneda\\MonedaDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\moneda\\MonedaDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:54.192Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "NumeracionDocumentoDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:47.208Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "NumeracionDocumentoActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:47.126Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "NumeracionDocumentoCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:47.042Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "DireccionSocioNegocioActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:39.751Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "DireccionSocioNegocioDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:39.677Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "DireccionSocioNegocioCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:39.601Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SocioNegocioCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\socioNegocio\\SocioNegocioCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\socioNegocio\\SocioNegocioCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:30.051Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "SocioNegocioActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\socioNegocio\\SocioNegocioActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\socioNegocio\\SocioNegocioActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:29.978Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "SocioNegocioDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\socioNegocio\\SocioNegocioDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\socioNegocio\\SocioNegocioDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:29.858Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "AlmacenDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\almacen\\AlmacenDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\almacen\\AlmacenDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:19.346Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "AlmacenCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\almacen\\AlmacenCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\almacen\\AlmacenCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:19.273Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AlmacenActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\almacen\\AlmacenActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\almacen\\AlmacenActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:19.181Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MunicipioCrearDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioCrearDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\municipio\\MunicipioCrearDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioCrearDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\municipio\\MunicipioCrearDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:11.275Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MunicipioActualizarDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioActualizarDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\municipio\\MunicipioActualizarDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioActualizarDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\municipio\\MunicipioActualizarDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:47:11.2Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
