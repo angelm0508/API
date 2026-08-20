@@ -317,10 +317,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.dto\\autenticacion\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{87B47ADE-C462-4D98-9F15-ABA4D61119EB}|API.Application.DTO\\API.Application.DTO.csproj|solutionrelative:api.application.dto\\autenticacion\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.service.webapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B0EE1C89-34B9-49CE-94CF-ACB4EF816540}|API.Service.WebApi\\API.Service.WebApi.csproj|solutionrelative:api.service.webapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -330,8 +326,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 171,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
+              "RelativeDocumentMoniker": "API.Service.WebApi\\Startup.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
+              "RelativeToolTip": "API.Service.WebApi\\Startup.cs",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAAAIEAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-14T08:55:54.455Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -347,16 +356,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Startup.cs",
-              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
-              "RelativeDocumentMoniker": "API.Service.WebApi\\Startup.cs",
-              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
-              "RelativeToolTip": "API.Service.WebApi\\Startup.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAAAwwC8AAAAPAAAAAAAAAA==",
+              "DocumentIndex": 77,
+              "Title": "LoginResponseDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "RelativeDocumentMoniker": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "RelativeToolTip": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-14T08:55:54.455Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-14T09:07:55.955Z"
             },
             {
               "$type": "Document",
@@ -369,18 +377,6 @@
               "ViewState": "AgIAAA0AAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-08-14T09:07:13.628Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 77,
-              "Title": "LoginResponseDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
-              "RelativeDocumentMoniker": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
-              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
-              "RelativeToolTip": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-14T09:07:55.955Z"
             },
             {
               "$type": "Document",
@@ -418,18 +414,6 @@
               "ViewState": "AgIAAAoAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-08-14T09:07:18.55Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 79,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "API.Service.WebApi\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-14T09:08:14.783Z"
             },
             {
               "$type": "Document",
