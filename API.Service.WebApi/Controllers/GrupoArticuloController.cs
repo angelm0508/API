@@ -1,6 +1,6 @@
-﻿using API.Application.DTO.articulo.grupo_articulo;
+using API.Application.DTO;
+using API.Application.DTO.articulo.grupo_articulo;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,65 +21,69 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GrupoArticuloDTO>> Obtener([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<GrupoArticuloDTO>>> Obtener([FromRoute] int id)
         {
             var grupoArticulo = await _grupoArticuloApplication.ObtenerAsync(id);
 
             if (!grupoArticulo.Resultado)
             {
-                return BadRequest(new RespuestaError($"{grupoArticulo.Mensaje}"));
+                return BadRequest(grupoArticulo);
             }
 
             if (grupoArticulo.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del grupo de articulo no se encontró."));
+                grupoArticulo.Resultado = false;
+                grupoArticulo.Mensaje = "El código del grupo de articulo no se encontró.";
+                return NotFound(grupoArticulo);
             }
 
-            return Ok(grupoArticulo.Dato);
+            return Ok(grupoArticulo);
         }
 
         [HttpGet("PorNombre/{name}")]
-        public async Task<ActionResult<GrupoArticuloDTO>> ObtenerPorNombre([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<GrupoArticuloDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
             var grupoArticulo = await _grupoArticuloApplication.ObtenerAsync(name);
 
             if (!grupoArticulo.Resultado)
             {
-                return BadRequest(new RespuestaError($"{grupoArticulo.Mensaje}"));
+                return BadRequest(grupoArticulo);
             }
 
             if (grupoArticulo.Dato == null)
             {
-                return NotFound(new RespuestaError("El nombre del grupo de articulo no se encontró."));
+                grupoArticulo.Resultado = false;
+                grupoArticulo.Mensaje = "El nombre del grupo de articulo no se encontró.";
+                return NotFound(grupoArticulo);
             }
 
-            return Ok(grupoArticulo.Dato);
+            return Ok(grupoArticulo);
         }
 
         [HttpGet("Contenga/{name}")]
-        public async Task<ActionResult<List<GrupoArticuloDTO>>> ObteneContengaNombreAsync([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<IEnumerable<GrupoArticuloDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
             var grupoArticulos = await _grupoArticuloApplication.ObtenerContengaNombreAsync(name);
 
             if (!grupoArticulos.Resultado)
             {
-                return BadRequest(new RespuestaError(grupoArticulos.Mensaje));
+                return BadRequest(grupoArticulos);
             }
 
-            return Ok(grupoArticulos.Dato);
+            return Ok(grupoArticulos);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<GrupoArticuloDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<GrupoArticuloDTO>>>> ObtenerTodoAsync()
         {
             var grupoArticulos = await _grupoArticuloApplication.ObtenerTodoAsync();
 
             if (!grupoArticulos.Resultado)
             {
-                return BadRequest(new RespuestaError(grupoArticulos.Mensaje));
+                return BadRequest(grupoArticulos);
             }
 
-            return Ok(grupoArticulos.Dato);
+            return Ok(grupoArticulos);
         }
 
         /*
@@ -109,56 +113,60 @@ namespace API.Service.WebApi.Controllers
         */
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] GrupoArticuloCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] GrupoArticuloCrearDTO obj)
         {
             var insert = await _grupoArticuloApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] int id, [FromBody] GrupoArticuloActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] GrupoArticuloActualizarDTO obj)
         {
             var grupoArticulo = await _grupoArticuloApplication.ObtenerAsync(id);
 
             if (grupoArticulo.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del grupo de articulo no se encontró."));
+                grupoArticulo.Resultado = false;
+                grupoArticulo.Mensaje = "El código del grupo de articulo no se encontró.";
+                return NotFound(grupoArticulo);
             }
 
             var update = await _grupoArticuloApplication.ActualizarAsync(id, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var grupoArticulo = await _grupoArticuloApplication.ObtenerAsync(id);
 
             if (grupoArticulo.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del grupo de articulo no se encontró."));
+                grupoArticulo.Resultado = false;
+                grupoArticulo.Mensaje = "El código del grupo de articulo no se encontró.";
+                return NotFound(grupoArticulo);
             }
 
             var delete = await _grupoArticuloApplication.EliminarAsync(id);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

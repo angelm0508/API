@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.usuario.usuario;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,118 +19,126 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<UsuarioDTO>> Obtener([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<UsuarioDTO>>> Obtener([FromRoute] int id)
         {
             var usuario = await _usuarioApplication.ObtenerAsync(id);
 
             if (!usuario.Resultado)
             {
-                return BadRequest(new RespuestaError($"{usuario.Mensaje}"));
+                return BadRequest(usuario);
             }
 
             if (usuario.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del usuario no se encontró."));
+                usuario.Resultado = false;
+                usuario.Mensaje = "El código del usuario no se encontró.";
+                return NotFound(usuario);
             }
 
-            return Ok(usuario.Dato);
+            return Ok(usuario);
         }
 
         [HttpGet("PorCodigo/{codigo}")]
-        public async Task<ActionResult<UsuarioDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<UsuarioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var usuario = await _usuarioApplication.ObtenerAsync(codigo);
 
             if (!usuario.Resultado)
             {
-                return BadRequest(new RespuestaError($"{usuario.Mensaje}"));
+                return BadRequest(usuario);
             }
 
             if (usuario.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del usuario no se encontró."));
+                usuario.Resultado = false;
+                usuario.Mensaje = "El código del usuario no se encontró.";
+                return NotFound(usuario);
             }
 
-            return Ok(usuario.Dato);
+            return Ok(usuario);
         }
 
         [HttpGet("Contenga/{name}")]
-        public async Task<ActionResult<List<UsuarioDTO>>> ObteneContengaNombreAsync([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<IEnumerable<UsuarioDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
             var usuarios = await _usuarioApplication.ObtenerContengaNombreAsync(name);
 
             if (!usuarios.Resultado)
             {
-                return BadRequest(new RespuestaError(usuarios.Mensaje));
+                return BadRequest(usuarios);
             }
 
-            return Ok(usuarios.Dato);
+            return Ok(usuarios);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UsuarioDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<UsuarioDTO>>>> ObtenerTodoAsync()
         {
             var usuarios = await _usuarioApplication.ObtenerTodoAsync();
 
             if (!usuarios.Resultado)
             {
-                return BadRequest(new RespuestaError(usuarios.Mensaje));
+                return BadRequest(usuarios);
             }
 
-            return Ok(usuarios.Dato);
+            return Ok(usuarios);
         }
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] UsuarioCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] UsuarioCrearDTO obj)
         {
             var insert = await _usuarioApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] int id, [FromBody] UsuarioActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] UsuarioActualizarDTO obj)
         {
             var usuario = await _usuarioApplication.ObtenerAsync(id);
 
             if (usuario.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del usuario no se encontró."));
+                usuario.Resultado = false;
+                usuario.Mensaje = "El código del usuario no se encontró.";
+                return NotFound(usuario);
             }
 
             var update = await _usuarioApplication.ActualizarAsync(id, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var usuario = await _usuarioApplication.ObtenerAsync(id);
 
             if (usuario.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del usuario no se encontró."));
+                usuario.Resultado = false;
+                usuario.Mensaje = "El código del usuario no se encontró.";
+                return NotFound(usuario);
             }
 
             var delete = await _usuarioApplication.EliminarAsync(id);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

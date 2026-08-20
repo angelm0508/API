@@ -1,6 +1,6 @@
-﻿using API.Application.DTO.articulo.articulo;
+using API.Application.DTO;
+using API.Application.DTO.articulo.articulo;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,143 +19,123 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<ArticuloDTO>> Articulo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<ArticuloDTO>>> Articulo([FromRoute] string codigo)
         {
             var producto = await _articuloApplication.ObtenerPorCodigoAsync(codigo);
-            
+
             if (!producto.Resultado)
-                return BadRequest(new RespuestaError(producto.Mensaje));
+                return BadRequest(producto);
 
             if (producto.Dato == null)
-                return NotFound(new RespuestaError("Código de articulo no encontrado."));
+            {
+                producto.Resultado = false;
+                producto.Mensaje = "Código de articulo no encontrado.";
+                return NotFound(producto);
+            }
 
-            return Ok(producto.Dato);
+            return Ok(producto);
         }
 
-        
         [HttpGet("Nombre/{nombre}")]
-        public async Task<ActionResult<ArticuloDTO>> ArticuloPorNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<ArticuloDTO>>> ArticuloPorNombre([FromRoute] string nombre)
         {
             var producto = await _articuloApplication.ObtenerPorNombreAsync(nombre);
 
             if (!producto.Resultado)
-                return BadRequest(new RespuestaError(producto.Mensaje));
+                return BadRequest(producto);
 
             if (producto.Dato == null)
-                return NotFound(new RespuestaError("Nombre de articulo no encontrado."));
+            {
+                producto.Resultado = false;
+                producto.Mensaje = "Nombre de articulo no encontrado.";
+                return NotFound(producto);
+            }
 
-            return Ok(producto.Dato);
+            return Ok(producto);
         }
 
-        
         [HttpGet("ContengaNombre/{nombre}")]
-        public async Task<ActionResult<List<ArticuloDTO>>> ArticulosContenganNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<IEnumerable<ArticuloDTO>>>> ArticulosContenganNombre([FromRoute] string nombre)
         {
             var producto = await _articuloApplication.ObtenerContenganNombreAsync(nombre);
 
             if (!producto.Resultado)
-                return BadRequest(new RespuestaError(producto.Mensaje));
+                return BadRequest(producto);
 
-            return Ok(producto.Dato);
+            return Ok(producto);
         }
 
-        
-
         [HttpGet("ContengaCodigo/{codigo}")]
-        public async Task<ActionResult<List<ArticuloDTO>>> ArticulosContenganCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<IEnumerable<ArticuloDTO>>>> ArticulosContenganCodigo([FromRoute] string codigo)
         {
             var productos = await _articuloApplication.ObtenerContenganCodigoAsync(codigo);
 
             if (!productos.Resultado)
-                return BadRequest(new RespuestaError(productos.Mensaje));
+                return BadRequest(productos);
 
-            return Ok(productos.Dato);
+            return Ok(productos);
         }
 
-
-        
-        //[HttpGet("all")]
         [HttpGet()]
-        public async Task<ActionResult<List<ArticuloDTO>>> Obtener()
+        public async Task<ActionResult<Respuesta<IEnumerable<ArticuloDTO>>>> Obtener()
         {
             var producto = await _articuloApplication.ObtenerAsync();
 
             if (!producto.Resultado)
-                return BadRequest(new RespuestaError(producto.Mensaje));
+                return BadRequest(producto);
 
-            return Ok(producto.Dato);
+            return Ok(producto);
         }
-        
 
-        /*
-        [HttpGet("allWithPaging")]
-        public async Task<ActionResult> GetAllWithPaging([FromQuery] PaginationParametersDTO paginationParametersDTO)
-        {
-            var productos = await _articuloApplication.GetAllWithPagingAsync(paginationParametersDTO);
-
-            if (!productos.IsSuccess)
-            {
-                return BadRequest(new RespuestaError(productos.Message));
-            }
-
-            var metadata = new
-            {
-                productos.Data.TotalCount,
-                productos.Data.PageSize,
-                productos.Data.CurrentPage,
-                productos.Data.HasNext,
-                productos.Data.HasPrevious
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
-
-            return Ok(productos.Data);
-        }
-        */
-
-    
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] ArticuloCrearDTO producto)
+        public async Task<ActionResult<Respuesta<bool>>> Post([FromBody] ArticuloCrearDTO producto)
         {
             var insertar = await _articuloApplication.InsertarAsync(producto);
 
             if (!insertar.Resultado)
-                return BadRequest(new RespuestaError(insertar.Mensaje));
+                return BadRequest(insertar);
 
-            return Ok();
+            return Ok(insertar);
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Update([FromRoute] string codigo, [FromBody] ArticuloActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Update([FromRoute] string codigo, [FromBody] ArticuloActualizarDTO obj)
         {
             var producto = await _articuloApplication.ObtenerPorCodigoAsync(codigo);
 
             if (producto.Dato == null)
-                return NotFound(new RespuestaError("Código de articulo no encontrado."));
+            {
+                producto.Resultado = false;
+                producto.Mensaje = "Código de articulo no encontrado.";
+                return NotFound(producto);
+            }
 
             var insert = await _articuloApplication.ActualizarAsync(codigo, obj);
 
             if (!insert.Resultado)
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Delete([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<bool>>> Delete([FromRoute] string codigo)
         {
             var producto = await _articuloApplication.ObtenerPorCodigoAsync(codigo);
 
             if (producto.Dato == null)
-                return NotFound(new RespuestaError("Código de articulo no encontrado."));
+            {
+                producto.Resultado = false;
+                producto.Mensaje = "Código de articulo no encontrado.";
+                return NotFound(producto);
+            }
 
             var eliminar = await _articuloApplication.EliminarAsync(codigo);
 
             if (!eliminar.Resultado)
-                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+                return BadRequest(eliminar);
 
-            return Ok();
+            return Ok(eliminar);
         }
-        
     }
 }

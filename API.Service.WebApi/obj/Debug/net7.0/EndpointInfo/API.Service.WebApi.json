@@ -617,6 +617,225 @@
         }
       }
     },
+    "/api/Auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Cotizacion/{id}": {
+      "get": {
+        "tags": [
+          "Cotizacion"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CotizacionDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CotizacionDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CotizacionDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cotizacion"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CotizacionActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CotizacionActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CotizacionActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cotizacion"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Cotizacion": {
+      "get": {
+        "tags": [
+          "Cotizacion"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CotizacionDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CotizacionDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CotizacionDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cotizacion"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CotizacionCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CotizacionCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CotizacionCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Departamento/{codigo}": {
       "get": {
         "tags": [
@@ -5169,6 +5388,323 @@
         },
         "additionalProperties": false
       },
+      "CotizacionActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CotizacionCrearDTO": {
+        "required": [
+          "numDoc",
+          "serie"
+        ],
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CotizacionDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DepartamentoActualizarDTO": {
         "type": "object",
         "properties": {
@@ -5684,6 +6220,50 @@
           },
           "bloqueado": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginDTO": {
+        "required": [
+          "contrasena",
+          "usuario"
+        ],
+        "type": "object",
+        "properties": {
+          "usuario": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "contrasena": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginResponseDTO": {
+        "type": "object",
+        "properties": {
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          },
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "usuarioNombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "expirasEn": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -6594,6 +7174,19 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Ingresa el token JWT obtenido en api/Auth/login.",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }

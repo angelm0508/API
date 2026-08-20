@@ -354,6 +354,131 @@
     ]
   },
   {
+    "ContainingType": "API.Service.WebApi.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.autenticacion.LoginDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.autenticacion.LoginResponseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/Cotizacion",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.cotizacion.CotizacionDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/Cotizacion",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.cotizacion.CotizacionCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
+    "Method": "Obtener",
+    "RelativePath": "api/Cotizacion/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.cotizacion.CotizacionDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/Cotizacion/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.cotizacion.CotizacionActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/Cotizacion/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "API.Service.WebApi.Controllers.DepartamentoController",
     "Method": "ObtenerTodo",
     "RelativePath": "api/Departamento",

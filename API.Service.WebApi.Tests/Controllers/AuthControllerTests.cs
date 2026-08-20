@@ -2,7 +2,6 @@ using API.Application.DTO;
 using API.Application.DTO.autenticacion;
 using API.Application.Interface;
 using API.Service.WebApi.Controllers;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -24,13 +23,13 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task Login_DevuelveBadRequest_CuandoCredencialesInvalidas()
         {
             var loginDto = new LoginDTO { Usuario = "user1", Contrasena = "wrong" };
-            _applicationMock.Setup(a => a.LoginAsync(loginDto))
-                .ReturnsAsync(new Respuesta<LoginResponseDTO> { Resultado = false, Mensaje = "Credenciales inválidas." });
+            var respuesta = new Respuesta<LoginResponseDTO> { Resultado = false, Mensaje = "Credenciales inválidas." };
+            _applicationMock.Setup(a => a.LoginAsync(loginDto)).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Login(loginDto);
 
             var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
-            Assert.IsType<RespuestaError>(badRequest.Value);
+            Assert.Same(respuesta, badRequest.Value);
         }
 
         [Fact]
@@ -38,13 +37,13 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             var loginDto = new LoginDTO { Usuario = "user1", Contrasena = "correct" };
             var loginResponse = new LoginResponseDTO { Resultado = true, Token = "token123", UsuarioNombre = "user1" };
-            _applicationMock.Setup(a => a.LoginAsync(loginDto))
-                .ReturnsAsync(new Respuesta<LoginResponseDTO> { Resultado = true, Dato = loginResponse });
+            var respuesta = new Respuesta<LoginResponseDTO> { Resultado = true, Dato = loginResponse };
+            _applicationMock.Setup(a => a.LoginAsync(loginDto)).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Login(loginDto);
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
-            Assert.Same(loginResponse, ok.Value);
+            Assert.Same(respuesta, ok.Value);
         }
     }
 }

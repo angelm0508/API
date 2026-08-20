@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.numeracion.numeracion_documento_det;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,87 +19,93 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigoObj}")]
-        public async Task<ActionResult<NumeracionDocumentoDetDTO>> Obtener([FromRoute] string codigoObj)
+        public async Task<ActionResult<Respuesta<NumeracionDocumentoDetDTO>>> Obtener([FromRoute] string codigoObj)
         {
             var numeracionDoc = await _numeracionDocumentoDetApplication.ObtenerAsync(codigoObj);
 
             if (!numeracionDoc.Resultado)
             {
-                return BadRequest(new RespuestaError($"{numeracionDoc.Mensaje}"));
+                return BadRequest(numeracionDoc);
             }
 
             if (numeracionDoc.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del documento de numeración no se encontró."));
+                numeracionDoc.Resultado = false;
+                numeracionDoc.Mensaje = "El código del documento de numeración no se encontró.";
+                return NotFound(numeracionDoc);
             }
 
-            return Ok(numeracionDoc.Dato);
+            return Ok(numeracionDoc);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<NumeracionDocumentoDetDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>>> ObtenerTodoAsync()
         {
             var numeracionDocs = await _numeracionDocumentoDetApplication.ObtenerTodoAsync();
 
             if (!numeracionDocs.Resultado)
             {
-                return BadRequest(new RespuestaError(numeracionDocs.Mensaje));
+                return BadRequest(numeracionDocs);
             }
 
-            return Ok(numeracionDocs.Dato);
+            return Ok(numeracionDocs);
         }
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] NumeracionDocumentoDetCrearDTO obj)
+        public async Task<ActionResult<Respuesta<string>>> InsertarAsync([FromBody] NumeracionDocumentoDetCrearDTO obj)
         {
             var insert = await _numeracionDocumentoDetApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{codigoObj}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] string codigoObj, [FromBody] NumeracionDocumentoDetActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] string codigoObj, [FromBody] NumeracionDocumentoDetActualizarDTO obj)
         {
             var numeracionDoc = await _numeracionDocumentoDetApplication.ObtenerAsync(codigoObj);
 
             if (numeracionDoc.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del documento de numeración no se encontró."));
+                numeracionDoc.Resultado = false;
+                numeracionDoc.Mensaje = "El código del documento de numeración no se encontró.";
+                return NotFound(numeracionDoc);
             }
 
             var update = await _numeracionDocumentoDetApplication.ActualizarAsync(codigoObj, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{codigoObj}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] string codigoObj)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] string codigoObj)
         {
             var numeracionDoc = await _numeracionDocumentoDetApplication.ObtenerAsync(codigoObj);
 
             if (numeracionDoc.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del documento de numeración no se encontró."));
+                numeracionDoc.Resultado = false;
+                numeracionDoc.Mensaje = "El código del documento de numeración no se encontró.";
+                return NotFound(numeracionDoc);
             }
 
             var delete = await _numeracionDocumentoDetApplication.EliminarAsync(codigoObj);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

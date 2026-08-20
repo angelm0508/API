@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.articulo.fabricante_articulo;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,118 +19,126 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<FabricanteArticuloDTO>> Obtener([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<FabricanteArticuloDTO>>> Obtener([FromRoute] int id)
         {
             var fabricante = await _fabricanteArticuloApplication.ObtenerAsync(id);
 
             if (!fabricante.Resultado)
             {
-                return BadRequest(new RespuestaError($"{fabricante.Mensaje}"));
+                return BadRequest(fabricante);
             }
 
             if (fabricante.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del fabricante no se encontró."));
+                fabricante.Resultado = false;
+                fabricante.Mensaje = "El código del fabricante no se encontró.";
+                return NotFound(fabricante);
             }
 
-            return Ok(fabricante.Dato);
+            return Ok(fabricante);
         }
 
         [HttpGet("PorNombre/{name}")]
-        public async Task<ActionResult<FabricanteArticuloDTO>> ObtenerPorNombre([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<FabricanteArticuloDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
             var fabricante = await _fabricanteArticuloApplication.ObtenerAsync(name);
 
             if (!fabricante.Resultado)
             {
-                return BadRequest(new RespuestaError($"{fabricante.Mensaje}"));
+                return BadRequest(fabricante);
             }
 
             if (fabricante.Dato == null)
             {
-                return NotFound(new RespuestaError("El nombre del fabricante no se encontró."));
+                fabricante.Resultado = false;
+                fabricante.Mensaje = "El nombre del fabricante no se encontró.";
+                return NotFound(fabricante);
             }
 
-            return Ok(fabricante.Dato);
+            return Ok(fabricante);
         }
 
         [HttpGet("Contenga/{name}")]
-        public async Task<ActionResult<List<FabricanteArticuloDTO>>> ObteneContengaNombreAsync([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<IEnumerable<FabricanteArticuloDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
             var fabricantes = await _fabricanteArticuloApplication.ObtenerContengaNombreAsync(name);
 
             if (!fabricantes.Resultado)
             {
-                return BadRequest(new RespuestaError(fabricantes.Mensaje));
+                return BadRequest(fabricantes);
             }
 
-            return Ok(fabricantes.Dato);
+            return Ok(fabricantes);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<FabricanteArticuloDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<FabricanteArticuloDTO>>>> ObtenerTodoAsync()
         {
             var fabricantes = await _fabricanteArticuloApplication.ObtenerTodoAsync();
 
             if (!fabricantes.Resultado)
             {
-                return BadRequest(new RespuestaError(fabricantes.Mensaje));
+                return BadRequest(fabricantes);
             }
 
-            return Ok(fabricantes.Dato);
+            return Ok(fabricantes);
         }
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] FabricanteArticuloCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] FabricanteArticuloCrearDTO obj)
         {
             var insert = await _fabricanteArticuloApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] int id, [FromBody] FabricanteArticuloActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] FabricanteArticuloActualizarDTO obj)
         {
             var fabricante = await _fabricanteArticuloApplication.ObtenerAsync(id);
 
             if (fabricante.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del fabricante no se encontró."));
+                fabricante.Resultado = false;
+                fabricante.Mensaje = "El código del fabricante no se encontró.";
+                return NotFound(fabricante);
             }
 
             var update = await _fabricanteArticuloApplication.ActualizarAsync(id, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var fabricante = await _fabricanteArticuloApplication.ObtenerAsync(id);
 
             if (fabricante.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del fabricante no se encontró."));
+                fabricante.Resultado = false;
+                fabricante.Mensaje = "El código del fabricante no se encontró.";
+                return NotFound(fabricante);
             }
 
             var delete = await _fabricanteArticuloApplication.EliminarAsync(id);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

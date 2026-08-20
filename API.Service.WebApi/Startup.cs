@@ -1,3 +1,4 @@
+using API.Application.DTO;
 using API.Application.Interface;
 using API.Application.Main;
 using API.Domain.Core;
@@ -7,7 +8,9 @@ using API.Infraestructure.Interface;
 using API.Infraestructure.Repository;
 using API.Transversal.Mapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,7 +29,27 @@ namespace API.Service.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var mensajes = context.ModelState
+                            .Where(x => x.Value?.Errors.Count > 0)
+                            .SelectMany(x => x.Value!.Errors)
+                            .Select(x => x.ErrorMessage)
+                            .ToArray();
+
+                        var respuesta = new Respuesta<object>
+                        {
+                            Resultado = false,
+                            Mensaje = string.Join(" | ", mensajes),
+                            Dato = null!
+                        };
+
+                        return new BadRequestObjectResult(respuesta);
+                    };
+                });
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
             {
@@ -167,6 +190,25 @@ namespace API.Service.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    context.Response.ContentType = "application/json";
+                    context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+                    var exceptionFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    var respuesta = new Respuesta<object>
+                    {
+                        Resultado = false,
+                        Mensaje = exceptionFeature?.Error.Message ?? "Ocurrió un error inesperado.",
+                        Dato = null!
+                    };
+
+                    await context.Response.WriteAsJsonAsync(respuesta);
+                });
+            });
 
             app.UseHttpsRedirection();
 

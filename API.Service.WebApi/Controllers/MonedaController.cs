@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.moneda;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,107 +19,123 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<MonedaDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<MonedaDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var moneda = await _monedaApplication.ObtenerPorCodigoAsync(codigo);
 
             if (!moneda.Resultado)
-                return BadRequest(new RespuestaError(moneda.Mensaje));
+                return BadRequest(moneda);
 
             if (moneda.Dato == null)
-                return NotFound(new RespuestaError("Código de moneda no encontrado."));
+            {
+                moneda.Resultado = false;
+                moneda.Mensaje = "Código de moneda no encontrado.";
+                return NotFound(moneda);
+            }
 
-            return Ok(moneda.Dato);
+            return Ok(moneda);
         }
 
         [HttpGet("Nombre/{nombre}")]
-        public async Task<ActionResult<MonedaDTO>> ObtenerPorNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<MonedaDTO>>> ObtenerPorNombre([FromRoute] string nombre)
         {
             var moneda = await _monedaApplication.ObtenerPorNombreAsync(nombre);
 
             if (!moneda.Resultado)
-                return BadRequest(new RespuestaError(moneda.Mensaje));
+                return BadRequest(moneda);
 
             if (moneda.Dato == null)
-                return NotFound(new RespuestaError("Nombre de moneda no encontrado."));
+            {
+                moneda.Resultado = false;
+                moneda.Mensaje = "Nombre de moneda no encontrado.";
+                return NotFound(moneda);
+            }
 
-            return Ok(moneda.Dato);
+            return Ok(moneda);
         }
 
         [HttpGet("ContengaNombre/{nombre}")]
-        public async Task<ActionResult<List<MonedaDTO>>> ObtenerContengaNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<IEnumerable<MonedaDTO>>>> ObtenerContengaNombre([FromRoute] string nombre)
         {
             var monedas = await _monedaApplication.ObtenerContengaNombreAsync(nombre);
 
             if (!monedas.Resultado)
-                return BadRequest(new RespuestaError(monedas.Mensaje));
+                return BadRequest(monedas);
 
-            return Ok(monedas.Dato);
+            return Ok(monedas);
         }
 
         [HttpGet("ContengaCodigo/{codigo}")]
-        public async Task<ActionResult<List<MonedaDTO>>> ObtenerContengaCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<IEnumerable<MonedaDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
             var monedas = await _monedaApplication.ObtenerContengaCodigoAsync(codigo);
 
             if (!monedas.Resultado)
-                return BadRequest(new RespuestaError(monedas.Mensaje));
+                return BadRequest(monedas);
 
-            return Ok(monedas.Dato);
+            return Ok(monedas);
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<MonedaDTO>>> ObtenerTodo()
+        public async Task<ActionResult<Respuesta<IEnumerable<MonedaDTO>>>> ObtenerTodo()
         {
             var monedas = await _monedaApplication.ObtenerAsync();
 
             if (!monedas.Resultado)
-                return BadRequest(new RespuestaError(monedas.Mensaje));
+                return BadRequest(monedas);
 
-            return Ok(monedas.Dato);
+            return Ok(monedas);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Crear([FromBody] MonedaCrearDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] MonedaCrearDTO obj)
         {
             var insertar = await _monedaApplication.InsertarAsync(obj);
 
             if (!insertar.Resultado)
-                return BadRequest(new RespuestaError(insertar.Mensaje));
+                return BadRequest(insertar);
 
-            return Ok();
+            return Ok(insertar);
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] MonedaActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] MonedaActualizarDTO obj)
         {
             var moneda = await _monedaApplication.ObtenerPorCodigoAsync(codigo);
 
             if (moneda.Dato == null)
-                return NotFound(new RespuestaError("Código de moneda no encontrado."));
+            {
+                moneda.Resultado = false;
+                moneda.Mensaje = "Código de moneda no encontrado.";
+                return NotFound(moneda);
+            }
 
             var actualizar = await _monedaApplication.ActualizarAsync(codigo, obj);
 
             if (!actualizar.Resultado)
-                return BadRequest(new RespuestaError(actualizar.Mensaje));
+                return BadRequest(actualizar);
 
-            return Ok();
+            return Ok(actualizar);
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Eliminar([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
             var moneda = await _monedaApplication.ObtenerPorCodigoAsync(codigo);
 
             if (moneda.Dato == null)
-                return NotFound(new RespuestaError("Código de moneda no encontrado."));
+            {
+                moneda.Resultado = false;
+                moneda.Mensaje = "Código de moneda no encontrado.";
+                return NotFound(moneda);
+            }
 
             var eliminar = await _monedaApplication.EliminarAsync(codigo);
 
             if (!eliminar.Resultado)
-                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+                return BadRequest(eliminar);
 
-            return Ok();
+            return Ok(eliminar);
         }
     }
 }

@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.articulo.grupo_sn;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,118 +19,126 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GrupoSnDTO>> Obtener([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<GrupoSnDTO>>> Obtener([FromRoute] int id)
         {
             var grupoSn = await _grupoSnApplication.ObtenerAsync(id);
 
             if (!grupoSn.Resultado)
             {
-                return BadRequest(new RespuestaError($"{grupoSn.Mensaje}"));
+                return BadRequest(grupoSn);
             }
 
             if (grupoSn.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del grupo SN no se encontró."));
+                grupoSn.Resultado = false;
+                grupoSn.Mensaje = "El código del grupo SN no se encontró.";
+                return NotFound(grupoSn);
             }
 
-            return Ok(grupoSn.Dato);
+            return Ok(grupoSn);
         }
 
         [HttpGet("PorNombre/{name}")]
-        public async Task<ActionResult<GrupoSnDTO>> ObtenerPorNombre([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<GrupoSnDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
             var grupoSn = await _grupoSnApplication.ObtenerAsync(name);
 
             if (!grupoSn.Resultado)
             {
-                return BadRequest(new RespuestaError($"{grupoSn.Mensaje}"));
+                return BadRequest(grupoSn);
             }
 
             if (grupoSn.Dato == null)
             {
-                return NotFound(new RespuestaError("El nombre del grupo SN no se encontró."));
+                grupoSn.Resultado = false;
+                grupoSn.Mensaje = "El nombre del grupo SN no se encontró.";
+                return NotFound(grupoSn);
             }
 
-            return Ok(grupoSn.Dato);
+            return Ok(grupoSn);
         }
 
         [HttpGet("Contenga/{name}")]
-        public async Task<ActionResult<List<GrupoSnDTO>>> ObteneContengaNombreAsync([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<IEnumerable<GrupoSnDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
             var gruposSn = await _grupoSnApplication.ObtenerContengaNombreAsync(name);
 
             if (!gruposSn.Resultado)
             {
-                return BadRequest(new RespuestaError(gruposSn.Mensaje));
+                return BadRequest(gruposSn);
             }
 
-            return Ok(gruposSn.Dato);
+            return Ok(gruposSn);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<GrupoSnDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<GrupoSnDTO>>>> ObtenerTodoAsync()
         {
             var gruposSn = await _grupoSnApplication.ObtenerTodoAsync();
 
             if (!gruposSn.Resultado)
             {
-                return BadRequest(new RespuestaError(gruposSn.Mensaje));
+                return BadRequest(gruposSn);
             }
 
-            return Ok(gruposSn.Dato);
+            return Ok(gruposSn);
         }
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] GrupoSnCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] GrupoSnCrearDTO obj)
         {
             var insert = await _grupoSnApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] int id, [FromBody] GrupoSnActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] GrupoSnActualizarDTO obj)
         {
             var grupoSn = await _grupoSnApplication.ObtenerAsync(id);
 
             if (grupoSn.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del grupo SN no se encontró."));
+                grupoSn.Resultado = false;
+                grupoSn.Mensaje = "El código del grupo SN no se encontró.";
+                return NotFound(grupoSn);
             }
 
             var update = await _grupoSnApplication.ActualizarAsync(id, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var grupoSn = await _grupoSnApplication.ObtenerAsync(id);
 
             if (grupoSn.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del grupo SN no se encontró."));
+                grupoSn.Resultado = false;
+                grupoSn.Mensaje = "El código del grupo SN no se encontró.";
+                return NotFound(grupoSn);
             }
 
             var delete = await _grupoSnApplication.EliminarAsync(id);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

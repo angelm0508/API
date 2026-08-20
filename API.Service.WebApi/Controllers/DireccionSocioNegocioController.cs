@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.direccionSocioNegocio;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,82 +19,94 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<DireccionSocioNegocioDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<DireccionSocioNegocioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var direccion = await _direccionApplication.ObtenerPorCodigoAsync(codigo);
 
             if (!direccion.Resultado)
-                return BadRequest(new RespuestaError(direccion.Mensaje));
+                return BadRequest(direccion);
 
             if (direccion.Dato == null)
-                return NotFound(new RespuestaError("Código de dirección no encontrado."));
+            {
+                direccion.Resultado = false;
+                direccion.Mensaje = "Código de dirección no encontrado.";
+                return NotFound(direccion);
+            }
 
-            return Ok(direccion.Dato);
+            return Ok(direccion);
         }
 
         [HttpGet("ContengaCodigo/{codigo}")]
-        public async Task<ActionResult<List<DireccionSocioNegocioDTO>>> ObtenerContengaCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<IEnumerable<DireccionSocioNegocioDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
             var direcciones = await _direccionApplication.ObtenerContengaCodigoAsync(codigo);
 
             if (!direcciones.Resultado)
-                return BadRequest(new RespuestaError(direcciones.Mensaje));
+                return BadRequest(direcciones);
 
-            return Ok(direcciones.Dato);
+            return Ok(direcciones);
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<DireccionSocioNegocioDTO>>> ObtenerTodo()
+        public async Task<ActionResult<Respuesta<IEnumerable<DireccionSocioNegocioDTO>>>> ObtenerTodo()
         {
             var direcciones = await _direccionApplication.ObtenerAsync();
 
             if (!direcciones.Resultado)
-                return BadRequest(new RespuestaError(direcciones.Mensaje));
+                return BadRequest(direcciones);
 
-            return Ok(direcciones.Dato);
+            return Ok(direcciones);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Crear([FromBody] DireccionSocioNegocioCrearDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] DireccionSocioNegocioCrearDTO obj)
         {
             var insertar = await _direccionApplication.InsertarAsync(obj);
 
             if (!insertar.Resultado)
-                return BadRequest(new RespuestaError(insertar.Mensaje));
+                return BadRequest(insertar);
 
-            return Ok();
+            return Ok(insertar);
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] DireccionSocioNegocioActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] DireccionSocioNegocioActualizarDTO obj)
         {
             var direccion = await _direccionApplication.ObtenerPorCodigoAsync(codigo);
 
             if (direccion.Dato == null)
-                return NotFound(new RespuestaError("Código de dirección no encontrado."));
+            {
+                direccion.Resultado = false;
+                direccion.Mensaje = "Código de dirección no encontrado.";
+                return NotFound(direccion);
+            }
 
             var actualizar = await _direccionApplication.ActualizarAsync(codigo, obj);
 
             if (!actualizar.Resultado)
-                return BadRequest(new RespuestaError(actualizar.Mensaje));
+                return BadRequest(actualizar);
 
-            return Ok();
+            return Ok(actualizar);
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Eliminar([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
             var direccion = await _direccionApplication.ObtenerPorCodigoAsync(codigo);
 
             if (direccion.Dato == null)
-                return NotFound(new RespuestaError("Código de dirección no encontrado."));
+            {
+                direccion.Resultado = false;
+                direccion.Mensaje = "Código de dirección no encontrado.";
+                return NotFound(direccion);
+            }
 
             var eliminar = await _direccionApplication.EliminarAsync(codigo);
 
             if (!eliminar.Resultado)
-                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+                return BadRequest(eliminar);
 
-            return Ok();
+            return Ok(eliminar);
         }
     }
 }

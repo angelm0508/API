@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.articulo.grupo_medida_det_articulo;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,87 +19,93 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GrupoMedidaDetArticuloDTO>> Obtener([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<GrupoMedidaDetArticuloDTO>>> Obtener([FromRoute] int id)
         {
             var grupoMedidaDet = await _grupoMedidaDetArticuloApplication.ObtenerAsync(id);
 
             if (!grupoMedidaDet.Resultado)
             {
-                return BadRequest(new RespuestaError($"{grupoMedidaDet.Mensaje}"));
+                return BadRequest(grupoMedidaDet);
             }
 
             if (grupoMedidaDet.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del detalle de grupo de medida no se encontró."));
+                grupoMedidaDet.Resultado = false;
+                grupoMedidaDet.Mensaje = "El código del detalle de grupo de medida no se encontró.";
+                return NotFound(grupoMedidaDet);
             }
 
-            return Ok(grupoMedidaDet.Dato);
+            return Ok(grupoMedidaDet);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<GrupoMedidaDetArticuloDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<GrupoMedidaDetArticuloDTO>>>> ObtenerTodoAsync()
         {
             var gruposMedidaDet = await _grupoMedidaDetArticuloApplication.ObtenerTodoAsync();
 
             if (!gruposMedidaDet.Resultado)
             {
-                return BadRequest(new RespuestaError(gruposMedidaDet.Mensaje));
+                return BadRequest(gruposMedidaDet);
             }
 
-            return Ok(gruposMedidaDet.Dato);
+            return Ok(gruposMedidaDet);
         }
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] GrupoMedidaDetArticuloCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] GrupoMedidaDetArticuloCrearDTO obj)
         {
             var insert = await _grupoMedidaDetArticuloApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] int id, [FromBody] GrupoMedidaDetArticuloActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] GrupoMedidaDetArticuloActualizarDTO obj)
         {
             var grupoMedidaDet = await _grupoMedidaDetArticuloApplication.ObtenerAsync(id);
 
             if (grupoMedidaDet.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del detalle de grupo de medida no se encontró."));
+                grupoMedidaDet.Resultado = false;
+                grupoMedidaDet.Mensaje = "El código del detalle de grupo de medida no se encontró.";
+                return NotFound(grupoMedidaDet);
             }
 
             var update = await _grupoMedidaDetArticuloApplication.ActualizarAsync(id, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var grupoMedidaDet = await _grupoMedidaDetArticuloApplication.ObtenerAsync(id);
 
             if (grupoMedidaDet.Dato == null)
             {
-                return NotFound(new RespuestaError("El código del detalle de grupo de medida no se encontró."));
+                grupoMedidaDet.Resultado = false;
+                grupoMedidaDet.Mensaje = "El código del detalle de grupo de medida no se encontró.";
+                return NotFound(grupoMedidaDet);
             }
 
             var delete = await _grupoMedidaDetArticuloApplication.EliminarAsync(id);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

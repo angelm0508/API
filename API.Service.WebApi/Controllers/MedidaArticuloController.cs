@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.articulo.medida_articulo;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,118 +19,126 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<MedidaArticuloDTO>> Obtener([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<MedidaArticuloDTO>>> Obtener([FromRoute] int id)
         {
             var medida = await _medidaArticuloApplication.ObtenerAsync(id);
 
             if (!medida.Resultado)
             {
-                return BadRequest(new RespuestaError($"{medida.Mensaje}"));
+                return BadRequest(medida);
             }
 
             if (medida.Dato == null)
             {
-                return NotFound(new RespuestaError("El código de la medida no se encontró."));
+                medida.Resultado = false;
+                medida.Mensaje = "El código de la medida no se encontró.";
+                return NotFound(medida);
             }
 
-            return Ok(medida.Dato);
+            return Ok(medida);
         }
 
         [HttpGet("PorCodigo/{codigo}")]
-        public async Task<ActionResult<MedidaArticuloDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<MedidaArticuloDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var medida = await _medidaArticuloApplication.ObtenerAsync(codigo);
 
             if (!medida.Resultado)
             {
-                return BadRequest(new RespuestaError($"{medida.Mensaje}"));
+                return BadRequest(medida);
             }
 
             if (medida.Dato == null)
             {
-                return NotFound(new RespuestaError("El código de la medida no se encontró."));
+                medida.Resultado = false;
+                medida.Mensaje = "El código de la medida no se encontró.";
+                return NotFound(medida);
             }
 
-            return Ok(medida.Dato);
+            return Ok(medida);
         }
 
         [HttpGet("Contenga/{name}")]
-        public async Task<ActionResult<List<MedidaArticuloDTO>>> ObteneContengaNombreAsync([FromRoute] string name)
+        public async Task<ActionResult<Respuesta<IEnumerable<MedidaArticuloDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
             var medidas = await _medidaArticuloApplication.ObtenerContengaNombreAsync(name);
 
             if (!medidas.Resultado)
             {
-                return BadRequest(new RespuestaError(medidas.Mensaje));
+                return BadRequest(medidas);
             }
 
-            return Ok(medidas.Dato);
+            return Ok(medidas);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<MedidaArticuloDTO>>> ObtenerTodoAsync()
+        public async Task<ActionResult<Respuesta<IEnumerable<MedidaArticuloDTO>>>> ObtenerTodoAsync()
         {
             var medidas = await _medidaArticuloApplication.ObtenerTodoAsync();
 
             if (!medidas.Resultado)
             {
-                return BadRequest(new RespuestaError(medidas.Mensaje));
+                return BadRequest(medidas);
             }
 
-            return Ok(medidas.Dato);
+            return Ok(medidas);
         }
 
         [HttpPost]
-        public async Task<ActionResult> InsertarAsync([FromBody] MedidaArticuloCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] MedidaArticuloCrearDTO obj)
         {
             var insert = await _medidaArticuloApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
-                return BadRequest(new RespuestaError(insert.Mensaje));
+                return BadRequest(insert);
             }
 
-            return Ok();
+            return Ok(insert);
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> ActualizarAsync([FromRoute] int id, [FromBody] MedidaArticuloActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] MedidaArticuloActualizarDTO obj)
         {
             var medida = await _medidaArticuloApplication.ObtenerAsync(id);
 
             if (medida.Dato == null)
             {
-                return NotFound(new RespuestaError("El código de la medida no se encontró."));
+                medida.Resultado = false;
+                medida.Mensaje = "El código de la medida no se encontró.";
+                return NotFound(medida);
             }
 
             var update = await _medidaArticuloApplication.ActualizarAsync(id, obj);
 
             if (!update.Resultado)
             {
-                return BadRequest(new RespuestaError(update.Mensaje));
+                return BadRequest(update);
             }
 
-            return Ok();
+            return Ok(update);
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> EliminarAsync([FromRoute] int id)
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var medida = await _medidaArticuloApplication.ObtenerAsync(id);
 
             if (medida.Dato == null)
             {
-                return NotFound(new RespuestaError("El código de la medida no se encontró."));
+                medida.Resultado = false;
+                medida.Mensaje = "El código de la medida no se encontró.";
+                return NotFound(medida);
             }
 
             var delete = await _medidaArticuloApplication.EliminarAsync(id);
 
             if (!delete.Resultado)
             {
-                return BadRequest(new RespuestaError(delete.Mensaje));
+                return BadRequest(delete);
             }
 
-            return Ok();
+            return Ok(delete);
         }
     }
 }

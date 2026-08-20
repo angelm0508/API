@@ -1,6 +1,6 @@
+using API.Application.DTO;
 using API.Application.DTO.municipio;
 using API.Application.Interface;
-using API.Transversal.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,107 +19,123 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<MunicipioDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<MunicipioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var municipio = await _municipioApplication.ObtenerPorCodigoAsync(codigo);
 
             if (!municipio.Resultado)
-                return BadRequest(new RespuestaError(municipio.Mensaje));
+                return BadRequest(municipio);
 
             if (municipio.Dato == null)
-                return NotFound(new RespuestaError("Código de municipio no encontrado."));
+            {
+                municipio.Resultado = false;
+                municipio.Mensaje = "Código de municipio no encontrado.";
+                return NotFound(municipio);
+            }
 
-            return Ok(municipio.Dato);
+            return Ok(municipio);
         }
 
         [HttpGet("Nombre/{nombre}")]
-        public async Task<ActionResult<MunicipioDTO>> ObtenerPorNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<MunicipioDTO>>> ObtenerPorNombre([FromRoute] string nombre)
         {
             var municipio = await _municipioApplication.ObtenerPorNombreAsync(nombre);
 
             if (!municipio.Resultado)
-                return BadRequest(new RespuestaError(municipio.Mensaje));
+                return BadRequest(municipio);
 
             if (municipio.Dato == null)
-                return NotFound(new RespuestaError("Nombre de municipio no encontrado."));
+            {
+                municipio.Resultado = false;
+                municipio.Mensaje = "Nombre de municipio no encontrado.";
+                return NotFound(municipio);
+            }
 
-            return Ok(municipio.Dato);
+            return Ok(municipio);
         }
 
         [HttpGet("ContengaNombre/{nombre}")]
-        public async Task<ActionResult<List<MunicipioDTO>>> ObtenerContengaNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<IEnumerable<MunicipioDTO>>>> ObtenerContengaNombre([FromRoute] string nombre)
         {
             var municipios = await _municipioApplication.ObtenerContengaNombreAsync(nombre);
 
             if (!municipios.Resultado)
-                return BadRequest(new RespuestaError(municipios.Mensaje));
+                return BadRequest(municipios);
 
-            return Ok(municipios.Dato);
+            return Ok(municipios);
         }
 
         [HttpGet("ContengaCodigo/{codigo}")]
-        public async Task<ActionResult<List<MunicipioDTO>>> ObtenerContengaCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<IEnumerable<MunicipioDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
             var municipios = await _municipioApplication.ObtenerContengaCodigoAsync(codigo);
 
             if (!municipios.Resultado)
-                return BadRequest(new RespuestaError(municipios.Mensaje));
+                return BadRequest(municipios);
 
-            return Ok(municipios.Dato);
+            return Ok(municipios);
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<MunicipioDTO>>> ObtenerTodo()
+        public async Task<ActionResult<Respuesta<IEnumerable<MunicipioDTO>>>> ObtenerTodo()
         {
             var municipios = await _municipioApplication.ObtenerAsync();
 
             if (!municipios.Resultado)
-                return BadRequest(new RespuestaError(municipios.Mensaje));
+                return BadRequest(municipios);
 
-            return Ok(municipios.Dato);
+            return Ok(municipios);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Crear([FromBody] MunicipioCrearDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] MunicipioCrearDTO obj)
         {
             var insertar = await _municipioApplication.InsertarAsync(obj);
 
             if (!insertar.Resultado)
-                return BadRequest(new RespuestaError(insertar.Mensaje));
+                return BadRequest(insertar);
 
-            return Ok();
+            return Ok(insertar);
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] MunicipioActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] MunicipioActualizarDTO obj)
         {
             var municipio = await _municipioApplication.ObtenerPorCodigoAsync(codigo);
 
             if (municipio.Dato == null)
-                return NotFound(new RespuestaError("Código de municipio no encontrado."));
+            {
+                municipio.Resultado = false;
+                municipio.Mensaje = "Código de municipio no encontrado.";
+                return NotFound(municipio);
+            }
 
             var actualizar = await _municipioApplication.ActualizarAsync(codigo, obj);
 
             if (!actualizar.Resultado)
-                return BadRequest(new RespuestaError(actualizar.Mensaje));
+                return BadRequest(actualizar);
 
-            return Ok();
+            return Ok(actualizar);
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Eliminar([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
             var municipio = await _municipioApplication.ObtenerPorCodigoAsync(codigo);
 
             if (municipio.Dato == null)
-                return NotFound(new RespuestaError("Código de municipio no encontrado."));
+            {
+                municipio.Resultado = false;
+                municipio.Mensaje = "Código de municipio no encontrado.";
+                return NotFound(municipio);
+            }
 
             var eliminar = await _municipioApplication.EliminarAsync(codigo);
 
             if (!eliminar.Resultado)
-                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+                return BadRequest(eliminar);
 
-            return Ok();
+            return Ok(eliminar);
         }
     }
 }

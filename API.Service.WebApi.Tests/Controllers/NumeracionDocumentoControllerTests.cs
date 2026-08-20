@@ -22,119 +22,128 @@ namespace API.Service.WebApi.Tests.Controllers
         [Fact]
         public async Task ObtenerPorCodigo_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
-            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
-                .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = false, Mensaje = "error" });
+            var respuesta = new Respuesta<NumeracionDocumentoDTO> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerPorCodigo("ND1");
 
-            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
         }
 
         [Fact]
         public async Task ObtenerPorCodigo_DevuelveNotFound_CuandoDatoEsNulo()
         {
-            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
-                .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = null! });
+            var respuesta = new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = null! };
+            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerPorCodigo("ND1");
 
-            Assert.IsType<NotFoundObjectResult>(resultado.Result);
+            var notFound = Assert.IsType<NotFoundObjectResult>(resultado.Result);
+            var valor = Assert.IsType<Respuesta<NumeracionDocumentoDTO>>(notFound.Value);
+            Assert.False(valor.Resultado);
+            Assert.Equal("Código de numeración no encontrado.", valor.Mensaje);
         }
 
         [Fact]
         public async Task ObtenerPorCodigo_DevuelveOk_CuandoExiste()
         {
             var dto = new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" };
-            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
-                .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = dto });
+            var respuesta = new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = dto };
+            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerPorCodigo("ND1");
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
-            Assert.Same(dto, ok.Value);
+            Assert.Same(respuesta, ok.Value);
         }
 
         [Fact]
         public async Task ObtenerContengaCodigo_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
-            _applicationMock.Setup(a => a.ObtenerContengaCodigoAsync("N"))
-                .ReturnsAsync(new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = false, Mensaje = "error" });
+            var respuesta = new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.ObtenerContengaCodigoAsync("N")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerContengaCodigo("N");
 
-            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
         }
 
         [Fact]
         public async Task ObtenerContengaCodigo_DevuelveOk_CuandoResultadoEsExitoso()
         {
             var datos = new List<NumeracionDocumentoDTO> { new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" } };
-            _applicationMock.Setup(a => a.ObtenerContengaCodigoAsync("N"))
-                .ReturnsAsync(new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = true, Dato = datos });
+            var respuesta = new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = true, Dato = datos };
+            _applicationMock.Setup(a => a.ObtenerContengaCodigoAsync("N")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerContengaCodigo("N");
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
-            Assert.Same(datos, ok.Value);
+            Assert.Same(respuesta, ok.Value);
         }
 
         [Fact]
         public async Task ObtenerTodo_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
-            _applicationMock.Setup(a => a.ObtenerAsync())
-                .ReturnsAsync(new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = false, Mensaje = "error" });
+            var respuesta = new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.ObtenerAsync()).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerTodo();
 
-            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
         }
 
         [Fact]
         public async Task ObtenerTodo_DevuelveOk_CuandoResultadoEsExitoso()
         {
             var datos = new List<NumeracionDocumentoDTO> { new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" } };
-            _applicationMock.Setup(a => a.ObtenerAsync())
-                .ReturnsAsync(new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = true, Dato = datos });
+            var respuesta = new Respuesta<IEnumerable<NumeracionDocumentoDTO>> { Resultado = true, Dato = datos };
+            _applicationMock.Setup(a => a.ObtenerAsync()).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerTodo();
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
-            Assert.Same(datos, ok.Value);
+            Assert.Same(respuesta, ok.Value);
         }
 
         [Fact]
         public async Task Crear_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
             var crearDto = new NumeracionDocumentoCrearDTO { CodigoObj = "ND1", SubTipoDoc = "F" };
-            _applicationMock.Setup(a => a.InsertarAsync(crearDto))
-                .ReturnsAsync(new Respuesta<bool> { Resultado = false, Mensaje = "error" });
+            var respuesta = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.InsertarAsync(crearDto)).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Crear(crearDto);
 
-            Assert.IsType<BadRequestObjectResult>(resultado);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
         }
 
         [Fact]
         public async Task Crear_DevuelveOk_CuandoResultadoEsExitoso()
         {
             var crearDto = new NumeracionDocumentoCrearDTO { CodigoObj = "ND1", SubTipoDoc = "F" };
-            _applicationMock.Setup(a => a.InsertarAsync(crearDto))
-                .ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var respuesta = new Respuesta<bool> { Resultado = true, Dato = true };
+            _applicationMock.Setup(a => a.InsertarAsync(crearDto)).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Crear(crearDto);
 
-            Assert.IsType<OkResult>(resultado);
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Same(respuesta, ok.Value);
         }
 
         [Fact]
         public async Task Actualizar_DevuelveNotFound_CuandoNoExiste()
         {
-            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
-                .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = null! });
+            var respuesta = new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = null! };
+            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Actualizar("ND1", new NumeracionDocumentoActualizarDTO());
 
-            Assert.IsType<NotFoundObjectResult>(resultado);
+            var notFound = Assert.IsType<NotFoundObjectResult>(resultado.Result);
+            Assert.Same(respuesta, notFound.Value);
         }
 
         [Fact]
@@ -142,12 +151,13 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
                 .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" } });
-            _applicationMock.Setup(a => a.ActualizarAsync("ND1", It.IsAny<NumeracionDocumentoActualizarDTO>()))
-                .ReturnsAsync(new Respuesta<bool> { Resultado = false, Mensaje = "error" });
+            var respuestaUpdate = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.ActualizarAsync("ND1", It.IsAny<NumeracionDocumentoActualizarDTO>())).ReturnsAsync(respuestaUpdate);
 
             var resultado = await _controller.Actualizar("ND1", new NumeracionDocumentoActualizarDTO());
 
-            Assert.IsType<BadRequestObjectResult>(resultado);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuestaUpdate, badRequest.Value);
         }
 
         [Fact]
@@ -155,23 +165,25 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
                 .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" } });
-            _applicationMock.Setup(a => a.ActualizarAsync("ND1", It.IsAny<NumeracionDocumentoActualizarDTO>()))
-                .ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var respuestaUpdate = new Respuesta<bool> { Resultado = true, Dato = true };
+            _applicationMock.Setup(a => a.ActualizarAsync("ND1", It.IsAny<NumeracionDocumentoActualizarDTO>())).ReturnsAsync(respuestaUpdate);
 
             var resultado = await _controller.Actualizar("ND1", new NumeracionDocumentoActualizarDTO());
 
-            Assert.IsType<OkResult>(resultado);
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Same(respuestaUpdate, ok.Value);
         }
 
         [Fact]
         public async Task Eliminar_DevuelveNotFound_CuandoNoExiste()
         {
-            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
-                .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = null! });
+            var respuesta = new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = null! };
+            _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Eliminar("ND1");
 
-            Assert.IsType<NotFoundObjectResult>(resultado);
+            var notFound = Assert.IsType<NotFoundObjectResult>(resultado.Result);
+            Assert.Same(respuesta, notFound.Value);
         }
 
         [Fact]
@@ -179,12 +191,13 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
                 .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" } });
-            _applicationMock.Setup(a => a.EliminarAsync("ND1"))
-                .ReturnsAsync(new Respuesta<bool> { Resultado = false, Mensaje = "error" });
+            var respuestaDelete = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.EliminarAsync("ND1")).ReturnsAsync(respuestaDelete);
 
             var resultado = await _controller.Eliminar("ND1");
 
-            Assert.IsType<BadRequestObjectResult>(resultado);
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuestaDelete, badRequest.Value);
         }
 
         [Fact]
@@ -192,12 +205,13 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             _applicationMock.Setup(a => a.ObtenerPorCodigoAsync("ND1"))
                 .ReturnsAsync(new Respuesta<NumeracionDocumentoDTO> { Resultado = true, Dato = new NumeracionDocumentoDTO { CodigoObj = "ND1", SubTipoDoc = "F" } });
-            _applicationMock.Setup(a => a.EliminarAsync("ND1"))
-                .ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var respuestaDelete = new Respuesta<bool> { Resultado = true, Dato = true };
+            _applicationMock.Setup(a => a.EliminarAsync("ND1")).ReturnsAsync(respuestaDelete);
 
             var resultado = await _controller.Eliminar("ND1");
 
-            Assert.IsType<OkResult>(resultado);
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Same(respuestaDelete, ok.Value);
         }
     }
 }
