@@ -1,10 +1,12 @@
 using API.Application.DTO.articulo.grupo_medida_det_articulo;
 using API.Application.Interface;
 using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/GrupoMedidaDetArticulo")]
     public class GrupoMedidaDetArticuloController : ControllerBase

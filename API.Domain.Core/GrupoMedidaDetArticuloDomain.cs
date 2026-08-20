@@ -7,9 +7,9 @@ namespace API.Domain.Core
 {
     public class GrupoMedidaDetArticuloDomain : IGrupoMedidaDetArticuloDomain
     {
-        private readonly IRepositorioGenerico<GrupoMedidaDetArticulo> _repoGenericoGrupoMedidaDetArticulo;
+        private readonly IRepositorioGenerico<GrupoMedidaDetArticulo, int> _repoGenericoGrupoMedidaDetArticulo;
 
-        public GrupoMedidaDetArticuloDomain(IRepositorioGenerico<GrupoMedidaDetArticulo> repoGenericoGrupoMedidaDetArticulo)
+        public GrupoMedidaDetArticuloDomain(IRepositorioGenerico<GrupoMedidaDetArticulo, int> repoGenericoGrupoMedidaDetArticulo)
         {
             _repoGenericoGrupoMedidaDetArticulo = repoGenericoGrupoMedidaDetArticulo;
         }
@@ -17,7 +17,8 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(GrupoMedidaDetArticulo obj)
         {
-            return await _repoGenericoGrupoMedidaDetArticulo.InsertarAsync(obj);
+            var insertado = await _repoGenericoGrupoMedidaDetArticulo.InsertarAsync(obj);
+            return insertado.NumLinea;
         }
 
         public async Task<bool> ActualizarAsync(int codigo, GrupoMedidaDetArticulo obj)

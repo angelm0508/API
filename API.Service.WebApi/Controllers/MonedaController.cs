@@ -1,10 +1,12 @@
 using API.Application.DTO.moneda;
 using API.Application.Interface;
 using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/Moneda")]
     public class MonedaController : ControllerBase

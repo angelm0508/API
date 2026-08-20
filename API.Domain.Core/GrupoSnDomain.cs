@@ -7,9 +7,9 @@ namespace API.Domain.Core
 {
     public class GrupoSnDomain : IGrupoSnDomain
     {
-        private readonly IRepositorioGenerico<GrupoSn> _repoGenericoGrupoSn;
+        private readonly IRepositorioGenerico<GrupoSn, int> _repoGenericoGrupoSn;
 
-        public GrupoSnDomain(IRepositorioGenerico<GrupoSn> repoGenericoGrupoSn)
+        public GrupoSnDomain(IRepositorioGenerico<GrupoSn, int> repoGenericoGrupoSn)
         {
             _repoGenericoGrupoSn = repoGenericoGrupoSn;
         }
@@ -22,7 +22,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
             }
 
-            return await _repoGenericoGrupoSn.InsertarAsync(obj);
+            var insertado = await _repoGenericoGrupoSn.InsertarAsync(obj);
+            return insertado.Entry;
         }
 
         public async Task<bool> ActualizarAsync(int codigo, GrupoSn obj)

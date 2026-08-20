@@ -9,3 +9,15 @@ C:\Users\Miguel\source\repos\API\API.Infraestructure.Data\obj\Debug\net7.0\API.I
 C:\Users\Miguel\source\repos\API\API.Infraestructure.Data\obj\Debug\net7.0\refint\API.Infraestructure.Data.dll
 C:\Users\Miguel\source\repos\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.pdb
 C:\Users\Miguel\source\repos\API\API.Infraestructure.Data\obj\Debug\net7.0\ref\API.Infraestructure.Data.dll
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\bin\Debug\net7.0\API.Infraestructure.Data.deps.json
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\bin\Debug\net7.0\API.Infraestructure.Data.dll
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\bin\Debug\net7.0\API.Infraestructure.Data.pdb
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.AssemblyInfoInputs.cache
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.AssemblyInfo.cs
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.csproj.CoreCompileInputs.cache
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.sourcelink.json
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.dll
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\refint\API.Infraestructure.Data.dll
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.pdb
+C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\ref\API.Infraestructure.Data.dll

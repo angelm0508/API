@@ -7,9 +7,9 @@ namespace API.Domain.Core
 {
     public class NumeracionDocumentoDetDomain : INumeracionDocumentoDetDomain
     {
-        private readonly IRepositorioGenerico<NumeracionDocumentoDet> _repoGenericoNumeracionDocumentoDet;
+        private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracionDocumentoDet;
 
-        public NumeracionDocumentoDetDomain(IRepositorioGenerico<NumeracionDocumentoDet> repoGenericoNumeracionDocumentoDet)
+        public NumeracionDocumentoDetDomain(IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracionDocumentoDet)
         {
             _repoGenericoNumeracionDocumentoDet = repoGenericoNumeracionDocumentoDet;
         }
@@ -23,12 +23,20 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(string codigoObj, NumeracionDocumentoDet obj)
         {
-            return await _repoGenericoNumeracionDocumentoDet.ActualizarAsync(codigoObj.GetHashCode(), obj);
+            var existente = await ObtenerAsync(codigoObj);
+            if (existente is null)
+                return false;
+
+            return await _repoGenericoNumeracionDocumentoDet.ActualizarAsync(existente.Serie, obj);
         }
 
         public async Task<bool> EliminarAsync(string codigoObj)
         {
-            return await _repoGenericoNumeracionDocumentoDet.EliminarAsync(codigoObj.GetHashCode());
+            var existente = await ObtenerAsync(codigoObj);
+            if (existente is null)
+                return false;
+
+            return await _repoGenericoNumeracionDocumentoDet.EliminarAsync(existente.Serie);
         }
 
         public async Task<IQueryable<NumeracionDocumentoDet>> ObtenerTodoAsync()

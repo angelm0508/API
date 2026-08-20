@@ -2,11 +2,13 @@
 using API.Application.Interface;
 using API.Transversal.Common;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/GrupoArticulo")]
     public class GrupoArticuloController : ControllerBase

@@ -1,4 +1,4 @@
-﻿using API.Application.Interface;
+using API.Application.Interface;
 using API.Application.Main;
 using API.Domain.Core;
 using API.Domain.Entity.Models;
@@ -6,7 +6,12 @@ using API.Domain.Interface;
 using API.Infraestructure.Interface;
 using API.Infraestructure.Repository;
 using API.Transversal.Mapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace API.Service.WebApi
 {
@@ -23,108 +28,136 @@ namespace API.Service.WebApi
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Ingresa el token JWT obtenido en api/Auth/login."
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
 
             services.AddDbContext<ApiDbTestContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("API_DB"));
             });
 
-            #region set up authentication 
-            /*
+            #region autenticación JWT
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
-            });
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]!))
+                    };
+                });
 
             services.AddAuthorization();
-
-            */
             #endregion
 
             services.AddAutoMapper(x => x.AddProfile(new PerfilMapeo()));
 
-            services.AddTransient<IRepositorioGenerico<GrupoArticulo>, GrupoArticuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<GrupoArticulo, int>, GrupoArticuloRepositorio>();
             services.AddTransient<IGrupoArticuloDomain, GrupoArticuloDomain>();
             services.AddTransient<IGrupoArticuloApplication, GrupoArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<FabricanteArticulo>, FabricanteArticuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<FabricanteArticulo, int>, FabricanteArticuloRepositorio>();
             services.AddTransient<IFabricanteArticuloDomain, FabricanteArticuloDomain>();
             services.AddTransient<IFabricanteArticuloApplication, FabricanteArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<MedidaArticulo>, MedidaArticuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<MedidaArticulo, int>, MedidaArticuloRepositorio>();
             services.AddTransient<IMedidaArticuloDomain, MedidaArticuloDomain>();
             services.AddTransient<IMedidaArticuloApplication, MedidaArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<GrupoMedidaArticulo>, GrupoMedidaArticuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<GrupoMedidaArticulo, int>, GrupoMedidaArticuloRepositorio>();
             services.AddTransient<IGrupoMedidaArticuloDomain, GrupoMedidaArticuloDomain>();
             services.AddTransient<IGrupoMedidaArticuloApplication, GrupoMedidaArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<GrupoMedidaDetArticulo>, GrupoMedidaDetArticuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<GrupoMedidaDetArticulo, int>, GrupoMedidaDetArticuloRepositorio>();
             services.AddTransient<IGrupoMedidaDetArticuloDomain, GrupoMedidaDetArticuloDomain>();
             services.AddTransient<IGrupoMedidaDetArticuloApplication, GrupoMedidaDetArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<Articulo>, ArticuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Articulo, string>, ArticuloRepositorio>();
             services.AddTransient<IArticuloDomain, ArticuloDomain>();
             services.AddTransient<IArticuloApplication, ArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<GrupoSn>, GrupoSnRepositorio>();
+            services.AddTransient<IRepositorioGenerico<GrupoSn, int>, GrupoSnRepositorio>();
             services.AddTransient<IGrupoSnDomain, GrupoSnDomain>();
             services.AddTransient<IGrupoSnApplication, GrupoSnApplication>();
 
-            services.AddTransient<IRepositorioGenerico<ListadoPrecio>, ListadoPrecioRepositorio>();
+            services.AddTransient<IRepositorioGenerico<ListadoPrecio, int>, ListadoPrecioRepositorio>();
             services.AddTransient<IListadoPrecioDomain, ListadoPrecioDomain>();
             services.AddTransient<IListadoPrecioApplication, ListadoPrecioApplication>();
 
-            services.AddTransient<IRepositorioGenerico<NumeracionDocumentoDet>, NumeracionDocumentoDetRepositorio>();
+            services.AddTransient<IRepositorioGenerico<NumeracionDocumentoDet, int>, NumeracionDocumentoDetRepositorio>();
             services.AddTransient<INumeracionDocumentoDetDomain, NumeracionDocumentoDetDomain>();
             services.AddTransient<INumeracionDocumentoDetApplication, NumeracionDocumentoDetApplication>();
 
-            // Nuevas tablas
-            services.AddTransient<IRepositorioGenericoDos<Pai>, PaisRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Pai, string>, PaisRepositorio>();
             services.AddTransient<IPaisDomain, PaisDomain>();
             services.AddTransient<IPaisApplication, PaisApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<Departamento>, DepartamentoRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Departamento, string>, DepartamentoRepositorio>();
             services.AddTransient<IDepartamentoDomain, DepartamentoDomain>();
             services.AddTransient<IDepartamentoApplication, DepartamentoApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<Municipio>, MunicipioRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Municipio, string>, MunicipioRepositorio>();
             services.AddTransient<IMunicipioDomain, MunicipioDomain>();
             services.AddTransient<IMunicipioApplication, MunicipioApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<Almacen>, AlmacenRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Almacen, string>, AlmacenRepositorio>();
             services.AddTransient<IAlmacenDomain, AlmacenDomain>();
             services.AddTransient<IAlmacenApplication, AlmacenApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<SocioNegocio>, SocioNegocioRepositorio>();
+            services.AddTransient<IRepositorioGenerico<SocioNegocio, string>, SocioNegocioRepositorio>();
             services.AddTransient<ISocioNegocioDomain, SocioNegocioDomain>();
             services.AddTransient<ISocioNegocioApplication, SocioNegocioApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<DireccionSocioNegocio>, DireccionSocioNegocioRepositorio>();
+            services.AddTransient<IRepositorioGenerico<DireccionSocioNegocio, string>, DireccionSocioNegocioRepositorio>();
             services.AddTransient<IDireccionSocioNegocioDomain, DireccionSocioNegocioDomain>();
             services.AddTransient<IDireccionSocioNegocioApplication, DireccionSocioNegocioApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<NumeracionDocumento>, NumeracionDocumentoRepositorio>();
+            services.AddTransient<IRepositorioGenerico<NumeracionDocumento, string>, NumeracionDocumentoRepositorio>();
             services.AddTransient<INumeracionDocumentoDomain, NumeracionDocumentoDomain>();
             services.AddTransient<INumeracionDocumentoApplication, NumeracionDocumentoApplication>();
 
-            services.AddTransient<IRepositorioGenericoDos<Monedum>, MonedaRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Monedum, string>, MonedaRepositorio>();
             services.AddTransient<IMonedaDomain, MonedaDomain>();
             services.AddTransient<IMonedaApplication, MonedaApplication>();
 
+            services.AddTransient<IRepositorioGenerico<Usuario, int>, UsuarioRepositorio>();
+            services.AddTransient<IUsuarioDomain, UsuarioDomain>();
+            services.AddTransient<IUsuarioApplication, UsuarioApplication>();
+
+            services.AddTransient<IRepositorioGenerico<Cotizacion, int>, CotizacionRepositorio>();
+            services.AddTransient<ICotizacionDomain, CotizacionDomain>();
+            services.AddTransient<ICotizacionApplication, CotizacionApplication>();
+
             // Servicios de autenticación
-            //services.AddTransient<ITokenService, TokenService>();
+            services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IAuthApplication, AuthApplication>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

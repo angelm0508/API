@@ -1,10 +1,12 @@
 using API.Application.DTO.direccionSocioNegocio;
 using API.Application.Interface;
 using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/DireccionSocioNegocio")]
     public class DireccionSocioNegocioController : ControllerBase

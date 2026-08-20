@@ -1,10 +1,12 @@
 using API.Application.DTO.precio.listado_precio;
 using API.Application.Interface;
 using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/ListadoPrecio")]
     public class ListadoPrecioController : ControllerBase

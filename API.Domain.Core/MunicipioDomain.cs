@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class MunicipioDomain : IMunicipioDomain
     {
-        private readonly IRepositorioGenericoDos<Municipio> _repoMunicipio;
-        public MunicipioDomain(IRepositorioGenericoDos<Municipio> repoMunicipio)
+        private readonly IRepositorioGenerico<Municipio, string> _repoMunicipio;
+        public MunicipioDomain(IRepositorioGenerico<Municipio, string> repoMunicipio)
         {
             _repoMunicipio = repoMunicipio;
         }
@@ -21,7 +21,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoMunicipio.InsertarAsync(obj);
+            await _repoMunicipio.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, Municipio obj)
         {

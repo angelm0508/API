@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class AlmacenDomain : IAlmacenDomain
     {
-        private readonly IRepositorioGenericoDos<Almacen> _repoAlmacen;
-        public AlmacenDomain(IRepositorioGenericoDos<Almacen> repoAlmacen)
+        private readonly IRepositorioGenerico<Almacen, string> _repoAlmacen;
+        public AlmacenDomain(IRepositorioGenerico<Almacen, string> repoAlmacen)
         {
             _repoAlmacen = repoAlmacen;
         }
@@ -21,7 +21,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoAlmacen.InsertarAsync(obj);
+            await _repoAlmacen.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, Almacen obj)
         {

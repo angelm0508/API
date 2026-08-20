@@ -7,9 +7,9 @@ namespace API.Domain.Core
 {
     public class UsuarioDomain : IUsuarioDomain
     {
-        private readonly IRepositorioGenerico<Usuario> _repoGenericoUsuario;
+        private readonly IRepositorioGenerico<Usuario, int> _repoGenericoUsuario;
 
-        public UsuarioDomain(IRepositorioGenerico<Usuario> repoGenericoUsuario)
+        public UsuarioDomain(IRepositorioGenerico<Usuario, int> repoGenericoUsuario)
         {
             _repoGenericoUsuario = repoGenericoUsuario;
         }
@@ -22,7 +22,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un usuario con el código: {obj.Codigo}");
             }
 
-            return await _repoGenericoUsuario.InsertarAsync(obj);
+            var insertado = await _repoGenericoUsuario.InsertarAsync(obj);
+            return insertado.Id;
         }
 
         public async Task<bool> ActualizarAsync(int codigo, Usuario obj)

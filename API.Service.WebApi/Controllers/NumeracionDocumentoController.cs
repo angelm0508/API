@@ -1,10 +1,12 @@
 using API.Application.DTO.numeracionDocumento;
 using API.Application.Interface;
 using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/NumeracionDocumento")]
     public class NumeracionDocumentoController : ControllerBase

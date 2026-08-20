@@ -4,6 +4,7 @@ using API.Application.Interface;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Application.Main
@@ -12,11 +13,13 @@ namespace API.Application.Main
     {
         private readonly IUsuarioDomain _usuarioDomain;
         private readonly IMapper _mapper;
+        private readonly IPasswordHasher<Usuario> _passwordHasher;
 
-        public UsuarioApplication(IUsuarioDomain usuarioDomain, IMapper mapper)
+        public UsuarioApplication(IUsuarioDomain usuarioDomain, IMapper mapper, IPasswordHasher<Usuario> passwordHasher)
         {
             _usuarioDomain = usuarioDomain;
             _mapper = mapper;
+            _passwordHasher = passwordHasher;
         }
 
         #region async methods
@@ -26,6 +29,8 @@ namespace API.Application.Main
             try
             {
                 var usuario = _mapper.Map<Usuario>(obj);
+                if (!string.IsNullOrEmpty(usuario.Password))
+                    usuario.Password = _passwordHasher.HashPassword(usuario, usuario.Password);
                 respuesta.Dato = await _usuarioDomain.InsertarAsync(usuario);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
@@ -43,6 +48,8 @@ namespace API.Application.Main
             try
             {
                 var usuario = _mapper.Map<Usuario>(obj);
+                if (!string.IsNullOrEmpty(usuario.Password))
+                    usuario.Password = _passwordHasher.HashPassword(usuario, usuario.Password);
                 respuesta.Dato = await _usuarioDomain.ActualizarAsync(id, usuario);
                 if (respuesta.Dato)
                 {

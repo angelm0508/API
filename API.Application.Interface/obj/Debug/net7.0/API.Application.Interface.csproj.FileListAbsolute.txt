@@ -29,3 +29,5 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Interface\obj\Debug\
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Interface\obj\Debug\net7.0\refint\API.Application.Interface.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Interface\obj\Debug\net7.0\API.Application.Interface.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Interface\obj\Debug\net7.0\ref\API.Application.Interface.dll
+C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Interface\bin\Debug\net7.0\API.Domain.Entity.dll
+C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Interface\bin\Debug\net7.0\API.Domain.Entity.pdb

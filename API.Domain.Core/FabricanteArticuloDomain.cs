@@ -7,9 +7,9 @@ namespace API.Domain.Core
 {
     public class FabricanteArticuloDomain : IFabricanteArticuloDomain
     {
-        private readonly IRepositorioGenerico<FabricanteArticulo> _repoGenericoFabricanteArticulo;
+        private readonly IRepositorioGenerico<FabricanteArticulo, int> _repoGenericoFabricanteArticulo;
 
-        public FabricanteArticuloDomain(IRepositorioGenerico<FabricanteArticulo> repoGenericoFabricanteArticulo)
+        public FabricanteArticuloDomain(IRepositorioGenerico<FabricanteArticulo, int> repoGenericoFabricanteArticulo)
         {
             _repoGenericoFabricanteArticulo = repoGenericoFabricanteArticulo;
         }
@@ -22,7 +22,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
             }
 
-            return await _repoGenericoFabricanteArticulo.InsertarAsync(obj);
+            var insertado = await _repoGenericoFabricanteArticulo.InsertarAsync(obj);
+            return insertado.Entry;
         }
 
         public async Task<bool> ActualizarAsync(int codigo, FabricanteArticulo obj)
