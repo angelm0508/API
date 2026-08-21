@@ -34,7 +34,25 @@ namespace API.Infraestructure.Repository
             if (existente is null)
                 return false;
 
-            Contexto.Entry(existente).CurrentValues.SetValues(entity);
+            var entrada = Contexto.Entry(existente);
+            var clavePrimaria = entrada.Metadata.FindPrimaryKey()!.Properties
+                .Select(p => p.Name)
+                .ToHashSet();
+
+            // No se usa CurrentValues.SetValues(entity) porque los DTO de actualización normalmente
+            // no incluyen la clave primaria (viaja en la ruta, no en el body): el objeto "entity"
+            // mapeado desde ese DTO trae la clave en su valor por defecto (0/null), y EF Core rechaza
+            // de inmediato cualquier intento de modificarla ("part of a key and so cannot be
+            // modified"). En su lugar se copian a mano solo las columnas que no son parte de la clave,
+            // leyendo los valores del objeto "entity" sin que EF llegue a rastrearlo.
+            foreach (var propiedad in entrada.Metadata.GetProperties())
+            {
+                if (clavePrimaria.Contains(propiedad.Name))
+                    continue;
+
+                entrada.Property(propiedad.Name).CurrentValue = propiedad.PropertyInfo?.GetValue(entity);
+            }
+
             return await Contexto.SaveChangesAsync() > 0;
         }
 

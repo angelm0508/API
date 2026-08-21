@@ -48,7 +48,7 @@ namespace API.Service.WebApi.Tests.Controllers
         [Fact]
         public async Task Obtener_DevuelveOk_CuandoExiste()
         {
-            var dto = new GrupoSnDTO { Codigo = 1, Nombre = "Grupo SN 1" };
+            var dto = new GrupoSnDTO { Entry = 1, Nombre = "Grupo SN 1" };
             var respuesta = new Respuesta<GrupoSnDTO> { Resultado = true, Dato = dto };
             _applicationMock.Setup(a => a.ObtenerAsync(1)).ReturnsAsync(respuesta);
 
@@ -87,7 +87,7 @@ namespace API.Service.WebApi.Tests.Controllers
         [Fact]
         public async Task ObtenerPorNombre_DevuelveOk_CuandoExiste()
         {
-            var dto = new GrupoSnDTO { Codigo = 1, Nombre = "Grupo SN 1" };
+            var dto = new GrupoSnDTO { Entry = 1, Nombre = "Grupo SN 1" };
             var respuesta = new Respuesta<GrupoSnDTO> { Resultado = true, Dato = dto };
             _applicationMock.Setup(a => a.ObtenerAsync("Grupo SN 1")).ReturnsAsync(respuesta);
 
@@ -112,7 +112,7 @@ namespace API.Service.WebApi.Tests.Controllers
         [Fact]
         public async Task ObteneContengaNombreAsync_DevuelveOk_CuandoResultadoEsExitoso()
         {
-            var respuesta = new Respuesta<IEnumerable<GrupoSnDTO>> { Resultado = true, Dato = new List<GrupoSnDTO> { new GrupoSnDTO { Codigo = 1 } } };
+            var respuesta = new Respuesta<IEnumerable<GrupoSnDTO>> { Resultado = true, Dato = new List<GrupoSnDTO> { new GrupoSnDTO { Entry = 1 } } };
             _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("Gru")).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObteneContengaNombreAsync("Gru");
@@ -136,7 +136,7 @@ namespace API.Service.WebApi.Tests.Controllers
         [Fact]
         public async Task ObtenerTodoAsync_DevuelveOk_CuandoResultadoEsExitoso()
         {
-            var respuesta = new Respuesta<IEnumerable<GrupoSnDTO>> { Resultado = true, Dato = new List<GrupoSnDTO> { new GrupoSnDTO { Codigo = 1 } } };
+            var respuesta = new Respuesta<IEnumerable<GrupoSnDTO>> { Resultado = true, Dato = new List<GrupoSnDTO> { new GrupoSnDTO { Entry = 1 } } };
             _applicationMock.Setup(a => a.ObtenerTodoAsync()).ReturnsAsync(respuesta);
 
             var resultado = await _controller.ObtenerTodoAsync();
@@ -187,7 +187,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task ActualizarAsync_DevuelveBadRequest_CuandoActualizarFalla()
         {
             _applicationMock.Setup(a => a.ObtenerAsync(1))
-                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Codigo = 1 } });
+                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Entry = 1 } });
             var respuestaUpdate = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
             _applicationMock.Setup(a => a.ActualizarAsync(1, It.IsAny<GrupoSnActualizarDTO>())).ReturnsAsync(respuestaUpdate);
 
@@ -201,7 +201,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task ActualizarAsync_DevuelveOk_CuandoActualizaCorrectamente()
         {
             _applicationMock.Setup(a => a.ObtenerAsync(1))
-                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Codigo = 1 } });
+                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Entry = 1 } });
             var respuestaUpdate = new Respuesta<bool> { Resultado = true, Dato = true };
             _applicationMock.Setup(a => a.ActualizarAsync(1, It.IsAny<GrupoSnActualizarDTO>())).ReturnsAsync(respuestaUpdate);
 
@@ -227,7 +227,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task EliminarAsync_DevuelveBadRequest_CuandoEliminarFalla()
         {
             _applicationMock.Setup(a => a.ObtenerAsync(1))
-                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Codigo = 1 } });
+                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Entry = 1 } });
             var respuestaDelete = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
             _applicationMock.Setup(a => a.EliminarAsync(1)).ReturnsAsync(respuestaDelete);
 
@@ -241,7 +241,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task EliminarAsync_DevuelveOk_CuandoEliminaCorrectamente()
         {
             _applicationMock.Setup(a => a.ObtenerAsync(1))
-                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Codigo = 1 } });
+                .ReturnsAsync(new Respuesta<GrupoSnDTO> { Resultado = true, Dato = new GrupoSnDTO { Entry = 1 } });
             var respuestaDelete = new Respuesta<bool> { Resultado = true, Dato = true };
             _applicationMock.Setup(a => a.EliminarAsync(1)).ReturnsAsync(respuestaDelete);
 

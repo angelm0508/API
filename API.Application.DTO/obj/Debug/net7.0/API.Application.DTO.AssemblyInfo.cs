@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("API.Application.DTO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+23c803772ac96c97e97752eb2e9fa9b57411e254")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c33cf499a49b78d863d2e514679dacb50aa51250")]
 [assembly: System.Reflection.AssemblyProductAttribute("API.Application.DTO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("API.Application.DTO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
