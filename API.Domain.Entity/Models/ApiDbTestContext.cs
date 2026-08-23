@@ -29,15 +29,13 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<GrupoArticulo> GrupoArticulos { get; set; }
 
-    public virtual DbSet<GrupoMedidaArticulo> GrupoMedidaArticulos { get; set; }
-
-    public virtual DbSet<GrupoMedidaDetArticulo> GrupoMedidaDetArticulos { get; set; }
-
     public virtual DbSet<GrupoSn> GrupoSns { get; set; }
 
-    public virtual DbSet<ListadoPrecio> ListadoPrecios { get; set; }
+    public virtual DbSet<GrupoUnidadMedidaArticulo> GrupoUnidadMedidaArticulos { get; set; }
 
-    public virtual DbSet<MedidaArticulo> MedidaArticulos { get; set; }
+    public virtual DbSet<GrupoUnidadMedidaDetArticulo> GrupoUnidadMedidaDetArticulos { get; set; }
+
+    public virtual DbSet<ListadoPrecio> ListadoPrecios { get; set; }
 
     public virtual DbSet<Monedum> Moneda { get; set; }
 
@@ -50,6 +48,8 @@ public partial class ApiDbTestContext : DbContext
     public virtual DbSet<Pai> Pais { get; set; }
 
     public virtual DbSet<SocioNegocio> SocioNegocios { get; set; }
+
+    public virtual DbSet<UnidadMedidaArticulo> UnidadMedidaArticulos { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
@@ -141,8 +141,8 @@ public partial class ApiDbTestContext : DbContext
                 .HasForeignKey(d => d.AlmacenDefecto)
                 .HasConstraintName("fk_articulo_almc_defecto");
 
-            entity.HasOne(d => d.CodigoGrpMedidaNavigation).WithMany(p => p.Articulos)
-                .HasForeignKey(d => d.CodigoGrpMedida)
+            entity.HasOne(d => d.CodigoGrpUnidadMedidaNavigation).WithMany(p => p.Articulos)
+                .HasForeignKey(d => d.CodigoGrpUnidadMedida)
                 .HasConstraintName("fk_articulo_grp_medida");
 
             entity.HasOne(d => d.CodigoGrupoNavigation).WithMany(p => p.Articulos)
@@ -269,9 +269,6 @@ public partial class ApiDbTestContext : DbContext
 
             entity.ToTable("FabricanteArticulo");
 
-            entity.Property(e => e.Bloqueado)
-                .HasMaxLength(1)
-                .HasDefaultValueSql("('N')");
             entity.Property(e => e.Nombre).HasMaxLength(30);
         });
 
@@ -287,39 +284,6 @@ public partial class ApiDbTestContext : DbContext
             entity.Property(e => e.Nombre).HasMaxLength(100);
         });
 
-        modelBuilder.Entity<GrupoMedidaArticulo>(entity =>
-        {
-            entity.HasKey(e => e.Entry).HasName("pk_grp_medida_art");
-
-            entity.ToTable("GrupoMedidaArticulo");
-
-            entity.Property(e => e.Bloqueado)
-                .HasMaxLength(1)
-                .HasDefaultValueSql("('N')");
-            entity.Property(e => e.Codigo).HasMaxLength(20);
-            entity.Property(e => e.Nombre).HasMaxLength(100);
-
-            entity.HasOne(d => d.BaseMedidaNavigation).WithMany(p => p.GrupoMedidaArticulos)
-                .HasForeignKey(d => d.BaseMedida)
-                .HasConstraintName("fk_medida_art");
-        });
-
-        modelBuilder.Entity<GrupoMedidaDetArticulo>(entity =>
-        {
-            entity.HasKey(e => new { e.GrpMedidaEntry, e.NumLinea }).HasName("pk_grp_medida_det_art");
-
-            entity.ToTable("GrupoMedidaDetArticulo");
-
-            entity.Property(e => e.Activo).HasMaxLength(1);
-            entity.Property(e => e.CantAlternativa).HasColumnType("decimal(19, 0)");
-            entity.Property(e => e.CantBase).HasColumnType("decimal(19, 0)");
-
-            entity.HasOne(d => d.MedidaEntryNavigation).WithMany(p => p.GrupoMedidaDetArticulos)
-                .HasForeignKey(d => d.MedidaEntry)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_grp_medida_art");
-        });
-
         modelBuilder.Entity<GrupoSn>(entity =>
         {
             entity.HasKey(e => e.Entry).HasName("pk_grupo_sn");
@@ -332,6 +296,40 @@ public partial class ApiDbTestContext : DbContext
                 .HasDefaultValueSql("('N')");
             entity.Property(e => e.Nombre).HasMaxLength(200);
             entity.Property(e => e.TipoGrupo).HasMaxLength(1);
+        });
+
+        modelBuilder.Entity<GrupoUnidadMedidaArticulo>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_grp_medida_art");
+
+            entity.ToTable("GrupoUnidadMedidaArticulo");
+
+            entity.Property(e => e.Bloqueado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Codigo).HasMaxLength(20);
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+
+            entity.HasOne(d => d.BaseMedidaNavigation).WithMany(p => p.GrupoUnidadMedidaArticulos)
+                .HasForeignKey(d => d.BaseMedida)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_medida_art");
+        });
+
+        modelBuilder.Entity<GrupoUnidadMedidaDetArticulo>(entity =>
+        {
+            entity.HasKey(e => new { e.GrpMedidaEntry, e.NumLinea }).HasName("pk_grp_medida_det_art");
+
+            entity.ToTable("GrupoUnidadMedidaDetArticulo");
+
+            entity.Property(e => e.Activo).HasMaxLength(1);
+            entity.Property(e => e.CantAlternativa).HasColumnType("decimal(19, 0)");
+            entity.Property(e => e.CantBase).HasColumnType("decimal(19, 0)");
+
+            entity.HasOne(d => d.MedidaEntryNavigation).WithMany(p => p.GrupoUnidadMedidaDetArticulos)
+                .HasForeignKey(d => d.MedidaEntry)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_grp_medida_art");
         });
 
         modelBuilder.Entity<ListadoPrecio>(entity =>
@@ -350,24 +348,6 @@ public partial class ApiDbTestContext : DbContext
                 .HasDefaultValueSql("('R')");
             entity.Property(e => e.RndFrmtDec).HasMaxLength(10);
             entity.Property(e => e.RndFrmtInt).HasMaxLength(10);
-        });
-
-        modelBuilder.Entity<MedidaArticulo>(entity =>
-        {
-            entity.HasKey(e => e.Entry).HasName("pk_medida_art");
-
-            entity.ToTable("MedidaArticulo");
-
-            entity.Property(e => e.Altura).HasColumnType("decimal(21, 6)");
-            entity.Property(e => e.Ancho).HasColumnType("decimal(21, 6)");
-            entity.Property(e => e.Bloqueado)
-                .HasMaxLength(1)
-                .HasDefaultValueSql("('N')");
-            entity.Property(e => e.Codigo).HasMaxLength(20);
-            entity.Property(e => e.Largo).HasColumnType("decimal(21, 6)");
-            entity.Property(e => e.Nombre).HasMaxLength(100);
-            entity.Property(e => e.Peso).HasColumnType("decimal(21, 6)");
-            entity.Property(e => e.Volumen).HasColumnType("decimal(21, 6)");
         });
 
         modelBuilder.Entity<Monedum>(entity =>
@@ -489,6 +469,24 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.NumLstPrecioNavigation).WithMany(p => p.SocioNegocios)
                 .HasForeignKey(d => d.NumLstPrecio)
                 .HasConstraintName("fk_sn_num_lst_precio");
+        });
+
+        modelBuilder.Entity<UnidadMedidaArticulo>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_medida_art");
+
+            entity.ToTable("UnidadMedidaArticulo");
+
+            entity.Property(e => e.Altura).HasColumnType("decimal(21, 6)");
+            entity.Property(e => e.Ancho).HasColumnType("decimal(21, 6)");
+            entity.Property(e => e.Bloqueado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Codigo).HasMaxLength(20);
+            entity.Property(e => e.Largo).HasColumnType("decimal(21, 6)");
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.Peso).HasColumnType("decimal(21, 6)");
+            entity.Property(e => e.Volumen).HasColumnType("decimal(21, 6)");
         });
 
         modelBuilder.Entity<Usuario>(entity =>

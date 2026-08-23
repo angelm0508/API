@@ -33,3 +33,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Mapper\obj\Debug\net
 C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Mapper\obj\Debug\net7.0\refint\API.Transversal.Mapper.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Mapper\obj\Debug\net7.0\API.Transversal.Mapper.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Mapper\obj\Debug\net7.0\ref\API.Transversal.Mapper.dll
+C:\temp\build_verify_out\API.Transversal.Mapper.deps.json
+C:\temp\build_verify_out\API.Transversal.Mapper.dll
+C:\temp\build_verify_out\API.Transversal.Mapper.pdb
+C:\temp\api_build_gruposn\API.Transversal.Mapper.deps.json
+C:\temp\api_build_gruposn\API.Transversal.Mapper.dll
+C:\temp\api_build_gruposn\API.Transversal.Mapper.pdb

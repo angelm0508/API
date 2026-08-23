@@ -22,6 +22,13 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
             }
 
+            // La columna Entry no es autonumérica en la base de datos, a diferencia de otras
+            // tablas similares (p. ej. GrupoArticulo.Codigo) -- hay que calcular el siguiente
+            // valor manualmente o el insert choca con la clave primaria existente.
+            var queryable = await _repoGenericoGrupoSn.ObtenerTodoAsync();
+            var maxEntry = await queryable.Select(x => (short?)x.Entry).MaxAsync() ?? 0;
+            obj.Entry = (short)(maxEntry + 1);
+
             var insertado = await _repoGenericoGrupoSn.InsertarAsync(obj);
             return insertado.Entry;
         }

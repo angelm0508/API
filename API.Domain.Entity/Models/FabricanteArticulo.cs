@@ -9,7 +9,5 @@ public partial class FabricanteArticulo
 
     public string Nombre { get; set; } = null!;
 
-    public string? Bloqueado { get; set; }
-
     public virtual ICollection<Articulo> Articulos { get; set; } = new List<Articulo>();
 }

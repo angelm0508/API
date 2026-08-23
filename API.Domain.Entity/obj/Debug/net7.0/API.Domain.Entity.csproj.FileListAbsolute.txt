@@ -27,3 +27,11 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Entity\obj\Debug\net7.0\r
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Entity\obj\Debug\net7.0\API.Domain.Entity.genruntimeconfig.cache
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Entity\obj\Debug\net7.0\ref\API.Domain.Entity.dll
+C:\temp\build_verify_out\API.Domain.Entity.deps.json
+C:\temp\build_verify_out\API.Domain.Entity.runtimeconfig.json
+C:\temp\build_verify_out\API.Domain.Entity.dll
+C:\temp\build_verify_out\API.Domain.Entity.pdb
+C:\temp\api_build_gruposn\API.Domain.Entity.deps.json
+C:\temp\api_build_gruposn\API.Domain.Entity.runtimeconfig.json
+C:\temp\api_build_gruposn\API.Domain.Entity.dll
+C:\temp\api_build_gruposn\API.Domain.Entity.pdb

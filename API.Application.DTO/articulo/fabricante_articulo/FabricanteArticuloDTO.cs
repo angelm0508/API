@@ -4,6 +4,5 @@ namespace API.Application.DTO.articulo.fabricante_articulo
     {
         public int Entry { get; set; }
         public string Nombre { get; set; }
-        public string Bloqueado { get; set; }
     }
 }

@@ -37,3 +37,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Core\obj\Debug\net7.0\API
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Core\obj\Debug\net7.0\refint\API.Domain.Core.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Core\obj\Debug\net7.0\API.Domain.Core.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Core\obj\Debug\net7.0\ref\API.Domain.Core.dll
+C:\temp\build_verify_out\API.Domain.Core.deps.json
+C:\temp\build_verify_out\API.Domain.Core.dll
+C:\temp\build_verify_out\API.Domain.Core.pdb
+C:\temp\api_build_gruposn\API.Domain.Core.deps.json
+C:\temp\api_build_gruposn\API.Domain.Core.dll
+C:\temp\api_build_gruposn\API.Domain.Core.pdb

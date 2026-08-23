@@ -21,3 +21,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Common\obj\Debug\net
 C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Common\obj\Debug\net7.0\refint\API.Transversal.Common.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Common\obj\Debug\net7.0\API.Transversal.Common.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Transversal.Common\obj\Debug\net7.0\ref\API.Transversal.Common.dll
+C:\temp\build_verify_out\API.Transversal.Common.deps.json
+C:\temp\build_verify_out\API.Transversal.Common.dll
+C:\temp\build_verify_out\API.Transversal.Common.pdb
+C:\temp\api_build_gruposn\API.Transversal.Common.deps.json
+C:\temp\api_build_gruposn\API.Transversal.Common.dll
+C:\temp\api_build_gruposn\API.Transversal.Common.pdb

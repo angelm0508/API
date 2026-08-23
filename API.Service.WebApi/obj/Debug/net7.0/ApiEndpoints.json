@@ -9,7 +9,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -33,7 +33,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.AlmacenController",
@@ -51,7 +61,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.almacen.AlmacenDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -80,7 +90,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.AlmacenController",
@@ -96,7 +116,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.AlmacenController",
@@ -114,7 +144,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -140,7 +170,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -166,7 +196,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.almacen.AlmacenDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.almacen.AlmacenDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -186,7 +216,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -210,7 +240,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
@@ -228,7 +268,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.articulo.ArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -257,7 +297,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
@@ -273,7 +323,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.ArticuloController",
@@ -291,7 +351,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -317,7 +377,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -343,7 +403,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.articulo.ArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.articulo.ArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -369,7 +429,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.autenticacion.LoginResponseDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.autenticacion.LoginResponseDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -389,7 +449,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.cotizacion.CotizacionDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.cotizacion.CotizacionDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -413,7 +473,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
@@ -431,7 +501,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.cotizacion.CotizacionDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.cotizacion.CotizacionDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -460,7 +530,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.CotizacionController",
@@ -476,7 +556,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DepartamentoController",
@@ -488,7 +578,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -512,7 +602,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DepartamentoController",
@@ -530,7 +630,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.departamento.DepartamentoDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -559,7 +659,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DepartamentoController",
@@ -575,7 +685,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DepartamentoController",
@@ -593,7 +713,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -619,7 +739,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -645,7 +765,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.departamento.DepartamentoDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.departamento.DepartamentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -665,7 +785,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.direccionSocioNegocio.DireccionSocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.direccionSocioNegocio.DireccionSocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -689,7 +809,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DireccionSocioNegocioController",
@@ -707,7 +837,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.direccionSocioNegocio.DireccionSocioNegocioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.direccionSocioNegocio.DireccionSocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -736,7 +866,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DireccionSocioNegocioController",
@@ -752,7 +892,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.DireccionSocioNegocioController",
@@ -770,7 +920,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.direccionSocioNegocio.DireccionSocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.direccionSocioNegocio.DireccionSocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -790,7 +940,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -814,7 +964,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
@@ -832,7 +992,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -861,7 +1021,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
@@ -877,7 +1047,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
@@ -895,7 +1075,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -921,7 +1101,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -941,7 +1121,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -965,7 +1145,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
@@ -983,7 +1173,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1012,7 +1202,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
@@ -1028,7 +1228,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoArticuloController",
@@ -1046,7 +1256,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1072,7 +1282,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_articulo.GrupoArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1081,256 +1291,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "ObtenerTodoAsync",
-    "RelativePath": "api/GrupoMedidaArticulo",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "InsertarAsync",
-    "RelativePath": "api/GrupoMedidaArticulo",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "obj",
-        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloCrearDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "Obtener",
-    "RelativePath": "api/GrupoMedidaArticulo/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "ActualizarAsync",
-    "RelativePath": "api/GrupoMedidaArticulo/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "obj",
-        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloActualizarDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "EliminarAsync",
-    "RelativePath": "api/GrupoMedidaArticulo/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "ObteneContengaNombreAsync",
-    "RelativePath": "api/GrupoMedidaArticulo/Contenga/{name}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "name",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaArticuloController",
-    "Method": "ObtenerPorNombre",
-    "RelativePath": "api/GrupoMedidaArticulo/PorNombre/{name}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "name",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "API.Application.DTO.articulo.grupo_medida_articulo.GrupoMedidaArticuloDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
-    "Method": "ObtenerTodoAsync",
-    "RelativePath": "api/GrupoMedidaDetArticulo",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
-    "Method": "InsertarAsync",
-    "RelativePath": "api/GrupoMedidaDetArticulo",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "obj",
-        "Type": "API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloCrearDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
-    "Method": "Obtener",
-    "RelativePath": "api/GrupoMedidaDetArticulo/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
-    "Method": "ActualizarAsync",
-    "RelativePath": "api/GrupoMedidaDetArticulo/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "obj",
-        "Type": "API.Application.DTO.articulo.grupo_medida_det_articulo.GrupoMedidaDetArticuloActualizarDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.GrupoMedidaDetArticuloController",
-    "Method": "EliminarAsync",
-    "RelativePath": "api/GrupoMedidaDetArticulo/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
@@ -1342,7 +1302,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1366,7 +1326,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
@@ -1384,7 +1354,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.grupo_sn.GrupoSnDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1413,7 +1383,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
@@ -1429,7 +1409,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.GrupoSnController",
@@ -1447,7 +1437,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1473,7 +1463,358 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.articulo.grupo_sn.GrupoSnDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_sn.GrupoSnDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_articulo.GrupoUnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_unidad_medida_articulo.GrupoUnidadMedidaArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_articulo.GrupoUnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_unidad_medida_articulo.GrupoUnidadMedidaArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_articulo.GrupoUnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaArticuloController",
+    "Method": "ObtenerPorNombre",
+    "RelativePath": "api/GrupoUnidadMedidaArticulo/PorNombre/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_articulo.GrupoUnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaDetArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/GrupoUnidadMedidaDetArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_det_articulo.GrupoUnidadMedidaDetArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaDetArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/GrupoUnidadMedidaDetArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_unidad_medida_det_articulo.GrupoUnidadMedidaDetArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaDetArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/GrupoUnidadMedidaDetArticulo/{grpMedidaEntry}/{numLinea}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grpMedidaEntry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "numLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_det_articulo.GrupoUnidadMedidaDetArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaDetArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/GrupoUnidadMedidaDetArticulo/{grpMedidaEntry}/{numLinea}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grpMedidaEntry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "numLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.grupo_unidad_medida_det_articulo.GrupoUnidadMedidaDetArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaDetArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/GrupoUnidadMedidaDetArticulo/{grpMedidaEntry}/{numLinea}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grpMedidaEntry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "numLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.GrupoUnidadMedidaDetArticuloController",
+    "Method": "ObtenerPorGrupo",
+    "RelativePath": "api/GrupoUnidadMedidaDetArticulo/PorGrupo/{grpMedidaEntry}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grpMedidaEntry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.grupo_unidad_medida_det_articulo.GrupoUnidadMedidaDetArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1493,7 +1834,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1517,7 +1858,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
@@ -1535,7 +1886,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.precio.listado_precio.ListadoPrecioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1564,7 +1915,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
@@ -1580,7 +1941,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
@@ -1598,7 +1969,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1624,158 +1995,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.precio.listado_precio.ListadoPrecioDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "ObtenerTodoAsync",
-    "RelativePath": "api/MedidaArticulo",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "InsertarAsync",
-    "RelativePath": "api/MedidaArticulo",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "obj",
-        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloCrearDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "Obtener",
-    "RelativePath": "api/MedidaArticulo/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "ActualizarAsync",
-    "RelativePath": "api/MedidaArticulo/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "obj",
-        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloActualizarDTO",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "EliminarAsync",
-    "RelativePath": "api/MedidaArticulo/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "ObteneContengaNombreAsync",
-    "RelativePath": "api/MedidaArticulo/Contenga/{name}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "name",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "API.Service.WebApi.Controllers.MedidaArticuloController",
-    "Method": "ObtenerPorCodigo",
-    "RelativePath": "api/MedidaArticulo/PorCodigo/{codigo}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "codigo",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "API.Application.DTO.articulo.medida_articulo.MedidaArticuloDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.precio.listado_precio.ListadoPrecioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1795,7 +2015,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1819,7 +2039,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.MonedaController",
@@ -1837,7 +2067,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.moneda.MonedaDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1866,7 +2096,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.MonedaController",
@@ -1882,7 +2122,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.MonedaController",
@@ -1900,7 +2150,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1926,7 +2176,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1952,7 +2202,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.moneda.MonedaDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.moneda.MonedaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1972,7 +2222,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -1996,7 +2246,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.MunicipioController",
@@ -2014,7 +2274,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.municipio.MunicipioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2043,7 +2303,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.MunicipioController",
@@ -2059,7 +2329,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.MunicipioController",
@@ -2077,7 +2357,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2103,7 +2383,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2129,7 +2409,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.municipio.MunicipioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.municipio.MunicipioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2149,7 +2429,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.numeracionDocumento.NumeracionDocumentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.numeracionDocumento.NumeracionDocumentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2173,7 +2453,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoController",
@@ -2191,7 +2481,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.numeracionDocumento.NumeracionDocumentoDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.numeracionDocumento.NumeracionDocumentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2220,7 +2510,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoController",
@@ -2236,7 +2536,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoController",
@@ -2254,7 +2564,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.numeracionDocumento.NumeracionDocumentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.numeracionDocumento.NumeracionDocumentoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2274,7 +2584,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2298,7 +2608,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
@@ -2316,7 +2636,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2345,7 +2665,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
@@ -2361,7 +2691,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.PaisController",
@@ -2373,7 +2713,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2397,7 +2737,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.PaisController",
@@ -2415,7 +2765,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.pais.PaisDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2444,7 +2794,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.PaisController",
@@ -2460,7 +2820,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.PaisController",
@@ -2478,7 +2848,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2504,7 +2874,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2530,7 +2900,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.pais.PaisDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2550,7 +2920,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2574,7 +2944,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.SocioNegocioController",
@@ -2592,7 +2972,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.socioNegocio.SocioNegocioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2621,7 +3001,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.SocioNegocioController",
@@ -2637,7 +3027,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.SocioNegocioController",
@@ -2655,7 +3055,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2681,7 +3081,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2707,7 +3107,188 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.socioNegocio.SocioNegocioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.socioNegocio.SocioNegocioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/UnidadMedidaArticulo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.unidad_medida_articulo.UnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/UnidadMedidaArticulo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.unidad_medida_articulo.UnidadMedidaArticuloCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "Obtener",
+    "RelativePath": "api/UnidadMedidaArticulo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.unidad_medida_articulo.UnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/UnidadMedidaArticulo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.articulo.unidad_medida_articulo.UnidadMedidaArticuloActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/UnidadMedidaArticulo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "ObteneContengaNombreAsync",
+    "RelativePath": "api/UnidadMedidaArticulo/Contenga/{name}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.articulo.unidad_medida_articulo.UnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.UnidadMedidaArticuloController",
+    "Method": "ObtenerPorCodigo",
+    "RelativePath": "api/UnidadMedidaArticulo/PorCodigo/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.unidad_medida_articulo.UnidadMedidaArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2727,7 +3308,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2751,7 +3332,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
@@ -2769,7 +3360,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.usuario.usuario.UsuarioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2798,7 +3389,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
@@ -2814,7 +3415,17 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "API.Service.WebApi.Controllers.UsuarioController",
@@ -2832,7 +3443,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2858,7 +3469,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.usuario.usuario.UsuarioDTO",
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.usuario.usuario.UsuarioDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

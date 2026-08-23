@@ -33,3 +33,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Repository\obj\D
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Repository\obj\Debug\net7.0\refint\API.Infraestructure.Repository.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Repository\obj\Debug\net7.0\API.Infraestructure.Repository.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Repository\obj\Debug\net7.0\ref\API.Infraestructure.Repository.dll
+C:\temp\build_verify_out\API.Infraestructure.Repository.deps.json
+C:\temp\build_verify_out\API.Infraestructure.Repository.dll
+C:\temp\build_verify_out\API.Infraestructure.Repository.pdb
+C:\temp\api_build_gruposn\API.Infraestructure.Repository.deps.json
+C:\temp\api_build_gruposn\API.Infraestructure.Repository.dll
+C:\temp\api_build_gruposn\API.Infraestructure.Repository.pdb

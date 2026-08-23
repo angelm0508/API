@@ -11,7 +11,7 @@ public partial class Articulo
 
     public short? CodigoGrupo { get; set; }
 
-    public int? CodigoGrpMedida { get; set; }
+    public int? CodigoGrpUnidadMedida { get; set; }
 
     public int? FabricanteEntry { get; set; }
 
@@ -49,7 +49,7 @@ public partial class Articulo
 
     public virtual Almacen? AlmacenDefectoNavigation { get; set; }
 
-    public virtual GrupoMedidaArticulo? CodigoGrpMedidaNavigation { get; set; }
+    public virtual GrupoUnidadMedidaArticulo? CodigoGrpUnidadMedidaNavigation { get; set; }
 
     public virtual GrupoArticulo? CodigoGrupoNavigation { get; set; }
 

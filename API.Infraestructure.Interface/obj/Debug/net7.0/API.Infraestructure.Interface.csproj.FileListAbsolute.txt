@@ -21,3 +21,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Interface\obj\De
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Interface\obj\Debug\net7.0\refint\API.Infraestructure.Interface.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Interface\obj\Debug\net7.0\API.Infraestructure.Interface.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Interface\obj\Debug\net7.0\ref\API.Infraestructure.Interface.dll
+C:\temp\build_verify_out\API.Infraestructure.Interface.deps.json
+C:\temp\build_verify_out\API.Infraestructure.Interface.dll
+C:\temp\build_verify_out\API.Infraestructure.Interface.pdb
+C:\temp\api_build_gruposn\API.Infraestructure.Interface.deps.json
+C:\temp\api_build_gruposn\API.Infraestructure.Interface.dll
+C:\temp\api_build_gruposn\API.Infraestructure.Interface.pdb

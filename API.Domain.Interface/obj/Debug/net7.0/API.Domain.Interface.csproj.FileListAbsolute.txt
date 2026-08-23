@@ -29,3 +29,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Interface\obj\Debug\net7.
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Interface\obj\Debug\net7.0\refint\API.Domain.Interface.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Interface\obj\Debug\net7.0\API.Domain.Interface.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Domain.Interface\obj\Debug\net7.0\ref\API.Domain.Interface.dll
+C:\temp\build_verify_out\API.Domain.Interface.deps.json
+C:\temp\build_verify_out\API.Domain.Interface.dll
+C:\temp\build_verify_out\API.Domain.Interface.pdb
+C:\temp\api_build_gruposn\API.Domain.Interface.deps.json
+C:\temp\api_build_gruposn\API.Domain.Interface.dll
+C:\temp\api_build_gruposn\API.Domain.Interface.pdb

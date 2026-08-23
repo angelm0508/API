@@ -27,17 +27,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlmacenDTO"
+                  "$ref": "#/components/schemas/AlmacenDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlmacenDTO"
+                  "$ref": "#/components/schemas/AlmacenDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlmacenDTO"
+                  "$ref": "#/components/schemas/AlmacenDTORespuesta"
                 }
               }
             }
@@ -80,7 +80,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -101,7 +118,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -128,17 +162,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlmacenDTO"
+                  "$ref": "#/components/schemas/AlmacenDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlmacenDTO"
+                  "$ref": "#/components/schemas/AlmacenDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AlmacenDTO"
+                  "$ref": "#/components/schemas/AlmacenDTORespuesta"
                 }
               }
             }
@@ -168,26 +202,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -217,26 +242,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -255,26 +271,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AlmacenDTO"
-                  }
+                  "$ref": "#/components/schemas/AlmacenDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -306,7 +313,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -333,17 +357,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArticuloDTO"
+                  "$ref": "#/components/schemas/ArticuloDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArticuloDTO"
+                  "$ref": "#/components/schemas/ArticuloDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArticuloDTO"
+                  "$ref": "#/components/schemas/ArticuloDTORespuesta"
                 }
               }
             }
@@ -386,7 +410,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -407,7 +448,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -434,17 +492,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArticuloDTO"
+                  "$ref": "#/components/schemas/ArticuloDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArticuloDTO"
+                  "$ref": "#/components/schemas/ArticuloDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArticuloDTO"
+                  "$ref": "#/components/schemas/ArticuloDTORespuesta"
                 }
               }
             }
@@ -474,26 +532,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -523,26 +572,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -561,26 +601,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/ArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -612,7 +643,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -647,17 +695,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponseDTO"
+                  "$ref": "#/components/schemas/LoginResponseDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponseDTO"
+                  "$ref": "#/components/schemas/LoginResponseDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoginResponseDTO"
+                  "$ref": "#/components/schemas/LoginResponseDTORespuesta"
                 }
               }
             }
@@ -688,17 +736,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/CotizacionDTO"
+                  "$ref": "#/components/schemas/CotizacionDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CotizacionDTO"
+                  "$ref": "#/components/schemas/CotizacionDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CotizacionDTO"
+                  "$ref": "#/components/schemas/CotizacionDTORespuesta"
                 }
               }
             }
@@ -742,7 +790,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -764,7 +829,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -780,26 +862,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CotizacionDTO"
-                  }
+                  "$ref": "#/components/schemas/CotizacionDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CotizacionDTO"
-                  }
+                  "$ref": "#/components/schemas/CotizacionDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CotizacionDTO"
-                  }
+                  "$ref": "#/components/schemas/CotizacionDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -831,7 +904,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -858,17 +948,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DepartamentoDTO"
+                  "$ref": "#/components/schemas/DepartamentoDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DepartamentoDTO"
+                  "$ref": "#/components/schemas/DepartamentoDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DepartamentoDTO"
+                  "$ref": "#/components/schemas/DepartamentoDTORespuesta"
                 }
               }
             }
@@ -911,7 +1001,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -932,7 +1039,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -959,17 +1083,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DepartamentoDTO"
+                  "$ref": "#/components/schemas/DepartamentoDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DepartamentoDTO"
+                  "$ref": "#/components/schemas/DepartamentoDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DepartamentoDTO"
+                  "$ref": "#/components/schemas/DepartamentoDTORespuesta"
                 }
               }
             }
@@ -999,26 +1123,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1048,26 +1163,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1086,26 +1192,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DepartamentoDTO"
-                  }
+                  "$ref": "#/components/schemas/DepartamentoDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1137,7 +1234,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -1164,17 +1278,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTORespuesta"
                 }
               }
             }
@@ -1217,7 +1331,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -1238,7 +1369,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -1265,26 +1413,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1303,26 +1442,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/DireccionSocioNegocioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1354,7 +1484,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -1382,17 +1529,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/FabricanteArticuloDTO"
+                  "$ref": "#/components/schemas/FabricanteArticuloDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FabricanteArticuloDTO"
+                  "$ref": "#/components/schemas/FabricanteArticuloDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FabricanteArticuloDTO"
+                  "$ref": "#/components/schemas/FabricanteArticuloDTORespuesta"
                 }
               }
             }
@@ -1436,7 +1583,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -1458,7 +1622,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -1485,17 +1666,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/FabricanteArticuloDTO"
+                  "$ref": "#/components/schemas/FabricanteArticuloDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FabricanteArticuloDTO"
+                  "$ref": "#/components/schemas/FabricanteArticuloDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FabricanteArticuloDTO"
+                  "$ref": "#/components/schemas/FabricanteArticuloDTORespuesta"
                 }
               }
             }
@@ -1525,26 +1706,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FabricanteArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/FabricanteArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FabricanteArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/FabricanteArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FabricanteArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/FabricanteArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1563,26 +1735,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FabricanteArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/FabricanteArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FabricanteArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/FabricanteArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/FabricanteArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/FabricanteArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1614,7 +1777,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -1642,17 +1822,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoArticuloDTO"
+                  "$ref": "#/components/schemas/GrupoArticuloDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoArticuloDTO"
+                  "$ref": "#/components/schemas/GrupoArticuloDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoArticuloDTO"
+                  "$ref": "#/components/schemas/GrupoArticuloDTORespuesta"
                 }
               }
             }
@@ -1696,7 +1876,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -1718,7 +1915,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -1745,17 +1959,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoArticuloDTO"
+                  "$ref": "#/components/schemas/GrupoArticuloDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoArticuloDTO"
+                  "$ref": "#/components/schemas/GrupoArticuloDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoArticuloDTO"
+                  "$ref": "#/components/schemas/GrupoArticuloDTORespuesta"
                 }
               }
             }
@@ -1785,26 +1999,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1823,26 +2028,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoArticuloDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoArticuloDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoArticuloDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoArticuloDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -1874,438 +2070,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/GrupoMedidaArticulo/{id}": {
-      "get": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
             "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
+                  "$ref": "#/components/schemas/Int32Respuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
+                  "$ref": "#/components/schemas/Int32Respuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
+                  "$ref": "#/components/schemas/Int32Respuesta"
                 }
               }
             }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaArticuloActualizarDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaArticuloActualizarDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaArticuloActualizarDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/GrupoMedidaArticulo/PorNombre/{name}": {
-      "get": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/GrupoMedidaArticulo/Contenga/{name}": {
-      "get": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/GrupoMedidaArticulo": {
-      "get": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaArticuloDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "GrupoMedidaArticulo"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaArticuloCrearDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaArticuloCrearDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaArticuloCrearDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/GrupoMedidaDetArticulo/{id}": {
-      "get": {
-        "tags": [
-          "GrupoMedidaDetArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaDetArticuloDTO"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaDetArticuloDTO"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GrupoMedidaDetArticuloDTO"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "GrupoMedidaDetArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaDetArticuloActualizarDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaDetArticuloActualizarDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaDetArticuloActualizarDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "GrupoMedidaDetArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/GrupoMedidaDetArticulo": {
-      "get": {
-        "tags": [
-          "GrupoMedidaDetArticulo"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaDetArticuloDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaDetArticuloDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoMedidaDetArticuloDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "GrupoMedidaDetArticulo"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaDetArticuloCrearDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaDetArticuloCrearDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GrupoMedidaDetArticuloCrearDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
           }
         }
       }
@@ -2333,17 +2115,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoSnDTO"
+                  "$ref": "#/components/schemas/GrupoSnDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoSnDTO"
+                  "$ref": "#/components/schemas/GrupoSnDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoSnDTO"
+                  "$ref": "#/components/schemas/GrupoSnDTORespuesta"
                 }
               }
             }
@@ -2387,7 +2169,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -2409,7 +2208,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -2436,17 +2252,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoSnDTO"
+                  "$ref": "#/components/schemas/GrupoSnDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoSnDTO"
+                  "$ref": "#/components/schemas/GrupoSnDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GrupoSnDTO"
+                  "$ref": "#/components/schemas/GrupoSnDTORespuesta"
                 }
               }
             }
@@ -2476,26 +2292,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoSnDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoSnDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoSnDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoSnDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoSnDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoSnDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -2514,26 +2321,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoSnDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoSnDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoSnDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoSnDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GrupoSnDTO"
-                  }
+                  "$ref": "#/components/schemas/GrupoSnDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -2565,7 +2363,601 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaArticulo/{id}": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaArticulo/PorNombre/{name}": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaArticulo/Contenga/{name}": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaArticulo": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GrupoUnidadMedidaArticulo"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaDetArticulo/{grpMedidaEntry}/{numLinea}": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaDetArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "grpMedidaEntry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "numLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "GrupoUnidadMedidaDetArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "grpMedidaEntry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "numLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GrupoUnidadMedidaDetArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "grpMedidaEntry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "numLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaDetArticulo/PorGrupo/{grpMedidaEntry}": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaDetArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "grpMedidaEntry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/GrupoUnidadMedidaDetArticulo": {
+      "get": {
+        "tags": [
+          "GrupoUnidadMedidaDetArticulo"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GrupoUnidadMedidaDetArticulo"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -2593,17 +2985,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListadoPrecioDTO"
+                  "$ref": "#/components/schemas/ListadoPrecioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListadoPrecioDTO"
+                  "$ref": "#/components/schemas/ListadoPrecioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListadoPrecioDTO"
+                  "$ref": "#/components/schemas/ListadoPrecioDTORespuesta"
                 }
               }
             }
@@ -2647,7 +3039,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -2669,7 +3078,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -2696,17 +3122,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListadoPrecioDTO"
+                  "$ref": "#/components/schemas/ListadoPrecioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListadoPrecioDTO"
+                  "$ref": "#/components/schemas/ListadoPrecioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListadoPrecioDTO"
+                  "$ref": "#/components/schemas/ListadoPrecioDTORespuesta"
                 }
               }
             }
@@ -2736,26 +3162,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ListadoPrecioDTO"
-                  }
+                  "$ref": "#/components/schemas/ListadoPrecioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ListadoPrecioDTO"
-                  }
+                  "$ref": "#/components/schemas/ListadoPrecioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ListadoPrecioDTO"
-                  }
+                  "$ref": "#/components/schemas/ListadoPrecioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -2774,26 +3191,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ListadoPrecioDTO"
-                  }
+                  "$ref": "#/components/schemas/ListadoPrecioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ListadoPrecioDTO"
-                  }
+                  "$ref": "#/components/schemas/ListadoPrecioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ListadoPrecioDTO"
-                  }
+                  "$ref": "#/components/schemas/ListadoPrecioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -2825,267 +3233,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/MedidaArticulo/{id}": {
-      "get": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
             "description": "Success",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedidaArticuloDTO"
+                  "$ref": "#/components/schemas/Int32Respuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedidaArticuloDTO"
+                  "$ref": "#/components/schemas/Int32Respuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MedidaArticuloDTO"
+                  "$ref": "#/components/schemas/Int32Respuesta"
                 }
               }
             }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedidaArticuloActualizarDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedidaArticuloActualizarDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedidaArticuloActualizarDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/MedidaArticulo/PorCodigo/{codigo}": {
-      "get": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "codigo",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedidaArticuloDTO"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedidaArticuloDTO"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MedidaArticuloDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/MedidaArticulo/Contenga/{name}": {
-      "get": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedidaArticuloDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedidaArticuloDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedidaArticuloDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/MedidaArticulo": {
-      "get": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedidaArticuloDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedidaArticuloDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MedidaArticuloDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "MedidaArticulo"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedidaArticuloCrearDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedidaArticuloCrearDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/MedidaArticuloCrearDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
           }
         }
       }
@@ -3112,17 +3277,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonedaDTO"
+                  "$ref": "#/components/schemas/MonedaDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonedaDTO"
+                  "$ref": "#/components/schemas/MonedaDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonedaDTO"
+                  "$ref": "#/components/schemas/MonedaDTORespuesta"
                 }
               }
             }
@@ -3165,7 +3330,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -3186,7 +3368,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -3213,17 +3412,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonedaDTO"
+                  "$ref": "#/components/schemas/MonedaDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonedaDTO"
+                  "$ref": "#/components/schemas/MonedaDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MonedaDTO"
+                  "$ref": "#/components/schemas/MonedaDTORespuesta"
                 }
               }
             }
@@ -3253,26 +3452,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3302,26 +3492,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3340,26 +3521,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MonedaDTO"
-                  }
+                  "$ref": "#/components/schemas/MonedaDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3391,7 +3563,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -3418,17 +3607,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MunicipioDTO"
+                  "$ref": "#/components/schemas/MunicipioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MunicipioDTO"
+                  "$ref": "#/components/schemas/MunicipioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MunicipioDTO"
+                  "$ref": "#/components/schemas/MunicipioDTORespuesta"
                 }
               }
             }
@@ -3471,7 +3660,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -3492,7 +3698,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -3519,17 +3742,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MunicipioDTO"
+                  "$ref": "#/components/schemas/MunicipioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MunicipioDTO"
+                  "$ref": "#/components/schemas/MunicipioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MunicipioDTO"
+                  "$ref": "#/components/schemas/MunicipioDTORespuesta"
                 }
               }
             }
@@ -3559,26 +3782,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3608,26 +3822,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3646,26 +3851,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MunicipioDTO"
-                  }
+                  "$ref": "#/components/schemas/MunicipioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3697,7 +3893,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -3724,17 +3937,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/NumeracionDocumentoDTO"
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NumeracionDocumentoDTO"
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NumeracionDocumentoDTO"
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTORespuesta"
                 }
               }
             }
@@ -3777,7 +3990,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -3798,7 +4028,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -3825,26 +4072,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3863,26 +4101,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -3914,7 +4143,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -3941,17 +4187,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
+                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
+                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
+                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTORespuesta"
                 }
               }
             }
@@ -3994,7 +4240,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -4015,7 +4278,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4031,26 +4311,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
-                  }
+                  "$ref": "#/components/schemas/NumeracionDocumentoDetDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4082,7 +4353,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4109,17 +4397,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaisDTO"
+                  "$ref": "#/components/schemas/PaisDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaisDTO"
+                  "$ref": "#/components/schemas/PaisDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaisDTO"
+                  "$ref": "#/components/schemas/PaisDTORespuesta"
                 }
               }
             }
@@ -4162,7 +4450,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -4183,7 +4488,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4210,17 +4532,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaisDTO"
+                  "$ref": "#/components/schemas/PaisDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaisDTO"
+                  "$ref": "#/components/schemas/PaisDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaisDTO"
+                  "$ref": "#/components/schemas/PaisDTORespuesta"
                 }
               }
             }
@@ -4250,26 +4572,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4299,26 +4612,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4337,26 +4641,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaisDTO"
-                  }
+                  "$ref": "#/components/schemas/PaisDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4388,7 +4683,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4415,17 +4727,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SocioNegocioDTO"
+                  "$ref": "#/components/schemas/SocioNegocioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SocioNegocioDTO"
+                  "$ref": "#/components/schemas/SocioNegocioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SocioNegocioDTO"
+                  "$ref": "#/components/schemas/SocioNegocioDTORespuesta"
                 }
               }
             }
@@ -4468,7 +4780,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -4489,7 +4818,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4516,17 +4862,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/SocioNegocioDTO"
+                  "$ref": "#/components/schemas/SocioNegocioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SocioNegocioDTO"
+                  "$ref": "#/components/schemas/SocioNegocioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SocioNegocioDTO"
+                  "$ref": "#/components/schemas/SocioNegocioDTORespuesta"
                 }
               }
             }
@@ -4556,26 +4902,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4605,26 +4942,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4643,26 +4971,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/SocioNegocioDTO"
-                  }
+                  "$ref": "#/components/schemas/SocioNegocioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4694,7 +5013,317 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UnidadMedidaArticulo/{id}": {
+      "get": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadMedidaArticuloActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadMedidaArticuloActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadMedidaArticuloActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UnidadMedidaArticulo/PorCodigo/{codigo}": {
+      "get": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "codigo",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UnidadMedidaArticulo/Contenga/{name}": {
+      "get": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UnidadMedidaArticulo": {
+      "get": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnidadMedidaArticuloDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UnidadMedidaArticulo"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadMedidaArticuloCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadMedidaArticuloCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnidadMedidaArticuloCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4722,17 +5351,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsuarioDTO"
+                  "$ref": "#/components/schemas/UsuarioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsuarioDTO"
+                  "$ref": "#/components/schemas/UsuarioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsuarioDTO"
+                  "$ref": "#/components/schemas/UsuarioDTORespuesta"
                 }
               }
             }
@@ -4776,7 +5405,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       },
@@ -4798,7 +5444,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -4825,17 +5488,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsuarioDTO"
+                  "$ref": "#/components/schemas/UsuarioDTORespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsuarioDTO"
+                  "$ref": "#/components/schemas/UsuarioDTORespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UsuarioDTO"
+                  "$ref": "#/components/schemas/UsuarioDTORespuesta"
                 }
               }
             }
@@ -4865,26 +5528,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UsuarioDTO"
-                  }
+                  "$ref": "#/components/schemas/UsuarioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UsuarioDTO"
-                  }
+                  "$ref": "#/components/schemas/UsuarioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UsuarioDTO"
-                  }
+                  "$ref": "#/components/schemas/UsuarioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4903,26 +5557,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UsuarioDTO"
-                  }
+                  "$ref": "#/components/schemas/UsuarioDTOIEnumerableRespuesta"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UsuarioDTO"
-                  }
+                  "$ref": "#/components/schemas/UsuarioDTOIEnumerableRespuesta"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UsuarioDTO"
-                  }
+                  "$ref": "#/components/schemas/UsuarioDTOIEnumerableRespuesta"
                 }
               }
             }
@@ -4954,7 +5599,24 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
           }
         }
       }
@@ -5088,6 +5750,42 @@
         },
         "additionalProperties": false
       },
+      "AlmacenDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlmacenDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlmacenDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/AlmacenDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ArticuloActualizarDTO": {
         "type": "object",
         "properties": {
@@ -5104,7 +5802,7 @@
             "format": "int32",
             "nullable": true
           },
-          "codigoGrpMedida": {
+          "codigoGrpUnidadMedida": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -5206,7 +5904,7 @@
             "format": "int32",
             "nullable": true
           },
-          "codigoGrpMedida": {
+          "codigoGrpUnidadMedida": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -5305,7 +6003,7 @@
             "format": "int32",
             "nullable": true
           },
-          "codigoGrpMedida": {
+          "codigoGrpUnidadMedida": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -5382,6 +6080,58 @@
             "nullable": true
           },
           "comentarios": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ArticuloDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArticuloDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ArticuloDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/ArticuloDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BooleanRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "boolean"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -5705,6 +6455,42 @@
         },
         "additionalProperties": false
       },
+      "CotizacionDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CotizacionDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CotizacionDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/CotizacionDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DepartamentoActualizarDTO": {
         "type": "object",
         "properties": {
@@ -5749,6 +6535,42 @@
             "nullable": true
           },
           "nombre": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepartamentoDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartamentoDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepartamentoDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/DepartamentoDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -5892,14 +6714,46 @@
         },
         "additionalProperties": false
       },
+      "DireccionSocioNegocioDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DireccionSocioNegocioDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/DireccionSocioNegocioDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FabricanteArticuloActualizarDTO": {
         "type": "object",
         "properties": {
           "nombre": {
-            "type": "string",
-            "nullable": true
-          },
-          "bloqueado": {
             "type": "string",
             "nullable": true
           }
@@ -5915,10 +6769,6 @@
           "nombre": {
             "minLength": 1,
             "type": "string"
-          },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5933,8 +6783,40 @@
           "nombre": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FabricanteArticuloDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FabricanteArticuloDTO"
+            },
+            "nullable": true
           },
-          "bloqueado": {
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FabricanteArticuloDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/FabricanteArticuloDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -5982,145 +6864,36 @@
         },
         "additionalProperties": false
       },
-      "GrupoMedidaArticuloActualizarDTO": {
+      "GrupoArticuloDTOIEnumerableRespuesta": {
         "type": "object",
         "properties": {
-          "nombre": {
-            "type": "string",
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrupoArticuloDTO"
+            },
             "nullable": true
           },
-          "bloqueado": {
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "GrupoMedidaArticuloCrearDTO": {
-        "required": [
-          "nombre"
-        ],
+      "GrupoArticuloDTORespuesta": {
         "type": "object",
         "properties": {
-          "nombre": {
-            "minLength": 1,
-            "type": "string"
+          "dato": {
+            "$ref": "#/components/schemas/GrupoArticuloDTO"
           },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GrupoMedidaArticuloDTO": {
-        "type": "object",
-        "properties": {
-          "codigo": {
-            "type": "integer",
-            "format": "int32"
+          "resultado": {
+            "type": "boolean"
           },
-          "nombre": {
-            "type": "string",
-            "nullable": true
-          },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GrupoMedidaDetArticuloActualizarDTO": {
-        "type": "object",
-        "properties": {
-          "codigoGrpMedida": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "codigoMedida": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "cantidadBase": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "cantidadEmpaque": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GrupoMedidaDetArticuloCrearDTO": {
-        "required": [
-          "codigoGrpMedida"
-        ],
-        "type": "object",
-        "properties": {
-          "codigoGrpMedida": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "codigoMedida": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "cantidadBase": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "cantidadEmpaque": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GrupoMedidaDetArticuloDTO": {
-        "type": "object",
-        "properties": {
-          "codigo": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "codigoGrpMedida": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "codigoMedida": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "cantidadBase": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "cantidadEmpaque": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "bloqueado": {
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -6134,6 +6907,10 @@
             "type": "string",
             "nullable": true
           },
+          "tipoGrupo": {
+            "type": "string",
+            "nullable": true
+          },
           "bloqueado": {
             "type": "string",
             "nullable": true
@@ -6143,12 +6920,18 @@
       },
       "GrupoSnCrearDTO": {
         "required": [
-          "nombre"
+          "nombre",
+          "tipoGrupo"
         ],
         "type": "object",
         "properties": {
           "nombre": {
             "minLength": 1,
+            "type": "string"
+          },
+          "tipoGrupo": {
+            "maxLength": 1,
+            "minLength": 0,
             "type": "string"
           },
           "bloqueado": {
@@ -6161,7 +6944,7 @@
       "GrupoSnDTO": {
         "type": "object",
         "properties": {
-          "codigo": {
+          "entry": {
             "type": "integer",
             "format": "int32"
           },
@@ -6169,7 +6952,320 @@
             "type": "string",
             "nullable": true
           },
+          "tipoGrupo": {
+            "type": "string",
+            "nullable": true
+          },
           "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoSnDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrupoSnDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoSnDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/GrupoSnDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaArticuloActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseMedida": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaArticuloCrearDTO": {
+        "required": [
+          "baseMedida",
+          "nombre"
+        ],
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "baseMedida": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaArticuloDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseMedida": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaArticuloDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaArticuloDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/GrupoUnidadMedidaArticuloDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaDetArticuloActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "medidaEntry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cantAlternativa": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cantBase": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pesoFactor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "udfFactor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "activo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaDetArticuloCrearDTO": {
+        "required": [
+          "grpMedidaEntry",
+          "medidaEntry"
+        ],
+        "type": "object",
+        "properties": {
+          "grpMedidaEntry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "medidaEntry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cantAlternativa": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cantBase": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pesoFactor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "udfFactor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "activo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaDetArticuloDTO": {
+        "type": "object",
+        "properties": {
+          "grpMedidaEntry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numLinea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "medidaEntry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cantAlternativa": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cantBase": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pesoFactor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "udfFactor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "activo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaDetArticuloDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GrupoUnidadMedidaDetArticuloDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/GrupoUnidadMedidaDetArticuloDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Int32Respuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -6210,7 +7306,7 @@
       "ListadoPrecioDTO": {
         "type": "object",
         "properties": {
-          "codigo": {
+          "entry": {
             "type": "integer",
             "format": "int32"
           },
@@ -6219,6 +7315,42 @@
             "nullable": true
           },
           "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListadoPrecioDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListadoPrecioDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListadoPrecioDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/ListadoPrecioDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -6269,136 +7401,16 @@
         },
         "additionalProperties": false
       },
-      "MedidaArticuloActualizarDTO": {
+      "LoginResponseDTORespuesta": {
         "type": "object",
         "properties": {
-          "codigo": {
-            "type": "string",
-            "nullable": true
+          "dato": {
+            "$ref": "#/components/schemas/LoginResponseDTO"
           },
-          "nombre": {
-            "type": "string",
-            "nullable": true
+          "resultado": {
+            "type": "boolean"
           },
-          "largo": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ancho": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "altura": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "volumen": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "peso": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MedidaArticuloCrearDTO": {
-        "required": [
-          "codigo"
-        ],
-        "type": "object",
-        "properties": {
-          "codigo": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "nombre": {
-            "type": "string",
-            "nullable": true
-          },
-          "largo": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ancho": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "altura": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "volumen": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "peso": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "bloqueado": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MedidaArticuloDTO": {
-        "type": "object",
-        "properties": {
-          "entry": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "codigo": {
-            "type": "string",
-            "nullable": true
-          },
-          "nombre": {
-            "type": "string",
-            "nullable": true
-          },
-          "largo": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ancho": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "altura": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "volumen": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "peso": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "bloqueado": {
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -6497,6 +7509,42 @@
         },
         "additionalProperties": false
       },
+      "MonedaDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonedaDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonedaDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/MonedaDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MunicipioActualizarDTO": {
         "type": "object",
         "properties": {
@@ -6551,6 +7599,42 @@
             "nullable": true
           },
           "nombre": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MunicipioDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MunicipioDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MunicipioDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/MunicipioDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -6620,6 +7704,42 @@
             "nullable": true
           },
           "subTipoDoc": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NumeracionDocumentoDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NumeracionDocumentoDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NumeracionDocumentoDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/NumeracionDocumentoDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -6806,6 +7926,42 @@
         },
         "additionalProperties": false
       },
+      "NumeracionDocumentoDetDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NumeracionDocumentoDetDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/NumeracionDocumentoDetDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PaisActualizarDTO": {
         "type": "object",
         "properties": {
@@ -6877,6 +8033,42 @@
             "nullable": true
           },
           "isonumerico": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaisDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaisDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaisDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/PaisDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }
@@ -7065,6 +8257,231 @@
         },
         "additionalProperties": false
       },
+      "SocioNegocioDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SocioNegocioDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SocioNegocioDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/SocioNegocioDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StringRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "string",
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnidadMedidaArticuloActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "largo": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ancho": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "altura": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "volumen": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "peso": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnidadMedidaArticuloCrearDTO": {
+        "required": [
+          "codigo"
+        ],
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "nombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "largo": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ancho": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "altura": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "volumen": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "peso": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnidadMedidaArticuloDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "codigo": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "largo": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ancho": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "altura": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "volumen": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "peso": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bloqueado": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnidadMedidaArticuloDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnidadMedidaArticuloDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnidadMedidaArticuloDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/UnidadMedidaArticuloDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UsuarioActualizarDTO": {
         "type": "object",
         "properties": {
@@ -7168,6 +8585,42 @@
             "nullable": true
           },
           "ultimaContra": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsuarioDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsuarioDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsuarioDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/UsuarioDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
             "type": "string",
             "nullable": true
           }

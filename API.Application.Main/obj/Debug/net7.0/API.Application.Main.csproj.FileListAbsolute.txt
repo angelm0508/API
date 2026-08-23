@@ -41,3 +41,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Main\obj\Debug\net7.
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Main\obj\Debug\net7.0\refint\API.Application.Main.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Main\obj\Debug\net7.0\API.Application.Main.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.Main\obj\Debug\net7.0\ref\API.Application.Main.dll
+C:\temp\build_verify_out\API.Application.Main.deps.json
+C:\temp\build_verify_out\API.Application.Main.dll
+C:\temp\build_verify_out\API.Application.Main.pdb
+C:\temp\api_build_gruposn\API.Application.Main.deps.json
+C:\temp\api_build_gruposn\API.Application.Main.dll
+C:\temp\api_build_gruposn\API.Application.Main.pdb

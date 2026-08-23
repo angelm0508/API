@@ -109,17 +109,17 @@ namespace API.Service.WebApi
             services.AddTransient<IFabricanteArticuloDomain, FabricanteArticuloDomain>();
             services.AddTransient<IFabricanteArticuloApplication, FabricanteArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<MedidaArticulo, int>, MedidaArticuloRepositorio>();
-            services.AddTransient<IMedidaArticuloDomain, MedidaArticuloDomain>();
-            services.AddTransient<IMedidaArticuloApplication, MedidaArticuloApplication>();
+            services.AddTransient<IRepositorioGenerico<UnidadMedidaArticulo, int>, UnidadMedidaArticuloRepositorio>();
+            services.AddTransient<IUnidadMedidaArticuloDomain, UnidadMedidaArticuloDomain>();
+            services.AddTransient<IUnidadMedidaArticuloApplication, UnidadMedidaArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<GrupoMedidaArticulo, int>, GrupoMedidaArticuloRepositorio>();
-            services.AddTransient<IGrupoMedidaArticuloDomain, GrupoMedidaArticuloDomain>();
-            services.AddTransient<IGrupoMedidaArticuloApplication, GrupoMedidaArticuloApplication>();
+            services.AddTransient<IRepositorioGenerico<GrupoUnidadMedidaArticulo, int>, GrupoUnidadMedidaArticuloRepositorio>();
+            services.AddTransient<IGrupoUnidadMedidaArticuloDomain, GrupoUnidadMedidaArticuloDomain>();
+            services.AddTransient<IGrupoUnidadMedidaArticuloApplication, GrupoUnidadMedidaArticuloApplication>();
 
-            services.AddTransient<IRepositorioGenerico<GrupoMedidaDetArticulo, int>, GrupoMedidaDetArticuloRepositorio>();
-            services.AddTransient<IGrupoMedidaDetArticuloDomain, GrupoMedidaDetArticuloDomain>();
-            services.AddTransient<IGrupoMedidaDetArticuloApplication, GrupoMedidaDetArticuloApplication>();
+            services.AddTransient<IRepositorioGenerico<GrupoUnidadMedidaDetArticulo, (int GrpMedidaEntry, int NumLinea)>, GrupoUnidadMedidaDetArticuloRepositorio>();
+            services.AddTransient<IGrupoUnidadMedidaDetArticuloDomain, GrupoUnidadMedidaDetArticuloDomain>();
+            services.AddTransient<IGrupoUnidadMedidaDetArticuloApplication, GrupoUnidadMedidaDetArticuloApplication>();
 
             services.AddTransient<IRepositorioGenerico<Articulo, string>, ArticuloRepositorio>();
             services.AddTransient<IArticuloDomain, ArticuloDomain>();

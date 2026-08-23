@@ -21,3 +21,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\n
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\refint\API.Infraestructure.Data.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\API.Infraestructure.Data.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Infraestructure.Data\obj\Debug\net7.0\ref\API.Infraestructure.Data.dll
+C:\temp\build_verify_out\API.Infraestructure.Data.deps.json
+C:\temp\build_verify_out\API.Infraestructure.Data.dll
+C:\temp\build_verify_out\API.Infraestructure.Data.pdb
+C:\temp\api_build_gruposn\API.Infraestructure.Data.deps.json
+C:\temp\api_build_gruposn\API.Infraestructure.Data.dll
+C:\temp\api_build_gruposn\API.Infraestructure.Data.pdb

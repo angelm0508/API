@@ -21,3 +21,9 @@ C:\Users\Miguel\source\repos\angelm0508\API\API.Application.DTO\obj\Debug\net7.0
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.DTO\obj\Debug\net7.0\refint\API.Application.DTO.dll
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.DTO\obj\Debug\net7.0\API.Application.DTO.pdb
 C:\Users\Miguel\source\repos\angelm0508\API\API.Application.DTO\obj\Debug\net7.0\ref\API.Application.DTO.dll
+C:\temp\build_verify_out\API.Application.DTO.deps.json
+C:\temp\build_verify_out\API.Application.DTO.dll
+C:\temp\build_verify_out\API.Application.DTO.pdb
+C:\temp\api_build_gruposn\API.Application.DTO.deps.json
+C:\temp\api_build_gruposn\API.Application.DTO.dll
+C:\temp\api_build_gruposn\API.Application.DTO.pdb

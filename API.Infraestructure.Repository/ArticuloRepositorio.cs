@@ -11,7 +11,7 @@ namespace API.Infraestructure.Repository
         {
             return await DbSet
                 .Include(x => x.CodigoGrupoNavigation)
-                .Include(x => x.CodigoGrpMedidaNavigation)
+                .Include(x => x.CodigoGrpUnidadMedidaNavigation)
                 .Include(x => x.FabricanteEntryNavigation)
                 .FirstOrDefaultAsync(x => x.Codigo == id);
         }

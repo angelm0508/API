@@ -1,9 +1,9 @@
 ﻿using API.Application.DTO.articulo.articulo;
 using API.Application.DTO.articulo.grupo_articulo;
 using API.Application.DTO.articulo.fabricante_articulo;
-using API.Application.DTO.articulo.medida_articulo;
-using API.Application.DTO.articulo.grupo_medida_articulo;
-using API.Application.DTO.articulo.grupo_medida_det_articulo;
+using API.Application.DTO.articulo.unidad_medida_articulo;
+using API.Application.DTO.articulo.grupo_unidad_medida_articulo;
+using API.Application.DTO.articulo.grupo_unidad_medida_det_articulo;
 using API.Application.DTO.articulo.grupo_sn;
 using API.Application.DTO.precio.listado_precio;
 using API.Application.DTO.numeracion.numeracion_documento_det;
@@ -79,20 +79,20 @@ namespace API.Transversal.Mapper
             CreateMap<FabricanteArticuloCrearDTO, FabricanteArticulo>();
             CreateMap<FabricanteArticuloActualizarDTO, FabricanteArticulo>();
 
-            // MedidaArticulo
-            CreateMap<MedidaArticulo, MedidaArticuloDTO>();
-            CreateMap<MedidaArticuloCrearDTO, MedidaArticulo>();
-            CreateMap<MedidaArticuloActualizarDTO, MedidaArticulo>();
+            // UnidadMedidaArticulo
+            CreateMap<UnidadMedidaArticulo, UnidadMedidaArticuloDTO>();
+            CreateMap<UnidadMedidaArticuloCrearDTO, UnidadMedidaArticulo>();
+            CreateMap<UnidadMedidaArticuloActualizarDTO, UnidadMedidaArticulo>();
 
-            // GrupoMedidaArticulo
-            CreateMap<GrupoMedidaArticulo, GrupoMedidaArticuloDTO>();
-            CreateMap<GrupoMedidaArticuloCrearDTO, GrupoMedidaArticulo>();
-            CreateMap<GrupoMedidaArticuloActualizarDTO, GrupoMedidaArticulo>();
+            // GrupoUnidadMedidaArticulo
+            CreateMap<GrupoUnidadMedidaArticulo, GrupoUnidadMedidaArticuloDTO>();
+            CreateMap<GrupoUnidadMedidaArticuloCrearDTO, GrupoUnidadMedidaArticulo>();
+            CreateMap<GrupoUnidadMedidaArticuloActualizarDTO, GrupoUnidadMedidaArticulo>();
 
-            // GrupoMedidaDetArticulo
-            CreateMap<GrupoMedidaDetArticulo, GrupoMedidaDetArticuloDTO>();
-            CreateMap<GrupoMedidaDetArticuloCrearDTO, GrupoMedidaDetArticulo>();
-            CreateMap<GrupoMedidaDetArticuloActualizarDTO, GrupoMedidaDetArticulo>();
+            // GrupoUnidadMedidaDetArticulo
+            CreateMap<GrupoUnidadMedidaDetArticulo, GrupoUnidadMedidaDetArticuloDTO>();
+            CreateMap<GrupoUnidadMedidaDetArticuloCrearDTO, GrupoUnidadMedidaDetArticulo>();
+            CreateMap<GrupoUnidadMedidaDetArticuloActualizarDTO, GrupoUnidadMedidaDetArticulo>();
 
             // GrupoSn
             CreateMap<GrupoSn, GrupoSnDTO>();
