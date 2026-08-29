@@ -42,6 +42,12 @@ namespace API.Domain.Core
                 throw new Exception("El almacén está bloqueado y no se puede eliminar.");
             }
 
+            var queryable = await _repoAlmacen.ObtenerTodoAsync();
+            if (await queryable.CountAsync() <= 1)
+            {
+                throw new Exception("No se puede eliminar el almacén porque es el último registro disponible.");
+            }
+
             return await _repoAlmacen.EliminarAsync(codigo);
         }
 
