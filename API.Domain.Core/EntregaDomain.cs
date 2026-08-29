@@ -8,7 +8,7 @@ namespace API.Domain.Core
     public class EntregaDomain : IEntregaDomain
     {
         // Código de objeto/documento reservado para Entregas -- exigido por el CHECK constraint
-        // de la tabla (TipoObjeto='4'). Se fuerza siempre en el servidor, sin confiar en lo que
+        // de la tabla (TipoObjeto='5'). Se fuerza siempre en el servidor, sin confiar en lo que
         // envíe el cliente.
         private const string TipoObjetoEntrega = "5";
 
