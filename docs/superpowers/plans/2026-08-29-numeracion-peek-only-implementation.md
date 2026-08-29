@@ -265,7 +265,13 @@ namespace API.Service.WebApi.Tests.TestHelpers
     internal class TestAsyncQueryProvider<T> : IAsyncQueryProvider
     {
         private readonly IQueryProvider _inner;
-        public TestAsyncQueryProvider(IQueryable<T> source) => _inner = source.Provider;
+        // NOTA: no usar "source.Provider" aquí -- TestAsyncEnumerable<T> sobreescribe IQueryable.Provider
+        // devolviendo siempre "new TestAsyncQueryProvider<T>(this)", así que leer source.Provider
+        // reentra a este mismo constructor indefinidamente (stack overflow, 100% reproducible). En su
+        // lugar se envuelve la misma expresión en un EnumerableQuery<T> "plano" (sin la sobreescritura)
+        // para obtener el proveedor real de LINQ-to-Objects. (Bug encontrado y corregido durante la
+        // implementación del Task 2 -- ver ledger.)
+        public TestAsyncQueryProvider(IQueryable<T> source) => _inner = ((IQueryable)new EnumerableQuery<T>(source.Expression)).Provider;
 
         public IQueryable CreateQuery(Expression expression) => new TestAsyncEnumerable<T>(expression);
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression) => new TestAsyncEnumerable<TElement>(expression);
