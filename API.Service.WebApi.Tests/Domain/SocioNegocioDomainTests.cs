@@ -56,6 +56,20 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task InsertarAsync_SerieAutogenerada_IgnoraElCodigoEnviadoPorElCliente()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(serie);
+            _repoSocioMock.Setup(r => r.InsertarAsync(It.IsAny<SocioNegocio>())).ReturnsAsync((SocioNegocio s) => s);
+
+            var obj = new SocioNegocio { Serie = 9, Codigo = "CODIGO-DEL-CLIENTE" };
+            var codigo = await _domain.InsertarAsync(obj);
+
+            Assert.Equal("CLI-0005", codigo);
+            Assert.Equal("CLI-0005", obj.Codigo);
+        }
+
+        [Fact]
         public async Task InsertarAsync_SerieManual_RespetaCodigoDelCliente()
         {
             var serie = SerieAutogenerada(sigNumero: 5);
