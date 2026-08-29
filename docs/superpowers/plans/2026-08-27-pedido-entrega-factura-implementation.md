@@ -8867,7 +8867,7 @@ Idéntico a `Views/Cotizaciones/_Form.cshtml`, cambiando el modelo, el título, 
 }
 
 <div class="modal-header">
-    <h5 class="modal-title">@(esEdicion ? "Editar factura" : "Nuevo factura")</h5>
+    <h5 class="modal-title">@(esEdicion ? "Editar factura" : "Nueva factura")</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
@@ -8973,7 +8973,7 @@ Idéntico a `Views/Cotizaciones/_Form.cshtml`, cambiando el modelo, el título, 
 
     @if (!esEdicion)
     {
-        <p class="text-muted small">Las líneas agregadas aquí se guardarán junto con el factura.</p>
+        <p class="text-muted small">Las líneas agregadas aquí se guardarán junto con la factura.</p>
     }
 
     <div class="table-responsive">
@@ -9118,7 +9118,7 @@ $(function () {
 
     $('#tblFacturas').on('click', '.btn-eliminar', async function () {
         const entry = $(this).data('entry');
-        const confirmado = await App.confirmarEliminar(`Se eliminará el factura #${entry}.`);
+        const confirmado = await App.confirmarEliminar(`Se eliminará la factura #${entry}.`);
         if (!confirmado) return;
 
         const respuesta = await App.eliminar(`/Facturas/Eliminar?entry=${entry}`);
@@ -9126,7 +9126,7 @@ $(function () {
             App.mostrarError(respuesta.mensaje);
             return;
         }
-        App.mostrarExito('Factura eliminado correctamente.');
+        App.mostrarExito('Factura eliminada correctamente.');
         recargarTabla();
     });
 
@@ -9195,7 +9195,7 @@ $(function () {
         }
 
         // El número de documento (No. documento) no se solicita aquí para series no manuales: el
-        // servidor lo calcula y avanza el consecutivo al registrar el factura (ver
+        // servidor lo calcula y avanza el consecutivo al registrar la factura (ver
         // FacturaDomain.InsertarAsync en la API), no antes. Para series Manual, el campo #NumDoc
         // está habilitado y su valor viaja normalmente en recolectarFormulario.
         const datos = App.recolectarFormulario('#formFactura');
@@ -9242,9 +9242,9 @@ $(function () {
 
             const sufijoNumDoc = respuestaCabecera.numDoc != null ? ` No. documento: ${respuestaCabecera.numDoc}.` : '';
             if (fallidas > 0) {
-                await App.mostrarExito(`Factura creado correctamente. Líneas guardadas: ${exitosas} de ${exitosas + fallidas}.${sufijoNumDoc}`);
+                await App.mostrarExito(`Factura creada correctamente. Líneas guardadas: ${exitosas} de ${exitosas + fallidas}.${sufijoNumDoc}`);
             } else {
-                await App.mostrarExito(`Factura creado correctamente.${sufijoNumDoc}`);
+                await App.mostrarExito(`Factura creada correctamente.${sufijoNumDoc}`);
             }
             bootstrap.Modal.getInstance(document.getElementById('modalFormulario')).hide();
             recargarTabla();
@@ -9258,7 +9258,7 @@ $(function () {
         }
 
         bootstrap.Modal.getInstance(document.getElementById('modalFormulario')).hide();
-        App.mostrarExito('Factura actualizado correctamente.');
+        App.mostrarExito('Factura actualizada correctamente.');
         recargarTabla();
     });
 
