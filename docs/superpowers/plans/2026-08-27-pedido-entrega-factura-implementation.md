@@ -3408,7 +3408,7 @@ En `OnModelCreating`, agregar (después del bloque de `CotizacionDetalle`, antes
             entity.Property(e => e.PrctjeImpuesto).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TipoObjeto)
                 .HasMaxLength(11)
-                .HasDefaultValueSql("('4')");
+                .HasDefaultValueSql("('5')");
             entity.Property(e => e.TotalBruto).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TotalDesc).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
@@ -6585,7 +6585,7 @@ En `OnModelCreating`, agregar (después del bloque de `CotizacionDetalle`, antes
             entity.Property(e => e.PrctjeImpuesto).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TipoObjeto)
                 .HasMaxLength(11)
-                .HasDefaultValueSql("('4')");
+                .HasDefaultValueSql("('6')");
             entity.Property(e => e.TotalBruto).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TotalDesc).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
