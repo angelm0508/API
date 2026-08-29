@@ -17,6 +17,8 @@ namespace API.Application.DTO.cotizacion
         public string? NombreSn { get; set; }
         public string? Direccion { get; set; }
         public string? MonedaDoc { get; set; }
+        public int? BaseTipo { get; set; }
+        public int? BaseEntry { get; set; }
         public decimal? PrctjeImpuesto { get; set; }
         public decimal? TotalImp { get; set; }
         public decimal? PrctjeDesc { get; set; }

@@ -47,11 +47,19 @@ public partial class Articulo
 
     public string? Comentarios { get; set; }
 
+    public int Serie { get; set; }
+
     public virtual Almacen? AlmacenDefectoNavigation { get; set; }
+
+    public virtual ICollection<CotizacionDetalle> CotizacionDetalles { get; set; } = new List<CotizacionDetalle>();
+
+    public virtual ICollection<PedidoDetalle> PedidoDetalles { get; set; } = new List<PedidoDetalle>();
 
     public virtual GrupoUnidadMedidaArticulo? CodigoGrpUnidadMedidaNavigation { get; set; }
 
     public virtual GrupoArticulo? CodigoGrupoNavigation { get; set; }
 
     public virtual FabricanteArticulo? FabricanteEntryNavigation { get; set; }
+
+    public virtual NumeracionDocumentoDet SerieNavigation { get; set; } = null!;
 }

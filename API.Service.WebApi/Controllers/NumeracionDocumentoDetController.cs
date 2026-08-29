@@ -18,41 +18,54 @@ namespace API.Service.WebApi.Controllers
             _numeracionDocumentoDetApplication = numeracionDocumentoDetApplication;
         }
 
-        [HttpGet("{codigoObj}")]
-        public async Task<ActionResult<Respuesta<NumeracionDocumentoDetDTO>>> Obtener([FromRoute] string codigoObj)
+        [HttpGet("{serie:int}")]
+        public async Task<ActionResult<Respuesta<NumeracionDocumentoDetDTO>>> Obtener([FromRoute] int serie)
         {
-            var numeracionDoc = await _numeracionDocumentoDetApplication.ObtenerAsync(codigoObj);
+            var numeracionDet = await _numeracionDocumentoDetApplication.ObtenerAsync(serie);
 
-            if (!numeracionDoc.Resultado)
+            if (!numeracionDet.Resultado)
             {
-                return BadRequest(numeracionDoc);
+                return BadRequest(numeracionDet);
             }
 
-            if (numeracionDoc.Dato == null)
+            if (numeracionDet.Dato == null)
             {
-                numeracionDoc.Resultado = false;
-                numeracionDoc.Mensaje = "El código del documento de numeración no se encontró.";
-                return NotFound(numeracionDoc);
+                numeracionDet.Resultado = false;
+                numeracionDet.Mensaje = "La línea de detalle no se encontró.";
+                return NotFound(numeracionDet);
             }
 
-            return Ok(numeracionDoc);
+            return Ok(numeracionDet);
+        }
+
+        [HttpGet("PorDocumento/{codigoObj}")]
+        public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>>> ObtenerPorDocumento([FromRoute] string codigoObj)
+        {
+            var numeracionDets = await _numeracionDocumentoDetApplication.ObtenerPorDocumentoAsync(codigoObj);
+
+            if (!numeracionDets.Resultado)
+            {
+                return BadRequest(numeracionDets);
+            }
+
+            return Ok(numeracionDets);
         }
 
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>>> ObtenerTodoAsync()
         {
-            var numeracionDocs = await _numeracionDocumentoDetApplication.ObtenerTodoAsync();
+            var numeracionDets = await _numeracionDocumentoDetApplication.ObtenerTodoAsync();
 
-            if (!numeracionDocs.Resultado)
+            if (!numeracionDets.Resultado)
             {
-                return BadRequest(numeracionDocs);
+                return BadRequest(numeracionDets);
             }
 
-            return Ok(numeracionDocs);
+            return Ok(numeracionDets);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Respuesta<string>>> InsertarAsync([FromBody] NumeracionDocumentoDetCrearDTO obj)
+        public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] NumeracionDocumentoDetCrearDTO obj)
         {
             var insert = await _numeracionDocumentoDetApplication.InsertarAsync(obj);
 
@@ -64,19 +77,19 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
-        [HttpPut("{codigoObj}")]
-        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] string codigoObj, [FromBody] NumeracionDocumentoDetActualizarDTO obj)
+        [HttpPut("{serie:int}")]
+        public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int serie, [FromBody] NumeracionDocumentoDetActualizarDTO obj)
         {
-            var numeracionDoc = await _numeracionDocumentoDetApplication.ObtenerAsync(codigoObj);
+            var numeracionDet = await _numeracionDocumentoDetApplication.ObtenerAsync(serie);
 
-            if (numeracionDoc.Dato == null)
+            if (numeracionDet.Dato == null)
             {
-                numeracionDoc.Resultado = false;
-                numeracionDoc.Mensaje = "El código del documento de numeración no se encontró.";
-                return NotFound(numeracionDoc);
+                numeracionDet.Resultado = false;
+                numeracionDet.Mensaje = "La línea de detalle no se encontró.";
+                return NotFound(numeracionDet);
             }
 
-            var update = await _numeracionDocumentoDetApplication.ActualizarAsync(codigoObj, obj);
+            var update = await _numeracionDocumentoDetApplication.ActualizarAsync(serie, obj);
 
             if (!update.Resultado)
             {
@@ -86,19 +99,19 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
-        [HttpDelete("{codigoObj}")]
-        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] string codigoObj)
+        [HttpDelete("{serie:int}")]
+        public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int serie)
         {
-            var numeracionDoc = await _numeracionDocumentoDetApplication.ObtenerAsync(codigoObj);
+            var numeracionDet = await _numeracionDocumentoDetApplication.ObtenerAsync(serie);
 
-            if (numeracionDoc.Dato == null)
+            if (numeracionDet.Dato == null)
             {
-                numeracionDoc.Resultado = false;
-                numeracionDoc.Mensaje = "El código del documento de numeración no se encontró.";
-                return NotFound(numeracionDoc);
+                numeracionDet.Resultado = false;
+                numeracionDet.Mensaje = "La línea de detalle no se encontró.";
+                return NotFound(numeracionDet);
             }
 
-            var delete = await _numeracionDocumentoDetApplication.EliminarAsync(codigoObj);
+            var delete = await _numeracionDocumentoDetApplication.EliminarAsync(serie);
 
             if (!delete.Resultado)
             {
@@ -106,6 +119,19 @@ namespace API.Service.WebApi.Controllers
             }
 
             return Ok(delete);
+        }
+
+        [HttpPost("GenerarCodigo/{serie:int}")]
+        public async Task<ActionResult<Respuesta<string>>> GenerarCodigoAsync([FromRoute] int serie)
+        {
+            var generado = await _numeracionDocumentoDetApplication.GenerarCodigoAsync(serie);
+
+            if (!generado.Resultado)
+            {
+                return BadRequest(generado);
+            }
+
+            return Ok(generado);
         }
     }
 }

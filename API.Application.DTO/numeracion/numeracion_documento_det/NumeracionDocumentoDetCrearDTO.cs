@@ -7,7 +7,7 @@ namespace API.Application.DTO.numeracion.numeracion_documento_det
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
         public string CodigoObj { get; set; }
 
-        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
+        // No se pide al usuario: se calcula del lado del servidor (ver NumeracionDocumentoDetDomain.InsertarAsync).
         public int Serie { get; set; }
 
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
@@ -24,5 +24,10 @@ namespace API.Application.DTO.numeracion.numeracion_documento_det
 
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
         public string SubTipoDoc { get; set; }
+
+        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
+        public string TipoSerie { get; set; }
+
+        public string? Manual { get; set; }
     }
 }

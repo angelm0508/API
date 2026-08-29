@@ -38,6 +38,12 @@ namespace API.Domain.Core
 
         public async Task<bool> EliminarAsync(int codigo)
         {
+            var queryable = await _repoGenericoFabricanteArticulo.ObtenerTodoAsync();
+            if (await queryable.CountAsync() <= 1)
+            {
+                throw new Exception("No se puede eliminar el fabricante porque es el último registro disponible.");
+            }
+
             return await _repoGenericoFabricanteArticulo.EliminarAsync(codigo);
         }
 

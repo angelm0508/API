@@ -4,8 +4,10 @@ namespace API.Application.DTO.cotizacion
 {
     public class CotizacionCrearDTO
     {
-        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
-        public int NumDoc { get; set; }
+        // Requerido solo cuando la serie elegida es "Manual" -- para series autogeneradas el
+        // servidor calcula el siguiente número al momento de registrar la cotización (ver
+        // CotizacionDomain.InsertarAsync), así que aquí no puede ser obligatorio.
+        public int? NumDoc { get; set; }
 
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
         public int Serie { get; set; }
@@ -23,6 +25,8 @@ namespace API.Application.DTO.cotizacion
         public string? NombreSn { get; set; }
         public string? Direccion { get; set; }
         public string? MonedaDoc { get; set; }
+        public int? BaseTipo { get; set; }
+        public int? BaseEntry { get; set; }
         public decimal? PrctjeImpuesto { get; set; }
         public decimal? TotalImp { get; set; }
         public decimal? PrctjeDesc { get; set; }

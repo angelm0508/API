@@ -26,10 +26,22 @@ namespace API.Domain.Core
         }
         public async Task<bool> ActualizarAsync(string codigo, Almacen obj)
         {
+            var existente = await ObtenerPorCodigoAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El almacén está bloqueado y no se puede modificar.");
+            }
+
             return await _repoAlmacen.ActualizarAsync(codigo, obj);
         }
         public async Task<bool> EliminarAsync(string codigo)
         {
+            var existente = await ObtenerPorCodigoAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El almacén está bloqueado y no se puede eliminar.");
+            }
+
             return await _repoAlmacen.EliminarAsync(codigo);
         }
 

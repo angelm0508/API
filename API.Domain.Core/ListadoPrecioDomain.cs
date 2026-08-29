@@ -22,13 +22,20 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
             }
 
+            // La columna Entry no es autonumérica en la base de datos -- hay que calcular el
+            // siguiente valor manualmente o el insert choca con la clave primaria existente.
+            var queryable = await _repoGenericoListadoPrecio.ObtenerTodoAsync();
+            var maxEntry = await queryable.Select(x => (int?)x.Entry).MaxAsync() ?? 0;
+            obj.Entry = maxEntry + 1;
+
             var insertado = await _repoGenericoListadoPrecio.InsertarAsync(obj);
             return insertado.Entry;
         }
 
         public async Task<bool> ActualizarAsync(int codigo, ListadoPrecio obj)
         {
-            if (await ObtenerAsync(obj.Nombre) != null)
+            var duplicado = await ObtenerAsync(obj.Nombre);
+            if (duplicado != null && duplicado.Entry != codigo)
             {
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
             }

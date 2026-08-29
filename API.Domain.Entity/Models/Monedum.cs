@@ -18,4 +18,6 @@ public partial class Monedum
     public short? TipoReondeo { get; set; }
 
     public virtual ICollection<Cotizacion> Cotizacions { get; set; } = new List<Cotizacion>();
+
+    public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 }

@@ -17,9 +17,9 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(GrupoUnidadMedidaArticulo obj)
         {
-            if (await ObtenerAsync(obj.Nombre) != null)
+            if (await ObtenerPorCodigoAsync(obj.Codigo) != null)
             {
-                throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
+                throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
             var insertado = await _repoGenericoGrupoUnidadMedidaArticulo.InsertarAsync(obj);
@@ -28,16 +28,35 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(int codigo, GrupoUnidadMedidaArticulo obj)
         {
-            if (await ObtenerAsync(obj.Nombre) != null)
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
             {
-                throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
+                throw new Exception("El grupo está bloqueado y no se puede modificar.");
+            }
+
+            var duplicado = await ObtenerPorCodigoAsync(obj.Codigo);
+            if (duplicado != null && duplicado.Entry != codigo)
+            {
+                throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
             return await _repoGenericoGrupoUnidadMedidaArticulo.ActualizarAsync(codigo, obj);
         }
 
+        private async Task<GrupoUnidadMedidaArticulo?> ObtenerPorCodigoAsync(string? codigo)
+        {
+            var queryable = await _repoGenericoGrupoUnidadMedidaArticulo.ObtenerTodoAsync();
+            return await queryable.FirstOrDefaultAsync(x => x.Codigo == codigo);
+        }
+
         public async Task<bool> EliminarAsync(int codigo)
         {
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El grupo está bloqueado y no se puede eliminar.");
+            }
+
             return await _repoGenericoGrupoUnidadMedidaArticulo.EliminarAsync(codigo);
         }
 

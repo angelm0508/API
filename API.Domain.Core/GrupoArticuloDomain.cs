@@ -29,6 +29,12 @@ namespace API.Domain.Core
         // public async Task<>
         public async Task<bool> ActualizarAsync(int codigo, GrupoArticulo obj)
         {
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El grupo está bloqueado y no se puede modificar.");
+            }
+
             if (await ObtenerAsync(obj.Nombre) != null)
             {
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
@@ -38,6 +44,18 @@ namespace API.Domain.Core
         }
         public async Task<bool> EliminarAsync(int codigo)
         {
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El grupo está bloqueado y no se puede eliminar.");
+            }
+
+            var queryable = await _repoGenericoGrupoArticulo.ObtenerTodoAsync();
+            if (await queryable.CountAsync() <= 1)
+            {
+                throw new Exception("No se puede eliminar el grupo de artículo porque es el último registro disponible.");
+            }
+
             return await _repoGenericoGrupoArticulo.EliminarAsync(codigo);
         }
 

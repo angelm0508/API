@@ -47,5 +47,8 @@ namespace API.Application.DTO.articulo.articulo
 
         public string? Comentarios { get; set; }
 
+        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
+        public int Serie { get; set; }
+
     }
 }

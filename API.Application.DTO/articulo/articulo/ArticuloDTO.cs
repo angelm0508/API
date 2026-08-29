@@ -45,5 +45,7 @@ namespace API.Application.DTO.articulo.articulo
         public decimal? Maximo { get; set; }
 
         public string? Comentarios { get; set; }
+
+        public int Serie { get; set; }
     }
 }

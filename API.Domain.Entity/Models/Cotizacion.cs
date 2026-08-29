@@ -37,6 +37,10 @@ public partial class Cotizacion
 
     public string? MonedaDoc { get; set; }
 
+    public int? BaseTipo { get; set; }
+
+    public int? BaseEntry { get; set; }
+
     public decimal? PrctjeImpuesto { get; set; }
 
     public decimal? TotalImp { get; set; }

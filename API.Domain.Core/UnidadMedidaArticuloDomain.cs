@@ -28,6 +28,12 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(int codigo, UnidadMedidaArticulo obj)
         {
+            var actual = await ObtenerAsync(codigo);
+            if (actual != null && actual.Bloqueado == "S")
+            {
+                throw new Exception("La unidad de medida está bloqueada y no se puede modificar.");
+            }
+
             var existente = await ObtenerAsync(obj.Codigo);
             if (existente != null && existente.Entry != codigo)
             {
@@ -39,6 +45,12 @@ namespace API.Domain.Core
 
         public async Task<bool> EliminarAsync(int codigo)
         {
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("La unidad de medida está bloqueada y no se puede eliminar.");
+            }
+
             return await _repoGenericoUnidadMedidaArticulo.EliminarAsync(codigo);
         }
 

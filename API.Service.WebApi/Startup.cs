@@ -177,6 +177,22 @@ namespace API.Service.WebApi
             services.AddTransient<ICotizacionDomain, CotizacionDomain>();
             services.AddTransient<ICotizacionApplication, CotizacionApplication>();
 
+            services.AddTransient<IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)>, CotizacionDetalleRepositorio>();
+            services.AddTransient<ICotizacionDetalleDomain, CotizacionDetalleDomain>();
+            services.AddTransient<ICotizacionDetalleApplication, CotizacionDetalleApplication>();
+
+            services.AddTransient<IRepositorioGenerico<Pedido, int>, PedidoRepositorio>();
+            services.AddTransient<IPedidoDomain, PedidoDomain>();
+            services.AddTransient<IPedidoApplication, PedidoApplication>();
+
+            services.AddTransient<IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)>, PedidoDetalleRepositorio>();
+            services.AddTransient<IPedidoDetalleDomain, PedidoDetalleDomain>();
+            services.AddTransient<IPedidoDetalleApplication, PedidoDetalleApplication>();
+
+            services.AddTransient<IRepositorioGenerico<Impuesto, string>, ImpuestoRepositorio>();
+            services.AddTransient<IImpuestoDomain, ImpuestoDomain>();
+            services.AddTransient<IImpuestoApplication, ImpuestoApplication>();
+
             // Servicios de autenticación
             services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
             services.AddTransient<ITokenService, TokenService>();

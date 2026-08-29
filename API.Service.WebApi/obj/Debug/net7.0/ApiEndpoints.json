@@ -569,6 +569,176 @@
     ]
   },
   {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionDetalleController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/CotizacionDetalle",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.cotizacion.CotizacionDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionDetalleController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/CotizacionDetalle",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.cotizacion.CotizacionDetalleCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionDetalleController",
+    "Method": "Obtener",
+    "RelativePath": "api/CotizacionDetalle/{entry}/{noLinea}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.cotizacion.CotizacionDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionDetalleController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/CotizacionDetalle/{entry}/{noLinea}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.cotizacion.CotizacionDetalleActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionDetalleController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/CotizacionDetalle/{entry}/{noLinea}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.CotizacionDetalleController",
+    "Method": "ObtenerPorCotizacion",
+    "RelativePath": "api/CotizacionDetalle/PorCotizacion/{entry}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.cotizacion.CotizacionDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "API.Service.WebApi.Controllers.DepartamentoController",
     "Method": "ObtenerTodo",
     "RelativePath": "api/Departamento",
@@ -1825,6 +1995,135 @@
     ]
   },
   {
+    "ContainingType": "API.Service.WebApi.Controllers.ImpuestoController",
+    "Method": "ObtenerTodo",
+    "RelativePath": "api/Impuesto",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.impuesto.ImpuestoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ImpuestoController",
+    "Method": "Crear",
+    "RelativePath": "api/Impuesto",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.impuesto.ImpuestoCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ImpuestoController",
+    "Method": "ObtenerPorCodigo",
+    "RelativePath": "api/Impuesto/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.impuesto.ImpuestoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ImpuestoController",
+    "Method": "Actualizar",
+    "RelativePath": "api/Impuesto/{codigo}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.impuesto.ImpuestoActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.ImpuestoController",
+    "Method": "Eliminar",
+    "RelativePath": "api/Impuesto/{codigo}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "API.Service.WebApi.Controllers.ListadoPrecioController",
     "Method": "ObtenerTodoAsync",
     "RelativePath": "api/ListadoPrecio",
@@ -2610,7 +2909,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.Respuesta\u00601[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -2623,14 +2922,14 @@
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
     "Method": "Obtener",
-    "RelativePath": "api/NumeracionDocumentoDet/{codigoObj}",
+    "RelativePath": "api/NumeracionDocumentoDet/{serie}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "codigoObj",
-        "Type": "System.String",
+        "Name": "serie",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],
@@ -2649,14 +2948,14 @@
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
     "Method": "ActualizarAsync",
-    "RelativePath": "api/NumeracionDocumentoDet/{codigoObj}",
+    "RelativePath": "api/NumeracionDocumentoDet/{serie}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "codigoObj",
-        "Type": "System.String",
+        "Name": "serie",
+        "Type": "System.Int32",
         "IsRequired": true
       },
       {
@@ -2680,8 +2979,60 @@
   {
     "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
     "Method": "EliminarAsync",
-    "RelativePath": "api/NumeracionDocumentoDet/{codigoObj}",
+    "RelativePath": "api/NumeracionDocumentoDet/{serie}",
     "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "serie",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "GenerarCodigoAsync",
+    "RelativePath": "api/NumeracionDocumentoDet/GenerarCodigo/{serie}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "serie",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.NumeracionDocumentoDetController",
+    "Method": "ObtenerPorDocumento",
+    "RelativePath": "api/NumeracionDocumentoDet/PorDocumento/{codigoObj}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -2693,7 +3044,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.numeracion.numeracion_documento_det.NumeracionDocumentoDetDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

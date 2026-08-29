@@ -30,5 +30,8 @@ namespace API.Application.DTO.socioNegocio
         public string? Email { get; set; }
 
         public string? Activo { get; set; }
+
+        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
+        public int Serie { get; set; }
     }
 }
