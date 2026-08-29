@@ -4,8 +4,7 @@ namespace API.Application.DTO.socioNegocio
 {
     public class SocioNegocioCrearDTO
     {
-        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
-        public string Codigo { get; set; } = null!;
+        public string? Codigo { get; set; }
 
         public string? Nombre { get; set; }
 

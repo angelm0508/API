@@ -88,7 +88,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] SocioNegocioCrearDTO obj)
+        public async Task<ActionResult<Respuesta<string>>> Crear([FromBody] SocioNegocioCrearDTO obj)
         {
             var insertar = await _socioNegocioApplication.InsertarAsync(obj);
 
