@@ -3207,7 +3207,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 ## Fase 2: Entrega
 
-### Task 1: API completa de Entrega y EntregaDetalle
+### Task 4: API completa de Entrega y EntregaDetalle
 
 **Files:**
 - Create: `API.Domain.Entity/Models/Entrega.cs`
@@ -5066,7 +5066,7 @@ git commit -m "feat: agregar módulo Entrega (API completa)
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 ```
 
-### Task 2: Cliente HTTP de Entrega en Web.ApiClient
+### Task 5: Cliente HTTP de Entrega en Web.ApiClient
 
 **Files:**
 - Create: `Web.ApiClient/Dtos/Entrega/EntregaDTO.cs`, `EntregaCrearDTO.cs`, `EntregaActualizarDTO.cs`
@@ -5076,7 +5076,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Modify: `Web.UI/Program.cs`
 
 **Interfaces:**
-- Consumes: rutas API `api/Entrega`, `api/EntregaDetalle` (Task 1).
+- Consumes: rutas API `api/Entrega`, `api/EntregaDetalle` (Task 4).
 - Produces: `IEntregaApiClient.{ObtenerTodoAsync,ObtenerAsync,InsertarAsync,ActualizarAsync,EliminarAsync}`, `IEntregaDetalleApiClient.{ObtenerTodoAsync,ObtenerPorEntregaAsync,ObtenerAsync,InsertarAsync,ActualizarAsync,EliminarAsync}` -- usados por el controlador Web en Task 3.
 
 - [ ] **Step 1: Crear los DTOs de Entrega en Web.ApiClient**
@@ -5411,7 +5411,7 @@ git commit -m "feat: agregar cliente HTTP de Entrega en Web.ApiClient
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 ```
 
-### Task 3: Pantalla Web de Entregas
+### Task 6: Pantalla Web de Entregas
 
 **Files:**
 - Create: `Web.UI/Controllers/EntregasController.cs`
@@ -5420,7 +5420,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Modify: `Web.UI/Views/Shared/_Layout.cshtml`
 
 **Interfaces:**
-- Consumes: `IEntregaApiClient`, `IEntregaDetalleApiClient` (Task 2); `ISocioNegocioApiClient`, `IMonedaApiClient`, `IArticuloApiClient`, `IAlmacenApiClient`, `IImpuestoApiClient`, `INumeracionDocumentoDetApiClient` (ya existentes, usados igual que en `CotizacionesController`).
+- Consumes: `IEntregaApiClient`, `IEntregaDetalleApiClient` (Task 5); `ISocioNegocioApiClient`, `IMonedaApiClient`, `IArticuloApiClient`, `IAlmacenApiClient`, `IImpuestoApiClient`, `INumeracionDocumentoDetApiClient` (ya existentes, usados igual que en `CotizacionesController`).
 
 - [ ] **Step 1: Crear `EntregasController`**
 
@@ -6384,7 +6384,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 ## Fase 3: Factura
 
-### Task 1: API completa de Factura y FacturaDetalle
+### Task 7: API completa de Factura y FacturaDetalle
 
 **Files:**
 - Create: `API.Domain.Entity/Models/Factura.cs`
@@ -8243,7 +8243,7 @@ git commit -m "feat: agregar módulo Factura (API completa)
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 ```
 
-### Task 2: Cliente HTTP de Factura en Web.ApiClient
+### Task 8: Cliente HTTP de Factura en Web.ApiClient
 
 **Files:**
 - Create: `Web.ApiClient/Dtos/Factura/FacturaDTO.cs`, `FacturaCrearDTO.cs`, `FacturaActualizarDTO.cs`
@@ -8253,7 +8253,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Modify: `Web.UI/Program.cs`
 
 **Interfaces:**
-- Consumes: rutas API `api/Factura`, `api/FacturaDetalle` (Task 1).
+- Consumes: rutas API `api/Factura`, `api/FacturaDetalle` (Task 7).
 - Produces: `IFacturaApiClient.{ObtenerTodoAsync,ObtenerAsync,InsertarAsync,ActualizarAsync,EliminarAsync}`, `IFacturaDetalleApiClient.{ObtenerTodoAsync,ObtenerPorFacturaAsync,ObtenerAsync,InsertarAsync,ActualizarAsync,EliminarAsync}` -- usados por el controlador Web en Task 3.
 
 - [ ] **Step 1: Crear los DTOs de Factura en Web.ApiClient**
@@ -8588,7 +8588,7 @@ git commit -m "feat: agregar cliente HTTP de Factura en Web.ApiClient
 Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 ```
 
-### Task 3: Pantalla Web de Facturas
+### Task 9: Pantalla Web de Facturas
 
 **Files:**
 - Create: `Web.UI/Controllers/FacturasController.cs`
@@ -8597,7 +8597,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Modify: `Web.UI/Views/Shared/_Layout.cshtml`
 
 **Interfaces:**
-- Consumes: `IFacturaApiClient`, `IFacturaDetalleApiClient` (Task 2); `ISocioNegocioApiClient`, `IMonedaApiClient`, `IArticuloApiClient`, `IAlmacenApiClient`, `IImpuestoApiClient`, `INumeracionDocumentoDetApiClient` (ya existentes, usados igual que en `CotizacionesController`).
+- Consumes: `IFacturaApiClient`, `IFacturaDetalleApiClient` (Task 8); `ISocioNegocioApiClient`, `IMonedaApiClient`, `IArticuloApiClient`, `IAlmacenApiClient`, `IImpuestoApiClient`, `INumeracionDocumentoDetApiClient` (ya existentes, usados igual que en `CotizacionesController`).
 
 - [ ] **Step 1: Crear `FacturasController`**
 
@@ -9563,7 +9563,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 ## Fase 4: Verificación final conjunta
 
-### Task 1: Confirmar que los tres módulos conviven sin romperse entre sí
+### Task 10: Confirmar que los tres módulos conviven sin romperse entre sí
 
 **Files:**
 - Ninguno (solo verificación).
