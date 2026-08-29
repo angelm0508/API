@@ -1101,6 +1101,305 @@
     ]
   },
   {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/Entrega",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.entrega.EntregaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/Entrega",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.entrega.EntregaCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaController",
+    "Method": "Obtener",
+    "RelativePath": "api/Entrega/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.entrega.EntregaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/Entrega/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.entrega.EntregaActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/Entrega/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaDetalleController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/EntregaDetalle",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.entrega.EntregaDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaDetalleController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/EntregaDetalle",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.entrega.EntregaDetalleCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaDetalleController",
+    "Method": "Obtener",
+    "RelativePath": "api/EntregaDetalle/{entry}/{noLinea}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.entrega.EntregaDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaDetalleController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/EntregaDetalle/{entry}/{noLinea}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.entrega.EntregaDetalleActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaDetalleController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/EntregaDetalle/{entry}/{noLinea}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.EntregaDetalleController",
+    "Method": "ObtenerPorEntrega",
+    "RelativePath": "api/EntregaDetalle/PorEntrega/{entry}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.entrega.EntregaDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "API.Service.WebApi.Controllers.FabricanteArticuloController",
     "Method": "ObtenerTodoAsync",
     "RelativePath": "api/FabricanteArticulo",
@@ -1272,6 +1571,305 @@
     "ReturnTypes": [
       {
         "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.articulo.fabricante_articulo.FabricanteArticuloDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/Factura",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.factura.FacturaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/Factura",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.factura.FacturaCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaController",
+    "Method": "Obtener",
+    "RelativePath": "api/Factura/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.factura.FacturaDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/Factura/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.factura.FacturaActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/Factura/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaDetalleController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/FacturaDetalle",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.factura.FacturaDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaDetalleController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/FacturaDetalle",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.factura.FacturaDetalleCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaDetalleController",
+    "Method": "Obtener",
+    "RelativePath": "api/FacturaDetalle/{entry}/{noLinea}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.factura.FacturaDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaDetalleController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/FacturaDetalle/{entry}/{noLinea}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.factura.FacturaDetalleActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaDetalleController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/FacturaDetalle/{entry}/{noLinea}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.FacturaDetalleController",
+    "Method": "ObtenerPorFactura",
+    "RelativePath": "api/FacturaDetalle/PorFactura/{entry}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.factura.FacturaDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -3252,6 +3850,305 @@
     "ReturnTypes": [
       {
         "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.pais.PaisDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/Pedido",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.pedido.PedidoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/Pedido",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.pedido.PedidoCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoController",
+    "Method": "Obtener",
+    "RelativePath": "api/Pedido/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.pedido.PedidoDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/Pedido/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.pedido.PedidoActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/Pedido/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoDetalleController",
+    "Method": "ObtenerTodoAsync",
+    "RelativePath": "api/PedidoDetalle",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.pedido.PedidoDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoDetalleController",
+    "Method": "InsertarAsync",
+    "RelativePath": "api/PedidoDetalle",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.pedido.PedidoDetalleCrearDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Int32, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoDetalleController",
+    "Method": "Obtener",
+    "RelativePath": "api/PedidoDetalle/{entry}/{noLinea}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[API.Application.DTO.pedido.PedidoDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoDetalleController",
+    "Method": "ActualizarAsync",
+    "RelativePath": "api/PedidoDetalle/{entry}/{noLinea}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "obj",
+        "Type": "API.Application.DTO.pedido.PedidoDetalleActualizarDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoDetalleController",
+    "Method": "EliminarAsync",
+    "RelativePath": "api/PedidoDetalle/{entry}/{noLinea}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "noLinea",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Boolean, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Service.WebApi.Controllers.PedidoDetalleController",
+    "Method": "ObtenerPorPedido",
+    "RelativePath": "api/PedidoDetalle/PorPedido/{entry}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "entry",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "API.Application.DTO.Respuesta\u00601[[System.Collections.Generic.IEnumerable\u00601[[API.Application.DTO.pedido.PedidoDetalleDTO, API.Application.DTO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

@@ -1790,6 +1790,503 @@
         }
       }
     },
+    "/api/Entrega/{id}": {
+      "get": {
+        "tags": [
+          "Entrega"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entrega"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entrega"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Entrega": {
+      "get": {
+        "tags": [
+          "Entrega"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entrega"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntregaDetalle/{entry}/{noLinea}": {
+      "get": {
+        "tags": [
+          "EntregaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "EntregaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaDetalleActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaDetalleActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaDetalleActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "EntregaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntregaDetalle/PorEntrega/{entry}": {
+      "get": {
+        "tags": [
+          "EntregaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/EntregaDetalle": {
+      "get": {
+        "tags": [
+          "EntregaDetalle"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDetalleDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "EntregaDetalle"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaDetalleCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaDetalleCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaDetalleCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/FabricanteArticulo/{id}": {
       "get": {
         "tags": [
@@ -2055,6 +2552,503 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/FabricanteArticuloCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Factura/{id}": {
+      "get": {
+        "tags": [
+          "Factura"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Factura"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Factura"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Factura": {
+      "get": {
+        "tags": [
+          "Factura"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Factura"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FacturaDetalle/{entry}/{noLinea}": {
+      "get": {
+        "tags": [
+          "FacturaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FacturaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaDetalleActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaDetalleActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaDetalleActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FacturaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FacturaDetalle/PorFactura/{entry}": {
+      "get": {
+        "tags": [
+          "FacturaDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/FacturaDetalle": {
+      "get": {
+        "tags": [
+          "FacturaDetalle"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FacturaDetalleDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FacturaDetalle"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaDetalleCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaDetalleCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacturaDetalleCrearDTO"
               }
             }
           }
@@ -5283,6 +6277,503 @@
         }
       }
     },
+    "/api/Pedido/{id}": {
+      "get": {
+        "tags": [
+          "Pedido"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pedido"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pedido"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Pedido": {
+      "get": {
+        "tags": [
+          "Pedido"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pedido"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PedidoDetalle/{entry}/{noLinea}": {
+      "get": {
+        "tags": [
+          "PedidoDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTORespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTORespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTORespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "PedidoDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoDetalleActualizarDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoDetalleActualizarDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoDetalleActualizarDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PedidoDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "noLinea",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PedidoDetalle/PorPedido/{entry}": {
+      "get": {
+        "tags": [
+          "PedidoDetalle"
+        ],
+        "parameters": [
+          {
+            "name": "entry",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/PedidoDetalle": {
+      "get": {
+        "tags": [
+          "PedidoDetalle"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTOIEnumerableRespuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoDetalleDTOIEnumerableRespuesta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PedidoDetalle"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoDetalleCrearDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoDetalleCrearDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoDetalleCrearDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Int32Respuesta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/SocioNegocio/{codigo}": {
       "get": {
         "tags": [
@@ -7692,6 +9183,710 @@
         },
         "additionalProperties": false
       },
+      "EntregaActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaCrearDTO": {
+        "required": [
+          "serie"
+        ],
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntregaDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/EntregaDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDetalleActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDetalleCrearDTO": {
+        "required": [
+          "entry"
+        ],
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDetalleDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "noLinea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDetalleDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntregaDetalleDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EntregaDetalleDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/EntregaDetalleDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "FabricanteArticuloActualizarDTO": {
         "type": "object",
         "properties": {
@@ -7754,6 +9949,710 @@
         "properties": {
           "dato": {
             "$ref": "#/components/schemas/FabricanteArticuloDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaCrearDTO": {
+        "required": [
+          "serie"
+        ],
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacturaDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/FacturaDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDetalleActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDetalleCrearDTO": {
+        "required": [
+          "entry"
+        ],
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDetalleDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "noLinea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDetalleDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacturaDetalleDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FacturaDetalleDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/FacturaDetalleDTO"
           },
           "resultado": {
             "type": "boolean"
@@ -9176,6 +12075,710 @@
         "properties": {
           "dato": {
             "$ref": "#/components/schemas/PaisDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoCrearDTO": {
+        "required": [
+          "serie"
+        ],
+        "type": "object",
+        "properties": {
+          "numDoc": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numDoc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "serie": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelado": {
+            "type": "string",
+            "nullable": true
+          },
+          "numManual": {
+            "type": "string",
+            "nullable": true
+          },
+          "imprimido": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "estadoInv": {
+            "type": "string",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechaDoc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaEmision": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fechaCancelado": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "codigoSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombreSn": {
+            "type": "string",
+            "nullable": true
+          },
+          "direccion": {
+            "type": "string",
+            "nullable": true
+          },
+          "monedaDoc": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "prctjeImpuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalImp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDoc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comentario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PedidoDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/PedidoDTO"
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDetalleActualizarDTO": {
+        "type": "object",
+        "properties": {
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDetalleCrearDTO": {
+        "required": [
+          "entry"
+        ],
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDetalleDTO": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "noLinea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tipoDocDestino": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "docDestinoEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseRef": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseTipo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseEntry": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "baseLinea": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "estadoLinea": {
+            "type": "string",
+            "nullable": true
+          },
+          "codArticulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "cantidad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precio": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "precioBruto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "prctjeDesc": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "codigoImpuesto": {
+            "type": "string",
+            "nullable": true
+          },
+          "impuesto": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "totalLinea": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tipoObjeto": {
+            "type": "string",
+            "nullable": true
+          },
+          "codAlmacen": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDetalleDTOIEnumerableRespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PedidoDetalleDTO"
+            },
+            "nullable": true
+          },
+          "resultado": {
+            "type": "boolean"
+          },
+          "mensaje": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoDetalleDTORespuesta": {
+        "type": "object",
+        "properties": {
+          "dato": {
+            "$ref": "#/components/schemas/PedidoDetalleDTO"
           },
           "resultado": {
             "type": "boolean"

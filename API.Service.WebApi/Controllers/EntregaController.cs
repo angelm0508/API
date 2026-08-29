@@ -31,7 +31,7 @@ namespace API.Service.WebApi.Controllers
             if (entrega.Dato == null)
             {
                 entrega.Resultado = false;
-                entrega.Mensaje = "El código del entrega no se encontró.";
+                entrega.Mensaje = "El código de la entrega no se encontró.";
                 return NotFound(entrega);
             }
 
@@ -72,7 +72,7 @@ namespace API.Service.WebApi.Controllers
             if (entrega.Dato == null)
             {
                 entrega.Resultado = false;
-                entrega.Mensaje = "El código del entrega no se encontró.";
+                entrega.Mensaje = "El código de la entrega no se encontró.";
                 return NotFound(entrega);
             }
 
@@ -94,7 +94,7 @@ namespace API.Service.WebApi.Controllers
             if (entrega.Dato == null)
             {
                 entrega.Resultado = false;
-                entrega.Mensaje = "El código del entrega no se encontró.";
+                entrega.Mensaje = "El código de la entrega no se encontró.";
                 return NotFound(entrega);
             }
 

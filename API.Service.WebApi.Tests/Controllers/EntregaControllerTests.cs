@@ -42,7 +42,7 @@ namespace API.Service.WebApi.Tests.Controllers
             var notFound = Assert.IsType<NotFoundObjectResult>(resultado.Result);
             var valor = Assert.IsType<Respuesta<EntregaDTO>>(notFound.Value);
             Assert.False(valor.Resultado);
-            Assert.Equal("El código del entrega no se encontró.", valor.Mensaje);
+            Assert.Equal("El código de la entrega no se encontró.", valor.Mensaje);
         }
 
         [Fact]

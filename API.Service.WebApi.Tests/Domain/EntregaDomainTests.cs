@@ -117,7 +117,7 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task ActualizarAsync_FuerzaTipoObjetoACuatro()
+        public async Task ActualizarAsync_FuerzaTipoObjetoACinco()
         {
             _repoEntregaMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Entrega>())).ReturnsAsync(true);
 

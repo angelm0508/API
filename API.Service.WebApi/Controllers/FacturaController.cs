@@ -31,7 +31,7 @@ namespace API.Service.WebApi.Controllers
             if (factura.Dato == null)
             {
                 factura.Resultado = false;
-                factura.Mensaje = "El código del factura no se encontró.";
+                factura.Mensaje = "El código de la factura no se encontró.";
                 return NotFound(factura);
             }
 
@@ -72,7 +72,7 @@ namespace API.Service.WebApi.Controllers
             if (factura.Dato == null)
             {
                 factura.Resultado = false;
-                factura.Mensaje = "El código del factura no se encontró.";
+                factura.Mensaje = "El código de la factura no se encontró.";
                 return NotFound(factura);
             }
 
@@ -94,7 +94,7 @@ namespace API.Service.WebApi.Controllers
             if (factura.Dato == null)
             {
                 factura.Resultado = false;
-                factura.Mensaje = "El código del factura no se encontró.";
+                factura.Mensaje = "El código de la factura no se encontró.";
                 return NotFound(factura);
             }
 

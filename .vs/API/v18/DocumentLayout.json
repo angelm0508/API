@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.core\\grupoarticulodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DEC285A8-4A82-4CEB-A63D-414565C30022}|API.Domain.Core\\API.Domain.Core.csproj|solutionrelative:api.domain.core\\grupoarticulodomain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.application.main\\grupoarticuloapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57EBC37C-AE11-41A4-906B-92DC30E5CAD4}|API.Application.Main\\API.Application.Main.csproj|solutionrelative:api.application.main\\grupoarticuloapplication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EDD64D4E-DDE1-4D20-B5AE-92D48E874563}|API.Domain.Entity\\API.Domain.Entity.csproj|c:\\users\\miguel\\source\\repos\\angelm0508\\api\\api.domain.entity\\query.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{EDD64D4E-DDE1-4D20-B5AE-92D48E874563}|API.Domain.Entity\\API.Domain.Entity.csproj|solutionrelative:api.domain.entity\\query.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
@@ -383,19 +391,43 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "GrupoArticuloDomain.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\GrupoArticuloDomain.cs",
+              "RelativeDocumentMoniker": "API.Domain.Core\\GrupoArticuloDomain.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\GrupoArticuloDomain.cs",
+              "RelativeToolTip": "API.Domain.Core\\GrupoArticuloDomain.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAowCwAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T04:43:27.801Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GrupoArticuloApplication.cs",
+              "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\GrupoArticuloApplication.cs",
+              "RelativeDocumentMoniker": "API.Application.Main\\GrupoArticuloApplication.cs",
+              "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\GrupoArticuloApplication.cs",
+              "RelativeToolTip": "API.Application.Main\\GrupoArticuloApplication.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAcwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T04:43:06.684Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "query.txt",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Entity\\query.txt",
               "RelativeDocumentMoniker": "API.Domain.Entity\\query.txt",
               "ToolTip": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Entity\\query.txt",
               "RelativeToolTip": "API.Domain.Entity\\query.txt",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAABYAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2026-08-22T02:02:12.235Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-22T02:02:12.235Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "ApiDbTestContext.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Entity\\Models\\ApiDbTestContext.cs",
               "RelativeDocumentMoniker": "API.Domain.Entity\\Models\\ApiDbTestContext.cs",
@@ -403,12 +435,11 @@
               "RelativeToolTip": "API.Domain.Entity\\Models\\ApiDbTestContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-22T01:58:02.842Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-22T01:58:02.842Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "TokenService.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\TokenService.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\TokenService.cs",
@@ -420,7 +451,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "Respuesta.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\Respuesta.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\Respuesta.cs",
@@ -432,7 +463,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\appsettings.json",
               "RelativeDocumentMoniker": "API.Service.WebApi\\appsettings.json",
@@ -444,7 +475,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "UsuarioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\UsuarioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\UsuarioDomain.cs",
@@ -456,7 +487,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "AuthApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\AuthApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\AuthApplication.cs",
@@ -464,12 +495,11 @@
               "RelativeToolTip": "API.Application.Main\\AuthApplication.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-20T04:27:25.106Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-20T04:27:25.106Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\AuthController.cs",
@@ -481,7 +511,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "IRepositorioGenerico.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Interface\\IRepositorioGenerico.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Interface\\IRepositorioGenerico.cs",
@@ -493,7 +523,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "ArticuloRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\ArticuloRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\ArticuloRepositorio.cs",
@@ -501,12 +531,11 @@
               "RelativeToolTip": "API.Infraestructure.Repository\\ArticuloRepositorio.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-20T04:17:48.091Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-08-20T04:17:48.091Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "ListadoPrecioRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\ListadoPrecioRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\ListadoPrecioRepositorio.cs",
@@ -518,7 +547,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "IAlmacenDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IAlmacenDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\IAlmacenDomain.cs",
@@ -530,7 +559,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "Startup.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Startup.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Startup.cs",
@@ -542,7 +571,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "UsuarioRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\UsuarioRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\UsuarioRepositorio.cs",
@@ -554,7 +583,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "AlmacenDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\AlmacenDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\AlmacenDomain.cs",
@@ -566,7 +595,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "AlmacenApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\AlmacenApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\AlmacenApplication.cs",
@@ -578,7 +607,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "GrupoArticuloRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\GrupoArticuloRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\GrupoArticuloRepositorio.cs",
@@ -590,7 +619,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 20,
               "Title": "FabricanteArticuloRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\FabricanteArticuloRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\FabricanteArticuloRepositorio.cs",
@@ -602,7 +631,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "CotizacionRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\CotizacionRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\CotizacionRepositorio.cs",
@@ -614,7 +643,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "MunicipioRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\MunicipioRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\MunicipioRepositorio.cs",
@@ -626,7 +655,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 28,
               "Title": "AlmacenControllerTests.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi.Tests\\Controllers\\AlmacenControllerTests.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi.Tests\\Controllers\\AlmacenControllerTests.cs",
@@ -638,7 +667,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 27,
               "Title": "PerfilMapeo.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Transversal.Mapper\\PerfilMapeo.cs",
               "RelativeDocumentMoniker": "API.Transversal.Mapper\\PerfilMapeo.cs",
@@ -650,7 +679,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "AlmacenRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\AlmacenRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\AlmacenRepositorio.cs",
@@ -662,7 +691,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 22,
               "Title": "DepartamentoRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\DepartamentoRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\DepartamentoRepositorio.cs",
@@ -674,7 +703,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 21,
               "Title": "DireccionSocioNegocioRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\DireccionSocioNegocioRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\DireccionSocioNegocioRepositorio.cs",
@@ -686,7 +715,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 29,
               "Title": "UsuarioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\UsuarioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\UsuarioApplication.cs",
@@ -698,7 +727,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 89,
+              "DocumentIndex": 91,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\appsettings.Development.json",
               "RelativeDocumentMoniker": "API.Service.WebApi\\appsettings.Development.json",
@@ -710,7 +739,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 26,
               "Title": "PaisRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\PaisRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\PaisRepositorio.cs",
@@ -722,7 +751,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 25,
               "Title": "NumeracionDocumentoRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\NumeracionDocumentoRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\NumeracionDocumentoRepositorio.cs",
@@ -734,7 +763,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 91,
+              "DocumentIndex": 93,
               "Title": "LoginDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\autenticacion\\LoginDTO.cs",
@@ -746,7 +775,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 90,
+              "DocumentIndex": 92,
               "Title": "LoginResponseDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\autenticacion\\LoginResponseDTO.cs",
@@ -758,7 +787,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 78,
+              "DocumentIndex": 80,
               "Title": "DireccionSocioNegocioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\DireccionSocioNegocioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\DireccionSocioNegocioApplication.cs",
@@ -770,7 +799,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 77,
+              "DocumentIndex": 79,
               "Title": "SocioNegocioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\SocioNegocioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\SocioNegocioApplication.cs",
@@ -782,7 +811,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 76,
+              "DocumentIndex": 78,
               "Title": "MunicipioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\MunicipioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\MunicipioApplication.cs",
@@ -794,7 +823,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 77,
               "Title": "PaisApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\PaisApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\PaisApplication.cs",
@@ -806,7 +835,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 88,
+              "DocumentIndex": 90,
               "Title": "DepartamentoController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\DepartamentoController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\DepartamentoController.cs",
@@ -818,7 +847,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 87,
+              "DocumentIndex": 89,
               "Title": "SocioNegocioController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\SocioNegocioController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\SocioNegocioController.cs",
@@ -830,7 +859,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 86,
+              "DocumentIndex": 88,
               "Title": "DireccionSocioNegocioController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\DireccionSocioNegocioController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\DireccionSocioNegocioController.cs",
@@ -842,7 +871,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 85,
+              "DocumentIndex": 87,
               "Title": "MunicipioController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\MunicipioController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\MunicipioController.cs",
@@ -854,7 +883,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 84,
+              "DocumentIndex": 86,
               "Title": "NumeracionDocumentoController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\NumeracionDocumentoController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\NumeracionDocumentoController.cs",
@@ -866,7 +895,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 83,
+              "DocumentIndex": 85,
               "Title": "MonedaController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\MonedaController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\MonedaController.cs",
@@ -878,7 +907,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 82,
+              "DocumentIndex": 84,
               "Title": "PaisController.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Service.WebApi\\Controllers\\PaisController.cs",
               "RelativeDocumentMoniker": "API.Service.WebApi\\Controllers\\PaisController.cs",
@@ -890,7 +919,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 81,
+              "DocumentIndex": 83,
               "Title": "MonedaApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\MonedaApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\MonedaApplication.cs",
@@ -902,7 +931,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 80,
+              "DocumentIndex": 82,
               "Title": "NumeracionDocumentoApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\NumeracionDocumentoApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\NumeracionDocumentoApplication.cs",
@@ -914,7 +943,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 79,
+              "DocumentIndex": 81,
               "Title": "DepartamentoApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Main\\DepartamentoApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Main\\DepartamentoApplication.cs",
@@ -926,7 +955,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 36,
               "Title": "MunicipioDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\municipio\\MunicipioDTO.cs",
@@ -938,7 +967,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "DepartamentoActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\departamento\\DepartamentoActualizarDTO.cs",
@@ -950,7 +979,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "DepartamentoDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\departamento\\DepartamentoDTO.cs",
@@ -962,7 +991,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 33,
               "Title": "DepartamentoCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\departamento\\DepartamentoCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\departamento\\DepartamentoCrearDTO.cs",
@@ -974,7 +1003,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 32,
               "Title": "PaisDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\pais\\PaisDTO.cs",
@@ -986,7 +1015,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 31,
               "Title": "PaisActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\pais\\PaisActualizarDTO.cs",
@@ -998,7 +1027,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 30,
               "Title": "PaisCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\pais\\PaisCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\pais\\PaisCrearDTO.cs",
@@ -1010,7 +1039,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
+              "DocumentIndex": 76,
               "Title": "ISocioNegocioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\ISocioNegocioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\ISocioNegocioApplication.cs",
@@ -1022,7 +1051,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 75,
               "Title": "IDireccionSocioNegocioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IDireccionSocioNegocioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\IDireccionSocioNegocioApplication.cs",
@@ -1034,7 +1063,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 74,
               "Title": "IMunicipioApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IMunicipioApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\IMunicipioApplication.cs",
@@ -1046,7 +1075,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
+              "DocumentIndex": 73,
               "Title": "IMonedaApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IMonedaApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\IMonedaApplication.cs",
@@ -1058,7 +1087,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 72,
               "Title": "IDepartamentoApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IDepartamentoApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\IDepartamentoApplication.cs",
@@ -1070,7 +1099,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 69,
+              "DocumentIndex": 71,
               "Title": "IPaisApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\IPaisApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\IPaisApplication.cs",
@@ -1082,7 +1111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
+              "DocumentIndex": 70,
               "Title": "INumeracionDocumentoApplication.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.Interface\\INumeracionDocumentoApplication.cs",
               "RelativeDocumentMoniker": "API.Application.Interface\\INumeracionDocumentoApplication.cs",
@@ -1094,7 +1123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 69,
               "Title": "SocioNegocioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\SocioNegocioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\SocioNegocioDomain.cs",
@@ -1106,7 +1135,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
+              "DocumentIndex": 68,
               "Title": "NumeracionDocumentoDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\NumeracionDocumentoDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\NumeracionDocumentoDomain.cs",
@@ -1118,7 +1147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 67,
               "Title": "DireccionSocioNegocioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\DireccionSocioNegocioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\DireccionSocioNegocioDomain.cs",
@@ -1130,7 +1159,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 66,
               "Title": "MunicipioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\MunicipioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\MunicipioDomain.cs",
@@ -1142,7 +1171,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 65,
               "Title": "DepartamentoDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\DepartamentoDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\DepartamentoDomain.cs",
@@ -1154,7 +1183,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 64,
               "Title": "MonedaDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\MonedaDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\MonedaDomain.cs",
@@ -1166,7 +1195,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 63,
               "Title": "PaisDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Core\\PaisDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Core\\PaisDomain.cs",
@@ -1178,7 +1207,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 62,
               "Title": "ISocioNegocioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\ISocioNegocioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\ISocioNegocioDomain.cs",
@@ -1190,7 +1219,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 61,
               "Title": "IPaisDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IPaisDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\IPaisDomain.cs",
@@ -1202,7 +1231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 60,
               "Title": "IDepartamentoDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IDepartamentoDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\IDepartamentoDomain.cs",
@@ -1214,7 +1243,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 59,
               "Title": "IMonedaDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IMonedaDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\IMonedaDomain.cs",
@@ -1226,7 +1255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 58,
               "Title": "IDireccionSocioNegocioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IDireccionSocioNegocioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\IDireccionSocioNegocioDomain.cs",
@@ -1238,7 +1267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 57,
               "Title": "INumeracionDocumentoDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\INumeracionDocumentoDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\INumeracionDocumentoDomain.cs",
@@ -1250,7 +1279,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 56,
               "Title": "IMunicipioDomain.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Interface\\IMunicipioDomain.cs",
               "RelativeDocumentMoniker": "API.Domain.Interface\\IMunicipioDomain.cs",
@@ -1262,7 +1291,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 55,
               "Title": "MonedaRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\MonedaRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\MonedaRepositorio.cs",
@@ -1274,7 +1303,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 54,
               "Title": "SocioNegocioRepositorio.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Infraestructure.Repository\\SocioNegocioRepositorio.cs",
               "RelativeDocumentMoniker": "API.Infraestructure.Repository\\SocioNegocioRepositorio.cs",
@@ -1286,7 +1315,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 53,
               "Title": "MonedaCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\moneda\\MonedaCrearDTO.cs",
@@ -1298,7 +1327,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 52,
               "Title": "MonedaActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\moneda\\MonedaActualizarDTO.cs",
@@ -1310,7 +1339,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 51,
               "Title": "MonedaDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\moneda\\MonedaDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\moneda\\MonedaDTO.cs",
@@ -1322,7 +1351,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 50,
               "Title": "NumeracionDocumentoDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoDTO.cs",
@@ -1334,7 +1363,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 49,
               "Title": "NumeracionDocumentoActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoActualizarDTO.cs",
@@ -1346,7 +1375,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 48,
               "Title": "NumeracionDocumentoCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\numeracionDocumento\\NumeracionDocumentoCrearDTO.cs",
@@ -1358,7 +1387,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 47,
               "Title": "DireccionSocioNegocioActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioActualizarDTO.cs",
@@ -1370,7 +1399,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 46,
               "Title": "DireccionSocioNegocioDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioDTO.cs",
@@ -1382,7 +1411,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 45,
               "Title": "DireccionSocioNegocioCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\direccionSocioNegocio\\DireccionSocioNegocioCrearDTO.cs",
@@ -1394,7 +1423,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 44,
               "Title": "SocioNegocioCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\socioNegocio\\SocioNegocioCrearDTO.cs",
@@ -1406,7 +1435,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 43,
               "Title": "SocioNegocioActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\socioNegocio\\SocioNegocioActualizarDTO.cs",
@@ -1418,7 +1447,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 42,
               "Title": "SocioNegocioDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\socioNegocio\\SocioNegocioDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\socioNegocio\\SocioNegocioDTO.cs",
@@ -1430,7 +1459,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 41,
               "Title": "AlmacenDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\almacen\\AlmacenDTO.cs",
@@ -1442,7 +1471,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 40,
               "Title": "AlmacenCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\almacen\\AlmacenCrearDTO.cs",
@@ -1454,7 +1483,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 39,
               "Title": "AlmacenActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\almacen\\AlmacenActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\almacen\\AlmacenActualizarDTO.cs",
@@ -1466,7 +1495,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 38,
               "Title": "MunicipioCrearDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioCrearDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\municipio\\MunicipioCrearDTO.cs",
@@ -1478,7 +1507,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 37,
               "Title": "MunicipioActualizarDTO.cs",
               "DocumentMoniker": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\municipio\\MunicipioActualizarDTO.cs",
               "RelativeDocumentMoniker": "API.Application.DTO\\municipio\\MunicipioActualizarDTO.cs",
