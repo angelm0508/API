@@ -41,5 +41,7 @@ public partial class NumeracionDocumentoDet
 
     public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 
+    public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
+
     public virtual ICollection<SocioNegocio> SocioNegocios { get; set; } = new List<SocioNegocio>();
 }

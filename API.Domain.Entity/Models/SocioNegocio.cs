@@ -39,6 +39,8 @@ public partial class SocioNegocio
 
     public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 
+    public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
+
     public virtual ICollection<DireccionSocioNegocio> DireccionSocioNegocios { get; set; } = new List<DireccionSocioNegocio>();
 
     public virtual GrupoSn? GrupoSnNavigation { get; set; }

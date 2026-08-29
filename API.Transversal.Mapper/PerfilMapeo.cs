@@ -11,6 +11,7 @@ using API.Application.DTO.usuario.usuario;
 using API.Application.DTO.cotizacion;
 using API.Application.DTO.entrega;
 using API.Application.DTO.pedido;
+using API.Application.DTO.factura;
 using API.Application.DTO.impuesto;
 using API.Application.DTO.pais;
 using API.Application.DTO.departamento;
@@ -137,6 +138,16 @@ namespace API.Transversal.Mapper
             CreateMap<EntregaDetalle, EntregaDetalleDTO>();
             CreateMap<EntregaDetalleCrearDTO, EntregaDetalle>();
             CreateMap<EntregaDetalleActualizarDTO, EntregaDetalle>();
+
+            // Factura
+            CreateMap<Factura, FacturaDTO>();
+            CreateMap<FacturaCrearDTO, Factura>();
+            CreateMap<FacturaActualizarDTO, Factura>();
+
+            // FacturaDetalle
+            CreateMap<FacturaDetalle, FacturaDetalleDTO>();
+            CreateMap<FacturaDetalleCrearDTO, FacturaDetalle>();
+            CreateMap<FacturaDetalleActualizarDTO, FacturaDetalle>();
 
             // Pedido
             CreateMap<Pedido, PedidoDTO>();

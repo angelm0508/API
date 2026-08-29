@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("API.Transversal.Common")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+77656ad54b98778fb739db85353352a497011a8a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae215fb0ec3c220b7a0138e4ec135ace7d731e79")]
 [assembly: System.Reflection.AssemblyProductAttribute("API.Transversal.Common")]
 [assembly: System.Reflection.AssemblyTitleAttribute("API.Transversal.Common")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -31,6 +31,8 @@ public partial class Almacen
 
     public virtual ICollection<PedidoDetalle> PedidoDetalles { get; set; } = new List<PedidoDetalle>();
 
+    public virtual ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();
+
     public virtual Departamento? DepartamentoNavigation { get; set; }
 
     public virtual Municipio? MunicipioNavigation { get; set; }
