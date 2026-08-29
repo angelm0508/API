@@ -88,7 +88,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Respuesta<bool>>> Post([FromBody] ArticuloCrearDTO producto)
+        public async Task<ActionResult<Respuesta<string>>> Post([FromBody] ArticuloCrearDTO producto)
         {
             var insertar = await _articuloApplication.InsertarAsync(producto);
 

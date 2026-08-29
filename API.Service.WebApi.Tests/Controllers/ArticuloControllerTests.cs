@@ -173,7 +173,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task Post_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
             var crearDto = new ArticuloCrearDTO { Codigo = "A1" };
-            var respuesta = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
+            var respuesta = new Respuesta<string> { Resultado = false, Mensaje = "error" };
             _applicationMock.Setup(a => a.InsertarAsync(crearDto)).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Post(crearDto);
@@ -186,7 +186,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task Post_DevuelveOk_CuandoResultadoEsExitoso()
         {
             var crearDto = new ArticuloCrearDTO { Codigo = "A1" };
-            var respuesta = new Respuesta<bool> { Resultado = true, Dato = true };
+            var respuesta = new Respuesta<string> { Resultado = true, Dato = "A1" };
             _applicationMock.Setup(a => a.InsertarAsync(crearDto)).ReturnsAsync(respuesta);
 
             var resultado = await _controller.Post(crearDto);
