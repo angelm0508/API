@@ -23,6 +23,10 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<CotizacionDetalle> CotizacionDetalles { get; set; }
 
+    public virtual DbSet<Entrega> Entregas { get; set; }
+
+    public virtual DbSet<EntregaDetalle> EntregaDetalles { get; set; }
+
     public virtual DbSet<Pedido> Pedidos { get; set; }
 
     public virtual DbSet<PedidoDetalle> PedidoDetalles { get; set; }
@@ -349,6 +353,98 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.PedidoDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_pedido_det_cod_art");
+        });
+
+        modelBuilder.Entity<Entrega>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_entrega");
+
+            entity.ToTable("Entrega");
+
+            entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
+            entity.Property(e => e.Cancelado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.CodigoSn)
+                .HasMaxLength(15)
+                .HasColumnName("CodigoSN");
+            entity.Property(e => e.Comentario).HasMaxLength(254);
+            entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.EstadoDoc)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.EstadoInv)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.FechaCancelado).HasColumnType("datetime");
+            entity.Property(e => e.FechaDoc).HasColumnType("datetime");
+            entity.Property(e => e.FechaEmision).HasColumnType("datetime");
+            entity.Property(e => e.Imprimido)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.MonedaDoc).HasMaxLength(3);
+            entity.Property(e => e.NombreSn)
+                .HasMaxLength(200)
+                .HasColumnName("NombreSN");
+            entity.Property(e => e.NumManual)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.PrctjeDesc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.PrctjeImpuesto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(11)
+                .HasDefaultValueSql("('4')");
+            entity.Property(e => e.TotalBruto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TotalDesc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TotalImp).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodigoSnNavigation).WithMany(p => p.Entregas)
+                .HasForeignKey(d => d.CodigoSn)
+                .HasConstraintName("fk_entrega_sn");
+
+            entity.HasOne(d => d.MonedaDocNavigation).WithMany(p => p.Entregas)
+                .HasForeignKey(d => d.MonedaDoc)
+                .HasConstraintName("fk_entrega_moneda");
+
+            entity.HasOne(d => d.SerieNavigation).WithMany(p => p.Entregas)
+                .HasForeignKey(d => d.Serie)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_entrega_serie");
+        });
+
+        modelBuilder.Entity<EntregaDetalle>(entity =>
+        {
+            entity.HasKey(e => new { e.Entry, e.NoLinea }).HasName("pk_entrega_det");
+
+            entity.ToTable("EntregaDetalle");
+
+            entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);
+            entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
+            entity.Property(e => e.Descripcion).HasMaxLength(200);
+            entity.Property(e => e.EstadoLinea)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.Impuesto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Precio).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.PrecioBruto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.PrctjeDesc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TipoDocDestino).HasDefaultValueSql("((-1))");
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("((3))");
+            entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodAlmacenNavigation).WithMany(p => p.EntregaDetalles)
+                .HasForeignKey(d => d.CodAlmacen)
+                .HasConstraintName("fk_entrega_det_almacen");
+
+            entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.EntregaDetalles)
+                .HasForeignKey(d => d.CodArticulo)
+                .HasConstraintName("fk_entrega_det_cod_art");
         });
 
         modelBuilder.Entity<Departamento>(entity =>

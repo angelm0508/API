@@ -9,6 +9,7 @@ using API.Application.DTO.precio.listado_precio;
 using API.Application.DTO.numeracion.numeracion_documento_det;
 using API.Application.DTO.usuario.usuario;
 using API.Application.DTO.cotizacion;
+using API.Application.DTO.entrega;
 using API.Application.DTO.pedido;
 using API.Application.DTO.impuesto;
 using API.Application.DTO.pais;
@@ -126,6 +127,16 @@ namespace API.Transversal.Mapper
             CreateMap<CotizacionDetalle, CotizacionDetalleDTO>();
             CreateMap<CotizacionDetalleCrearDTO, CotizacionDetalle>();
             CreateMap<CotizacionDetalleActualizarDTO, CotizacionDetalle>();
+
+            // Entrega
+            CreateMap<Entrega, EntregaDTO>();
+            CreateMap<EntregaCrearDTO, Entrega>();
+            CreateMap<EntregaActualizarDTO, Entrega>();
+
+            // EntregaDetalle
+            CreateMap<EntregaDetalle, EntregaDetalleDTO>();
+            CreateMap<EntregaDetalleCrearDTO, EntregaDetalle>();
+            CreateMap<EntregaDetalleActualizarDTO, EntregaDetalle>();
 
             // Pedido
             CreateMap<Pedido, PedidoDTO>();

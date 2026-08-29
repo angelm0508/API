@@ -53,6 +53,8 @@ public partial class Articulo
 
     public virtual ICollection<CotizacionDetalle> CotizacionDetalles { get; set; } = new List<CotizacionDetalle>();
 
+    public virtual ICollection<EntregaDetalle> EntregaDetalles { get; set; } = new List<EntregaDetalle>();
+
     public virtual ICollection<PedidoDetalle> PedidoDetalles { get; set; } = new List<PedidoDetalle>();
 
     public virtual GrupoUnidadMedidaArticulo? CodigoGrpUnidadMedidaNavigation { get; set; }

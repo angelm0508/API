@@ -181,6 +181,14 @@ namespace API.Service.WebApi
             services.AddTransient<ICotizacionDetalleDomain, CotizacionDetalleDomain>();
             services.AddTransient<ICotizacionDetalleApplication, CotizacionDetalleApplication>();
 
+            services.AddTransient<IRepositorioGenerico<Entrega, int>, EntregaRepositorio>();
+            services.AddTransient<IEntregaDomain, EntregaDomain>();
+            services.AddTransient<IEntregaApplication, EntregaApplication>();
+
+            services.AddTransient<IRepositorioGenerico<EntregaDetalle, (int Entry, int NoLinea)>, EntregaDetalleRepositorio>();
+            services.AddTransient<IEntregaDetalleDomain, EntregaDetalleDomain>();
+            services.AddTransient<IEntregaDetalleApplication, EntregaDetalleApplication>();
+
             services.AddTransient<IRepositorioGenerico<Pedido, int>, PedidoRepositorio>();
             services.AddTransient<IPedidoDomain, PedidoDomain>();
             services.AddTransient<IPedidoApplication, PedidoApplication>();

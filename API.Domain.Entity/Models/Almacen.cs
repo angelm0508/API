@@ -27,6 +27,8 @@ public partial class Almacen
 
     public virtual ICollection<CotizacionDetalle> CotizacionDetalles { get; set; } = new List<CotizacionDetalle>();
 
+    public virtual ICollection<EntregaDetalle> EntregaDetalles { get; set; } = new List<EntregaDetalle>();
+
     public virtual ICollection<PedidoDetalle> PedidoDetalles { get; set; } = new List<PedidoDetalle>();
 
     public virtual Departamento? DepartamentoNavigation { get; set; }
