@@ -88,13 +88,17 @@ namespace API.Domain.Core
                 throw new Exception("Se agotó la numeración disponible en esta serie.");
             }
 
-            var numeroFormateado = linea.SigNumero.Value.ToString().PadLeft(linea.CantDigitos ?? 0, '0');
-            var codigo = $"{linea.IniCadena}{numeroFormateado}{linea.FinCadena}";
+            // Solo consulta: NO se incrementa ni se persiste el consecutivo aquí. El consecutivo
+            // real solo avanza cuando el documento se registra de verdad (ver CotizacionDomain,
+            // ArticuloDomain, SocioNegocioDomain) -- llamar a este método varias veces sin registrar
+            // nada debe devolver siempre el mismo código.
+            return FormatearCodigo(linea);
+        }
 
-            linea.SigNumero = linea.SigNumero.Value + 1;
-            await _repoGenericoNumeracionDocumentoDet.ActualizarAsync(serie, linea);
-
-            return codigo;
+        public static string FormatearCodigo(NumeracionDocumentoDet linea)
+        {
+            var numeroFormateado = linea.SigNumero!.Value.ToString().PadLeft(linea.CantDigitos ?? 0, '0');
+            return $"{linea.IniCadena}{numeroFormateado}{linea.FinCadena}";
         }
 
         #endregion
