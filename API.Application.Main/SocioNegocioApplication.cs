@@ -109,12 +109,12 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerAsync()
+        public async Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerAsync(string? tipo = null)
         {
             var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>>();
             try
             {
-                var sociosNegocios = await _socioNegocioDomain.ObtenerTodoAsync();
+                var sociosNegocios = await _socioNegocioDomain.ObtenerTodoAsync(tipo);
                 respuesta.Dato = _mapper.Map<IEnumerable<SocioNegocioDTO>>(sociosNegocios);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Consulta realizada correctamente.";
@@ -126,12 +126,12 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerContengaNombreAsync(string nombre)
+        public async Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerContengaNombreAsync(string nombre, string? tipo = null)
         {
             var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>>();
             try
             {
-                var sociosNegocios = await _socioNegocioDomain.ObtenerContengaNombreAsync(nombre);
+                var sociosNegocios = await _socioNegocioDomain.ObtenerContengaNombreAsync(nombre, tipo);
                 respuesta.Dato = _mapper.Map<IEnumerable<SocioNegocioDTO>>(sociosNegocios);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Consulta realizada correctamente.";

@@ -10,8 +10,8 @@ namespace API.Domain.Interface
         Task<bool> EliminarAsync(string codigo);
         Task<SocioNegocio> ObtenerPorCodigoAsync(string codigo);
         Task<SocioNegocio> ObtenerPorNombreAsync(string nombre);
-        Task<IQueryable<SocioNegocio>> ObtenerTodoAsync();
-        Task<IEnumerable<SocioNegocio>> ObtenerContengaNombreAsync(string nombre);
+        Task<IQueryable<SocioNegocio>> ObtenerTodoAsync(string? tipo = null);
+        Task<IEnumerable<SocioNegocio>> ObtenerContengaNombreAsync(string nombre, string? tipo = null);
         Task<IEnumerable<SocioNegocio>> ObtenerContengaCodigoAsync(string codigo);
         #endregion
     }

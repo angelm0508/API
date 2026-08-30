@@ -11,8 +11,8 @@ namespace API.Application.Interface
         Task<Respuesta<bool>> EliminarAsync(string codigo);
         Task<Respuesta<SocioNegocioDTO>> ObtenerPorNombreAsync(string nombre);
         Task<Respuesta<SocioNegocioDTO>> ObtenerPorCodigoAsync(string codigo);
-        Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerAsync();
-        Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerContengaNombreAsync(string nombre);
+        Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerAsync(string? tipo = null);
+        Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerContengaNombreAsync(string nombre, string? tipo = null);
         Task<Respuesta<IEnumerable<SocioNegocioDTO>>> ObtenerContengaCodigoAsync(string codigo);
         #endregion
     }

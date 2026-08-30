@@ -189,6 +189,22 @@ namespace API.Service.WebApi
             services.AddTransient<IEntregaDetalleDomain, EntregaDetalleDomain>();
             services.AddTransient<IEntregaDetalleApplication, EntregaDetalleApplication>();
 
+            services.AddTransient<IRepositorioGenerico<EntregaCompra, int>, EntregaCompraRepositorio>();
+            services.AddTransient<IEntregaCompraDomain, EntregaCompraDomain>();
+            services.AddTransient<IEntregaCompraApplication, EntregaCompraApplication>();
+
+            services.AddTransient<IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)>, EntregaCompraDetalleRepositorio>();
+            services.AddTransient<IEntregaCompraDetalleDomain, EntregaCompraDetalleDomain>();
+            services.AddTransient<IEntregaCompraDetalleApplication, EntregaCompraDetalleApplication>();
+
+            services.AddTransient<IRepositorioGenerico<FacturaCompra, int>, FacturaCompraRepositorio>();
+            services.AddTransient<IFacturaCompraDomain, FacturaCompraDomain>();
+            services.AddTransient<IFacturaCompraApplication, FacturaCompraApplication>();
+
+            services.AddTransient<IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)>, FacturaCompraDetalleRepositorio>();
+            services.AddTransient<IFacturaCompraDetalleDomain, FacturaCompraDetalleDomain>();
+            services.AddTransient<IFacturaCompraDetalleApplication, FacturaCompraDetalleApplication>();
+
             services.AddTransient<IRepositorioGenerico<Factura, int>, FacturaRepositorio>();
             services.AddTransient<IFacturaDomain, FacturaDomain>();
             services.AddTransient<IFacturaApplication, FacturaApplication>();
@@ -204,6 +220,14 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)>, PedidoDetalleRepositorio>();
             services.AddTransient<IPedidoDetalleDomain, PedidoDetalleDomain>();
             services.AddTransient<IPedidoDetalleApplication, PedidoDetalleApplication>();
+
+            services.AddTransient<IRepositorioGenerico<PedidoCompra, int>, PedidoCompraRepositorio>();
+            services.AddTransient<IPedidoCompraDomain, PedidoCompraDomain>();
+            services.AddTransient<IPedidoCompraApplication, PedidoCompraApplication>();
+
+            services.AddTransient<IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)>, PedidoCompraDetalleRepositorio>();
+            services.AddTransient<IPedidoCompraDetalleDomain, PedidoCompraDetalleDomain>();
+            services.AddTransient<IPedidoCompraDetalleApplication, PedidoCompraDetalleApplication>();
 
             services.AddTransient<IRepositorioGenerico<Impuesto, string>, ImpuestoRepositorio>();
             services.AddTransient<IImpuestoDomain, ImpuestoDomain>();

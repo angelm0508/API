@@ -23,5 +23,11 @@ public partial class Monedum
 
     public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();
 
+    public virtual ICollection<PedidoCompra> PedidoCompras { get; set; } = new List<PedidoCompra>();
+
+    public virtual ICollection<EntregaCompra> EntregaCompras { get; set; } = new List<EntregaCompra>();
+
+    public virtual ICollection<FacturaCompra> FacturaCompras { get; set; } = new List<FacturaCompra>();
+
     public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
 }

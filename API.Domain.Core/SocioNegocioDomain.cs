@@ -88,15 +88,21 @@ namespace API.Domain.Core
             var socioNegocio = await _repoSocioNegocio.ObtenerTodoAsync();
             return await socioNegocio.FirstOrDefaultAsync(x => x.Nombre == nombre);
         }
-        public async Task<IQueryable<SocioNegocio>> ObtenerTodoAsync()
+        public async Task<IQueryable<SocioNegocio>> ObtenerTodoAsync(string? tipo = null)
         {
-            return await _repoSocioNegocio.ObtenerTodoAsync();
+            var queryable = await _repoSocioNegocio.ObtenerTodoAsync();
+            if (tipo is "C" or "P")
+                queryable = queryable.Where(x => x.TipoSn == tipo);
+            return queryable;
         }
 
-        public async Task<IEnumerable<SocioNegocio>> ObtenerContengaNombreAsync(string nombre)
+        public async Task<IEnumerable<SocioNegocio>> ObtenerContengaNombreAsync(string nombre, string? tipo = null)
         {
             var sociosNegocios = await _repoSocioNegocio.ObtenerTodoAsync();
-            return await sociosNegocios.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
+            var filtrado = sociosNegocios.Where(x => x.Nombre.Contains(nombre));
+            if (tipo is "C" or "P")
+                filtrado = filtrado.Where(x => x.TipoSn == tipo);
+            return await filtrado.ToListAsync();
         }
 
         public async Task<IEnumerable<SocioNegocio>> ObtenerContengaCodigoAsync(string codigo)

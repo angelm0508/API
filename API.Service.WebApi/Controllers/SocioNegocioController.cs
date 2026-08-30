@@ -55,9 +55,9 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("ContengaNombre/{nombre}")]
-        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerContengaNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerContengaNombre([FromRoute] string nombre, [FromQuery] string? tipo)
         {
-            var sociosNegocios = await _socioNegocioApplication.ObtenerContengaNombreAsync(nombre);
+            var sociosNegocios = await _socioNegocioApplication.ObtenerContengaNombreAsync(nombre, tipo);
 
             if (!sociosNegocios.Resultado)
                 return BadRequest(sociosNegocios);
@@ -77,9 +77,9 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerTodo()
+        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerTodo([FromQuery] string? tipo)
         {
-            var sociosNegocios = await _socioNegocioApplication.ObtenerAsync();
+            var sociosNegocios = await _socioNegocioApplication.ObtenerAsync(tipo);
 
             if (!sociosNegocios.Resultado)
                 return BadRequest(sociosNegocios);

@@ -39,6 +39,67 @@ namespace API.Service.WebApi.Tests.Domain
             FinCadena = ""
         };
 
+        private void SeedSocios() => _repoSocioMock
+            .Setup(r => r.ObtenerTodoAsync())
+            .ReturnsAsync(new[]
+            {
+                new SocioNegocio { Codigo = "C001", Nombre = "Cliente Uno", TipoSn = "C" },
+                new SocioNegocio { Codigo = "C002", Nombre = "Cliente Dos Nube", TipoSn = "C" },
+                new SocioNegocio { Codigo = "P001", Nombre = "Proveedor Uno", TipoSn = "P" },
+                new SocioNegocio { Codigo = "P002", Nombre = "Proveedor Dos Nube", TipoSn = "P" },
+            }.AsAsyncQueryable());
+
+        [Fact]
+        public async Task ObtenerContengaNombreAsync_SinTipo_NoFiltra()
+        {
+            SeedSocios();
+            var r = await _domain.ObtenerContengaNombreAsync("Nube");
+            Assert.Equal(2, r.Count());
+        }
+
+        [Fact]
+        public async Task ObtenerContengaNombreAsync_TipoP_SoloProveedores()
+        {
+            SeedSocios();
+            var r = await _domain.ObtenerContengaNombreAsync("Nube", "P");
+            Assert.Single(r);
+            Assert.Equal("P002", r.First().Codigo);
+        }
+
+        [Fact]
+        public async Task ObtenerContengaNombreAsync_TipoC_SoloClientes()
+        {
+            SeedSocios();
+            var r = await _domain.ObtenerContengaNombreAsync("Uno", "C");
+            Assert.Single(r);
+            Assert.Equal("C001", r.First().Codigo);
+        }
+
+        [Fact]
+        public async Task ObtenerTodoAsync_TipoP_SoloProveedores()
+        {
+            SeedSocios();
+            var q = await _domain.ObtenerTodoAsync("P");
+            Assert.Equal(2, q.Count());
+            Assert.All(q, s => Assert.Equal("P", s.TipoSn));
+        }
+
+        [Fact]
+        public async Task ObtenerTodoAsync_SinTipo_DevuelveTodos()
+        {
+            SeedSocios();
+            var q = await _domain.ObtenerTodoAsync();
+            Assert.Equal(4, q.Count());
+        }
+
+        [Fact]
+        public async Task ObtenerTodoAsync_TipoInvalido_NoFiltra()
+        {
+            SeedSocios();
+            var q = await _domain.ObtenerTodoAsync("X");
+            Assert.Equal(4, q.Count());
+        }
+
         [Fact]
         public async Task InsertarAsync_SerieAutogenerada_GeneraCodigoYAvanzaSigNumero()
         {
