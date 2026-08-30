@@ -173,6 +173,32 @@ namespace API.Service.WebApi.Tests.Controllers
         }
 
         [Fact]
+        public async Task ObtenerTodo_ReenviaTipoALaAplicacion()
+        {
+            var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>> { Resultado = true, Dato = new List<SocioNegocioDTO>() };
+            _applicationMock.Setup(a => a.ObtenerAsync("P")).ReturnsAsync(respuesta);
+
+            var resultado = await _controller.ObtenerTodo("P");
+
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Same(respuesta, ok.Value);
+            _applicationMock.Verify(a => a.ObtenerAsync("P"), Times.Once);
+        }
+
+        [Fact]
+        public async Task ObtenerContengaNombre_ReenviaTipoALaAplicacion()
+        {
+            var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>> { Resultado = true, Dato = new List<SocioNegocioDTO>() };
+            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("Clie", "C")).ReturnsAsync(respuesta);
+
+            var resultado = await _controller.ObtenerContengaNombre("Clie", "C");
+
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Same(respuesta, ok.Value);
+            _applicationMock.Verify(a => a.ObtenerContengaNombreAsync("Clie", "C"), Times.Once);
+        }
+
+        [Fact]
         public async Task Crear_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
             var crearDto = new SocioNegocioCrearDTO { Codigo = "SN1" };

@@ -93,6 +93,14 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task ObtenerTodoAsync_TipoInvalido_NoFiltra()
+        {
+            SeedSocios();
+            var q = await _domain.ObtenerTodoAsync("X");
+            Assert.Equal(4, q.Count());
+        }
+
+        [Fact]
         public async Task InsertarAsync_SerieAutogenerada_GeneraCodigoYAvanzaSigNumero()
         {
             var serie = SerieAutogenerada(sigNumero: 5);
