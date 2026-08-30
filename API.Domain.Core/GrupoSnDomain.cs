@@ -7,9 +7,9 @@ namespace API.Domain.Core
 {
     public class GrupoSnDomain : IGrupoSnDomain
     {
-        private readonly IRepositorioGenerico<GrupoSn> _repoGenericoGrupoSn;
+        private readonly IRepositorioGenerico<GrupoSn, int> _repoGenericoGrupoSn;
 
-        public GrupoSnDomain(IRepositorioGenerico<GrupoSn> repoGenericoGrupoSn)
+        public GrupoSnDomain(IRepositorioGenerico<GrupoSn, int> repoGenericoGrupoSn)
         {
             _repoGenericoGrupoSn = repoGenericoGrupoSn;
         }
@@ -22,11 +22,25 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
             }
 
-            return await _repoGenericoGrupoSn.InsertarAsync(obj);
+            // La columna Entry no es autonumérica en la base de datos, a diferencia de otras
+            // tablas similares (p. ej. GrupoArticulo.Codigo) -- hay que calcular el siguiente
+            // valor manualmente o el insert choca con la clave primaria existente.
+            var queryable = await _repoGenericoGrupoSn.ObtenerTodoAsync();
+            var maxEntry = await queryable.Select(x => (short?)x.Entry).MaxAsync() ?? 0;
+            obj.Entry = (short)(maxEntry + 1);
+
+            var insertado = await _repoGenericoGrupoSn.InsertarAsync(obj);
+            return insertado.Entry;
         }
 
         public async Task<bool> ActualizarAsync(int codigo, GrupoSn obj)
         {
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El grupo está bloqueado y no se puede modificar.");
+            }
+
             if (await ObtenerAsync(obj.Nombre) != null)
             {
                 throw new Exception($"Ya existe un registro con el nombre: {obj.Nombre}");
@@ -37,6 +51,22 @@ namespace API.Domain.Core
 
         public async Task<bool> EliminarAsync(int codigo)
         {
+            var existente = await ObtenerAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El grupo está bloqueado y no se puede eliminar.");
+            }
+
+            if (existente != null)
+            {
+                var queryable = await _repoGenericoGrupoSn.ObtenerTodoAsync();
+                var cantidadMismoTipo = await queryable.CountAsync(x => x.TipoGrupo == existente.TipoGrupo);
+                if (cantidadMismoTipo <= 1)
+                {
+                    throw new Exception("No se puede eliminar el grupo porque es el último registro disponible para este tipo.");
+                }
+            }
+
             return await _repoGenericoGrupoSn.EliminarAsync(codigo);
         }
 

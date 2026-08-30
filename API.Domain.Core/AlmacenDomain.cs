@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class AlmacenDomain : IAlmacenDomain
     {
-        private readonly IRepositorioGenericoDos<Almacen> _repoAlmacen;
-        public AlmacenDomain(IRepositorioGenericoDos<Almacen> repoAlmacen)
+        private readonly IRepositorioGenerico<Almacen, string> _repoAlmacen;
+        public AlmacenDomain(IRepositorioGenerico<Almacen, string> repoAlmacen)
         {
             _repoAlmacen = repoAlmacen;
         }
@@ -21,14 +21,33 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoAlmacen.InsertarAsync(obj);
+            await _repoAlmacen.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, Almacen obj)
         {
+            var existente = await ObtenerPorCodigoAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El almacén está bloqueado y no se puede modificar.");
+            }
+
             return await _repoAlmacen.ActualizarAsync(codigo, obj);
         }
         public async Task<bool> EliminarAsync(string codigo)
         {
+            var existente = await ObtenerPorCodigoAsync(codigo);
+            if (existente != null && existente.Bloqueado == "S")
+            {
+                throw new Exception("El almacén está bloqueado y no se puede eliminar.");
+            }
+
+            var queryable = await _repoAlmacen.ObtenerTodoAsync();
+            if (await queryable.CountAsync() <= 1)
+            {
+                throw new Exception("No se puede eliminar el almacén porque es el último registro disponible.");
+            }
+
             return await _repoAlmacen.EliminarAsync(codigo);
         }
 

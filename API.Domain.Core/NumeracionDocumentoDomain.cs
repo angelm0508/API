@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class NumeracionDocumentoDomain : INumeracionDocumentoDomain
     {
-        private readonly IRepositorioGenericoDos<NumeracionDocumento> _repoNumeracion;
-        public NumeracionDocumentoDomain(IRepositorioGenericoDos<NumeracionDocumento> repoNumeracion)
+        private readonly IRepositorioGenerico<NumeracionDocumento, string> _repoNumeracion;
+        public NumeracionDocumentoDomain(IRepositorioGenerico<NumeracionDocumento, string> repoNumeracion)
         {
             _repoNumeracion = repoNumeracion;
         }
@@ -21,7 +21,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.CodigoObj}");
             }
 
-            return await _repoNumeracion.InsertarAsync(obj);
+            await _repoNumeracion.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, NumeracionDocumento obj)
         {

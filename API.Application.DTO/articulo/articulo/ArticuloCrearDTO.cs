@@ -4,14 +4,13 @@ namespace API.Application.DTO.articulo.articulo
 {
     public class ArticuloCrearDTO
     {
-        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
-        public string Codigo { get; set; } = null!;
+        public string? Codigo { get; set; }
 
         public string? Nombre { get; set; }
 
         public short? CodigoGrupo { get; set; }
 
-        public int? CodigoGrpMedida { get; set; }
+        public int? CodigoGrpUnidadMedida { get; set; }
 
         public int? FabricanteEntry { get; set; }
 
@@ -46,6 +45,9 @@ namespace API.Application.DTO.articulo.articulo
         public decimal? Maximo { get; set; }
 
         public string? Comentarios { get; set; }
+
+        [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
+        public int Serie { get; set; }
 
     }
 }

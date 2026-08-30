@@ -1,5 +1,18 @@
 ﻿using API.Application.DTO.articulo.articulo;
 using API.Application.DTO.articulo.grupo_articulo;
+using API.Application.DTO.articulo.fabricante_articulo;
+using API.Application.DTO.articulo.unidad_medida_articulo;
+using API.Application.DTO.articulo.grupo_unidad_medida_articulo;
+using API.Application.DTO.articulo.grupo_unidad_medida_det_articulo;
+using API.Application.DTO.articulo.grupo_sn;
+using API.Application.DTO.precio.listado_precio;
+using API.Application.DTO.numeracion.numeracion_documento_det;
+using API.Application.DTO.usuario.usuario;
+using API.Application.DTO.cotizacion;
+using API.Application.DTO.entrega;
+using API.Application.DTO.pedido;
+using API.Application.DTO.factura;
+using API.Application.DTO.impuesto;
 using API.Application.DTO.pais;
 using API.Application.DTO.departamento;
 using API.Application.DTO.municipio;
@@ -64,6 +77,92 @@ namespace API.Transversal.Mapper
             CreateMap<Monedum, MonedaDTO>();
             CreateMap<MonedaCrearDTO, Monedum>();
             CreateMap<MonedaActualizarDTO, Monedum>();
+
+            // FabricanteArticulo
+            CreateMap<FabricanteArticulo, FabricanteArticuloDTO>();
+            CreateMap<FabricanteArticuloCrearDTO, FabricanteArticulo>();
+            CreateMap<FabricanteArticuloActualizarDTO, FabricanteArticulo>();
+
+            // UnidadMedidaArticulo
+            CreateMap<UnidadMedidaArticulo, UnidadMedidaArticuloDTO>();
+            CreateMap<UnidadMedidaArticuloCrearDTO, UnidadMedidaArticulo>();
+            CreateMap<UnidadMedidaArticuloActualizarDTO, UnidadMedidaArticulo>();
+
+            // GrupoUnidadMedidaArticulo
+            CreateMap<GrupoUnidadMedidaArticulo, GrupoUnidadMedidaArticuloDTO>();
+            CreateMap<GrupoUnidadMedidaArticuloCrearDTO, GrupoUnidadMedidaArticulo>();
+            CreateMap<GrupoUnidadMedidaArticuloActualizarDTO, GrupoUnidadMedidaArticulo>();
+
+            // GrupoUnidadMedidaDetArticulo
+            CreateMap<GrupoUnidadMedidaDetArticulo, GrupoUnidadMedidaDetArticuloDTO>();
+            CreateMap<GrupoUnidadMedidaDetArticuloCrearDTO, GrupoUnidadMedidaDetArticulo>();
+            CreateMap<GrupoUnidadMedidaDetArticuloActualizarDTO, GrupoUnidadMedidaDetArticulo>();
+
+            // GrupoSn
+            CreateMap<GrupoSn, GrupoSnDTO>();
+            CreateMap<GrupoSnCrearDTO, GrupoSn>();
+            CreateMap<GrupoSnActualizarDTO, GrupoSn>();
+
+            // ListadoPrecio
+            CreateMap<ListadoPrecio, ListadoPrecioDTO>();
+            CreateMap<ListadoPrecioCrearDTO, ListadoPrecio>();
+            CreateMap<ListadoPrecioActualizarDTO, ListadoPrecio>();
+
+            // NumeracionDocumentoDet
+            CreateMap<NumeracionDocumentoDet, NumeracionDocumentoDetDTO>();
+            CreateMap<NumeracionDocumentoDetCrearDTO, NumeracionDocumentoDet>();
+            CreateMap<NumeracionDocumentoDetActualizarDTO, NumeracionDocumentoDet>();
+
+            // Usuario (el hash de Password nunca se expone en las respuestas de la API)
+            CreateMap<Usuario, UsuarioDTO>()
+                .ForMember(d => d.Password, opt => opt.Ignore());
+            CreateMap<UsuarioCrearDTO, Usuario>();
+            CreateMap<UsuarioActualizarDTO, Usuario>();
+
+            // Cotizacion
+            CreateMap<Cotizacion, CotizacionDTO>();
+            CreateMap<CotizacionCrearDTO, Cotizacion>();
+            CreateMap<CotizacionActualizarDTO, Cotizacion>();
+
+            // CotizacionDetalle
+            CreateMap<CotizacionDetalle, CotizacionDetalleDTO>();
+            CreateMap<CotizacionDetalleCrearDTO, CotizacionDetalle>();
+            CreateMap<CotizacionDetalleActualizarDTO, CotizacionDetalle>();
+
+            // Entrega
+            CreateMap<Entrega, EntregaDTO>();
+            CreateMap<EntregaCrearDTO, Entrega>();
+            CreateMap<EntregaActualizarDTO, Entrega>();
+
+            // EntregaDetalle
+            CreateMap<EntregaDetalle, EntregaDetalleDTO>();
+            CreateMap<EntregaDetalleCrearDTO, EntregaDetalle>();
+            CreateMap<EntregaDetalleActualizarDTO, EntregaDetalle>();
+
+            // Factura
+            CreateMap<Factura, FacturaDTO>();
+            CreateMap<FacturaCrearDTO, Factura>();
+            CreateMap<FacturaActualizarDTO, Factura>();
+
+            // FacturaDetalle
+            CreateMap<FacturaDetalle, FacturaDetalleDTO>();
+            CreateMap<FacturaDetalleCrearDTO, FacturaDetalle>();
+            CreateMap<FacturaDetalleActualizarDTO, FacturaDetalle>();
+
+            // Pedido
+            CreateMap<Pedido, PedidoDTO>();
+            CreateMap<PedidoCrearDTO, Pedido>();
+            CreateMap<PedidoActualizarDTO, Pedido>();
+
+            // PedidoDetalle
+            CreateMap<PedidoDetalle, PedidoDetalleDTO>();
+            CreateMap<PedidoDetalleCrearDTO, PedidoDetalle>();
+            CreateMap<PedidoDetalleActualizarDTO, PedidoDetalle>();
+
+            // Impuesto
+            CreateMap<Impuesto, ImpuestoDTO>();
+            CreateMap<ImpuestoCrearDTO, Impuesto>();
+            CreateMap<ImpuestoActualizarDTO, Impuesto>();
         }
     }
 }

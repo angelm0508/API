@@ -7,21 +7,59 @@ namespace API.Domain.Core
 {
     public class ArticuloDomain : IArticuloDomain
     {
-        private readonly IRepositorioGenericoDos<Articulo> _repoGenericoArticulo;
-        public ArticuloDomain(IRepositorioGenericoDos<Articulo> repoGenericoArticulo)
+        private readonly IRepositorioGenerico<Articulo, string> _repoGenericoArticulo;
+        private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
+
+        public ArticuloDomain(
+            IRepositorioGenerico<Articulo, string> repoGenericoArticulo,
+            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion)
         {
             _repoGenericoArticulo = repoGenericoArticulo;
+            _repoGenericoNumeracion = repoGenericoNumeracion;
         }
 
         #region async methods
-        public async Task<bool> InsertarAsync(Articulo obj)
+        public async Task<string> InsertarAsync(Articulo obj)
         {
+            var serie = await _repoGenericoNumeracion.ObtenerAsync(obj.Serie)
+                ?? throw new Exception("La serie no existe.");
+
+            if (serie.Manual == "S")
+            {
+                // Serie manual: el código lo escribe el usuario, el consecutivo automático no aplica.
+                if (string.IsNullOrWhiteSpace(obj.Codigo))
+                {
+                    throw new Exception("El código es requerido para series manuales.");
+                }
+            }
+            else
+            {
+                // Serie autogenerada: el consecutivo solo avanza aquí, al registrar el artículo --
+                // no al solo consultar/previsualizar el código (NumeracionDocumentoDetDomain.GenerarCodigoAsync
+                // es de solo lectura).
+                if (serie.SigNumero == null)
+                {
+                    throw new Exception("La serie no tiene configurado el número siguiente.");
+                }
+
+                if (serie.FinNumero.HasValue && serie.SigNumero.Value > serie.FinNumero.Value)
+                {
+                    throw new Exception("Se agotó la numeración disponible en esta serie.");
+                }
+
+                obj.Codigo = NumeracionDocumentoDetDomain.FormatearCodigo(serie);
+                serie.SigNumero = serie.SigNumero.Value + 1;
+                // Sin ActualizarAsync explícito -- "serie" ya está rastreada por el mismo DbContext
+                // que usa _repoGenericoArticulo; el incremento se persiste junto con el INSERT.
+            }
+
             if (await ObtenerPorCodigoAsync(obj.Codigo) != null)
             {
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoGenericoArticulo.InsertarAsync(obj);
+            await _repoGenericoArticulo.InsertarAsync(obj);
+            return obj.Codigo;
         }
         public async Task<bool> ActualizarAsync(string sku, Articulo obj)
         {

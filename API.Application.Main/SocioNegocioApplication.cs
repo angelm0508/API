@@ -19,18 +19,15 @@ namespace API.Application.Main
         }
 
         #region async methods
-        public async Task<Respuesta<bool>> InsertarAsync(SocioNegocioCrearDTO obj)
+        public async Task<Respuesta<string>> InsertarAsync(SocioNegocioCrearDTO obj)
         {
-            var respuesta = new Respuesta<bool>();
+            var respuesta = new Respuesta<string>();
             try
             {
                 var socioNegocio = _mapper.Map<SocioNegocio>(obj);
                 respuesta.Dato = await _socioNegocioDomain.InsertarAsync(socioNegocio);
-                if (respuesta.Dato)
-                {
-                    respuesta.Resultado = true;
-                    respuesta.Mensaje = "Registro agregado correctamente.";
-                }
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Registro agregado correctamente.";
             }
             catch (Exception ex)
             {

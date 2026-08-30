@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("API.Transversal.Common")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f72cc1dda66c2113c1178b28edcf0d419bcbb73")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0794b2535efd1cf81ed1b2a9e2e04873ed8a4605")]
 [assembly: System.Reflection.AssemblyProductAttribute("API.Transversal.Common")]
 [assembly: System.Reflection.AssemblyTitleAttribute("API.Transversal.Common")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

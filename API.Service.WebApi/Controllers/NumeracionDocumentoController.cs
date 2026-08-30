@@ -1,10 +1,12 @@
+using API.Application.DTO;
 using API.Application.DTO.numeracionDocumento;
 using API.Application.Interface;
-using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/NumeracionDocumento")]
     public class NumeracionDocumentoController : ControllerBase
@@ -17,82 +19,94 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<NumeracionDocumentoDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<NumeracionDocumentoDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var numeracion = await _numeracionApplication.ObtenerPorCodigoAsync(codigo);
 
             if (!numeracion.Resultado)
-                return BadRequest(new RespuestaError(numeracion.Mensaje));
+                return BadRequest(numeracion);
 
             if (numeracion.Dato == null)
-                return NotFound(new RespuestaError("Código de numeración no encontrado."));
+            {
+                numeracion.Resultado = false;
+                numeracion.Mensaje = "Código de numeración no encontrado.";
+                return NotFound(numeracion);
+            }
 
-            return Ok(numeracion.Dato);
+            return Ok(numeracion);
         }
 
         [HttpGet("ContengaCodigo/{codigo}")]
-        public async Task<ActionResult<List<NumeracionDocumentoDTO>>> ObtenerContengaCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
             var numeraciones = await _numeracionApplication.ObtenerContengaCodigoAsync(codigo);
 
             if (!numeraciones.Resultado)
-                return BadRequest(new RespuestaError(numeraciones.Mensaje));
+                return BadRequest(numeraciones);
 
-            return Ok(numeraciones.Dato);
+            return Ok(numeraciones);
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<NumeracionDocumentoDTO>>> ObtenerTodo()
+        public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDTO>>>> ObtenerTodo()
         {
             var numeraciones = await _numeracionApplication.ObtenerAsync();
 
             if (!numeraciones.Resultado)
-                return BadRequest(new RespuestaError(numeraciones.Mensaje));
+                return BadRequest(numeraciones);
 
-            return Ok(numeraciones.Dato);
+            return Ok(numeraciones);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Crear([FromBody] NumeracionDocumentoCrearDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] NumeracionDocumentoCrearDTO obj)
         {
             var insertar = await _numeracionApplication.InsertarAsync(obj);
 
             if (!insertar.Resultado)
-                return BadRequest(new RespuestaError(insertar.Mensaje));
+                return BadRequest(insertar);
 
-            return Ok();
+            return Ok(insertar);
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] NumeracionDocumentoActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] NumeracionDocumentoActualizarDTO obj)
         {
             var numeracion = await _numeracionApplication.ObtenerPorCodigoAsync(codigo);
 
             if (numeracion.Dato == null)
-                return NotFound(new RespuestaError("Código de numeración no encontrado."));
+            {
+                numeracion.Resultado = false;
+                numeracion.Mensaje = "Código de numeración no encontrado.";
+                return NotFound(numeracion);
+            }
 
             var actualizar = await _numeracionApplication.ActualizarAsync(codigo, obj);
 
             if (!actualizar.Resultado)
-                return BadRequest(new RespuestaError(actualizar.Mensaje));
+                return BadRequest(actualizar);
 
-            return Ok();
+            return Ok(actualizar);
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Eliminar([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
             var numeracion = await _numeracionApplication.ObtenerPorCodigoAsync(codigo);
 
             if (numeracion.Dato == null)
-                return NotFound(new RespuestaError("Código de numeración no encontrado."));
+            {
+                numeracion.Resultado = false;
+                numeracion.Mensaje = "Código de numeración no encontrado.";
+                return NotFound(numeracion);
+            }
 
             var eliminar = await _numeracionApplication.EliminarAsync(codigo);
 
             if (!eliminar.Resultado)
-                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+                return BadRequest(eliminar);
 
-            return Ok();
+            return Ok(eliminar);
         }
     }
 }

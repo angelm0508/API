@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class PaisDomain : IPaisDomain
     {
-        private readonly IRepositorioGenericoDos<Pai> _repoGenericopais;
-        public PaisDomain(IRepositorioGenericoDos<Pai> repoGenericopais)
+        private readonly IRepositorioGenerico<Pai, string> _repoGenericopais;
+        public PaisDomain(IRepositorioGenerico<Pai, string> repoGenericopais)
         {
             _repoGenericopais = repoGenericopais;
         }
@@ -21,7 +21,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoGenericopais.InsertarAsync(obj);
+            await _repoGenericopais.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, Pai obj)
         {

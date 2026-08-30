@@ -6,7 +6,7 @@ namespace API.Application.Interface
     public interface IArticuloApplication
     {
         #region async methods
-        Task<Respuesta<bool>> InsertarAsync(ArticuloCrearDTO obj);
+        Task<Respuesta<string>> InsertarAsync(ArticuloCrearDTO obj);
         Task<Respuesta<bool>> ActualizarAsync(string sku, ArticuloActualizarDTO obj);
         Task<Respuesta<bool>> EliminarAsync(string sku);
         Task<Respuesta<ArticuloDTO>> ObtenerPorNombreAsync(string name);

@@ -1,10 +1,12 @@
+using API.Application.DTO;
 using API.Application.DTO.socioNegocio;
 using API.Application.Interface;
-using API.Transversal.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service.WebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/SocioNegocio")]
     public class SocioNegocioController : ControllerBase
@@ -17,107 +19,123 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{codigo}")]
-        public async Task<ActionResult<SocioNegocioDTO>> ObtenerPorCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<SocioNegocioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
             var socioNegocio = await _socioNegocioApplication.ObtenerPorCodigoAsync(codigo);
 
             if (!socioNegocio.Resultado)
-                return BadRequest(new RespuestaError(socioNegocio.Mensaje));
+                return BadRequest(socioNegocio);
 
             if (socioNegocio.Dato == null)
-                return NotFound(new RespuestaError("Código de socio negocio no encontrado."));
+            {
+                socioNegocio.Resultado = false;
+                socioNegocio.Mensaje = "Código de socio negocio no encontrado.";
+                return NotFound(socioNegocio);
+            }
 
-            return Ok(socioNegocio.Dato);
+            return Ok(socioNegocio);
         }
 
         [HttpGet("Nombre/{nombre}")]
-        public async Task<ActionResult<SocioNegocioDTO>> ObtenerPorNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<SocioNegocioDTO>>> ObtenerPorNombre([FromRoute] string nombre)
         {
             var socioNegocio = await _socioNegocioApplication.ObtenerPorNombreAsync(nombre);
 
             if (!socioNegocio.Resultado)
-                return BadRequest(new RespuestaError(socioNegocio.Mensaje));
+                return BadRequest(socioNegocio);
 
             if (socioNegocio.Dato == null)
-                return NotFound(new RespuestaError("Nombre de socio negocio no encontrado."));
+            {
+                socioNegocio.Resultado = false;
+                socioNegocio.Mensaje = "Nombre de socio negocio no encontrado.";
+                return NotFound(socioNegocio);
+            }
 
-            return Ok(socioNegocio.Dato);
+            return Ok(socioNegocio);
         }
 
         [HttpGet("ContengaNombre/{nombre}")]
-        public async Task<ActionResult<List<SocioNegocioDTO>>> ObtenerContengaNombre([FromRoute] string nombre)
+        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerContengaNombre([FromRoute] string nombre)
         {
             var sociosNegocios = await _socioNegocioApplication.ObtenerContengaNombreAsync(nombre);
 
             if (!sociosNegocios.Resultado)
-                return BadRequest(new RespuestaError(sociosNegocios.Mensaje));
+                return BadRequest(sociosNegocios);
 
-            return Ok(sociosNegocios.Dato);
+            return Ok(sociosNegocios);
         }
 
         [HttpGet("ContengaCodigo/{codigo}")]
-        public async Task<ActionResult<List<SocioNegocioDTO>>> ObtenerContengaCodigo([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
             var sociosNegocios = await _socioNegocioApplication.ObtenerContengaCodigoAsync(codigo);
 
             if (!sociosNegocios.Resultado)
-                return BadRequest(new RespuestaError(sociosNegocios.Mensaje));
+                return BadRequest(sociosNegocios);
 
-            return Ok(sociosNegocios.Dato);
+            return Ok(sociosNegocios);
         }
 
         [HttpGet()]
-        public async Task<ActionResult<List<SocioNegocioDTO>>> ObtenerTodo()
+        public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerTodo()
         {
             var sociosNegocios = await _socioNegocioApplication.ObtenerAsync();
 
             if (!sociosNegocios.Resultado)
-                return BadRequest(new RespuestaError(sociosNegocios.Mensaje));
+                return BadRequest(sociosNegocios);
 
-            return Ok(sociosNegocios.Dato);
+            return Ok(sociosNegocios);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Crear([FromBody] SocioNegocioCrearDTO obj)
+        public async Task<ActionResult<Respuesta<string>>> Crear([FromBody] SocioNegocioCrearDTO obj)
         {
             var insertar = await _socioNegocioApplication.InsertarAsync(obj);
 
             if (!insertar.Resultado)
-                return BadRequest(new RespuestaError(insertar.Mensaje));
+                return BadRequest(insertar);
 
-            return Ok();
+            return Ok(insertar);
         }
 
         [HttpPut("{codigo}")]
-        public async Task<ActionResult> Actualizar([FromRoute] string codigo, [FromBody] SocioNegocioActualizarDTO obj)
+        public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] SocioNegocioActualizarDTO obj)
         {
             var socioNegocio = await _socioNegocioApplication.ObtenerPorCodigoAsync(codigo);
 
             if (socioNegocio.Dato == null)
-                return NotFound(new RespuestaError("Código de socio negocio no encontrado."));
+            {
+                socioNegocio.Resultado = false;
+                socioNegocio.Mensaje = "Código de socio negocio no encontrado.";
+                return NotFound(socioNegocio);
+            }
 
             var actualizar = await _socioNegocioApplication.ActualizarAsync(codigo, obj);
 
             if (!actualizar.Resultado)
-                return BadRequest(new RespuestaError(actualizar.Mensaje));
+                return BadRequest(actualizar);
 
-            return Ok();
+            return Ok(actualizar);
         }
 
         [HttpDelete("{codigo}")]
-        public async Task<ActionResult> Eliminar([FromRoute] string codigo)
+        public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
             var socioNegocio = await _socioNegocioApplication.ObtenerPorCodigoAsync(codigo);
 
             if (socioNegocio.Dato == null)
-                return NotFound(new RespuestaError("Código de socio negocio no encontrado."));
+            {
+                socioNegocio.Resultado = false;
+                socioNegocio.Mensaje = "Código de socio negocio no encontrado.";
+                return NotFound(socioNegocio);
+            }
 
             var eliminar = await _socioNegocioApplication.EliminarAsync(codigo);
 
             if (!eliminar.Resultado)
-                return BadRequest(new RespuestaError($"{eliminar.Mensaje}"));
+                return BadRequest(eliminar);
 
-            return Ok();
+            return Ok(eliminar);
         }
     }
 }

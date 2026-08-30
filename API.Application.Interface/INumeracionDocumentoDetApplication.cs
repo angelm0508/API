@@ -6,11 +6,13 @@ namespace API.Application.Interface
     public interface INumeracionDocumentoDetApplication
     {
         #region async methods
-        Task<Respuesta<string>> InsertarAsync(NumeracionDocumentoDetCrearDTO obj);
-        Task<Respuesta<bool>> ActualizarAsync(string codigoObj, NumeracionDocumentoDetActualizarDTO obj);
-        Task<Respuesta<bool>> EliminarAsync(string codigoObj);
-        Task<Respuesta<NumeracionDocumentoDetDTO>> ObtenerAsync(string codigoObj);
+        Task<Respuesta<int>> InsertarAsync(NumeracionDocumentoDetCrearDTO obj);
+        Task<Respuesta<bool>> ActualizarAsync(int serie, NumeracionDocumentoDetActualizarDTO obj);
+        Task<Respuesta<bool>> EliminarAsync(int serie);
+        Task<Respuesta<NumeracionDocumentoDetDTO>> ObtenerAsync(int serie);
+        Task<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>> ObtenerPorDocumentoAsync(string codigoObj);
         Task<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>> ObtenerTodoAsync();
+        Task<Respuesta<string>> GenerarCodigoAsync(int serie);
         #endregion
     }
 }

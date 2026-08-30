@@ -14,5 +14,7 @@ namespace API.Application.DTO.numeracion.numeracion_documento_det
         public string? Bloqueado { get; set; }
         public int? CantDigitos { get; set; }
         public string SubTipoDoc { get; set; }
+        public string TipoSerie { get; set; }
+        public string? Manual { get; set; }
     }
 }

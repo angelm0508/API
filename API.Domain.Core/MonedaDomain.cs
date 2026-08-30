@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class MonedaDomain : IMonedaDomain
     {
-        private readonly IRepositorioGenericoDos<Monedum> _repoMoneda;
-        public MonedaDomain(IRepositorioGenericoDos<Monedum> repoMoneda)
+        private readonly IRepositorioGenerico<Monedum, string> _repoMoneda;
+        public MonedaDomain(IRepositorioGenerico<Monedum, string> repoMoneda)
         {
             _repoMoneda = repoMoneda;
         }
@@ -21,7 +21,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoMoneda.InsertarAsync(obj);
+            await _repoMoneda.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, Monedum obj)
         {

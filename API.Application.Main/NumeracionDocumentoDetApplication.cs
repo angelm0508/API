@@ -20,9 +20,9 @@ namespace API.Application.Main
         }
 
         #region async methods
-        public async Task<Respuesta<string>> InsertarAsync(NumeracionDocumentoDetCrearDTO obj)
+        public async Task<Respuesta<int>> InsertarAsync(NumeracionDocumentoDetCrearDTO obj)
         {
-            var respuesta = new Respuesta<string>();
+            var respuesta = new Respuesta<int>();
             try
             {
                 var numeracionDoc = _mapper.Map<NumeracionDocumentoDet>(obj);
@@ -37,13 +37,13 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<bool>> ActualizarAsync(string codigoObj, NumeracionDocumentoDetActualizarDTO obj)
+        public async Task<Respuesta<bool>> ActualizarAsync(int serie, NumeracionDocumentoDetActualizarDTO obj)
         {
             var respuesta = new Respuesta<bool>();
             try
             {
                 var numeracionDoc = _mapper.Map<NumeracionDocumentoDet>(obj);
-                respuesta.Dato = await _numeracionDocumentoDetDomain.ActualizarAsync(codigoObj, numeracionDoc);
+                respuesta.Dato = await _numeracionDocumentoDetDomain.ActualizarAsync(serie, numeracionDoc);
                 if (respuesta.Dato)
                 {
                     respuesta.Resultado = true;
@@ -57,12 +57,12 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<bool>> EliminarAsync(string codigoObj)
+        public async Task<Respuesta<bool>> EliminarAsync(int serie)
         {
             var respuesta = new Respuesta<bool>();
             try
             {
-                respuesta.Dato = await _numeracionDocumentoDetDomain.EliminarAsync(codigoObj);
+                respuesta.Dato = await _numeracionDocumentoDetDomain.EliminarAsync(serie);
                 if (respuesta.Dato)
                 {
                     respuesta.Resultado = true;
@@ -76,13 +76,29 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<NumeracionDocumentoDetDTO>> ObtenerAsync(string codigoObj)
+        public async Task<Respuesta<NumeracionDocumentoDetDTO>> ObtenerAsync(int serie)
         {
             var respuesta = new Respuesta<NumeracionDocumentoDetDTO>();
             try
             {
-                var numeracionDoc = await _numeracionDocumentoDetDomain.ObtenerAsync(codigoObj);
+                var numeracionDoc = await _numeracionDocumentoDetDomain.ObtenerAsync(serie);
                 respuesta.Dato = _mapper.Map<NumeracionDocumentoDetDTO>(numeracionDoc);
+                respuesta.Resultado = true;
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
+
+        public async Task<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>> ObtenerPorDocumentoAsync(string codigoObj)
+        {
+            var respuesta = new Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>();
+            try
+            {
+                var numeracionDocs = await _numeracionDocumentoDetDomain.ObtenerPorDocumentoAsync(codigoObj);
+                respuesta.Dato = _mapper.Map<IEnumerable<NumeracionDocumentoDetDTO>>(numeracionDocs);
                 respuesta.Resultado = true;
             }
             catch (Exception ex)
@@ -101,6 +117,22 @@ namespace API.Application.Main
                 var numeracionDocs = await queryable.ToListAsync();
                 respuesta.Dato = _mapper.Map<IEnumerable<NumeracionDocumentoDetDTO>>(numeracionDocs);
                 respuesta.Resultado = true;
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
+
+        public async Task<Respuesta<string>> GenerarCodigoAsync(int serie)
+        {
+            var respuesta = new Respuesta<string>();
+            try
+            {
+                respuesta.Dato = await _numeracionDocumentoDetDomain.GenerarCodigoAsync(serie);
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Código generado correctamente.";
             }
             catch (Exception ex)
             {

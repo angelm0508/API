@@ -116,6 +116,9 @@
             "projectReferences": {
               "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\API.Application.DTO.csproj": {
                 "projectPath": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Application.DTO\\API.Application.DTO.csproj"
+              },
+              "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Entity\\API.Domain.Entity.csproj": {
+                "projectPath": "C:\\Users\\Miguel\\source\\repos\\angelm0508\\API\\API.Domain.Entity\\API.Domain.Entity.csproj"
               }
             }
           }
@@ -231,6 +234,18 @@
             "AutoMapper": {
               "target": "Package",
               "version": "[16.2.0, )"
+            },
+            "Microsoft.Extensions.Identity.Core": {
+              "target": "Package",
+              "version": "[7.0.20, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.14.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.14.0, )"
             }
           },
           "imports": [

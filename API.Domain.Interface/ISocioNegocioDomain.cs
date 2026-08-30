@@ -5,7 +5,7 @@ namespace API.Domain.Interface
     public interface ISocioNegocioDomain
     {
         #region async methods
-        Task<bool> InsertarAsync(SocioNegocio obj);
+        Task<string> InsertarAsync(SocioNegocio obj);
         Task<bool> ActualizarAsync(string codigo, SocioNegocio obj);
         Task<bool> EliminarAsync(string codigo);
         Task<SocioNegocio> ObtenerPorCodigoAsync(string codigo);

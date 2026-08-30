@@ -7,8 +7,8 @@ namespace API.Domain.Core
 {
     public class DepartamentoDomain : IDepartamentoDomain
     {
-        private readonly IRepositorioGenericoDos<Departamento> _repoDepartamento;
-        public DepartamentoDomain(IRepositorioGenericoDos<Departamento> repoDepartamento)
+        private readonly IRepositorioGenerico<Departamento, string> _repoDepartamento;
+        public DepartamentoDomain(IRepositorioGenerico<Departamento, string> repoDepartamento)
         {
             _repoDepartamento = repoDepartamento;
         }
@@ -21,7 +21,8 @@ namespace API.Domain.Core
                 throw new Exception($"Ya existe un registro con el código: {obj.Codigo}");
             }
 
-            return await _repoDepartamento.InsertarAsync(obj);
+            await _repoDepartamento.InsertarAsync(obj);
+            return true;
         }
         public async Task<bool> ActualizarAsync(string codigo, Departamento obj)
         {
