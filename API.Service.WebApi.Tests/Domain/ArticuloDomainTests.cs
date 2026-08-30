@@ -98,15 +98,21 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task InsertarAsync_SerieBloqueada_Lanza()
+        public async Task InsertarAsync_SerieBloqueada_PermiteRegistrarIgual()
         {
+            // A diferencia de las demás validaciones de la serie, "Bloqueado" ya no impide
+            // registrar un artículo -- ver ArticuloDomain.InsertarAsync (cambio confirmado por el
+            // usuario, no revierte el chequeo de serie inexistente/manual sin código/sin
+            // SigNumero/numeración agotada, que siguen aplicando igual).
             var serie = SerieAutogenerada(bloqueado: "S");
             _repoNumeracionMock.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(serie);
+            _repoArticuloMock.Setup(r => r.InsertarAsync(It.IsAny<Articulo>())).ReturnsAsync((Articulo a) => a);
 
             var obj = new Articulo { Serie = 7 };
+            var codigo = await _domain.InsertarAsync(obj);
 
-            await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
-            _repoArticuloMock.Verify(r => r.InsertarAsync(It.IsAny<Articulo>()), Times.Never);
+            Assert.Equal("ART-0005", codigo);
+            _repoArticuloMock.Verify(r => r.InsertarAsync(It.IsAny<Articulo>()), Times.Once);
         }
 
         [Fact]
