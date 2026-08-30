@@ -187,5 +187,29 @@ namespace API.Service.WebApi.Tests.Controllers
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
             Assert.Same(respuestaDelete, ok.Value);
         }
+
+        [Fact]
+        public async Task ObtenerContengaNombre_DevuelveBadRequest_CuandoResultadoEsFalso()
+        {
+            var respuesta = new Respuesta<IEnumerable<ImpuestoDTO>> { Resultado = false, Mensaje = "error" };
+            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("IVA")).ReturnsAsync(respuesta);
+
+            var resultado = await _controller.ObtenerContengaNombre("IVA");
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
+        }
+
+        [Fact]
+        public async Task ObtenerContengaNombre_DevuelveOk_CuandoResultadoEsExitoso()
+        {
+            var respuesta = new Respuesta<IEnumerable<ImpuestoDTO>> { Resultado = true, Dato = new List<ImpuestoDTO> { new ImpuestoDTO { Codigo = "I1", Nombre = "IVA", Tasa = 12 } } };
+            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("IVA")).ReturnsAsync(respuesta);
+
+            var resultado = await _controller.ObtenerContengaNombre("IVA");
+
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Same(respuesta, ok.Value);
+        }
     }
 }

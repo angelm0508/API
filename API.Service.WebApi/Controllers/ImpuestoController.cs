@@ -36,6 +36,17 @@ namespace API.Service.WebApi.Controllers
             return Ok(impuesto);
         }
 
+        [HttpGet("ContengaNombre/{nombre}")]
+        public async Task<ActionResult<Respuesta<IEnumerable<ImpuestoDTO>>>> ObtenerContengaNombre([FromRoute] string nombre)
+        {
+            var impuestos = await _impuestoApplication.ObtenerContengaNombreAsync(nombre);
+
+            if (!impuestos.Resultado)
+                return BadRequest(impuestos);
+
+            return Ok(impuestos);
+        }
+
         [HttpGet()]
         public async Task<ActionResult<Respuesta<IEnumerable<ImpuestoDTO>>>> ObtenerTodo()
         {

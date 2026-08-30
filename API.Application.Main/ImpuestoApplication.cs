@@ -111,6 +111,23 @@ namespace API.Application.Main
             }
             return respuesta;
         }
+
+        public async Task<Respuesta<IEnumerable<ImpuestoDTO>>> ObtenerContengaNombreAsync(string nombre)
+        {
+            var respuesta = new Respuesta<IEnumerable<ImpuestoDTO>>();
+            try
+            {
+                var impuestos = await _impuestoDomain.ObtenerContengaNombreAsync(nombre);
+                respuesta.Dato = _mapper.Map<IEnumerable<ImpuestoDTO>>(impuestos);
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Consulta realizada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
         #endregion
     }
 }

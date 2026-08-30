@@ -45,6 +45,12 @@ namespace API.Domain.Core
         {
             return await _repoImpuesto.ObtenerTodoAsync();
         }
+
+        public async Task<IEnumerable<Impuesto>> ObtenerContengaNombreAsync(string nombre)
+        {
+            var impuestos = await _repoImpuesto.ObtenerTodoAsync();
+            return await impuestos.Where(x => x.Nombre.Contains(nombre)).ToListAsync();
+        }
         #endregion
     }
 }
