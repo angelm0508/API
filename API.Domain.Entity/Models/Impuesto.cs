@@ -12,4 +12,6 @@ public partial class Impuesto
     public decimal? Tasa { get; set; }
 
     public virtual ICollection<PedidoCompraDetalle> PedidoCompraDetalles { get; set; } = new List<PedidoCompraDetalle>();
+
+    public virtual ICollection<EntregaCompraDetalle> EntregaCompraDetalles { get; set; } = new List<EntregaCompraDetalle>();
 }
