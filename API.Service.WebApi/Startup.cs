@@ -205,6 +205,14 @@ namespace API.Service.WebApi
             services.AddTransient<IPedidoDetalleDomain, PedidoDetalleDomain>();
             services.AddTransient<IPedidoDetalleApplication, PedidoDetalleApplication>();
 
+            services.AddTransient<IRepositorioGenerico<PedidoCompra, int>, PedidoCompraRepositorio>();
+            services.AddTransient<IPedidoCompraDomain, PedidoCompraDomain>();
+            services.AddTransient<IPedidoCompraApplication, PedidoCompraApplication>();
+
+            services.AddTransient<IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)>, PedidoCompraDetalleRepositorio>();
+            services.AddTransient<IPedidoCompraDetalleDomain, PedidoCompraDetalleDomain>();
+            services.AddTransient<IPedidoCompraDetalleApplication, PedidoCompraDetalleApplication>();
+
             services.AddTransient<IRepositorioGenerico<Impuesto, string>, ImpuestoRepositorio>();
             services.AddTransient<IImpuestoDomain, ImpuestoDomain>();
             services.AddTransient<IImpuestoApplication, ImpuestoApplication>();

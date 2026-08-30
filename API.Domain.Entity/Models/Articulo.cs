@@ -57,6 +57,8 @@ public partial class Articulo
 
     public virtual ICollection<PedidoDetalle> PedidoDetalles { get; set; } = new List<PedidoDetalle>();
 
+    public virtual ICollection<PedidoCompraDetalle> PedidoCompraDetalles { get; set; } = new List<PedidoCompraDetalle>();
+
     public virtual ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();
 
     public virtual GrupoUnidadMedidaArticulo? CodigoGrpUnidadMedidaNavigation { get; set; }
