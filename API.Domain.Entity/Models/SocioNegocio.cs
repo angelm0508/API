@@ -43,6 +43,8 @@ public partial class SocioNegocio
 
     public virtual ICollection<EntregaCompra> EntregaCompras { get; set; } = new List<EntregaCompra>();
 
+    public virtual ICollection<FacturaCompra> FacturaCompras { get; set; } = new List<FacturaCompra>();
+
     public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
 
     public virtual ICollection<DireccionSocioNegocio> DireccionSocioNegocios { get; set; } = new List<DireccionSocioNegocio>();

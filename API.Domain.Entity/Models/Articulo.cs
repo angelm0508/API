@@ -61,6 +61,8 @@ public partial class Articulo
 
     public virtual ICollection<EntregaCompraDetalle> EntregaCompraDetalles { get; set; } = new List<EntregaCompraDetalle>();
 
+    public virtual ICollection<FacturaCompraDetalle> FacturaCompraDetalles { get; set; } = new List<FacturaCompraDetalle>();
+
     public virtual ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();
 
     public virtual GrupoUnidadMedidaArticulo? CodigoGrpUnidadMedidaNavigation { get; set; }
