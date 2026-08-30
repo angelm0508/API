@@ -1108,6 +1108,7 @@ por:
 ```javascript
     function abrirModal(html) {
         $('#contenidoModal').html(html);
+        $('#modalFormulario').off('.autocompletar'); // limpia los listeners de la apertura anterior antes de que los 4 buscadores registren los suyos
         new bootstrap.Modal('#modalFormulario').show();
         inicializarSeriePedido();
         inicializarBuscadorSocio();
@@ -1153,9 +1154,12 @@ Mismo reemplazo que el Task 3 Step 5, cambiando únicamente los 4 endpoints de `
                 if (!a) return;
                 $('#detDescripcion').val(a.nombre ?? a.Nombre ?? '');
                 $('#detPrecio').val(a.precioUnitario ?? a.PrecioUnitario ?? 0);
+                // No se escribe el <input> del buscador de Almacén directamente -- hay que pasar
+                // por buscadorAlmacen.establecer() para que su estado interno ("resuelto") quede
+                // consistente (si no, un texto inválido escrito antes en ese campo podría dejarlo
+                // bloqueado para siempre aunque visualmente parezca tener un valor).
                 const almacenDefecto = a.almacenDefecto ?? a.AlmacenDefecto ?? '';
-                $('#detCodAlmacenTexto').val(almacenDefecto);
-                $('#detCodAlmacen').val(almacenDefecto);
+                buscadorAlmacen.establecer(almacenDefecto ? { codigo: almacenDefecto, nombre: almacenDefecto } : null);
                 recalcularLinea();
             }
         });
@@ -1459,6 +1463,7 @@ Eliminar los 2 `<script>` de datos (`datosArticulosEntrega`, `datosImpuestosEntr
 ```javascript
     function abrirModal(html) {
         $('#contenidoModal').html(html);
+        $('#modalFormulario').off('.autocompletar'); // limpia los listeners de la apertura anterior antes de que los 4 buscadores registren los suyos
         new bootstrap.Modal('#modalFormulario').show();
         inicializarSerieEntrega();
         inicializarBuscadorSocio();
@@ -1502,9 +1507,12 @@ Eliminar los 2 `<script>` de datos (`datosArticulosEntrega`, `datosImpuestosEntr
                 if (!a) return;
                 $('#detDescripcion').val(a.nombre ?? a.Nombre ?? '');
                 $('#detPrecio').val(a.precioUnitario ?? a.PrecioUnitario ?? 0);
+                // No se escribe el <input> del buscador de Almacén directamente -- hay que pasar
+                // por buscadorAlmacen.establecer() para que su estado interno ("resuelto") quede
+                // consistente (si no, un texto inválido escrito antes en ese campo podría dejarlo
+                // bloqueado para siempre aunque visualmente parezca tener un valor).
                 const almacenDefecto = a.almacenDefecto ?? a.AlmacenDefecto ?? '';
-                $('#detCodAlmacenTexto').val(almacenDefecto);
-                $('#detCodAlmacen').val(almacenDefecto);
+                buscadorAlmacen.establecer(almacenDefecto ? { codigo: almacenDefecto, nombre: almacenDefecto } : null);
                 recalcularLinea();
             }
         });
@@ -1806,6 +1814,7 @@ Eliminar los 2 `<script>` de datos (`datosArticulosFactura`, `datosImpuestosFact
 ```javascript
     function abrirModal(html) {
         $('#contenidoModal').html(html);
+        $('#modalFormulario').off('.autocompletar'); // limpia los listeners de la apertura anterior antes de que los 4 buscadores registren los suyos
         new bootstrap.Modal('#modalFormulario').show();
         inicializarSerieFactura();
         inicializarBuscadorSocio();
@@ -1849,9 +1858,12 @@ Eliminar los 2 `<script>` de datos (`datosArticulosFactura`, `datosImpuestosFact
                 if (!a) return;
                 $('#detDescripcion').val(a.nombre ?? a.Nombre ?? '');
                 $('#detPrecio').val(a.precioUnitario ?? a.PrecioUnitario ?? 0);
+                // No se escribe el <input> del buscador de Almacén directamente -- hay que pasar
+                // por buscadorAlmacen.establecer() para que su estado interno ("resuelto") quede
+                // consistente (si no, un texto inválido escrito antes en ese campo podría dejarlo
+                // bloqueado para siempre aunque visualmente parezca tener un valor).
                 const almacenDefecto = a.almacenDefecto ?? a.AlmacenDefecto ?? '';
-                $('#detCodAlmacenTexto').val(almacenDefecto);
-                $('#detCodAlmacen').val(almacenDefecto);
+                buscadorAlmacen.establecer(almacenDefecto ? { codigo: almacenDefecto, nombre: almacenDefecto } : null);
                 recalcularLinea();
             }
         });
