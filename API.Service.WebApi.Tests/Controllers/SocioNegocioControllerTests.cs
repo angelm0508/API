@@ -101,9 +101,9 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task ObtenerContengaNombre_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
             var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>> { Resultado = false, Mensaje = "error" };
-            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("Clie")).ReturnsAsync(respuesta);
+            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("Clie", null)).ReturnsAsync(respuesta);
 
-            var resultado = await _controller.ObtenerContengaNombre("Clie");
+            var resultado = await _controller.ObtenerContengaNombre("Clie", null);
 
             var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
             Assert.Same(respuesta, badRequest.Value);
@@ -114,9 +114,9 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             var datos = new List<SocioNegocioDTO> { new SocioNegocioDTO { Codigo = "SN1" } };
             var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>> { Resultado = true, Dato = datos };
-            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("Clie")).ReturnsAsync(respuesta);
+            _applicationMock.Setup(a => a.ObtenerContengaNombreAsync("Clie", null)).ReturnsAsync(respuesta);
 
-            var resultado = await _controller.ObtenerContengaNombre("Clie");
+            var resultado = await _controller.ObtenerContengaNombre("Clie", null);
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
             Assert.Same(respuesta, ok.Value);
@@ -151,9 +151,9 @@ namespace API.Service.WebApi.Tests.Controllers
         public async Task ObtenerTodo_DevuelveBadRequest_CuandoResultadoEsFalso()
         {
             var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>> { Resultado = false, Mensaje = "error" };
-            _applicationMock.Setup(a => a.ObtenerAsync()).ReturnsAsync(respuesta);
+            _applicationMock.Setup(a => a.ObtenerAsync(null)).ReturnsAsync(respuesta);
 
-            var resultado = await _controller.ObtenerTodo();
+            var resultado = await _controller.ObtenerTodo(null);
 
             var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
             Assert.Same(respuesta, badRequest.Value);
@@ -164,9 +164,9 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             var datos = new List<SocioNegocioDTO> { new SocioNegocioDTO { Codigo = "SN1" } };
             var respuesta = new Respuesta<IEnumerable<SocioNegocioDTO>> { Resultado = true, Dato = datos };
-            _applicationMock.Setup(a => a.ObtenerAsync()).ReturnsAsync(respuesta);
+            _applicationMock.Setup(a => a.ObtenerAsync(null)).ReturnsAsync(respuesta);
 
-            var resultado = await _controller.ObtenerTodo();
+            var resultado = await _controller.ObtenerTodo(null);
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
             Assert.Same(respuesta, ok.Value);
