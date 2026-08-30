@@ -661,6 +661,7 @@ por:
 ```javascript
     function abrirModal(html) {
         $('#contenidoModal').html(html);
+        $('#modalFormulario').off('.autocompletar'); // limpia los listeners de la apertura anterior antes de que los 4 buscadores registren los suyos
         new bootstrap.Modal('#modalFormulario').show();
         inicializarSerieCotizacion();
         inicializarBuscadorSocio();
@@ -706,9 +707,12 @@ Reemplazar el cuerpo completo de `inicializarDetalle` (desde la declaración de 
                 if (!a) return;
                 $('#detDescripcion').val(a.nombre ?? a.Nombre ?? '');
                 $('#detPrecio').val(a.precioUnitario ?? a.PrecioUnitario ?? 0);
+                // No se escribe el <input> del buscador de Almacén directamente -- hay que pasar
+                // por buscadorAlmacen.establecer() para que su estado interno ("resuelto") quede
+                // consistente (si no, un texto inválido escrito antes en ese campo podría dejarlo
+                // bloqueado para siempre aunque visualmente parezca tener un valor).
                 const almacenDefecto = a.almacenDefecto ?? a.AlmacenDefecto ?? '';
-                $('#detCodAlmacenTexto').val(almacenDefecto);
-                $('#detCodAlmacen').val(almacenDefecto);
+                buscadorAlmacen.establecer(almacenDefecto ? { codigo: almacenDefecto, nombre: almacenDefecto } : null);
                 recalcularLinea();
             }
         });
