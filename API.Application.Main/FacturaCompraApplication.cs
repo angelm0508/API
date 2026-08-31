@@ -26,7 +26,8 @@ namespace API.Application.Main
             try
             {
                 var facturaCompra = _mapper.Map<FacturaCompra>(obj);
-                respuesta.Dato = await _facturaCompraDomain.InsertarAsync(facturaCompra);
+                var lineas = _mapper.Map<IEnumerable<FacturaCompraDetalle>>(obj.Lineas);
+                respuesta.Dato = await _facturaCompraDomain.InsertarAsync(facturaCompra, lineas);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
             }
