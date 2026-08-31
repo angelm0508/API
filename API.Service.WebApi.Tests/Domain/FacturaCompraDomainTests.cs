@@ -125,6 +125,20 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task ActualizarAsync_Cancelado_SinComentario_PreservaElExistente()
+        {
+            var existente = new FacturaCompra { Entry = 7, Cancelado = "N", EstadoInv = "A", Comentario = "nota original" };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+
+            var ok = await _domain.ActualizarAsync(7, new FacturaCompra { Cancelado = "S" });
+
+            Assert.True(ok);
+            Assert.Equal("nota original", existente.Comentario);
+            Assert.Equal("S", existente.Cancelado);
+            Assert.Equal("C", existente.EstadoInv);
+        }
+
+        [Fact]
         public async Task ActualizarAsync_YaCancelado_Lanza()
         {
             _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new FacturaCompra { Entry = 7, Cancelado = "S" });

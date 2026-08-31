@@ -110,7 +110,11 @@ namespace API.Domain.Core
                     existente.Cancelado = "S";
                     existente.EstadoInv = "C";
                     existente.FechaCancelado = DateTime.Now;
-                    existente.Comentario = obj.Comentario;
+                    // Solo se toca el comentario si el cliente lo envió: el botón "Cancelar
+                    // documento" del Web manda únicamente { Cancelado: 'S' }, y no debe borrar la
+                    // nota existente (igual que SAP B1: anular no vacía las observaciones).
+                    if (obj.Comentario != null)
+                        existente.Comentario = obj.Comentario;
                     return true;
                 });
             }
@@ -118,7 +122,8 @@ namespace API.Domain.Core
             // Edición inocua: solo el comentario.
             return await _tx.EjecutarAsync(async () =>
             {
-                existente.Comentario = obj.Comentario;
+                if (obj.Comentario != null)
+                    existente.Comentario = obj.Comentario;
                 return true;
             });
         }
