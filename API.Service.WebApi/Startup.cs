@@ -238,6 +238,9 @@ namespace API.Service.WebApi
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IInventarioAsientoService, InventarioAsientoService>();
 
+            services.AddTransient<IExistenciaDomain, ExistenciaDomain>();
+            services.AddTransient<IExistenciaApplication, ExistenciaApplication>();
+
             // Servicios de autenticación
             services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
             services.AddTransient<ITokenService, TokenService>();
