@@ -1,3 +1,4 @@
+using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
@@ -11,17 +12,20 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)> _repoExistencia;
         private readonly IRepositorioGenerico<MovimientoInventario, int> _repoMovimiento;
         private readonly IValuacionInventario _valuacion;
+        private readonly IRepositorioGenerico<Almacen, string> _repoAlmacen;
 
         public InventarioAsientoService(
             IRepositorioGenerico<Articulo, string> repoArticulo,
             IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)> repoExistencia,
             IRepositorioGenerico<MovimientoInventario, int> repoMovimiento,
-            IValuacionInventario valuacion)
+            IValuacionInventario valuacion,
+            IRepositorioGenerico<Almacen, string> repoAlmacen)
         {
             _repoArticulo = repoArticulo;
             _repoExistencia = repoExistencia;
             _repoMovimiento = repoMovimiento;
             _valuacion = valuacion;
+            _repoAlmacen = repoAlmacen;
         }
 
         public async Task AsentarAsync(IEnumerable<MovimientoRequest> movimientos, bool permitirNegativo = false)
@@ -68,11 +72,14 @@ namespace API.Domain.Core
             decimal cantidad, decimal precioUnitario, DateTime fecha, bool permitirNegativo, int? movReversaDe)
         {
             var articulo = await _repoArticulo.ObtenerAsync(codArticulo)
-                ?? throw new Exception($"El artículo {codArticulo} no existe.");
+                ?? throw new ArticuloNoExisteException(codArticulo);
 
             // Solo los artículos de inventario mueven stock; servicios/no-inventario se ignoran.
             if (articulo.ArticuloInventario != "S")
                 return;
+
+            if (await _repoAlmacen.ObtenerAsync(codAlmacen) is null)
+                throw new AlmacenNoExisteException(codAlmacen);
 
             var existencia = await _repoExistencia.ObtenerAsync((codArticulo, codAlmacen));
             var nuevaExistencia = existencia is null;
@@ -80,7 +87,7 @@ namespace API.Domain.Core
 
             var nuevaDisponible = existencia.Disponible + cantidad;
             if (nuevaDisponible < 0m && !permitirNegativo)
-                throw new Exception($"Stock insuficiente en el almacén {codAlmacen} para el artículo {codArticulo}: disponible {existencia.Disponible}, requerido {-cantidad}.");
+                throw new StockInsuficienteException(codArticulo, codAlmacen, existencia.Disponible, -cantidad);
 
             var cantArtActual = articulo.CantDisponible ?? 0m;
             var resultado = cantidad >= 0m
