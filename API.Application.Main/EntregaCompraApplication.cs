@@ -26,7 +26,8 @@ namespace API.Application.Main
             try
             {
                 var entregaCompra = _mapper.Map<EntregaCompra>(obj);
-                respuesta.Dato = await _entregaCompraDomain.InsertarAsync(entregaCompra);
+                var lineas = _mapper.Map<IEnumerable<EntregaCompraDetalle>>(obj.Lineas);
+                respuesta.Dato = await _entregaCompraDomain.InsertarAsync(entregaCompra, lineas);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
             }
