@@ -159,15 +159,22 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task InsertarAsync_SerieBloqueada_Lanza()
+        public async Task InsertarAsync_SerieBloqueada_PermiteRegistrarIgual()
         {
+            // A diferencia de las demás validaciones de la serie, "Bloqueado" ya no impide
+            // registrar un socio de negocio -- ver SocioNegocioDomain.InsertarAsync (cambio
+            // confirmado por el usuario; los chequeos de serie inexistente / manual sin código /
+            // sin SigNumero / numeración agotada siguen aplicando igual).
             var serie = SerieAutogenerada(bloqueado: "S");
             _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(serie);
+            _repoSocioMock.Setup(r => r.InsertarAsync(It.IsAny<SocioNegocio>())).ReturnsAsync((SocioNegocio s) => s);
 
             var obj = new SocioNegocio { Serie = 9 };
+            var codigo = await _domain.InsertarAsync(obj);
 
-            await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
-            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+            Assert.Equal("CLI-0005", codigo);
+            Assert.Equal(6, serie.SigNumero);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Once);
         }
 
         [Fact]

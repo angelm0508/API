@@ -24,11 +24,6 @@ namespace API.Domain.Core
             var serie = await _repoGenericoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
-            if (serie.Bloqueado == "S")
-            {
-                throw new Exception("La serie está bloqueada y no se puede usar para registrar socios de negocio.");
-            }
-
             if (serie.Manual == "S")
             {
                 // Serie manual: el código lo escribe el usuario, el consecutivo automático no aplica.
