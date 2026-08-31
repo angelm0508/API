@@ -39,6 +39,10 @@ public partial class Almacen
 
     public virtual ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();
 
+    public virtual ICollection<ExistenciaArticulo> ExistenciaArticulos { get; set; } = new List<ExistenciaArticulo>();
+
+    public virtual ICollection<MovimientoInventario> MovimientoInventarios { get; set; } = new List<MovimientoInventario>();
+
     public virtual Departamento? DepartamentoNavigation { get; set; }
 
     public virtual Municipio? MunicipioNavigation { get; set; }

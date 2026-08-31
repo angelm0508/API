@@ -70,5 +70,10 @@ namespace API.Infraestructure.Repository
         {
             return Task.FromResult(DbSet.AsQueryable());
         }
+
+        public virtual async Task AgregarSinGuardarAsync(TEntity entity)
+        {
+            await DbSet.AddAsync(entity);
+        }
     }
 }

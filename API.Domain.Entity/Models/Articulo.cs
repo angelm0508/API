@@ -49,6 +49,14 @@ public partial class Articulo
 
     public int Serie { get; set; }
 
+    public string MetodoValuacion { get; set; } = null!;
+
+    public decimal CostoPromedio { get; set; }
+
+    public decimal CostoEstandar { get; set; }
+
+    public decimal ValorInventario { get; set; }
+
     public virtual Almacen? AlmacenDefectoNavigation { get; set; }
 
     public virtual ICollection<CotizacionDetalle> CotizacionDetalles { get; set; } = new List<CotizacionDetalle>();
@@ -64,6 +72,10 @@ public partial class Articulo
     public virtual ICollection<FacturaCompraDetalle> FacturaCompraDetalles { get; set; } = new List<FacturaCompraDetalle>();
 
     public virtual ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();
+
+    public virtual ICollection<ExistenciaArticulo> ExistenciaArticulos { get; set; } = new List<ExistenciaArticulo>();
+
+    public virtual ICollection<MovimientoInventario> MovimientoInventarios { get; set; } = new List<MovimientoInventario>();
 
     public virtual GrupoUnidadMedidaArticulo? CodigoGrpUnidadMedidaNavigation { get; set; }
 
