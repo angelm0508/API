@@ -12,6 +12,9 @@ namespace API.Domain.Interface
     /// Aplica movimientos de inventario (existencias, valuación, kardex) sobre el ChangeTracker
     /// del ApiDbTestContext scoped. NUNCA llama SaveChangesAsync: el caller persiste todo junto
     /// con su documento, en una sola transacción implícita (mismo patrón que la numeración).
+    /// Si lanza (p. ej. stock insuficiente), el ChangeTracker queda con mutaciones PARCIALES de los
+    /// movimientos ya procesados: el caller debe abandonar el scope del DbContext y NUNCA llamar
+    /// SaveChangesAsync.
     /// </summary>
     public interface IInventarioAsientoService
     {

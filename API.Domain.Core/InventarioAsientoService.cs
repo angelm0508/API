@@ -40,6 +40,8 @@ namespace API.Domain.Core
             var queryable = await _repoMovimiento.ObtenerTodoAsync();
             var delDocumento = await queryable
                 .Where(x => x.TipoDoc == tipoDoc && x.DocEntry == docEntry)
+                // orden determinista: el promedio móvil es sensible al orden en que se aplican las reversas
+                .OrderBy(x => x.Entry)
                 .ToListAsync();
 
             var yaRevertidos = delDocumento

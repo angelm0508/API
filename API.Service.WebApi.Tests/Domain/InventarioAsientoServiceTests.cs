@@ -84,6 +84,22 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task AsentarAsync_DosLineasMismoArticulo_AcumulaPromedioEnLaSegunda()
+        {
+            // Un solo artículo, sin costo ni existencia previa. Moq.ReturnsAsync devuelve SIEMPRE la
+            // misma instancia de Articulo, así que las escrituras de la 1ra línea (CostoPromedio,
+            // CantDisponible) son lo que lee la 2da: acumulación real dentro de una sola llamada.
+            ArticuloDeInventario("ART1", costoProm: 0m, cantActual: 0m);
+            ConExistencia("ART1", "01", 0m);   // NO SinExistenciaPrevia (devolvería null en cada llamada)
+
+            await _svc.AsentarAsync(new[] { Req("ART1", "01", 10m, 25m), Req("ART1", "01", 5m, 30m) });
+
+            Assert.Equal(2, _movAgregados.Count);
+            Assert.Equal(15m, _movAgregados[1].SaldoCantidad);
+            Assert.Equal(400m / 15m, _movAgregados[1].SaldoCostoPromedio);
+        }
+
+        [Fact]
         public async Task AsentarAsync_ArticuloNoInventario_SeIgnora()
         {
             _repoArt.Setup(r => r.ObtenerAsync("SERV1")).ReturnsAsync(new Articulo { Codigo = "SERV1", ArticuloInventario = "N" });
