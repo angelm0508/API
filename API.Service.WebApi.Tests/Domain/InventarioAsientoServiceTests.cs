@@ -1,4 +1,5 @@
 using API.Domain.Core;
+using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
@@ -13,17 +14,19 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<Articulo, string>> _repoArt = new();
         private readonly Mock<IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)>> _repoExist = new();
         private readonly Mock<IRepositorioGenerico<MovimientoInventario, int>> _repoMov = new();
+        private readonly Mock<IRepositorioGenerico<Almacen, string>> _repoAlmacen = new();
         private readonly InventarioAsientoService _svc;
 
         private readonly List<MovimientoInventario> _movAgregados = new();
 
         public InventarioAsientoServiceTests()
         {
-            _svc = new InventarioAsientoService(_repoArt.Object, _repoExist.Object, _repoMov.Object, new ValuacionInventario());
+            _svc = new InventarioAsientoService(_repoArt.Object, _repoExist.Object, _repoMov.Object, new ValuacionInventario(), _repoAlmacen.Object);
             _repoMov.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<MovimientoInventario>()))
                 .Callback<MovimientoInventario>(m => _movAgregados.Add(m))
                 .Returns(Task.CompletedTask);
             _repoExist.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<ExistenciaArticulo>())).Returns(Task.CompletedTask);
+            _repoAlmacen.Setup(r => r.ObtenerAsync(It.IsAny<string>())).ReturnsAsync(new Almacen { Codigo = "01" });
         }
 
         private void ArticuloDeInventario(string cod, string metodo = "P", decimal costoProm = 0m, decimal costoEst = 0m, decimal cantActual = 0m) =>
@@ -116,7 +119,7 @@ namespace API.Service.WebApi.Tests.Domain
             ArticuloDeInventario("ART1", costoProm: 25m, cantActual: 2m);
             ConExistencia("ART1", "01", 2m);
 
-            await Assert.ThrowsAsync<Exception>(() => _svc.AsentarAsync(new[] { Req("ART1", "01", -5m, 0m) }));
+            await Assert.ThrowsAsync<StockInsuficienteException>(() => _svc.AsentarAsync(new[] { Req("ART1", "01", -5m, 0m) }));
             Assert.Empty(_movAgregados);
         }
 
@@ -131,6 +134,28 @@ namespace API.Service.WebApi.Tests.Domain
             var mov = Assert.Single(_movAgregados);
             Assert.Equal(5m, mov.CantidadSale);
             Assert.Equal(-3m, mov.SaldoCantidad);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_AlmacenInexistente_Lanza()
+        {
+            ArticuloDeInventario("ART1");
+            SinExistenciaPrevia();
+            _repoAlmacen.Setup(r => r.ObtenerAsync("99")).ReturnsAsync((Almacen?)null);
+
+            await Assert.ThrowsAsync<AlmacenNoExisteException>(
+                () => _svc.AsentarAsync(new[] { new MovimientoRequest("11", 100, 1, "ART1", "99", 10m, 25m, new DateTime(2026, 8, 30)) }));
+            Assert.Empty(_movAgregados);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_ArticuloInexistente_Lanza()
+        {
+            _repoArt.Setup(r => r.ObtenerAsync(It.IsAny<string>())).ReturnsAsync((Articulo?)null);
+
+            await Assert.ThrowsAsync<ArticuloNoExisteException>(
+                () => _svc.AsentarAsync(new[] { new MovimientoRequest("11", 100, 1, "FANTASMA", "01", 10m, 25m, new DateTime(2026, 8, 30)) }));
+            Assert.Empty(_movAgregados);
         }
 
         [Fact]

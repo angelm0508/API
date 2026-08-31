@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\API.Domain.Entity\API.Domain.Entity.csproj" />
+    <ProjectReference Include="..\API.Domain.Interface\API.Domain.Interface.csproj" />
     <ProjectReference Include="..\API.Infraestructure.Interface\API.Infraestructure.Interface.csproj" />
   </ItemGroup>
 
