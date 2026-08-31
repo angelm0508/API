@@ -200,6 +200,7 @@ namespace API.Transversal.Mapper
 
             // Inventario
             CreateMap<ExistenciaArticulo, ExistenciaArticuloDTO>();
+            CreateMap<MovimientoInventario, MovimientoInventarioDTO>();
         }
     }
 }
