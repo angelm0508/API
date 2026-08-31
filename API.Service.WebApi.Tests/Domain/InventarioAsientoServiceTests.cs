@@ -149,6 +149,16 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task AsentarAsync_ArticuloInexistente_Lanza()
+        {
+            _repoArt.Setup(r => r.ObtenerAsync(It.IsAny<string>())).ReturnsAsync((Articulo?)null);
+
+            await Assert.ThrowsAsync<ArticuloNoExisteException>(
+                () => _svc.AsentarAsync(new[] { new MovimientoRequest("11", 100, 1, "FANTASMA", "01", 10m, 25m, new DateTime(2026, 8, 30)) }));
+            Assert.Empty(_movAgregados);
+        }
+
+        [Fact]
         public async Task RevertirAsync_GeneraInversosYNoDuplica()
         {
             // Kardex del documento ("11", 100): una entrada de 10, sin reversa previa.

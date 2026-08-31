@@ -59,7 +59,11 @@ namespace API.Domain.Core
                 await AplicarMovimientoAsync(
                     orig.TipoDoc, orig.DocEntry, orig.DocLinea, orig.CodArticulo, orig.CodAlmacen,
                     cantidad: -cantidadOriginal,
-                    // Se revierte al costo con que se valuó el original, para que el valor cuadre exacto.
+                    // La reversa se registra como salida al costo con que se valuó el original.
+                    // OJO: una salida NO recalcula el promedio móvil (ver ValuacionInventario.CalcularSalida),
+                    // así que anular una compra revierte la CANTIDAD exacta pero deja CostoPromedio /
+                    // ValorInventario en el valor posterior a la entrada. Ajuste de valuación en la reversa:
+                    // pendiente (INV-3 / deuda de valuación conocida).
                     precioUnitario: orig.CostoUnitario,
                     fecha: orig.Fecha,
                     permitirNegativo: true,   // una reversa nunca se bloquea por negativo

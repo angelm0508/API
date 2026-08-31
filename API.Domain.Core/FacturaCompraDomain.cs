@@ -119,11 +119,10 @@ namespace API.Domain.Core
                 });
             }
 
-            // Edición inocua: solo el comentario.
+            // Edición inocua: solo el comentario (replace-semantics: enviar vacío lo borra).
             return await _tx.EjecutarAsync(async () =>
             {
-                if (obj.Comentario != null)
-                    existente.Comentario = obj.Comentario;
+                existente.Comentario = obj.Comentario;
                 return true;
             });
         }
@@ -138,12 +137,15 @@ namespace API.Domain.Core
                 throw new Exception("Cancele el documento (Cancelado='S') antes de eliminarlo.");
 
             // Documento cancelado (inventario ya revertido) o sin asiento: borrar líneas y encabezado.
-            var detalles = await _repoDetalle.ObtenerTodoAsync();
-            var lineas = await detalles.Where(d => d.Entry == id).ToListAsync();
-            foreach (var linea in lineas)
-                await _repoDetalle.EliminarAsync((linea.Entry, linea.NoLinea));
+            return await _tx.EjecutarAsync(async () =>
+            {
+                var detalles = await _repoDetalle.ObtenerTodoAsync();
+                var lineas = await detalles.Where(d => d.Entry == id).ToListAsync();
+                foreach (var linea in lineas)
+                    await _repoDetalle.EliminarAsync((linea.Entry, linea.NoLinea));
 
-            return await _repoFacturaCompra.EliminarAsync(id);
+                return await _repoFacturaCompra.EliminarAsync(id);
+            });
         }
 
         public async Task<FacturaCompra> ObtenerAsync(int id)

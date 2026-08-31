@@ -21,13 +21,11 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(EntregaCompraDetalle obj)
         {
-            await LanzarSiElDocumentoExisteAsync(obj.Entry);
-
-            var lineasExistentes = await ObtenerPorEntregaCompraAsync(obj.Entry);
-            obj.NoLinea = lineasExistentes.Any() ? lineasExistentes.Max(x => x.NoLinea) + 1 : 1;
-
-            var insertado = await _repoGenericoDet.InsertarAsync(obj);
-            return insertado.NoLinea;
+            // Las líneas se crean únicamente al registrar el documento (EntregaCompraDomain.InsertarAsync).
+            // Este endpoint suelto no debe crear líneas: sin FK a EntregaCompra, un Entry inexistente
+            // generaría una línea huérfana.
+            await Task.CompletedTask;
+            throw new Exception("Las líneas se definen al crear el documento y no se pueden agregar después.");
         }
 
         public async Task<bool> ActualizarAsync(int entry, int noLinea, EntregaCompraDetalle obj)

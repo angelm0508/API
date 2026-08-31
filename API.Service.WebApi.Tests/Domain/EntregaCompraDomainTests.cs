@@ -46,7 +46,8 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task InsertarAsync_ConLineas_NumeraAsientaYMarcaEstadoInv()
         {
-            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
             var obj = new EntregaCompra { Serie = 4, FechaDoc = new DateTime(2026, 8, 30) };
             var lineas = new[] { Linea("ART1", "01", 10m, 25m), Linea("ART2", "01", 5m, 30m) };
 
@@ -56,6 +57,8 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal("12", obj.TipoObjeto);
             Assert.Equal("A", obj.EstadoInv);
             Assert.Equal(5, obj.NumDoc);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Once);
+            Assert.Equal(6, serie.SigNumero); // arrancaba en 5; debe haber avanzado
             // 2 líneas con Entry/NoLinea asignados
             _repoDetalle.Verify(r => r.AgregarSinGuardarAsync(It.Is<EntregaCompraDetalle>(l => l.Entry == 99 && l.NoLinea == 1)), Times.Once);
             _repoDetalle.Verify(r => r.AgregarSinGuardarAsync(It.Is<EntregaCompraDetalle>(l => l.Entry == 99 && l.NoLinea == 2)), Times.Once);
@@ -147,6 +150,19 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task ActualizarAsync_Inocua_ComentarioNull_LoBorra()
+        {
+            var existente = new EntregaCompra { Entry = 7, Cancelado = "N", EstadoInv = "A", Comentario = "algo" };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+
+            var ok = await _domain.ActualizarAsync(7, new EntregaCompra { Comentario = null });
+
+            Assert.True(ok);
+            Assert.Null(existente.Comentario);
+            _asiento.Verify(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
         public async Task ActualizarAsync_Inocua_SoloCopiaComentario()
         {
             var existente = new EntregaCompra { Entry = 7, Cancelado = "N", EstadoInv = "A", CodigoSn = "SN-ORIG", MonedaDoc = "GTQ", Comentario = "viejo" };
@@ -173,12 +189,19 @@ namespace API.Service.WebApi.Tests.Domain
         {
             _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new EntregaCompra { Entry = 7, EstadoInv = "C", Cancelado = "S" });
             _repoDetalle.Setup(r => r.ObtenerTodoAsync())
-                .ReturnsAsync(new List<EntregaCompraDetalle>().AsAsyncQueryable()); // helper de TestHelpers: soporta ToListAsync
+                .ReturnsAsync(new List<EntregaCompraDetalle>
+                {
+                    new() { Entry = 7, NoLinea = 1 },
+                    new() { Entry = 7, NoLinea = 2 },
+                }.AsAsyncQueryable()); // helper de TestHelpers: soporta ToListAsync
+            _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int, int)>())).ReturnsAsync(true);
             _repoHeader.Setup(r => r.EliminarAsync(7)).ReturnsAsync(true);
 
             var ok = await _domain.EliminarAsync(7);
 
             Assert.True(ok);
+            _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 7 && k.NoLinea == 1)), Times.Once);
+            _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 7 && k.NoLinea == 2)), Times.Once);
             _repoHeader.Verify(r => r.EliminarAsync(7), Times.Once);
         }
     }

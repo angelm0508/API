@@ -26,6 +26,7 @@ namespace API.Infraestructure.Repository
             catch
             {
                 await tx.RollbackAsync();
+                _context.ChangeTracker.Clear(); // el contexto scoped queda con mutaciones parciales tras el rollback
                 throw;
             }
         }
