@@ -76,6 +76,19 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task InsertarAsync_ConCanceladoEnviadoPorElCliente_LoIgnora()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4, Cancelado = "S", FechaCancelado = new DateTime(2020, 1, 1) };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 10m, 25m) });
+
+            Assert.Equal("N", obj.Cancelado);
+            Assert.Null(obj.FechaCancelado);
+            Assert.Equal("A", obj.EstadoInv);
+        }
+
+        [Fact]
         public async Task InsertarAsync_LineaSinCantidad_NoGeneraMovimiento()
         {
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));

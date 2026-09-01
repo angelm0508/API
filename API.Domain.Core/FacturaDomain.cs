@@ -35,6 +35,8 @@ namespace API.Domain.Core
         {
             obj.TipoObjeto = TipoObjetoFactura;
             obj.EstadoInv = "A";
+            obj.Cancelado = "N";                  // un documento recién registrado nunca nace cancelado
+            obj.FechaCancelado = null;
 
             var serie = await _repoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
