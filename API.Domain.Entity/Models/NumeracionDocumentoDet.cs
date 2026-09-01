@@ -45,6 +45,10 @@ public partial class NumeracionDocumentoDet
 
     public virtual ICollection<EntregaCompra> EntregaCompras { get; set; } = new List<EntregaCompra>();
 
+    public virtual ICollection<EntradaMercancia> EntradaMercancias { get; set; } = new List<EntradaMercancia>();
+
+    public virtual ICollection<SalidaMercancia> SalidaMercancias { get; set; } = new List<SalidaMercancia>();
+
     public virtual ICollection<FacturaCompra> FacturaCompras { get; set; } = new List<FacturaCompra>();
 
     public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
