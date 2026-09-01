@@ -182,6 +182,49 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(0m, rev.SaldoCantidad);
         }
 
+        [Fact] // reverso de una VENTA: la salida vuelve como entrada y restaura el saldo exacto
+        public async Task RevertirAsync_DeUnaSalida_GeneraEntradaYRestauraSaldo()
+        {
+            var original = new MovimientoInventario
+            {
+                Entry = 500, TipoDoc = "5", DocEntry = 100, DocLinea = 1,
+                CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 8, 30),
+                CantidadEntra = 0m, CantidadSale = 10m, CostoUnitario = 20m, MovReversaDe = null
+            };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { original }.AsAsyncQueryable());
+            ArticuloDeInventario("ART1", costoProm: 20m, cantActual: 90m);
+            ConExistencia("ART1", "01", 90m);
+
+            await _svc.RevertirAsync("5", 100);
+
+            var rev = Assert.Single(_movAgregados);
+            Assert.Equal(10m, rev.CantidadEntra);
+            Assert.Equal(0m, rev.CantidadSale);
+            Assert.Equal(100m, rev.SaldoCantidad);
+            Assert.Equal(20m, rev.SaldoCostoPromedio);   // re-mezcla al costo con que salio: restaura exacto
+            Assert.Equal(500, rev.MovReversaDe);
+        }
+
+        [Fact] // el articulo llego a 0 tras la venta: CalcularEntrada no explota ni deja el promedio absurdo
+        public async Task RevertirAsync_DeUnaSalida_ConCantidadEnCero_NoRompeElPromedio()
+        {
+            var original = new MovimientoInventario
+            {
+                Entry = 501, TipoDoc = "5", DocEntry = 101, DocLinea = 1,
+                CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 8, 30),
+                CantidadEntra = 0m, CantidadSale = 10m, CostoUnitario = 20m, MovReversaDe = null
+            };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { original }.AsAsyncQueryable());
+            ArticuloDeInventario("ART1", costoProm: 20m, cantActual: 0m);
+            ConExistencia("ART1", "01", 0m);
+
+            await _svc.RevertirAsync("5", 101);
+
+            var rev = Assert.Single(_movAgregados);
+            Assert.Equal(10m, rev.SaldoCantidad);
+            Assert.Equal(20m, rev.SaldoCostoPromedio);
+        }
+
         [Fact]
         public async Task RevertirAsync_YaRevertido_NoGeneraNada()
         {
