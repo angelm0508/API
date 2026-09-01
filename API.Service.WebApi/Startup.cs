@@ -197,7 +197,7 @@ namespace API.Service.WebApi
             services.AddTransient<IEntregaCompraDetalleDomain, EntregaCompraDetalleDomain>();
             services.AddTransient<IEntregaCompraDetalleApplication, EntregaCompraDetalleApplication>();
 
-            // INV-4: Entrada y Salida de Mercancias. Task 1 solo registra los 4 repos.
+            // INV-4: Entrada y Salida de Mercancías (repos + domains + applications).
             services.AddTransient<IRepositorioGenerico<EntradaMercancia, int>, EntradaMercanciaRepositorio>();
             services.AddTransient<IEntradaMercanciaDomain, EntradaMercanciaDomain>();
             services.AddTransient<IEntradaMercanciaApplication, EntradaMercanciaApplication>();

@@ -79,6 +79,8 @@ namespace API.Service.WebApi.Tests.Domain
                 _movimientosAsentados[0].CodArticulo, _movimientosAsentados[0].CodAlmacen,
                 _movimientosAsentados[0].Cantidad, _movimientosAsentados[0].PrecioUnitario));
             Assert.Equal(2, _movimientosAsentados[1].DocLinea);
+            // El asiento se hace con bloqueo duro de negativo (permitirNegativo == false).
+            _asiento.Verify(a => a.AsentarAsync(It.IsAny<IEnumerable<MovimientoRequest>>(), false), Times.Once);
         }
 
         [Fact]

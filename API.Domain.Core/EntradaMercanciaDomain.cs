@@ -7,7 +7,7 @@ namespace API.Domain.Core
 {
     public class EntradaMercanciaDomain : IEntradaMercanciaDomain
     {
-        // CHECK constraint de la tabla: TipoObjeto='59'. Se fuerza siempre en el servidor.
+        // Default de la tabla: TipoObjeto='59'. Se fuerza siempre en el servidor.
         private const string TipoObjetoEntradaMercancia = "59";
 
         private readonly IRepositorioGenerico<EntradaMercancia, int> _repoEntrada;

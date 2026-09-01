@@ -717,8 +717,8 @@ public partial class ApiDbTestContext : DbContext
             entity.ToTable("EntradaMercanciaDetalle");
 
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
-            entity.Property(e => e.CodAlmacen).HasMaxLength(10);
-            entity.Property(e => e.CodArticulo).HasMaxLength(20);
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);    // Almacen.Codigo = 8
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);  // Articulo.Codigo = 15
             entity.Property(e => e.CostoUnitario).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.Descripcion).HasMaxLength(254);
             entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");
@@ -776,8 +776,8 @@ public partial class ApiDbTestContext : DbContext
             entity.ToTable("SalidaMercanciaDetalle");
 
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
-            entity.Property(e => e.CodAlmacen).HasMaxLength(10);
-            entity.Property(e => e.CodArticulo).HasMaxLength(20);
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);    // Almacen.Codigo = 8
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);  // Articulo.Codigo = 15
             entity.Property(e => e.CostoUnitario).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.Descripcion).HasMaxLength(254);
             entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");

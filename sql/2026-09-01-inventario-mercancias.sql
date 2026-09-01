@@ -10,12 +10,12 @@ BEGIN
         Entry          int identity(1,1) NOT NULL,
         NumDoc         int           NOT NULL CONSTRAINT DF_EntradaMerc_NumDoc     DEFAULT (0),
         Serie          int           NOT NULL,
-        NumManual      char(1)       NOT NULL CONSTRAINT DF_EntradaMerc_NumManual  DEFAULT ('N') CONSTRAINT CK_EntradaMerc_NumManual CHECK (NumManual IN ('S','N')),
-        Imprimido      char(1)       NOT NULL CONSTRAINT DF_EntradaMerc_Imprimido  DEFAULT ('N'),
-        EstadoDoc      char(1)       NOT NULL CONSTRAINT DF_EntradaMerc_EstadoDoc  DEFAULT ('A') CONSTRAINT CK_EntradaMerc_EstadoDoc CHECK (EstadoDoc IN ('A','C')),
-        EstadoInv      char(1)       NOT NULL CONSTRAINT DF_EntradaMerc_EstadoInv  DEFAULT ('A') CONSTRAINT CK_EntradaMerc_EstadoInv CHECK (EstadoInv IN ('A','C')),
-        Cancelado      char(1)       NOT NULL CONSTRAINT DF_EntradaMerc_Cancelado  DEFAULT ('N') CONSTRAINT CK_EntradaMerc_Cancelado CHECK (Cancelado IN ('S','N')),
-        TipoObjeto     varchar(11)   NOT NULL CONSTRAINT DF_EntradaMerc_TipoObjeto DEFAULT ('59'),
+        NumManual      nvarchar(1)   NOT NULL CONSTRAINT DF_EntradaMerc_NumManual  DEFAULT ('N') CONSTRAINT CK_EntradaMerc_NumManual CHECK (NumManual IN ('S','N')),
+        Imprimido      nvarchar(1)   NOT NULL CONSTRAINT DF_EntradaMerc_Imprimido  DEFAULT ('N'),
+        EstadoDoc      nvarchar(1)   NOT NULL CONSTRAINT DF_EntradaMerc_EstadoDoc  DEFAULT ('A') CONSTRAINT CK_EntradaMerc_EstadoDoc CHECK (EstadoDoc IN ('A','C')),
+        EstadoInv      nvarchar(1)   NOT NULL CONSTRAINT DF_EntradaMerc_EstadoInv  DEFAULT ('A') CONSTRAINT CK_EntradaMerc_EstadoInv CHECK (EstadoInv IN ('A','C')),
+        Cancelado      nvarchar(1)   NOT NULL CONSTRAINT DF_EntradaMerc_Cancelado  DEFAULT ('N') CONSTRAINT CK_EntradaMerc_Cancelado CHECK (Cancelado IN ('S','N')),
+        TipoObjeto     nvarchar(11)  NOT NULL CONSTRAINT DF_EntradaMerc_TipoObjeto DEFAULT ('59'),
         FechaDoc       datetime      NULL,
         FechaContab    datetime      NULL,
         FechaCancelado datetime      NULL,
@@ -33,12 +33,12 @@ BEGIN
     CREATE TABLE dbo.EntradaMercanciaDetalle (
         Entry         int           NOT NULL,
         NoLinea       int           NOT NULL,
-        CodArticulo   varchar(20)   NULL,
+        CodArticulo   nvarchar(15)  NULL,
         Descripcion   nvarchar(254) NULL,
         Cantidad      decimal(19,6) NULL,
         CostoUnitario decimal(19,6) NOT NULL CONSTRAINT DF_EntradaMercDet_Costo DEFAULT (0),
         TotalLinea    decimal(19,6) NULL,
-        CodAlmacen    varchar(10)   NULL,
+        CodAlmacen    nvarchar(8)   NULL,
         CONSTRAINT pk_entrada_mercancia_det PRIMARY KEY (Entry, NoLinea),
         CONSTRAINT fk_entrada_mercancia_det_art FOREIGN KEY (CodArticulo) REFERENCES dbo.Articulo(Codigo),
         CONSTRAINT fk_entrada_mercancia_det_alm FOREIGN KEY (CodAlmacen)  REFERENCES dbo.Almacen(Codigo)
@@ -52,12 +52,12 @@ BEGIN
         Entry          int identity(1,1) NOT NULL,
         NumDoc         int           NOT NULL CONSTRAINT DF_SalidaMerc_NumDoc     DEFAULT (0),
         Serie          int           NOT NULL,
-        NumManual      char(1)       NOT NULL CONSTRAINT DF_SalidaMerc_NumManual  DEFAULT ('N') CONSTRAINT CK_SalidaMerc_NumManual CHECK (NumManual IN ('S','N')),
-        Imprimido      char(1)       NOT NULL CONSTRAINT DF_SalidaMerc_Imprimido  DEFAULT ('N'),
-        EstadoDoc      char(1)       NOT NULL CONSTRAINT DF_SalidaMerc_EstadoDoc  DEFAULT ('A') CONSTRAINT CK_SalidaMerc_EstadoDoc CHECK (EstadoDoc IN ('A','C')),
-        EstadoInv      char(1)       NOT NULL CONSTRAINT DF_SalidaMerc_EstadoInv  DEFAULT ('A') CONSTRAINT CK_SalidaMerc_EstadoInv CHECK (EstadoInv IN ('A','C')),
-        Cancelado      char(1)       NOT NULL CONSTRAINT DF_SalidaMerc_Cancelado  DEFAULT ('N') CONSTRAINT CK_SalidaMerc_Cancelado CHECK (Cancelado IN ('S','N')),
-        TipoObjeto     varchar(11)   NOT NULL CONSTRAINT DF_SalidaMerc_TipoObjeto DEFAULT ('60'),
+        NumManual      nvarchar(1)   NOT NULL CONSTRAINT DF_SalidaMerc_NumManual  DEFAULT ('N') CONSTRAINT CK_SalidaMerc_NumManual CHECK (NumManual IN ('S','N')),
+        Imprimido      nvarchar(1)   NOT NULL CONSTRAINT DF_SalidaMerc_Imprimido  DEFAULT ('N'),
+        EstadoDoc      nvarchar(1)   NOT NULL CONSTRAINT DF_SalidaMerc_EstadoDoc  DEFAULT ('A') CONSTRAINT CK_SalidaMerc_EstadoDoc CHECK (EstadoDoc IN ('A','C')),
+        EstadoInv      nvarchar(1)   NOT NULL CONSTRAINT DF_SalidaMerc_EstadoInv  DEFAULT ('A') CONSTRAINT CK_SalidaMerc_EstadoInv CHECK (EstadoInv IN ('A','C')),
+        Cancelado      nvarchar(1)   NOT NULL CONSTRAINT DF_SalidaMerc_Cancelado  DEFAULT ('N') CONSTRAINT CK_SalidaMerc_Cancelado CHECK (Cancelado IN ('S','N')),
+        TipoObjeto     nvarchar(11)  NOT NULL CONSTRAINT DF_SalidaMerc_TipoObjeto DEFAULT ('60'),
         FechaDoc       datetime      NULL,
         FechaContab    datetime      NULL,
         FechaCancelado datetime      NULL,
@@ -75,12 +75,12 @@ BEGIN
     CREATE TABLE dbo.SalidaMercanciaDetalle (
         Entry         int           NOT NULL,
         NoLinea       int           NOT NULL,
-        CodArticulo   varchar(20)   NULL,
+        CodArticulo   nvarchar(15)  NULL,
         Descripcion   nvarchar(254) NULL,
         Cantidad      decimal(19,6) NULL,
         CostoUnitario decimal(19,6) NOT NULL CONSTRAINT DF_SalidaMercDet_Costo DEFAULT (0),
         TotalLinea    decimal(19,6) NULL,
-        CodAlmacen    varchar(10)   NULL,
+        CodAlmacen    nvarchar(8)   NULL,
         CONSTRAINT pk_salida_mercancia_det PRIMARY KEY (Entry, NoLinea),
         CONSTRAINT fk_salida_mercancia_det_art FOREIGN KEY (CodArticulo) REFERENCES dbo.Articulo(Codigo),
         CONSTRAINT fk_salida_mercancia_det_alm FOREIGN KEY (CodAlmacen)  REFERENCES dbo.Almacen(Codigo)
@@ -94,6 +94,18 @@ IF NOT EXISTS (SELECT 1 FROM dbo.NumeracionDocumentoDet WHERE CodigoObj = '59')
 IF NOT EXISTS (SELECT 1 FROM dbo.NumeracionDocumentoDet WHERE CodigoObj = '60')
     INSERT INTO dbo.NumeracionDocumentoDet (CodigoObj, Serie, NombreSerie, SigNumero, Manual, Bloqueado, SubTipoDoc, TipoSerie)
     VALUES ('60', (SELECT ISNULL(MAX(Serie),0)+1 FROM dbo.NumeracionDocumentoDet), 'Primario', 1, 'N', 'N', '--', 'N');
+
+-- ===== Fila padre en NumeracionDocumento (idempotente) — la pantalla "Numeracion de
+-- documentos" se alimenta del padre; sin esto el usuario no puede ver ni ajustar las series
+-- de '59'/'60'. NOT NULL reales de NumeracionDocumento: CodigoObj y SubTipoDoc (PK compuesta);
+-- SerieDfct y DocAlias son nullables. Se cubren las cuatro columnas. =====
+IF NOT EXISTS (SELECT 1 FROM dbo.NumeracionDocumento WHERE CodigoObj='59' AND SubTipoDoc='--')
+    INSERT INTO dbo.NumeracionDocumento (CodigoObj, SubTipoDoc, DocAlias, SerieDfct)
+    SELECT '59', '--', 'Entrada merc.', MIN(Serie) FROM dbo.NumeracionDocumentoDet WHERE CodigoObj='59';
+
+IF NOT EXISTS (SELECT 1 FROM dbo.NumeracionDocumento WHERE CodigoObj='60' AND SubTipoDoc='--')
+    INSERT INTO dbo.NumeracionDocumento (CodigoObj, SubTipoDoc, DocAlias, SerieDfct)
+    SELECT '60', '--', 'Salida merc.', MIN(Serie) FROM dbo.NumeracionDocumentoDet WHERE CodigoObj='60';
 
 PRINT 'INV-4 DDL aplicado.';
 SELECT name FROM sys.tables

@@ -29,5 +29,20 @@ namespace API.Service.WebApi.Tests.Infraestructure
             Assert.NotNull(et);
             Assert.NotNull(et!.FindPrimaryKey());
         }
+
+        // Protege C-1 / I-2: el MaxLength de CodArticulo/CodAlmacen de cada detalle debe
+        // coincidir con el de la PK de Articulo/Almacen (si divergen, el .sql no aplica).
+        [Theory]
+        [InlineData(typeof(EntradaMercanciaDetalle))]
+        [InlineData(typeof(SalidaMercanciaDetalle))]
+        public void DetalleAlineaMaxLengthConLaTablaPadre(System.Type tipo)
+        {
+            using var ctx = Contexto();
+            var det = ctx.Model.FindEntityType(tipo)!;
+            var art = ctx.Model.FindEntityType(typeof(Articulo))!;
+            var alm = ctx.Model.FindEntityType(typeof(Almacen))!;
+            Assert.Equal(art.FindProperty("Codigo")!.GetMaxLength(), det.FindProperty("CodArticulo")!.GetMaxLength());
+            Assert.Equal(alm.FindProperty("Codigo")!.GetMaxLength(), det.FindProperty("CodAlmacen")!.GetMaxLength());
+        }
     }
 }

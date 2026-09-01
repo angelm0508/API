@@ -12,8 +12,8 @@ namespace API.Application.DTO.salidaMercancia
         public string? Descripcion { get; set; }
         public decimal? Cantidad { get; set; }
 
-        // Costo por línea. Si viene nulo o <= 0 el servidor resuelve el costo vigente del
-        // artículo (promedio o estándar según su método de valuación).
+        // En una Salida el servidor SIEMPRE calcula el costo (promedio móvil / estándar del
+        // artículo); este valor se ignora. Se acepta solo por simetría con EntradaMercancia.
         public decimal? CostoUnitario { get; set; }
         public string? CodAlmacen { get; set; }
     }
