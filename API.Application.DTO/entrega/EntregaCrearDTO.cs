@@ -34,5 +34,12 @@ namespace API.Application.DTO.entrega
         public decimal? TotalBruto { get; set; }
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
+
+        /// <summary>
+        /// Líneas del documento. Con INV-3 el documento se registra con sus líneas en una
+        /// sola petición (y una sola transacción). El `Entry` de cada línea se ignora aquí
+        /// (lo asigna el servidor al crear el encabezado).
+        /// </summary>
+        public List<EntregaDetalleCrearDTO> Lineas { get; set; } = new();
     }
 }
