@@ -13,6 +13,7 @@ using API.Application.DTO.entrega;
 using API.Application.DTO.pedido;
 using API.Application.DTO.pedidoCompra;
 using API.Application.DTO.entregaCompra;
+using API.Application.DTO.entradaMercancia;
 using API.Application.DTO.facturaCompra;
 using API.Application.DTO.factura;
 using API.Application.DTO.impuesto;
@@ -152,6 +153,16 @@ namespace API.Transversal.Mapper
             CreateMap<EntregaCompraDetalle, EntregaCompraDetalleDTO>();
             CreateMap<EntregaCompraDetalleCrearDTO, EntregaCompraDetalle>();
             CreateMap<EntregaCompraDetalleActualizarDTO, EntregaCompraDetalle>();
+
+            // EntradaMercancia
+            CreateMap<EntradaMercanciaCrearDTO, EntradaMercancia>();
+            CreateMap<EntradaMercanciaActualizarDTO, EntradaMercancia>();
+            CreateMap<EntradaMercancia, EntradaMercanciaDTO>();
+
+            // EntradaMercanciaDetalle
+            CreateMap<EntradaMercanciaDetalleCrearDTO, EntradaMercanciaDetalle>();
+            CreateMap<EntradaMercanciaDetalleActualizarDTO, EntradaMercanciaDetalle>();
+            CreateMap<EntradaMercanciaDetalle, EntradaMercanciaDetalleDTO>();
 
             // FacturaCompra
             CreateMap<FacturaCompra, FacturaCompraDTO>();
