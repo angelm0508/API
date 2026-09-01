@@ -47,5 +47,13 @@ namespace API.Application.DTO.articulo.articulo
         public string? Comentarios { get; set; }
 
         public int Serie { get; set; }
+
+        // INV-4: costo vigente del artículo, para prellenar el costo unitario en Entradas de
+        // mercancía. Mapeo por convención de nombre (Articulo -> ArticuloDTO); solo lectura.
+        public decimal CostoPromedio { get; set; }
+
+        public decimal CostoEstandar { get; set; }
+
+        public string? MetodoValuacion { get; set; }
     }
 }
