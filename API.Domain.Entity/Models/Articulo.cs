@@ -69,6 +69,10 @@ public partial class Articulo
 
     public virtual ICollection<EntregaCompraDetalle> EntregaCompraDetalles { get; set; } = new List<EntregaCompraDetalle>();
 
+    public virtual ICollection<EntradaMercanciaDetalle> EntradaMercanciaDetalles { get; set; } = new List<EntradaMercanciaDetalle>();
+
+    public virtual ICollection<SalidaMercanciaDetalle> SalidaMercanciaDetalles { get; set; } = new List<SalidaMercanciaDetalle>();
+
     public virtual ICollection<FacturaCompraDetalle> FacturaCompraDetalles { get; set; } = new List<FacturaCompraDetalle>();
 
     public virtual ICollection<FacturaDetalle> FacturaDetalles { get; set; } = new List<FacturaDetalle>();

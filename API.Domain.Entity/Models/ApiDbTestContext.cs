@@ -43,6 +43,14 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<EntregaCompraDetalle> EntregaCompraDetalles { get; set; }
 
+    public virtual DbSet<EntradaMercancia> EntradaMercancias { get; set; }
+
+    public virtual DbSet<EntradaMercanciaDetalle> EntradaMercanciaDetalles { get; set; }
+
+    public virtual DbSet<SalidaMercancia> SalidaMercancias { get; set; }
+
+    public virtual DbSet<SalidaMercanciaDetalle> SalidaMercanciaDetalles { get; set; }
+
     public virtual DbSet<FacturaCompra> FacturaCompras { get; set; }
 
     public virtual DbSet<FacturaCompraDetalle> FacturaCompraDetalles { get; set; }
@@ -663,6 +671,124 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodigoImpuestoNavigation).WithMany(p => p.EntregaCompraDetalles)
                 .HasForeignKey(d => d.CodigoImpuesto)
                 .HasConstraintName("fk_entrega_compra_det_cod_impuesto");
+        });
+
+        modelBuilder.Entity<EntradaMercancia>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_entrada_mercancia");
+
+            entity.ToTable("EntradaMercancia");
+
+            entity.Property(e => e.Cancelado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Comentario).HasMaxLength(254);
+            entity.Property(e => e.EstadoDoc)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.EstadoInv)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.FechaCancelado).HasColumnType("datetime");
+            entity.Property(e => e.FechaContab).HasColumnType("datetime");
+            entity.Property(e => e.FechaDoc).HasColumnType("datetime");
+            entity.Property(e => e.Imprimido)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.NumManual)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Referencia).HasMaxLength(100);
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(11)
+                .HasDefaultValueSql("('59')");
+            entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.SerieNavigation).WithMany(p => p.EntradaMercancias)
+                .HasForeignKey(d => d.Serie)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_entrada_mercancia_serie");
+        });
+
+        modelBuilder.Entity<EntradaMercanciaDetalle>(entity =>
+        {
+            entity.HasKey(e => new { e.Entry, e.NoLinea }).HasName("pk_entrada_mercancia_det");
+
+            entity.ToTable("EntradaMercanciaDetalle");
+
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);    // Almacen.Codigo = 8
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);  // Articulo.Codigo = 15
+            entity.Property(e => e.CostoUnitario).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Descripcion).HasMaxLength(254);
+            entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodAlmacenNavigation).WithMany(p => p.EntradaMercanciaDetalles)
+                .HasForeignKey(d => d.CodAlmacen)
+                .HasConstraintName("fk_entrada_mercancia_det_almacen");
+
+            entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.EntradaMercanciaDetalles)
+                .HasForeignKey(d => d.CodArticulo)
+                .HasConstraintName("fk_entrada_mercancia_det_cod_art");
+        });
+
+        modelBuilder.Entity<SalidaMercancia>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_salida_mercancia");
+
+            entity.ToTable("SalidaMercancia");
+
+            entity.Property(e => e.Cancelado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Comentario).HasMaxLength(254);
+            entity.Property(e => e.EstadoDoc)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.EstadoInv)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('A')");
+            entity.Property(e => e.FechaCancelado).HasColumnType("datetime");
+            entity.Property(e => e.FechaContab).HasColumnType("datetime");
+            entity.Property(e => e.FechaDoc).HasColumnType("datetime");
+            entity.Property(e => e.Imprimido)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.NumManual)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Referencia).HasMaxLength(100);
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(11)
+                .HasDefaultValueSql("('60')");
+            entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.SerieNavigation).WithMany(p => p.SalidaMercancias)
+                .HasForeignKey(d => d.Serie)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_salida_mercancia_serie");
+        });
+
+        modelBuilder.Entity<SalidaMercanciaDetalle>(entity =>
+        {
+            entity.HasKey(e => new { e.Entry, e.NoLinea }).HasName("pk_salida_mercancia_det");
+
+            entity.ToTable("SalidaMercanciaDetalle");
+
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);    // Almacen.Codigo = 8
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);  // Articulo.Codigo = 15
+            entity.Property(e => e.CostoUnitario).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Descripcion).HasMaxLength(254);
+            entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodAlmacenNavigation).WithMany(p => p.SalidaMercanciaDetalles)
+                .HasForeignKey(d => d.CodAlmacen)
+                .HasConstraintName("fk_salida_mercancia_det_almacen");
+
+            entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.SalidaMercanciaDetalles)
+                .HasForeignKey(d => d.CodArticulo)
+                .HasConstraintName("fk_salida_mercancia_det_cod_art");
         });
 
         modelBuilder.Entity<Factura>(entity =>

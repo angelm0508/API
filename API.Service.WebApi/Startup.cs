@@ -197,6 +197,20 @@ namespace API.Service.WebApi
             services.AddTransient<IEntregaCompraDetalleDomain, EntregaCompraDetalleDomain>();
             services.AddTransient<IEntregaCompraDetalleApplication, EntregaCompraDetalleApplication>();
 
+            // INV-4: Entrada y Salida de Mercancías (repos + domains + applications).
+            services.AddTransient<IRepositorioGenerico<EntradaMercancia, int>, EntradaMercanciaRepositorio>();
+            services.AddTransient<IEntradaMercanciaDomain, EntradaMercanciaDomain>();
+            services.AddTransient<IEntradaMercanciaApplication, EntradaMercanciaApplication>();
+            services.AddTransient<IRepositorioGenerico<EntradaMercanciaDetalle, (int Entry, int NoLinea)>, EntradaMercanciaDetalleRepositorio>();
+            services.AddTransient<IEntradaMercanciaDetalleDomain, EntradaMercanciaDetalleDomain>();
+            services.AddTransient<IEntradaMercanciaDetalleApplication, EntradaMercanciaDetalleApplication>();
+            services.AddTransient<IRepositorioGenerico<SalidaMercancia, int>, SalidaMercanciaRepositorio>();
+            services.AddTransient<ISalidaMercanciaDomain, SalidaMercanciaDomain>();
+            services.AddTransient<ISalidaMercanciaApplication, SalidaMercanciaApplication>();
+            services.AddTransient<IRepositorioGenerico<SalidaMercanciaDetalle, (int Entry, int NoLinea)>, SalidaMercanciaDetalleRepositorio>();
+            services.AddTransient<ISalidaMercanciaDetalleDomain, SalidaMercanciaDetalleDomain>();
+            services.AddTransient<ISalidaMercanciaDetalleApplication, SalidaMercanciaDetalleApplication>();
+
             services.AddTransient<IRepositorioGenerico<FacturaCompra, int>, FacturaCompraRepositorio>();
             services.AddTransient<IFacturaCompraDomain, FacturaCompraDomain>();
             services.AddTransient<IFacturaCompraApplication, FacturaCompraApplication>();
