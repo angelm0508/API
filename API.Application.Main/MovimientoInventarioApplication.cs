@@ -31,6 +31,7 @@ namespace API.Application.Main
                 var alias = (await (await _numeracion.ObtenerTodoAsync())
                         .Where(n => n.SubTipoDoc == "--" && n.DocAlias != null)
                         .ToListAsync())
+                    .Where(n => !string.IsNullOrWhiteSpace(n.DocAlias))
                     .ToDictionary(n => n.CodigoObj, n => n.DocAlias!);
 
                 foreach (var dto in dtos)
