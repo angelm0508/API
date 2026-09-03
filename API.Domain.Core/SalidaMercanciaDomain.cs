@@ -65,23 +65,30 @@ namespace API.Domain.Core
 
             var lineasList = lineas?.ToList() ?? new List<SalidaMercanciaDetalle>();
 
+            // Resolver el costo de cada línea y los totales ANTES de abrir la transacción:
+            // el encabezado se guarda primero (Save #1) y SalidaMercancia.TotalDoc es NOT NULL,
+            // así que TotalDoc tiene que estar calculado antes de ese Save.
+            decimal totalDoc = 0m;
+            foreach (var linea in lineasList)
+            {
+                var costo = await CostoVigenteAsync(linea.CodArticulo);
+                linea.CostoUnitario = costo;
+                linea.TotalLinea = (linea.Cantidad ?? 0m) * costo;
+                totalDoc += linea.TotalLinea.Value;
+            }
+            obj.TotalDoc = totalDoc;
+
             return await _tx.EjecutarAsync(async () =>
             {
                 await _repoSalida.InsertarAsync(obj); // Save #1: asigna obj.Entry
 
                 var noLinea = 1;
-                decimal totalDoc = 0m;
                 foreach (var linea in lineasList)
                 {
                     linea.Entry = obj.Entry;
                     linea.NoLinea = noLinea++;
-                    var costo = await CostoVigenteAsync(linea.CodArticulo);
-                    linea.CostoUnitario = costo;
-                    linea.TotalLinea = (linea.Cantidad ?? 0m) * costo;
-                    totalDoc += linea.TotalLinea.Value;
                     await _repoDetalle.AgregarSinGuardarAsync(linea);
                 }
-                obj.TotalDoc = totalDoc;
 
                 var movimientos = lineasList
                     .Where(l => (l.Cantidad ?? 0m) > 0m)

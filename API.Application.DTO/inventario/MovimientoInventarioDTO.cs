@@ -19,5 +19,8 @@ namespace API.Application.DTO.inventario
         public decimal SaldoCostoPromedio { get; set; }
         public decimal SaldoValor { get; set; }
         public int? MovReversaDe { get; set; }
+
+        /// <summary>Nombre del tipo de documento (DocAlias de NumeracionDocumento); si no hay, el propio código.</summary>
+        public string? TipoDocNombre { get; set; }
     }
 }
