@@ -21,6 +21,10 @@ namespace API.Service.WebApi.Tests.Domain
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
+        // TotalDoc capturado en el instante en que se guarda el encabezado (Save #1).
+        // La columna SalidaMercancia.TotalDoc es NOT NULL: debe venir ya calculado en ese Save.
+        private decimal? _totalDocAlInsertarEncabezado;
+
         public SalidaMercanciaDomainTests()
         {
             _domain = new SalidaMercanciaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _repoArticulo.Object);
@@ -28,7 +32,7 @@ namespace API.Service.WebApi.Tests.Domain
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
             _repoHeader.Setup(r => r.InsertarAsync(It.IsAny<SalidaMercancia>()))
-                .ReturnsAsync((SalidaMercancia c) => { c.Entry = 99; return c; });
+                .ReturnsAsync((SalidaMercancia c) => { _totalDocAlInsertarEncabezado = c.TotalDoc; c.Entry = 99; return c; });
             _repoDetalle.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<SalidaMercanciaDetalle>())).Returns(Task.CompletedTask);
             _asiento.Setup(a => a.AsentarAsync(It.IsAny<IEnumerable<MovimientoRequest>>(), It.IsAny<bool>()))
                 .Callback<IEnumerable<MovimientoRequest>, bool>((ms, _) => _movimientosAsentados.AddRange(ms))
@@ -44,6 +48,25 @@ namespace API.Service.WebApi.Tests.Domain
 
         private static SalidaMercanciaDetalle Linea(string art, string alm, decimal? cant, decimal? costo) =>
             new() { CodArticulo = art, CodAlmacen = alm, Cantidad = cant, CostoUnitario = costo };
+
+        [Fact]
+        public async Task InsertarAsync_ElEncabezadoSeGuardaConTotalDocYaCalculado()
+        {
+            // Regresión: SalidaMercancia.TotalDoc es NOT NULL. El cálculo del total debe ocurrir
+            // ANTES del Save del encabezado, no después de insertarlo.
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            _repoArticulo.Setup(r => r.ObtenerAsync("ART1"))
+                .ReturnsAsync(new Articulo { Codigo = "ART1", MetodoValuacion = "P", CostoPromedio = 25m });
+            _repoArticulo.Setup(r => r.ObtenerAsync("ART2"))
+                .ReturnsAsync(new Articulo { Codigo = "ART2", MetodoValuacion = "P", CostoPromedio = 30m });
+            var obj = new SalidaMercancia { Serie = 4 };
+            var lineas = new[] { Linea("ART1", "01", 10m, null), Linea("ART2", "01", 5m, null) };
+
+            await _domain.InsertarAsync(obj, lineas);
+
+            Assert.NotNull(_totalDocAlInsertarEncabezado);
+            Assert.Equal(400m, _totalDocAlInsertarEncabezado); // 10*25 + 5*30 (costo del artículo)
+        }
 
         [Fact]
         public async Task InsertarAsync_ConLineas_NumeraAsientaYMarcaEstadoInv()
