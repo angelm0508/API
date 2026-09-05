@@ -38,3 +38,4 @@ coverage*.info
 
 # Secretos locales (nunca commitear credenciales reales)
 appsettings.*.Local.json
+deploy/.env
