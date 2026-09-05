@@ -1,0 +1,53 @@
+# Stack de despliegue para Coolify (o cualquier host con Docker Compose).
+# api/web se construyen directamente desde los repos de GitHub (no hace falta
+# clonarlos juntos en el mismo servidor); db no expone puerto a internet.
+#
+# Variables a configurar en Coolify (o en un .env junto a este archivo):
+#   DB_SA_PASSWORD  - contraseña del usuario sa de SQL Server (elegí una fuerte)
+#   JWT_KEY         - clave de firma de los tokens JWT de la API (min. 20 caracteres, distinta a la de desarrollo)
+#   JWT_ISSUER      - ver appsettings.json de la API (valor de desarrollo: TuAplicacion)
+#   JWT_AUDIENCE    - ver appsettings.json de la API (valor de desarrollo: TuAplicacionUsuarios)
+
+services:
+  api:
+    build:
+      context: https://github.com/angelm0508/API.git#main
+      dockerfile: API.Service.WebApi/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__API_DB: "Server=db;Database=API_DB;User Id=sa;Password=${DB_SA_PASSWORD};TrustServerCertificate=True;"
+      Jwt__Key: ${JWT_KEY}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__ExpirationMinutes: "60"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  web:
+    build:
+      context: https://github.com/angelm0508/Web.git#main
+      dockerfile: Web.UI/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # Nombre del servicio "api" resuelto por la red interna de Docker Compose,
+      # no localhost ni una IP publica.
+      ApiSettings__BaseUrl: "http://api:8080"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${DB_SA_PASSWORD}
+      MSSQL_PID: Express
+    volumes:
+      - db_data:/var/opt/mssql
+    restart: unless-stopped
+    # Sin "ports": no debe quedar accesible desde fuera del servidor.
+    # Para correr los scripts .sql iniciales, usar `docker exec` (ver mensaje del asistente).
+
+volumes:
+  db_data:
