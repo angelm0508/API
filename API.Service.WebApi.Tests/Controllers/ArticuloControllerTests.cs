@@ -1,5 +1,6 @@
 using API.Application.DTO;
 using API.Application.DTO.articulo.articulo;
+using API.Application.DTO.precio;
 using API.Application.Interface;
 using API.Service.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,14 @@ namespace API.Service.WebApi.Tests.Controllers
     public class ArticuloControllerTests
     {
         private readonly Mock<IArticuloApplication> _applicationMock;
+        private readonly Mock<IPrecioListaApplication> _precioListaApp;
         private readonly ArticuloController _controller;
 
         public ArticuloControllerTests()
         {
             _applicationMock = new Mock<IArticuloApplication>();
-            _controller = new ArticuloController(_applicationMock.Object);
+            _precioListaApp = new Mock<IPrecioListaApplication>();
+            _controller = new ArticuloController(_applicationMock.Object, _precioListaApp.Object);
         }
 
         [Fact]
@@ -273,6 +276,48 @@ namespace API.Service.WebApi.Tests.Controllers
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
             Assert.Same(respuestaDelete, ok.Value);
+        }
+
+        [Fact]
+        public async Task Precio_Ok_DevuelveOk200()
+        {
+            _precioListaApp
+                .Setup(a => a.ResolverAsync("0003-0002", 1))
+                .ReturnsAsync(new Respuesta<PrecioResueltoDTO>
+                {
+                    Resultado = true,
+                    Dato = new PrecioResueltoDTO { Codigo = "0003-0002", PrecioBase = 22m, FactorEfectivo = 1.20m, PrecioLista = 26.40m }
+                });
+
+            var r = await _controller.Precio("0003-0002", 1);
+
+            var ok = Assert.IsType<OkObjectResult>(r.Result);
+            var payload = Assert.IsType<Respuesta<PrecioResueltoDTO>>(ok.Value);
+            Assert.Equal(26.40m, payload.Dato!.PrecioLista);
+        }
+
+        [Fact]
+        public async Task Precio_ArticuloNoExiste_Devuelve404()
+        {
+            _precioListaApp
+                .Setup(a => a.ResolverAsync("NOPE", null))
+                .ReturnsAsync(new Respuesta<PrecioResueltoDTO> { Resultado = false, Mensaje = "El artículo NOPE no existe." });
+
+            var r = await _controller.Precio("NOPE", null);
+
+            Assert.IsType<NotFoundObjectResult>(r.Result);
+        }
+
+        [Fact]
+        public async Task Precio_ListaInvalida_Devuelve400()
+        {
+            _precioListaApp
+                .Setup(a => a.ResolverAsync("0003-0002", 999))
+                .ReturnsAsync(new Respuesta<PrecioResueltoDTO> { Resultado = false, Mensaje = "La lista de precio 999 no está registrada." });
+
+            var r = await _controller.Precio("0003-0002", 999);
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
         }
     }
 }

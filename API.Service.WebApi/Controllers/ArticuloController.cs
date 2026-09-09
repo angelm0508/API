@@ -1,5 +1,6 @@
 using API.Application.DTO;
 using API.Application.DTO.articulo.articulo;
+using API.Application.DTO.precio;
 using API.Application.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace API.Service.WebApi.Controllers
     public class ArticuloController : ControllerBase
     {
         private readonly IArticuloApplication _articuloApplication;
+        private readonly IPrecioListaApplication _precioListaApplication;
 
-        public ArticuloController(IArticuloApplication articuloApplication)
+        public ArticuloController(IArticuloApplication articuloApplication, IPrecioListaApplication precioListaApplication)
         {
             _articuloApplication = articuloApplication;
+            _precioListaApplication = precioListaApplication;
         }
 
         [HttpGet("{codigo}")]
@@ -34,6 +37,22 @@ namespace API.Service.WebApi.Controllers
             }
 
             return Ok(producto);
+        }
+
+        [HttpGet("{codigo}/Precio")]
+        public async Task<ActionResult<Respuesta<PrecioResueltoDTO>>> Precio(
+            [FromRoute] string codigo, [FromQuery] int? listaPrecio)
+        {
+            var res = await _precioListaApplication.ResolverAsync(codigo, listaPrecio);
+            if (res.Resultado)
+                return Ok(res);
+
+            // "El artículo X no existe." viene de ArticuloNoExisteException -> 404.
+            // Lista inexistente / ciclo / profundidad -> 400.
+            return res.Mensaje != null &&
+                   res.Mensaje.Contains("El artículo", StringComparison.OrdinalIgnoreCase)
+                ? NotFound(res)
+                : BadRequest(res);
         }
 
         [HttpGet("Nombre/{nombre}")]

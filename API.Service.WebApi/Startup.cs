@@ -2,6 +2,7 @@ using API.Application.DTO;
 using API.Application.Interface;
 using API.Application.Main;
 using API.Domain.Core;
+using API.Domain.Core.Precio;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
@@ -132,6 +133,9 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<ListadoPrecio, int>, ListadoPrecioRepositorio>();
             services.AddTransient<IListadoPrecioDomain, ListadoPrecioDomain>();
             services.AddTransient<IListadoPrecioApplication, ListadoPrecioApplication>();
+
+            services.AddTransient<IPrecioListaDomain, PrecioListaDomain>();
+            services.AddTransient<IPrecioListaApplication, PrecioListaApplication>();
 
             services.AddTransient<IRepositorioGenerico<NumeracionDocumentoDet, int>, NumeracionDocumentoDetRepositorio>();
             services.AddTransient<INumeracionDocumentoDetDomain, NumeracionDocumentoDetDomain>();
