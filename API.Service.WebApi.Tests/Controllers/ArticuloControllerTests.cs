@@ -301,7 +301,7 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             _precioListaApp
                 .Setup(a => a.ResolverAsync("NOPE", null))
-                .ReturnsAsync(new Respuesta<PrecioResueltoDTO> { Resultado = false, Mensaje = "El artículo NOPE no existe." });
+                .ReturnsAsync(new Respuesta<PrecioResueltoDTO> { Resultado = false, Mensaje = new API.Domain.Core.Inventario.ArticuloNoExisteException("NOPE").Message });
 
             var r = await _controller.Precio("NOPE", null);
 
