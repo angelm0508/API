@@ -209,7 +209,7 @@ git commit -m "feat(precio): RedondeoCalculadora para listas de precio"
 - Produces:
   - `record PrecioResuelto(string Codigo, decimal PrecioBase, decimal FactorEfectivo, decimal PrecioLista)` en `API.Domain.Interface`.
   - `IPrecioListaDomain.ResolverAsync(string codigoArticulo, int? listaPrecioEntry) -> Task<PrecioResuelto>`.
-  - `PrecioListaInvalidaException : Exception` en `API.Domain.Core.Precio` — mensajes: `"La cadena de listas de precio es circular."`, `"La cadena de listas de precio es demasiado profunda."`, `"La lista de precio {entry} no existe."`.
+  - `PrecioListaInvalidaException : Exception` en `API.Domain.Core.Precio` — mensajes: `"La cadena de listas de precio es circular."`, `"La cadena de listas de precio es demasiado profunda."`, `"La lista de precio {entry} no está registrada."`. **Ninguno contiene el substring `"El artículo"`** (el controller lo usa para distinguir 404 de artículo vs 400 de lista).
 
 - [ ] **Step 1: Crear la interfaz + record**
 
@@ -252,7 +252,7 @@ namespace API.Domain.Core.Precio
             new("La cadena de listas de precio es demasiado profunda.");
 
         public static PrecioListaInvalidaException NoExiste(int entry) =>
-            new($"La lista de precio {entry} no existe.");
+            new($"La lista de precio {entry} no está registrada.");
     }
 }
 ```
@@ -495,7 +495,7 @@ git commit -m "feat(precio): PrecioListaDomain (cadena Base + factor + redondeo)
 - Produces:
   - `PrecioResueltoDTO { string Codigo; decimal PrecioBase; decimal FactorEfectivo; decimal PrecioLista; }`.
   - `IPrecioListaApplication.ResolverAsync(string, int?) -> Task<Respuesta<PrecioResueltoDTO>>`.
-  - Endpoint `GET api/Articulo/{codigo}/Precio?listaPrecio={int?}` → `200 Respuesta<PrecioResueltoDTO>` OK; `404` si el mensaje contiene `"no existe"`; `400` en cualquier otro error de negocio.
+  - Endpoint `GET api/Articulo/{codigo}/Precio?listaPrecio={int?}` → `200 Respuesta<PrecioResueltoDTO>` OK; `404` si el mensaje contiene `"El artículo"` (viene de `ArticuloNoExisteException`); `400` en cualquier otro error de negocio (lista inexistente / ciclo / profundidad).
 
 - [ ] **Step 1: Crear el DTO**
 
@@ -610,8 +610,10 @@ En `API/API.Service.WebApi/Controllers/ArticuloController.cs`:
             if (res.Resultado)
                 return Ok(res);
 
+            // "El artículo X no existe." viene de ArticuloNoExisteException -> 404.
+            // Lista inexistente / ciclo / profundidad -> 400.
             return res.Mensaje != null &&
-                   res.Mensaje.Contains("no existe", StringComparison.OrdinalIgnoreCase)
+                   res.Mensaje.Contains("El artículo", StringComparison.OrdinalIgnoreCase)
                 ? NotFound(res)
                 : BadRequest(res);
         }
@@ -657,7 +659,7 @@ En `API/API.Service.WebApi.Tests/Controllers/ArticuloControllerTests.cs` — rev
         {
             _precioListaApp
                 .Setup(a => a.ResolverAsync("0003-0002", 999))
-                .ReturnsAsync(new Respuesta<PrecioResueltoDTO> { Resultado = false, Mensaje = "La lista de precio 999 no existe." });
+                .ReturnsAsync(new Respuesta<PrecioResueltoDTO> { Resultado = false, Mensaje = "La lista de precio 999 no está registrada." });
 
             var r = await _controller.Precio("0003-0002", 999);
 
@@ -1107,7 +1109,7 @@ git add docs/ && git commit -m "docs: cierre lista de precio en documentos" || e
 - **Spec §2 (pruebas API):** tabla de redondeo → Task 1 Step 2 (`[Theory]`, 12 casos, incluye los 9 del spec + 3 extra). Casos de dominio (sin lista, factor simple 26.40, cadena L0×L1 = 1.32, ciclo, profundidad 11, artículo/factor/precio nulos, redondeo real método 3 regla C → 30) → Task 2 Step 3 (10 casos). Controller 200/404/400 → Task 3 Step 6.
 - **Spec §3 (Web):** DTO + `IArticuloApiClient.ObtenerPrecioAsync` + `PreciosController` (`Articulo` + `ListaDeSocio`) + `App.resolverPrecioLista` + `App.obtenerListaDeSocio` → Task 4. Los 7 JS: variable `listaPrecioSocio`, `onSeleccion` del socio (setea + `ofrecerRecalcularLineas`), `aplicarPrecioDeArticulo` en `aplicarArticuloSeleccionado`, `ofrecerRecalcularLineas` con `Swal`, precarga en edición vía `App.obtenerListaDeSocio` → Task 5 (canónico) + Task 6 (3 venta) + Task 7 (3 compra). Borrado del socio → `listaPrecioSocio = null`, sin recálculo (cubierto por la guarda `listaPrecioSocio == null` en `ofrecerRecalcularLineas` y `resolverPrecioLista`).
 - **Spec §4 (estructura):** este plan agrupa las 6 transformaciones en 2 lotes (Task 6 venta, Task 7 compra) en vez de 6 tareas sueltas — mismo criterio que el plan de `ajustes-documentos`. Task 8 = verificación.
-- **Decisión 404 vs 400:** el controller distingue por substring `"no existe"` del mensaje de `ArticuloNoExisteException` (mensaje bajo nuestro control, documentado en Task 2/3 Interfaces). El spec §1 lo dejó abierto ("puede resolverse mejor con excepción tipada; el contrato es artículo → 404, lista/ciclo → 400") — cumplido. Funcionalmente el front cae al precio base ante cualquier no-`resultado`, así que 404 vs 400 no afecta la UX.
+- **Decisión 404 vs 400:** el controller distingue por substring `"El artículo"` del mensaje de `ArticuloNoExisteException` (`"El artículo {x} no existe."`, bajo nuestro control). Los mensajes de `PrecioListaInvalidaException` (`"...circular."`, `"...demasiado profunda."`, `"La lista de precio {n} no está registrada."`) **no** contienen ese substring → 400. El spec §1 lo dejó abierto ("el contrato es artículo → 404, lista/ciclo → 400") — cumplido. Funcionalmente el front cae al precio base ante cualquier no-`resultado`, así que 404 vs 400 no afecta la UX. **(Ajuste de pre-flight: el borrador original usaba `"no existe"` como discriminador, que colisionaba con el mensaje de lista-no-registrada.)**
 - **Redondeo de listas base:** se usa solo `cadena[0]` (lista asignada) — Task 2 Step 5, `var asignada = cadena[0];`. Coincide con el spec y con SAP B1.
 - **Fuera de alcance (spec):** precios por artículo dentro de una lista, `SocioNegocio.Descuento`, recálculo de documentos guardados, `ExtMonto`/`RndFrmtInt`/`RndFrmtDec`, seed de datos, documentos de mercancía. Ninguna tarea los toca.
 - **Placeholder scan:** sin "TBD"/"TODO". "`B`" es el baseline real que la Task 1 Step 1 fija (se espera 745); todos los totales de suite son `B + N` con `N` explícito por tarea (12, 22, 25). Los "verificar el nombre real" (`Respuesta<T>` props, método de `ISocioNegocioApiClient`, función de re-render de cada JS) son chequeos de precondición con acción definida, no huecos.
