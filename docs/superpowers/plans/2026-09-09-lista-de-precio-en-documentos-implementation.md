@@ -947,14 +947,15 @@ Agregar como `function` (al nivel del `$(function () {` de módulo, junto a `apl
             const cod = l.codArticulo ?? l.CodArticulo ?? l.codigo ?? l.Codigo;
             const nuevo = await App.resolverPrecioLista(cod, listaPrecioSocio);
             if (nuevo == null) continue;
+            const viejo = Number(l.precio ?? l.Precio ?? 0);
+            if (!viejo) continue;   // sin precio previo no se puede reescalar el impuesto en proporción
             // El monto de impuesto y el total de línea escalan linealmente con el precio
             // (mismo % de descuento y misma tasa) -> se ajustan en proporción para no dejar
             // ni la columna de la fila ni los totales del documento (calcularTotalesDesdeLineas
             // suma el `impuesto` guardado por línea) desincronizados.
-            const viejo = Number(l.precio ?? l.Precio ?? 0);
             const cant = Number(l.cantidad ?? l.Cantidad ?? 0);
             const pd = Number(l.prctjeDesc ?? l.PrctjeDesc ?? 0);
-            const f = viejo ? (nuevo / viejo) : 1;
+            const f = nuevo / viejo;
             const impNuevo = Number(((Number(l.impuesto ?? l.Impuesto ?? 0)) * f).toFixed(2));
             const bruto = cant * nuevo;
             const totalNuevo = Number((bruto - bruto * (pd / 100) + impNuevo).toFixed(2));
