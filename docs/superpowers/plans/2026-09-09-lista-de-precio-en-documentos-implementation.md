@@ -945,14 +945,28 @@ Agregar como `function` (al nivel del `$(function () {` de módulo, junto a `apl
 
         for (const l of lineasLocales) {
             const cod = l.codArticulo ?? l.CodArticulo ?? l.codigo ?? l.Codigo;
-            const p = await App.resolverPrecioLista(cod, listaPrecioSocio);
-            if (p != null) { l.precio = p; l.Precio = p; }
+            const nuevo = await App.resolverPrecioLista(cod, listaPrecioSocio);
+            if (nuevo == null) continue;
+            // El monto de impuesto y el total de línea escalan linealmente con el precio
+            // (mismo % de descuento y misma tasa) -> se ajustan en proporción para no dejar
+            // ni la columna de la fila ni los totales del documento (calcularTotalesDesdeLineas
+            // suma el `impuesto` guardado por línea) desincronizados.
+            const viejo = Number(l.precio ?? l.Precio ?? 0);
+            const cant = Number(l.cantidad ?? l.Cantidad ?? 0);
+            const pd = Number(l.prctjeDesc ?? l.PrctjeDesc ?? 0);
+            const f = viejo ? (nuevo / viejo) : 1;
+            const impNuevo = Number(((Number(l.impuesto ?? l.Impuesto ?? 0)) * f).toFixed(2));
+            const bruto = cant * nuevo;
+            const totalNuevo = Number((bruto - bruto * (pd / 100) + impNuevo).toFixed(2));
+            l.precio = nuevo;      l.Precio = nuevo;
+            l.impuesto = impNuevo; l.Impuesto = impNuevo;
+            l.totalLinea = totalNuevo; l.TotalLinea = totalNuevo;
         }
         pintarDetalle();
     }
 ```
 
-> Verificar con qué clave se guarda el código de artículo en `lineasLocales` (mirar cómo se arma `datosForm` al agregar una línea — en `cotizaciones.js` el hidden es `#detCodArticulo` y el objeto usa `CodArticulo`). Ajustar el `l.codArticulo ?? l.CodArticulo ?? ...` si hace falta.
+> Verificar con qué clave se guarda el código de artículo en `lineasLocales` (mirar cómo se arma `datosForm` al agregar una línea — en `cotizaciones.js` el hidden es `#detCodArticulo` y el objeto usa `CodArticulo`). Ajustar el `l.codArticulo ?? l.CodArticulo ?? ...` si hace falta. Verificar también los nombres de las claves de línea usadas arriba (`impuesto`/`Impuesto`, `totalLinea`/`TotalLinea`, `prctjeDesc`/`PrctjeDesc`, `cantidad`/`Cantidad`) contra cómo las lee `pintarDetalle` y `calcularTotalesDesdeLineas` en ese archivo.
 
 - [ ] **Step 6: Build Web**
 
