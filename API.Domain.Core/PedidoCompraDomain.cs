@@ -15,15 +15,27 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<PedidoCompra, int> _repoGenericoPedidoCompra;
         private readonly IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> _repoGenericoDetalle;
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
+        private readonly IRepositorioGenerico<EntregaCompra, int> _repoEntregaCompra;
+        private readonly IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)> _repoEntregaCompraDetalle;
+        private readonly IRepositorioGenerico<FacturaCompra, int> _repoFacturaCompra;
+        private readonly IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> _repoFacturaCompraDetalle;
 
         public PedidoCompraDomain(
             IRepositorioGenerico<PedidoCompra, int> repoGenericoPedidoCompra,
             IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> repoGenericoDetalle,
-            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion)
+            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion,
+            IRepositorioGenerico<EntregaCompra, int> repoEntregaCompra,
+            IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)> repoEntregaCompraDetalle,
+            IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
+            IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> repoFacturaCompraDetalle)
         {
             _repoGenericoPedidoCompra = repoGenericoPedidoCompra;
             _repoGenericoDetalle = repoGenericoDetalle;
             _repoGenericoNumeracion = repoGenericoNumeracion;
+            _repoEntregaCompra = repoEntregaCompra;
+            _repoEntregaCompraDetalle = repoEntregaCompraDetalle;
+            _repoFacturaCompra = repoFacturaCompra;
+            _repoFacturaCompraDetalle = repoFacturaCompraDetalle;
         }
 
         #region async methods
@@ -105,6 +117,69 @@ namespace API.Domain.Core
         public async Task<IQueryable<PedidoCompra>> ObtenerTodoAsync()
         {
             return await _repoGenericoPedidoCompra.ObtenerTodoAsync();
+        }
+
+        // BaseTipo con el que una Entrega de Compra o una Factura de Compra directa apuntan a una
+        // línea de Pedido de Compra -- mismo número que el TipoObjeto/CodigoObj del Pedido de Compra.
+        private const int BaseTipoPedidoCompra = 11;
+
+        public async Task<IEnumerable<DocumentoAbierto>> ObtenerAbiertosAsync(string codigoSn)
+        {
+            var pedidos = await (await _repoGenericoPedidoCompra.ObtenerTodoAsync())
+                .Where(p => p.CodigoSn == codigoSn && p.Cancelado != "S")
+                .ToListAsync();
+            if (pedidos.Count == 0) return Enumerable.Empty<DocumentoAbierto>();
+
+            var entriesPedidos = pedidos.Select(p => p.Entry).ToHashSet();
+            var lineasPedido = await (await _repoGenericoDetalle.ObtenerTodoAsync())
+                .Where(d => entriesPedidos.Contains(d.Entry))
+                .ToListAsync();
+
+            // Consumo por Entrega de Compra: líneas activas (encabezado no cancelado) con BaseTipo=Pedido.
+            var entregasCanceladas = (await (await _repoEntregaCompra.ObtenerTodoAsync())
+                .Where(e => e.Cancelado == "S")
+                .Select(e => e.Entry)
+                .ToListAsync()).ToHashSet();
+            var consumoPorEntrega = (await (await _repoEntregaCompraDetalle.ObtenerTodoAsync())
+                .Where(d => d.BaseTipo == BaseTipoPedidoCompra && d.BaseEntry != null && d.BaseLinea != null)
+                .ToListAsync())
+                .Where(d => !entregasCanceladas.Contains(d.Entry))
+                .GroupBy(d => (d.BaseEntry!.Value, d.BaseLinea!.Value))
+                .ToDictionary(g => g.Key, g => g.Sum(d => d.Cantidad ?? 0m));
+
+            // Consumo por Factura de Compra directa (sin Entrega de por medio): mismo BaseTipo=Pedido,
+            // mismo pool que el consumo por Entrega -- ver spec §1, "un solo pool compartido".
+            var facturasCanceladas = (await (await _repoFacturaCompra.ObtenerTodoAsync())
+                .Where(f => f.Cancelado == "S")
+                .Select(f => f.Entry)
+                .ToListAsync()).ToHashSet();
+            var consumoPorFacturaDirecta = (await (await _repoFacturaCompraDetalle.ObtenerTodoAsync())
+                .Where(d => d.BaseTipo == BaseTipoPedidoCompra && d.BaseEntry != null && d.BaseLinea != null)
+                .ToListAsync())
+                .Where(d => !facturasCanceladas.Contains(d.Entry))
+                .GroupBy(d => (d.BaseEntry!.Value, d.BaseLinea!.Value))
+                .ToDictionary(g => g.Key, g => g.Sum(d => d.Cantidad ?? 0m));
+
+            var resultado = new List<DocumentoAbierto>();
+            foreach (var pedido in pedidos)
+            {
+                var lineasAbiertas = new List<LineaAbierta>();
+                foreach (var linea in lineasPedido.Where(l => l.Entry == pedido.Entry))
+                {
+                    var clave = (linea.Entry, linea.NoLinea);
+                    var consumido = consumoPorEntrega.GetValueOrDefault(clave, 0m) + consumoPorFacturaDirecta.GetValueOrDefault(clave, 0m);
+                    var abierta = (linea.Cantidad ?? 0m) - consumido;
+                    if (abierta <= 0m) continue;
+
+                    lineasAbiertas.Add(new LineaAbierta(
+                        linea.NoLinea, linea.CodArticulo!, linea.Descripcion, linea.Cantidad ?? 0m,
+                        abierta, linea.Precio, linea.CodAlmacen, linea.CodigoImpuesto));
+                }
+                if (lineasAbiertas.Count == 0) continue;
+
+                resultado.Add(new DocumentoAbierto(pedido.Entry, pedido.NumDoc, pedido.Serie, pedido.FechaDoc, lineasAbiertas));
+            }
+            return resultado;
         }
         #endregion
     }
