@@ -267,6 +267,8 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<UsuarioPermiso, (int UsuarioId, string CodigoModulo)>, UsuarioPermisoRepositorio>();
             services.AddTransient<IRepositorioGenerico<Plantilla, int>, PlantillaRepositorio>();
             services.AddTransient<IRepositorioGenerico<PlantillaPermisoDetalle, (int PlantillaId, string CodigoModulo)>, PlantillaPermisoDetalleRepositorio>();
+            services.AddTransient<IModuloDomain, ModuloDomain>();
+            services.AddTransient<IPermisoDomain, PermisoDomain>();
 
             // Servicios de autenticación
             services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
