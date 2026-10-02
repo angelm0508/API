@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.precio.listado_precio;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _listadoPrecioApplication = listadoPrecioApplication;
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<ListadoPrecioDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(listadoPrecio);
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Ver)]
         [HttpGet("PorNombre/{name}")]
         public async Task<ActionResult<Respuesta<ListadoPrecioDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
@@ -58,6 +62,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(listadoPrecio);
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Ver)]
         [HttpGet("Contenga/{name}")]
         public async Task<ActionResult<Respuesta<IEnumerable<ListadoPrecioDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
@@ -71,6 +76,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(listadoPrecios);
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<ListadoPrecioDTO>>>> ObtenerTodoAsync()
         {
@@ -84,6 +90,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(listadoPrecios);
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] ListadoPrecioCrearDTO obj)
         {
@@ -97,6 +104,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] ListadoPrecioActualizarDTO obj)
         {
@@ -119,6 +127,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("ListadosPrecio", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

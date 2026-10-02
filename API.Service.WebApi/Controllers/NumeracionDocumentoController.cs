@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.numeracionDocumento;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _numeracionApplication = numeracionApplication;
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpGet("{codigo}")]
         public async Task<ActionResult<Respuesta<NumeracionDocumentoDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
@@ -36,6 +39,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(numeracion);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpGet("ContengaCodigo/{codigo}")]
         public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
@@ -47,6 +51,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(numeraciones);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpGet()]
         public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDTO>>>> ObtenerTodo()
         {
@@ -58,6 +63,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(numeraciones);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] NumeracionDocumentoCrearDTO obj)
         {
@@ -69,6 +75,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insertar);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Actualizar)]
         [HttpPut("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] NumeracionDocumentoActualizarDTO obj)
         {
@@ -89,6 +96,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(actualizar);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Eliminar)]
         [HttpDelete("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {

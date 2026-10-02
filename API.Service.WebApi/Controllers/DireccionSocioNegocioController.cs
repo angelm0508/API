@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.direccionSocioNegocio;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _direccionApplication = direccionApplication;
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet("{codigo}")]
         public async Task<ActionResult<Respuesta<DireccionSocioNegocioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
@@ -36,6 +39,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(direccion);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet("ContengaCodigo/{codigo}")]
         public async Task<ActionResult<Respuesta<IEnumerable<DireccionSocioNegocioDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
@@ -47,6 +51,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(direcciones);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet()]
         public async Task<ActionResult<Respuesta<IEnumerable<DireccionSocioNegocioDTO>>>> ObtenerTodo()
         {
@@ -58,6 +63,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(direcciones);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] DireccionSocioNegocioCrearDTO obj)
         {
@@ -69,6 +75,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insertar);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Actualizar)]
         [HttpPut("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] DireccionSocioNegocioActualizarDTO obj)
         {
@@ -89,6 +96,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(actualizar);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Eliminar)]
         [HttpDelete("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {

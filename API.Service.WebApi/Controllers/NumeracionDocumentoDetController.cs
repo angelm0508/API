@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.numeracion.numeracion_documento_det;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _numeracionDocumentoDetApplication = numeracionDocumentoDetApplication;
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpGet("{serie:int}")]
         public async Task<ActionResult<Respuesta<NumeracionDocumentoDetDTO>>> Obtener([FromRoute] int serie)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(numeracionDet);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpGet("PorDocumento/{codigoObj}")]
         public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>>> ObtenerPorDocumento([FromRoute] string codigoObj)
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(numeracionDets);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<NumeracionDocumentoDetDTO>>>> ObtenerTodoAsync()
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(numeracionDets);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] NumeracionDocumentoDetCrearDTO obj)
         {
@@ -77,6 +83,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Actualizar)]
         [HttpPut("{serie:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int serie, [FromBody] NumeracionDocumentoDetActualizarDTO obj)
         {
@@ -99,6 +106,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Eliminar)]
         [HttpDelete("{serie:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int serie)
         {
@@ -121,6 +129,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(delete);
         }
 
+        [RequierePermiso("NumeracionDocumento", Accion.Ver)]
         [HttpPost("GenerarCodigo/{serie:int}")]
         public async Task<ActionResult<Respuesta<string>>> GenerarCodigoAsync([FromRoute] int serie)
         {

@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.socioNegocio;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _socioNegocioApplication = socioNegocioApplication;
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet("{codigo}")]
         public async Task<ActionResult<Respuesta<SocioNegocioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
@@ -36,6 +39,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(socioNegocio);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet("Nombre/{nombre}")]
         public async Task<ActionResult<Respuesta<SocioNegocioDTO>>> ObtenerPorNombre([FromRoute] string nombre)
         {
@@ -54,6 +58,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(socioNegocio);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet("ContengaNombre/{nombre}")]
         public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerContengaNombre([FromRoute] string nombre, [FromQuery] string? tipo)
         {
@@ -65,6 +70,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(sociosNegocios);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet("ContengaCodigo/{codigo}")]
         public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
@@ -76,6 +82,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(sociosNegocios);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Ver)]
         [HttpGet()]
         public async Task<ActionResult<Respuesta<IEnumerable<SocioNegocioDTO>>>> ObtenerTodo([FromQuery] string? tipo)
         {
@@ -87,6 +94,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(sociosNegocios);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<string>>> Crear([FromBody] SocioNegocioCrearDTO obj)
         {
@@ -98,6 +106,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insertar);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Actualizar)]
         [HttpPut("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] SocioNegocioActualizarDTO obj)
         {
@@ -118,6 +127,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(actualizar);
         }
 
+        [RequierePermiso("SociosNegocio", Accion.Eliminar)]
         [HttpDelete("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
