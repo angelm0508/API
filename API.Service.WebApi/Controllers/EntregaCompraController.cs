@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.entregaCompra;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<EntregaCompraDTO>>> Obtener([FromRoute] int id)
         {
             var entregaCompra = await _entregaCompraApplication.ObtenerAsync(id);
@@ -39,6 +42,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequierePermiso("EntregasCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<IEnumerable<EntregaCompraDTO>>>> ObtenerTodoAsync()
         {
             var entregaCompras = await _entregaCompraApplication.ObtenerTodoAsync();
@@ -52,6 +56,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost]
+        [RequierePermiso("EntregasCompra", Accion.Agregar)]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] EntregaCompraCrearDTO obj)
         {
             var insert = await _entregaCompraApplication.InsertarAsync(obj);
@@ -65,6 +70,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Actualizar)]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] EntregaCompraActualizarDTO obj)
         {
             var entregaCompra = await _entregaCompraApplication.ObtenerAsync(id);
@@ -87,6 +93,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Eliminar)]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var entregaCompra = await _entregaCompraApplication.ObtenerAsync(id);

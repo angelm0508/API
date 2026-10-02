@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.pedidoCompra;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [RequierePermiso("PedidosCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<PedidoCompraDTO>>> Obtener([FromRoute] int id)
         {
             var pedidoCompra = await _pedidoCompraApplication.ObtenerAsync(id);
@@ -39,6 +42,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequierePermiso("PedidosCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<IEnumerable<PedidoCompraDTO>>>> ObtenerTodoAsync()
         {
             var pedidoCompras = await _pedidoCompraApplication.ObtenerTodoAsync();
@@ -52,6 +56,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost]
+        [RequierePermiso("PedidosCompra", Accion.Agregar)]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] PedidoCompraCrearDTO obj)
         {
             var insert = await _pedidoCompraApplication.InsertarAsync(obj);
@@ -65,6 +70,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [RequierePermiso("PedidosCompra", Accion.Actualizar)]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] PedidoCompraActualizarDTO obj)
         {
             var pedidoCompra = await _pedidoCompraApplication.ObtenerAsync(id);
@@ -87,6 +93,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [RequierePermiso("PedidosCompra", Accion.Eliminar)]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
             var pedidoCompra = await _pedidoCompraApplication.ObtenerAsync(id);

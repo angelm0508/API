@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.entregaCompra;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +21,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("{entry:int}/{noLinea:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<EntregaCompraDetalleDTO>>> Obtener([FromRoute] int entry, [FromRoute] int noLinea)
         {
             var det = await _entregaCompraDetalleApplication.ObtenerAsync(entry, noLinea);
@@ -39,6 +42,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet("PorEntregaCompra/{entry:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<IEnumerable<EntregaCompraDetalleDTO>>>> ObtenerPorEntregaCompra([FromRoute] int entry)
         {
             var detalles = await _entregaCompraDetalleApplication.ObtenerPorEntregaCompraAsync(entry);
@@ -52,6 +56,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpGet]
+        [RequierePermiso("EntregasCompra", Accion.Ver)]
         public async Task<ActionResult<Respuesta<IEnumerable<EntregaCompraDetalleDTO>>>> ObtenerTodoAsync()
         {
             var detalles = await _entregaCompraDetalleApplication.ObtenerTodoAsync();
@@ -65,6 +70,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost]
+        [RequierePermiso("EntregasCompra", Accion.Agregar)]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] EntregaCompraDetalleCrearDTO obj)
         {
             var insert = await _entregaCompraDetalleApplication.InsertarAsync(obj);
@@ -78,6 +84,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPut("{entry:int}/{noLinea:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Actualizar)]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int entry, [FromRoute] int noLinea, [FromBody] EntregaCompraDetalleActualizarDTO obj)
         {
             var det = await _entregaCompraDetalleApplication.ObtenerAsync(entry, noLinea);
@@ -100,6 +107,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpDelete("{entry:int}/{noLinea:int}")]
+        [RequierePermiso("EntregasCompra", Accion.Eliminar)]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int entry, [FromRoute] int noLinea)
         {
             var det = await _entregaCompraDetalleApplication.ObtenerAsync(entry, noLinea);
