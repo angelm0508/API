@@ -57,6 +57,29 @@ namespace API.Service.WebApi.Tests.Authorization
             Assert.IsType<ObjectResult>(ctx.Result);
         }
 
+        [Theory]
+        [InlineData(Accion.Ver)]
+        [InlineData(Accion.Agregar)]
+        [InlineData(Accion.Actualizar)]
+        [InlineData(Accion.Eliminar)]
+        public void OnAuthorization_ModuloUsuarios_NoSuperUsuarioConClaimPerm_Bloquea403(Accion accion)
+        {
+            var ctx = Contexto(new Claim("SuperUsuario", "N"), new Claim("perm", "Usuarios:VAUE"));
+            new RequierePermisoAttribute("Usuarios", accion).OnAuthorization(ctx);
+
+            var resultado = Assert.IsType<ObjectResult>(ctx.Result);
+            Assert.Equal(StatusCodes.Status403Forbidden, resultado.StatusCode);
+        }
+
+        [Fact]
+        public void OnAuthorization_ModuloUsuarios_SuperUsuario_NoBloquea()
+        {
+            var ctx = Contexto(new Claim("SuperUsuario", "S"));
+            new RequierePermisoAttribute("Usuarios", Accion.Actualizar).OnAuthorization(ctx);
+
+            Assert.Null(ctx.Result);
+        }
+
         [Fact]
         public void OnAuthorization_SinClaimSuperUsuario_SeTrataComoN()
         {

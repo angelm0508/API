@@ -79,5 +79,39 @@ namespace API.Service.WebApi.Tests.Application
             Assert.Contains(claims, c => c.Type == "perm" && c.Value == "Articulos:VAUE");
             Assert.Contains(claims, c => c.Type == "perm" && c.Value == "Almacenes:VAUE");
         }
+
+        [Fact]
+        public async Task GenerarTokenAsync_SinNingunaFila_NoOtorgaPorDefectoElModuloUsuarios()
+        {
+            var usuario = new Usuario { Id = 4, Codigo = "nuevo", SuperUsuario = "N" };
+            _permisoDomain.Setup(p => p.ObtenerMatrizUsuarioAsync(4)).ReturnsAsync(new List<PermisoModulo>());
+            _moduloDomain.Setup(m => m.ObtenerTodoAsync()).ReturnsAsync(new List<Modulo>
+            {
+                new() { Codigo = "Articulos", Nombre = "Artículos", Grupo = "Inventario" },
+                new() { Codigo = "Usuarios", Nombre = "Usuarios", Grupo = "Administración" },
+            }.AsAsyncQueryable());
+
+            var (token, _) = await _service.GenerarTokenAsync(usuario);
+
+            var claims = LeerClaims(token);
+            Assert.Contains(claims, c => c.Type == "perm" && c.Value == "Articulos:VAUE");
+            Assert.DoesNotContain(claims, c => c.Type == "perm" && c.Value.StartsWith("Usuarios"));
+        }
+
+        [Fact]
+        public async Task GenerarTokenAsync_ConFilasTodoFalse_NoEmitePermNiAccesoPorDefecto()
+        {
+            var usuario = new Usuario { Id = 5, Codigo = "bloqueado", SuperUsuario = "N" };
+            _permisoDomain.Setup(p => p.ObtenerMatrizUsuarioAsync(5)).ReturnsAsync(new List<PermisoModulo>
+            {
+                new("Articulos", false, false, false, false),
+                new("Almacenes", false, false, false, false),
+            });
+
+            var (token, _) = await _service.GenerarTokenAsync(usuario);
+
+            Assert.DoesNotContain(LeerClaims(token), c => c.Type == "perm");
+            _moduloDomain.Verify(m => m.ObtenerTodoAsync(), Times.Never);
+        }
     }
 }

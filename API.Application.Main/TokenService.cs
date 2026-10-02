@@ -60,7 +60,7 @@ namespace API.Application.Main
         }
 
         // Sin fila en la matriz = acceso total (decision de la spec): se emite un claim "perm"
-        // con las 4 letras por cada modulo del catalogo.
+        // con las 4 letras por cada modulo del catalogo excepto "Usuarios".
         private async Task<List<Claim>> ArmarClaimsPermisoAsync(int usuarioId)
         {
             var matriz = await _permisoDomain.ObtenerMatrizUsuarioAsync(usuarioId);
@@ -68,7 +68,8 @@ namespace API.Application.Main
 
             if (matriz.Count == 0)
             {
-                var modulos = await (await _moduloDomain.ObtenerTodoAsync()).ToListAsync();
+                // "Usuarios" (administración de usuarios/permisos) es exclusivo de SuperUsuario: nunca se otorga por defecto.
+                var modulos = await (await _moduloDomain.ObtenerTodoAsync()).Where(m => m.Codigo != "Usuarios").ToListAsync();
                 foreach (var m in modulos)
                     claims.Add(new Claim("perm", $"{m.Codigo}:VAUE"));
                 return claims;
