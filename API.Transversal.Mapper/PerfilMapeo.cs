@@ -27,6 +27,7 @@ using API.Application.DTO.direccionSocioNegocio;
 using API.Application.DTO.numeracionDocumento;
 using API.Application.DTO.moneda;
 using API.Application.DTO.inventario;
+using API.Application.DTO.permiso;
 using API.Domain.Entity.Models;
 using AutoMapper;
 
@@ -223,6 +224,11 @@ namespace API.Transversal.Mapper
             // Inventario
             CreateMap<ExistenciaArticulo, ExistenciaArticuloDTO>();
             CreateMap<MovimientoInventario, MovimientoInventarioDTO>();
+
+            // Plantilla
+            CreateMap<Plantilla, PlantillaDTO>();
+            CreateMap<PlantillaCrearDTO, Plantilla>();
+            CreateMap<PlantillaActualizarDTO, Plantilla>();
         }
     }
 }
