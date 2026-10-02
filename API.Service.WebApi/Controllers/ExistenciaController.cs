@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.inventario;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _app = app;
         }
 
+        [RequierePermiso("Existencias", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<ExistenciaArticuloDTO>>>> ObtenerTodo([FromQuery] string? articulo, [FromQuery] string? almacen)
         {
@@ -25,6 +28,7 @@ namespace API.Service.WebApi.Controllers
             return r.Resultado ? Ok(r) : BadRequest(r);
         }
 
+        [RequierePermiso("Existencias", Accion.Ver)]
         [HttpGet("{codArticulo}/{codAlmacen}")]
         public async Task<ActionResult<Respuesta<ExistenciaArticuloDTO>>> Obtener([FromRoute] string codArticulo, [FromRoute] string codAlmacen)
         {
@@ -32,6 +36,7 @@ namespace API.Service.WebApi.Controllers
             return r.Resultado ? Ok(r) : BadRequest(r);
         }
 
+        [RequierePermiso("Existencias", Accion.Ver)]
         [HttpGet("PorArticulo/{codArticulo}")]
         public async Task<ActionResult<Respuesta<IEnumerable<ExistenciaArticuloDTO>>>> ObtenerPorArticulo([FromRoute] string codArticulo)
         {

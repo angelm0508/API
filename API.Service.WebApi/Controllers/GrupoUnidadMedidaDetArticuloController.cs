@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.articulo.grupo_unidad_medida_det_articulo;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _grupoUnidadMedidaDetArticuloApplication = grupoUnidadMedidaDetArticuloApplication;
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet("{grpMedidaEntry:int}/{numLinea:int}")]
         public async Task<ActionResult<Respuesta<GrupoUnidadMedidaDetArticuloDTO>>> Obtener([FromRoute] int grpMedidaEntry, [FromRoute] int numLinea)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(det);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet("PorGrupo/{grpMedidaEntry:int}")]
         public async Task<ActionResult<Respuesta<IEnumerable<GrupoUnidadMedidaDetArticuloDTO>>>> ObtenerPorGrupo([FromRoute] int grpMedidaEntry)
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(detalles);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<GrupoUnidadMedidaDetArticuloDTO>>>> ObtenerTodoAsync()
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(detalles);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] GrupoUnidadMedidaDetArticuloCrearDTO obj)
         {
@@ -77,6 +83,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Actualizar)]
         [HttpPut("{grpMedidaEntry:int}/{numLinea:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int grpMedidaEntry, [FromRoute] int numLinea, [FromBody] GrupoUnidadMedidaDetArticuloActualizarDTO obj)
         {
@@ -99,6 +106,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Eliminar)]
         [HttpDelete("{grpMedidaEntry:int}/{numLinea:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int grpMedidaEntry, [FromRoute] int numLinea)
         {

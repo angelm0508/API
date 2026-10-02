@@ -1,6 +1,8 @@
 ﻿using API.Application.DTO;
 using API.Application.DTO.articulo.grupo_unidad_medida_articulo;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _grupoUnidadMedidaArticuloApplication = grupoUnidadMedidaArticuloApplication;
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<GrupoUnidadMedidaArticuloDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(grupoMedida);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet("PorNombre/{name}")]
         public async Task<ActionResult<Respuesta<GrupoUnidadMedidaArticuloDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
@@ -58,6 +62,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(grupoMedida);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet("Contenga/{name}")]
         public async Task<ActionResult<Respuesta<IEnumerable<GrupoUnidadMedidaArticuloDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
@@ -71,6 +76,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(gruposMedida);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<GrupoUnidadMedidaArticuloDTO>>>> ObtenerTodoAsync()
         {
@@ -84,6 +90,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(gruposMedida);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] GrupoUnidadMedidaArticuloCrearDTO obj)
         {
@@ -97,6 +104,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] GrupoUnidadMedidaArticuloActualizarDTO obj)
         {
@@ -119,6 +127,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("GruposUnidadMedida", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

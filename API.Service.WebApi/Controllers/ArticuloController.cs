@@ -2,6 +2,8 @@ using API.Application.DTO;
 using API.Application.DTO.articulo.articulo;
 using API.Application.DTO.precio;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +23,7 @@ namespace API.Service.WebApi.Controllers
             _precioListaApplication = precioListaApplication;
         }
 
+        [RequierePermiso("Articulos", Accion.Ver)]
         [HttpGet("{codigo}")]
         public async Task<ActionResult<Respuesta<ArticuloDTO>>> Articulo([FromRoute] string codigo)
         {
@@ -39,6 +42,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(producto);
         }
 
+        [RequierePermiso("Articulos", Accion.Ver)]
         [HttpGet("{codigo}/Precio")]
         public async Task<ActionResult<Respuesta<PrecioResueltoDTO>>> Precio(
             [FromRoute] string codigo, [FromQuery] int? listaPrecio)
@@ -55,6 +59,7 @@ namespace API.Service.WebApi.Controllers
                 : BadRequest(res);
         }
 
+        [RequierePermiso("Articulos", Accion.Ver)]
         [HttpGet("Nombre/{nombre}")]
         public async Task<ActionResult<Respuesta<ArticuloDTO>>> ArticuloPorNombre([FromRoute] string nombre)
         {
@@ -73,6 +78,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(producto);
         }
 
+        [RequierePermiso("Articulos", Accion.Ver)]
         [HttpGet("ContengaNombre/{nombre}")]
         public async Task<ActionResult<Respuesta<IEnumerable<ArticuloDTO>>>> ArticulosContenganNombre([FromRoute] string nombre)
         {
@@ -84,6 +90,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(producto);
         }
 
+        [RequierePermiso("Articulos", Accion.Ver)]
         [HttpGet("ContengaCodigo/{codigo}")]
         public async Task<ActionResult<Respuesta<IEnumerable<ArticuloDTO>>>> ArticulosContenganCodigo([FromRoute] string codigo)
         {
@@ -95,6 +102,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(productos);
         }
 
+        [RequierePermiso("Articulos", Accion.Ver)]
         [HttpGet()]
         public async Task<ActionResult<Respuesta<IEnumerable<ArticuloDTO>>>> Obtener()
         {
@@ -106,6 +114,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(producto);
         }
 
+        [RequierePermiso("Articulos", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<string>>> Post([FromBody] ArticuloCrearDTO producto)
         {
@@ -117,6 +126,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insertar);
         }
 
+        [RequierePermiso("Articulos", Accion.Actualizar)]
         [HttpPut("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Update([FromRoute] string codigo, [FromBody] ArticuloActualizarDTO obj)
         {
@@ -137,6 +147,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Articulos", Accion.Eliminar)]
         [HttpDelete("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Delete([FromRoute] string codigo)
         {

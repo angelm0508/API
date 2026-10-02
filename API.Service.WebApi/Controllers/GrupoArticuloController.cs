@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.articulo.grupo_articulo;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,7 @@ namespace API.Service.WebApi.Controllers
             _grupoArticuloApplication = grupoArticuloApplication;
         }
 
+        [RequierePermiso("GruposArticulo", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<GrupoArticuloDTO>>> Obtener([FromRoute] int id)
         {
@@ -40,6 +43,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(grupoArticulo);
         }
 
+        [RequierePermiso("GruposArticulo", Accion.Ver)]
         [HttpGet("PorNombre/{name}")]
         public async Task<ActionResult<Respuesta<GrupoArticuloDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
@@ -60,6 +64,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(grupoArticulo);
         }
 
+        [RequierePermiso("GruposArticulo", Accion.Ver)]
         [HttpGet("Contenga/{name}")]
         public async Task<ActionResult<Respuesta<IEnumerable<GrupoArticuloDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
@@ -73,6 +78,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(grupoArticulos);
         }
 
+        [RequierePermiso("GruposArticulo", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<GrupoArticuloDTO>>>> ObtenerTodoAsync()
         {
@@ -112,6 +118,7 @@ namespace API.Service.WebApi.Controllers
         }
         */
 
+        [RequierePermiso("GruposArticulo", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] GrupoArticuloCrearDTO obj)
         {
@@ -125,6 +132,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("GruposArticulo", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] GrupoArticuloActualizarDTO obj)
         {
@@ -147,6 +155,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("GruposArticulo", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

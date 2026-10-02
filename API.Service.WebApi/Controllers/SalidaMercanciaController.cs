@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.salidaMercancia;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _salidaMercanciaApplication = salidaMercanciaApplication;
         }
 
+        [RequierePermiso("SalidasMercancia", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<SalidaMercanciaDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(salidaMercancia);
         }
 
+        [RequierePermiso("SalidasMercancia", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<SalidaMercanciaDTO>>>> ObtenerTodoAsync()
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(salidaMercancias);
         }
 
+        [RequierePermiso("SalidasMercancia", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] SalidaMercanciaCrearDTO obj)
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("SalidasMercancia", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] SalidaMercanciaActualizarDTO obj)
         {
@@ -86,6 +92,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("SalidasMercancia", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

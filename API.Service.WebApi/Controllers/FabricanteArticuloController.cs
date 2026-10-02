@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.articulo.fabricante_articulo;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _fabricanteArticuloApplication = fabricanteArticuloApplication;
         }
 
+        [RequierePermiso("Fabricantes", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<FabricanteArticuloDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(fabricante);
         }
 
+        [RequierePermiso("Fabricantes", Accion.Ver)]
         [HttpGet("PorNombre/{name}")]
         public async Task<ActionResult<Respuesta<FabricanteArticuloDTO>>> ObtenerPorNombre([FromRoute] string name)
         {
@@ -58,6 +62,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(fabricante);
         }
 
+        [RequierePermiso("Fabricantes", Accion.Ver)]
         [HttpGet("Contenga/{name}")]
         public async Task<ActionResult<Respuesta<IEnumerable<FabricanteArticuloDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
@@ -71,6 +76,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(fabricantes);
         }
 
+        [RequierePermiso("Fabricantes", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<FabricanteArticuloDTO>>>> ObtenerTodoAsync()
         {
@@ -84,6 +90,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(fabricantes);
         }
 
+        [RequierePermiso("Fabricantes", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] FabricanteArticuloCrearDTO obj)
         {
@@ -97,6 +104,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Fabricantes", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] FabricanteArticuloActualizarDTO obj)
         {
@@ -119,6 +127,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Fabricantes", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

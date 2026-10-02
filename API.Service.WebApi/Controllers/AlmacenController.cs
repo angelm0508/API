@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.almacen;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _almacenApplication = almacenApplication;
         }
 
+        [RequierePermiso("Almacenes", Accion.Ver)]
         [HttpGet("{codigo}")]
         public async Task<ActionResult<Respuesta<AlmacenDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
@@ -36,6 +39,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(almacen);
         }
 
+        [RequierePermiso("Almacenes", Accion.Ver)]
         [HttpGet("Nombre/{nombre}")]
         public async Task<ActionResult<Respuesta<AlmacenDTO>>> ObtenerPorNombre([FromRoute] string nombre)
         {
@@ -54,6 +58,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(almacen);
         }
 
+        [RequierePermiso("Almacenes", Accion.Ver)]
         [HttpGet("ContengaNombre/{nombre}")]
         public async Task<ActionResult<Respuesta<IEnumerable<AlmacenDTO>>>> ObtenerContengaNombre([FromRoute] string nombre)
         {
@@ -65,6 +70,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(almacenes);
         }
 
+        [RequierePermiso("Almacenes", Accion.Ver)]
         [HttpGet("ContengaCodigo/{codigo}")]
         public async Task<ActionResult<Respuesta<IEnumerable<AlmacenDTO>>>> ObtenerContengaCodigo([FromRoute] string codigo)
         {
@@ -76,6 +82,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(almacenes);
         }
 
+        [RequierePermiso("Almacenes", Accion.Ver)]
         [HttpGet()]
         public async Task<ActionResult<Respuesta<IEnumerable<AlmacenDTO>>>> ObtenerTodo()
         {
@@ -87,6 +94,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(almacenes);
         }
 
+        [RequierePermiso("Almacenes", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<bool>>> Crear([FromBody] AlmacenCrearDTO obj)
         {
@@ -98,6 +106,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insertar);
         }
 
+        [RequierePermiso("Almacenes", Accion.Actualizar)]
         [HttpPut("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Actualizar([FromRoute] string codigo, [FromBody] AlmacenActualizarDTO obj)
         {
@@ -118,6 +127,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(actualizar);
         }
 
+        [RequierePermiso("Almacenes", Accion.Eliminar)]
         [HttpDelete("{codigo}")]
         public async Task<ActionResult<Respuesta<bool>>> Eliminar([FromRoute] string codigo)
         {
