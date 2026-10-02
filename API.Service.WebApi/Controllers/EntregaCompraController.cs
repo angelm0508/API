@@ -73,6 +73,11 @@ namespace API.Service.WebApi.Controllers
         [RequierePermiso("EntregasCompra", Accion.Actualizar)]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] EntregaCompraActualizarDTO obj)
         {
+            // Cancelar un documento (Cancelado = 'S') equivale a eliminarlo: exige Accion.Eliminar
+            // ademas de Actualizar (spec: 'cancelar documento -> Eliminar').
+            if (obj.Cancelado == "S" && !PermisoUsuario.Tiene(User, "EntregasCompra", Accion.Eliminar))
+                return PermisoUsuario.Denegado();
+
             var entregaCompra = await _entregaCompraApplication.ObtenerAsync(id);
 
             if (entregaCompra.Dato == null)

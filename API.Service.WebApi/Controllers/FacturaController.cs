@@ -73,6 +73,11 @@ namespace API.Service.WebApi.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] FacturaActualizarDTO obj)
         {
+            // Cancelar un documento (Cancelado = 'S') equivale a eliminarlo: exige Accion.Eliminar
+            // ademas de Actualizar (spec: 'cancelar documento -> Eliminar').
+            if (obj.Cancelado == "S" && !PermisoUsuario.Tiene(User, "Facturas", Accion.Eliminar))
+                return PermisoUsuario.Denegado();
+
             var factura = await _facturaApplication.ObtenerAsync(id);
 
             if (factura.Dato == null)

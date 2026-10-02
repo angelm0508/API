@@ -73,6 +73,11 @@ namespace API.Service.WebApi.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] EntradaMercanciaActualizarDTO obj)
         {
+            // Cancelar un documento (Cancelado = 'S') equivale a eliminarlo: exige Accion.Eliminar
+            // ademas de Actualizar (spec: 'cancelar documento -> Eliminar').
+            if (obj.Cancelado == "S" && !PermisoUsuario.Tiene(User, "EntradasMercancia", Accion.Eliminar))
+                return PermisoUsuario.Denegado();
+
             var entradaMercancia = await _entradaMercanciaApplication.ObtenerAsync(id);
 
             if (entradaMercancia.Dato == null)
