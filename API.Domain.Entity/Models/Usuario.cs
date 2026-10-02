@@ -24,4 +24,6 @@ public partial class Usuario
     public string? Bloqueado { get; set; }
 
     public string? UltimaContra { get; set; }
+
+    public virtual ICollection<UsuarioPermiso> UsuarioPermisos { get; set; } = new List<UsuarioPermiso>();
 }

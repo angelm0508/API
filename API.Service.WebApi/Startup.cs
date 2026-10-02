@@ -263,6 +263,11 @@ namespace API.Service.WebApi
             services.AddTransient<IMovimientoInventarioDomain, MovimientoInventarioDomain>();
             services.AddTransient<IMovimientoInventarioApplication, MovimientoInventarioApplication>();
 
+            services.AddTransient<IRepositorioGenerico<Modulo, string>, ModuloRepositorio>();
+            services.AddTransient<IRepositorioGenerico<UsuarioPermiso, (int UsuarioId, string CodigoModulo)>, UsuarioPermisoRepositorio>();
+            services.AddTransient<IRepositorioGenerico<Plantilla, int>, PlantillaRepositorio>();
+            services.AddTransient<IRepositorioGenerico<PlantillaPermisoDetalle, (int PlantillaId, string CodigoModulo)>, PlantillaPermisoDetalleRepositorio>();
+
             // Servicios de autenticación
             services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
             services.AddTransient<ITokenService, TokenService>();

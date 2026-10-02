@@ -91,7 +91,15 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<ExistenciaArticulo> ExistenciaArticulos { get; set; }
 
+    public virtual DbSet<Modulo> Modulos { get; set; }
+
     public virtual DbSet<MovimientoInventario> MovimientoInventarios { get; set; }
+
+    public virtual DbSet<Plantilla> Plantillas { get; set; }
+
+    public virtual DbSet<PlantillaPermisoDetalle> PlantillaPermisoDetalles { get; set; }
+
+    public virtual DbSet<UsuarioPermiso> UsuarioPermisos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -1360,6 +1368,56 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.MovReversaDeNavigation).WithMany(p => p.InverseMovReversaDeNavigation)
                 .HasForeignKey(d => d.MovReversaDe)
                 .HasConstraintName("fk_movimiento_reversa");
+        });
+
+        modelBuilder.Entity<Modulo>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Modulo");
+            entity.ToTable("Modulo");
+            entity.Property(e => e.Codigo).HasMaxLength(40);
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.Grupo).HasMaxLength(40);
+        });
+
+        modelBuilder.Entity<UsuarioPermiso>(entity =>
+        {
+            entity.HasKey(e => new { e.UsuarioId, e.CodigoModulo }).HasName("pk_usuario_permiso");
+            entity.ToTable("UsuarioPermiso");
+            entity.Property(e => e.CodigoModulo).HasMaxLength(40);
+
+            entity.HasOne(d => d.UsuarioNavigation).WithMany(p => p.UsuarioPermisos)
+                .HasForeignKey(d => d.UsuarioId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_usuario_permiso_usuario");
+
+            entity.HasOne(d => d.ModuloNavigation).WithMany(p => p.UsuarioPermisos)
+                .HasForeignKey(d => d.CodigoModulo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_usuario_permiso_modulo");
+        });
+
+        modelBuilder.Entity<Plantilla>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Plantilla");
+            entity.ToTable("Plantilla");
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<PlantillaPermisoDetalle>(entity =>
+        {
+            entity.HasKey(e => new { e.PlantillaId, e.CodigoModulo }).HasName("pk_plantilla_permiso_detalle");
+            entity.ToTable("PlantillaPermisoDetalle");
+            entity.Property(e => e.CodigoModulo).HasMaxLength(40);
+
+            entity.HasOne(d => d.PlantillaNavigation).WithMany(p => p.Detalles)
+                .HasForeignKey(d => d.PlantillaId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_plantilla_permiso_plantilla");
+
+            entity.HasOne(d => d.ModuloNavigation).WithMany(p => p.PlantillaPermisoDetalles)
+                .HasForeignKey(d => d.CodigoModulo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_plantilla_permiso_modulo");
         });
 
         OnModelCreatingPartial(modelBuilder);
