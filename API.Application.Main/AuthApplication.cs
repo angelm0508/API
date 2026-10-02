@@ -58,7 +58,7 @@ namespace API.Application.Main
                     return respuesta;
                 }
 
-                var (token, expira) = _tokenService.GenerarToken(usuario);
+                var (token, expira) = await _tokenService.GenerarTokenAsync(usuario);
 
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Login exitoso.";

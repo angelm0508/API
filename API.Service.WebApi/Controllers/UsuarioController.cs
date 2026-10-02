@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.usuario.usuario;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _usuarioApplication = usuarioApplication;
         }
 
+        [RequierePermiso("Usuarios", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<UsuarioDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(usuario);
         }
 
+        [RequierePermiso("Usuarios", Accion.Ver)]
         [HttpGet("PorCodigo/{codigo}")]
         public async Task<ActionResult<Respuesta<UsuarioDTO>>> ObtenerPorCodigo([FromRoute] string codigo)
         {
@@ -58,6 +62,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(usuario);
         }
 
+        [RequierePermiso("Usuarios", Accion.Ver)]
         [HttpGet("Contenga/{name}")]
         public async Task<ActionResult<Respuesta<IEnumerable<UsuarioDTO>>>> ObteneContengaNombreAsync([FromRoute] string name)
         {
@@ -71,6 +76,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(usuarios);
         }
 
+        [RequierePermiso("Usuarios", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<UsuarioDTO>>>> ObtenerTodoAsync()
         {
@@ -84,6 +90,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(usuarios);
         }
 
+        [RequierePermiso("Usuarios", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] UsuarioCrearDTO obj)
         {
@@ -97,6 +104,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Usuarios", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] UsuarioActualizarDTO obj)
         {
@@ -119,6 +127,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Usuarios", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {
