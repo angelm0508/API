@@ -73,5 +73,73 @@ namespace API.Service.WebApi.Tests.Controllers
 
             Assert.IsType<OkObjectResult>(resultado.Result);
         }
+
+        [Fact]
+        public async Task Insertar_NoSuperUsuario_DevuelveForbid()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("NoSuperUsuario", "irrelevante") }, "Test"))
+                }
+            };
+
+            var resultado = await _controller.InsertarAsync(new PlantillaCrearDTO { Nombre = "Test" });
+
+            Assert.IsType<ForbidResult>(resultado.Result);
+            _applicationMock.Verify(a => a.InsertarAsync(It.IsAny<PlantillaCrearDTO>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Actualizar_NoSuperUsuario_DevuelveForbid()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("NoSuperUsuario", "irrelevante") }, "Test"))
+                }
+            };
+
+            var resultado = await _controller.ActualizarAsync(1, new PlantillaActualizarDTO { Nombre = "Test" });
+
+            Assert.IsType<ForbidResult>(resultado.Result);
+            _applicationMock.Verify(a => a.ActualizarAsync(It.IsAny<int>(), It.IsAny<PlantillaActualizarDTO>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Eliminar_NoSuperUsuario_DevuelveForbid()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("NoSuperUsuario", "irrelevante") }, "Test"))
+                }
+            };
+
+            var resultado = await _controller.EliminarAsync(1);
+
+            Assert.IsType<ForbidResult>(resultado.Result);
+            _applicationMock.Verify(a => a.EliminarAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GuardarPermisos_NoSuperUsuario_DevuelveForbid()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("NoSuperUsuario", "irrelevante") }, "Test"))
+                }
+            };
+
+            var resultado = await _controller.GuardarPermisos(5, new List<PermisoModuloDTO>());
+
+            Assert.IsType<ForbidResult>(resultado.Result);
+            _permisoApplicationMock.Verify(a => a.GuardarMatrizPlantillaAsync(It.IsAny<int>(), It.IsAny<List<PermisoModuloDTO>>()), Times.Never);
+        }
     }
 }

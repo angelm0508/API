@@ -61,5 +61,39 @@ namespace API.Service.WebApi.Tests.Controllers
 
             Assert.IsType<OkObjectResult>(resultado.Result);
         }
+
+        [Fact]
+        public async Task Guardar_NoSuperUsuario_DevuelveForbid()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("NoSuperUsuario", "irrelevante") }, "Test"))
+                }
+            };
+
+            var resultado = await _controller.Guardar(1, new List<PermisoModuloDTO>());
+
+            Assert.IsType<ForbidResult>(resultado.Result);
+            _applicationMock.Verify(a => a.GuardarMatrizUsuarioAsync(It.IsAny<int>(), It.IsAny<List<PermisoModuloDTO>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task AplicarPlantilla_NoSuperUsuario_DevuelveForbid()
+        {
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("NoSuperUsuario", "irrelevante") }, "Test"))
+                }
+            };
+
+            var resultado = await _controller.AplicarPlantilla(1, 5);
+
+            Assert.IsType<ForbidResult>(resultado.Result);
+            _applicationMock.Verify(a => a.AplicarPlantillaAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
     }
 }
