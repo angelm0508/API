@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.pedido;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _pedidoApplication = pedidoApplication;
         }
 
+        [RequierePermiso("Pedidos", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<PedidoDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(pedido);
         }
 
+        [RequierePermiso("Pedidos", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<PedidoDTO>>>> ObtenerTodoAsync()
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(pedidos);
         }
 
+        [RequierePermiso("Pedidos", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] PedidoCrearDTO obj)
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Pedidos", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] PedidoActualizarDTO obj)
         {
@@ -86,6 +92,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Pedidos", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

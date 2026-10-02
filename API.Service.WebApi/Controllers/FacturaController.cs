@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.factura;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _facturaApplication = facturaApplication;
         }
 
+        [RequierePermiso("Facturas", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<FacturaDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(factura);
         }
 
+        [RequierePermiso("Facturas", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<FacturaDTO>>>> ObtenerTodoAsync()
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(facturas);
         }
 
+        [RequierePermiso("Facturas", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] FacturaCrearDTO obj)
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Facturas", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] FacturaActualizarDTO obj)
         {
@@ -86,6 +92,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Facturas", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

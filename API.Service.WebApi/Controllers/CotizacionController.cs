@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.cotizacion;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _cotizacionApplication = cotizacionApplication;
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Ver)]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Respuesta<CotizacionDTO>>> Obtener([FromRoute] int id)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(cotizacion);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<CotizacionDTO>>>> ObtenerTodoAsync()
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(cotizaciones);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] CotizacionCrearDTO obj)
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Actualizar)]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] CotizacionActualizarDTO obj)
         {
@@ -86,6 +92,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Eliminar)]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int id)
         {

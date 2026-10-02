@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.cotizacion;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _cotizacionDetalleApplication = cotizacionDetalleApplication;
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Ver)]
         [HttpGet("{entry:int}/{noLinea:int}")]
         public async Task<ActionResult<Respuesta<CotizacionDetalleDTO>>> Obtener([FromRoute] int entry, [FromRoute] int noLinea)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(det);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Ver)]
         [HttpGet("PorCotizacion/{entry:int}")]
         public async Task<ActionResult<Respuesta<IEnumerable<CotizacionDetalleDTO>>>> ObtenerPorCotizacion([FromRoute] int entry)
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(detalles);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<CotizacionDetalleDTO>>>> ObtenerTodoAsync()
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(detalles);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] CotizacionDetalleCrearDTO obj)
         {
@@ -77,6 +83,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Actualizar)]
         [HttpPut("{entry:int}/{noLinea:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int entry, [FromRoute] int noLinea, [FromBody] CotizacionDetalleActualizarDTO obj)
         {
@@ -99,6 +106,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Cotizaciones", Accion.Eliminar)]
         [HttpDelete("{entry:int}/{noLinea:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int entry, [FromRoute] int noLinea)
         {

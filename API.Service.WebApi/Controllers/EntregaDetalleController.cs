@@ -1,6 +1,8 @@
 using API.Application.DTO;
 using API.Application.DTO.entrega;
 using API.Application.Interface;
+using API.Domain.Interface;
+using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +20,7 @@ namespace API.Service.WebApi.Controllers
             _entregaDetalleApplication = entregaDetalleApplication;
         }
 
+        [RequierePermiso("Entregas", Accion.Ver)]
         [HttpGet("{entry:int}/{noLinea:int}")]
         public async Task<ActionResult<Respuesta<EntregaDetalleDTO>>> Obtener([FromRoute] int entry, [FromRoute] int noLinea)
         {
@@ -38,6 +41,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(det);
         }
 
+        [RequierePermiso("Entregas", Accion.Ver)]
         [HttpGet("PorEntrega/{entry:int}")]
         public async Task<ActionResult<Respuesta<IEnumerable<EntregaDetalleDTO>>>> ObtenerPorEntrega([FromRoute] int entry)
         {
@@ -51,6 +55,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(detalles);
         }
 
+        [RequierePermiso("Entregas", Accion.Ver)]
         [HttpGet]
         public async Task<ActionResult<Respuesta<IEnumerable<EntregaDetalleDTO>>>> ObtenerTodoAsync()
         {
@@ -64,6 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(detalles);
         }
 
+        [RequierePermiso("Entregas", Accion.Agregar)]
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] EntregaDetalleCrearDTO obj)
         {
@@ -77,6 +83,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(insert);
         }
 
+        [RequierePermiso("Entregas", Accion.Actualizar)]
         [HttpPut("{entry:int}/{noLinea:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int entry, [FromRoute] int noLinea, [FromBody] EntregaDetalleActualizarDTO obj)
         {
@@ -99,6 +106,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(update);
         }
 
+        [RequierePermiso("Entregas", Accion.Eliminar)]
         [HttpDelete("{entry:int}/{noLinea:int}")]
         public async Task<ActionResult<Respuesta<bool>>> EliminarAsync([FromRoute] int entry, [FromRoute] int noLinea)
         {
