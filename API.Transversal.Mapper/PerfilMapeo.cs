@@ -19,6 +19,8 @@ using API.Application.DTO.facturaCompra;
 using API.Application.DTO.factura;
 using API.Application.DTO.notaDebito;
 using API.Application.DTO.notaDebitoCompra;
+using API.Application.DTO.notaCredito;
+using API.Application.DTO.notaCreditoCompra;
 using API.Application.DTO.impuesto;
 using API.Application.DTO.pais;
 using API.Application.DTO.departamento;
@@ -214,6 +216,24 @@ namespace API.Transversal.Mapper
             // NotaDebitoCompraDetalle
             CreateMap<NotaDebitoCompraDetalle, NotaDebitoCompraDetalleDTO>();
             CreateMap<NotaDebitoCompraDetalleCrearDTO, NotaDebitoCompraDetalle>();
+
+            // NotaCredito
+            CreateMap<NotaCredito, NotaCreditoDTO>();
+            CreateMap<NotaCreditoCrearDTO, NotaCredito>();
+            CreateMap<NotaCreditoActualizarDTO, NotaCredito>();
+
+            // NotaCreditoDetalle
+            CreateMap<NotaCreditoDetalle, NotaCreditoDetalleDTO>();
+            CreateMap<NotaCreditoDetalleCrearDTO, NotaCreditoDetalle>();
+
+            // NotaCreditoCompra
+            CreateMap<NotaCreditoCompra, NotaCreditoCompraDTO>();
+            CreateMap<NotaCreditoCompraCrearDTO, NotaCreditoCompra>();
+            CreateMap<NotaCreditoCompraActualizarDTO, NotaCreditoCompra>();
+
+            // NotaCreditoCompraDetalle
+            CreateMap<NotaCreditoCompraDetalle, NotaCreditoCompraDetalleDTO>();
+            CreateMap<NotaCreditoCompraDetalleCrearDTO, NotaCreditoCompraDetalle>();
 
             // Pedido
             CreateMap<Pedido, PedidoDTO>();
