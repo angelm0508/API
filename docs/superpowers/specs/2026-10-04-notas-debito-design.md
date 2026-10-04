@@ -126,7 +126,8 @@ Por cada documento se clona la pila completa de Factura/FacturaCompra (sin inven
   en `SocioNegocio`, `Monedum`, `NumeracionDocumentoDet` y `Impuesto` como las demás.
 - **Repos** `NotaDebitoRepositorio`, `NotaDebitoDetalleRepositorio` y los de compra (genéricos EF).
 - **DTOs** (carpetas `notaDebito/`, `notaDebitoCompra/`): `...DTO`, `...CrearDTO` (con `Lineas`),
-  `...ActualizarDTO`, y los tres del detalle. `Descripcion` obligatoria en el DTO de línea.
+  `...ActualizarDTO`, `...DetalleDTO`, `...DetalleCrearDTO`, `...FacturaBaseResumenDTO` y
+  `...FacturaBaseDTO`. `Descripcion` obligatoria en el DTO de línea.
 - **Dominio** `NotaDebitoDomain` / `NotaDebitoCompraDomain`:
   - `InsertarAsync(nota, lineas)`: fuerza `TipoObjeto` (`7`/`14`), `Cancelado='N'`, `EstadoDoc='A'`,
     `FechaCancelado=null`; valida la serie (existe, **pertenece a su `CodigoObj`**, no bloqueada;
@@ -149,9 +150,12 @@ Por cada documento se clona la pila completa de Factura/FacturaCompra (sin inven
   `Respuesta<T>`, errores de dominio → `Resultado=false`).
 - **Controllers** `NotaDebitoController` (`api/NotaDebito`) y el de compra (`api/NotaDebitoCompra`)
   con las mismas rutas que Factura: `GET {id}`, `GET`, `POST`, `PUT {id}`, `DELETE {id}`, más
-  `GET {id:int}/Lineas`, `GET FacturasBase/{codigoSn}` y `GET FacturaBase/{entry}`. Permisos:
-  `RequierePermiso("NotasDebito"|"NotasDebitoCompra", Ver/Agregar/Actualizar/Eliminar)`; los
-  endpoints de base usan `Ver` del propio módulo (así no hace falta `Ver` sobre Facturas). El
+  `GET {id:int}/Lineas`, `GET FacturasBase/{codigoSn}` y `GET FacturaBase/{entry}` (en el
+  controller de compra: `GET FacturasCompraBase/{codigoSn}` y `GET FacturaCompraBase/{entry}`).
+  Permisos: `RequierePermiso("NotasDebito"|"NotasDebitoCompra", Ver/Agregar/Actualizar/Eliminar)`;
+  los cuatro endpoints de base (y sus proxies Web) exigen `Agregar` del propio módulo, no `Ver`
+  (solo los usa el formulario de creación; un usuario con solo `Ver` no debe poder leer otras
+  facturas) y así no hace falta ningún permiso sobre Facturas. El
   `PUT` con `Cancelado=="S"` exige además `Eliminar` (mismo chequeo que los demás documentos).
 - **DI y mapeos:** registros `AddTransient` en `Startup.cs` y `CreateMap` en `PerfilMapeo.cs`.
 
@@ -166,7 +170,7 @@ almacén:
   Factura (Index, ObtenerTodos, FormularioCrear/Editar, Crear, Editar, Eliminar, ObtenerDetalle,
   BuscarSocios (`C` o `P`), BuscarImpuestos,
   ObtenerImpuestoPorCodigo) más `BuscarFacturasBase(codigoSn)` y `ObtenerFacturaBase(entry)`
-  (proxies de los endpoints de base). Atributos `[RequierePermiso("NotasDebito"...)]`,
+  (proxies de los endpoints de base, que exigen `Agregar`). Atributos `[RequierePermiso("NotasDebito"...)]`,
   `[ValidateAntiForgeryToken]` en los POST, y el chequeo de `Eliminar` al cancelar.
 - **Vistas** `Views/NotasDebito/{Index,_Form}.cshtml` y `Views/NotasDebitoCompra/...`; JS
   `notasdebito.js` y `notasdebitocompra.js`. Líneas con descripción, cantidad, precio, descuento e
@@ -176,14 +180,14 @@ almacén:
   `BaseTipo`/`BaseEntry`. En el formulario de edición el documento base se muestra como
   "Factura (entrada N)". Botones Nuevo/Editar/Eliminar/Cancelar documento ocultos según permiso
   (patrón `datosPermisos<Modulo>` + `puedeGuardar`; "Cancelar documento" por `Eliminar`).
-- **Menú** (`_Layout.cshtml`): "Notas de débito" en Ventas y "Notas de débito" en Compras,
+- **Menú** (`_Layout.cshtml`): "Notas de débito" en Ventas y "Notas de débito de compra" en Compras,
   visibles con `Ver` del módulo respectivo; las listas `EsActivo*`/`Muestra*` incluyen los
   controllers nuevos.
 
 ## §4 — Pruebas
 
 - API (xUnit + Moq, convenciones existentes, `AsAsyncQueryable()` para `ToListAsync`): dominio de
-  los 4 pares (inserción con numeración manual/automática, serie de otro objeto/bloqueada,
+  los 2 documentos (inserción con numeración manual/automática, serie de otro objeto/bloqueada,
   socio de tipo equivocado, líneas inválidas, base: inexistente/cancelada/otro socio/válida,
   cancelar, editar comentario, documento cancelado inmutable, eliminar exige cancelar, **no se
   asienta inventario**), aplicación (mapeo/errores), controllers (rutas, 404/400, permisos

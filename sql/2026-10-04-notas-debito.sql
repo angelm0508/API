@@ -148,6 +148,8 @@ USING (VALUES
     ('NotasDebitoCompra', 'Notas de débito de compra', 'Compras')
 ) AS source (Codigo, Nombre, Grupo)
 ON target.Codigo = source.Codigo
+WHEN MATCHED AND (target.Nombre <> source.Nombre OR target.Grupo <> source.Grupo) THEN
+    UPDATE SET Nombre = source.Nombre, Grupo = source.Grupo
 WHEN NOT MATCHED THEN
     INSERT (Codigo, Nombre, Grupo) VALUES (source.Codigo, source.Nombre, source.Grupo);
 
