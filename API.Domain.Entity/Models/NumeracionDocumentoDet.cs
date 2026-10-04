@@ -57,5 +57,9 @@ public partial class NumeracionDocumentoDet
 
     public virtual ICollection<NotaDebitoCompra> NotaDebitoCompras { get; set; } = new List<NotaDebitoCompra>();
 
+    public virtual ICollection<NotaCredito> NotaCreditos { get; set; } = new List<NotaCredito>();
+
+    public virtual ICollection<NotaCreditoCompra> NotaCreditoCompras { get; set; } = new List<NotaCreditoCompra>();
+
     public virtual ICollection<SocioNegocio> SocioNegocios { get; set; } = new List<SocioNegocio>();
 }

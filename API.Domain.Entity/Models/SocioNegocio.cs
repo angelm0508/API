@@ -51,6 +51,10 @@ public partial class SocioNegocio
 
     public virtual ICollection<NotaDebitoCompra> NotaDebitoCompras { get; set; } = new List<NotaDebitoCompra>();
 
+    public virtual ICollection<NotaCredito> NotaCreditos { get; set; } = new List<NotaCredito>();
+
+    public virtual ICollection<NotaCreditoCompra> NotaCreditoCompras { get; set; } = new List<NotaCreditoCompra>();
+
     public virtual ICollection<DireccionSocioNegocio> DireccionSocioNegocios { get; set; } = new List<DireccionSocioNegocio>();
 
     public virtual GrupoSn? GrupoSnNavigation { get; set; }
