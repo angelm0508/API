@@ -35,6 +35,7 @@ comportamiento.
    usar).
 5. **Permisos:** módulos nuevos `NotasDebito` (grupo Ventas) y `NotasDebitoCompra` (grupo Compras),
    con el modelo vigente: acceso denegado por defecto, solo `SuperUsuario` se salta la matriz.
+6. **Líneas inmutables tras crear el documento** (igual que Factura): no hay endpoints ni acciones para crear/editar/eliminar líneas de un documento guardado; las líneas se leen con `GET api/NotaDebito/{id}/Lineas`.
 
 ### Fuera de alcance
 
@@ -80,7 +81,7 @@ las referencias base), `PrctjeImpuesto`/`TotalImp`/`PrctjeDesc`/`TotalDesc`/`Tot
 `NotaDebitoDetalle`: `Entry` int, `NoLinea` int (PK compuesta), `Descripcion` nvarchar(200) NOT
 NULL, `Cantidad`/`Precio`/`PrecioBruto`/`PrctjeDesc`/`Impuesto`/`TotalLinea` decimal(19,6),
 `CodigoImpuesto` nvarchar(8) NOT NULL (FK `Impuesto`), `TipoObjeto` nvarchar(20) CHECK `('7')`
-DEFAULT `'7'`. FK al encabezado por `Entry` (sin cascade; el dominio borra las líneas).
+DEFAULT `'7'`. Sin FK de `Entry` al encabezado (igual que `FacturaDetalle`); el dominio borra las líneas antes del encabezado.
 
 `NotaDebitoCompra` / `NotaDebitoCompraDetalle`: idéntico, con `TipoObjeto` `'14'` y `BaseTipo` CHECK
 `(-1, 13)` (13 = Factura de Compra). Sin columnas de artículo, almacén ni referencias por línea
@@ -91,7 +92,7 @@ DEFAULT `'7'`. FK al encabezado por `Entry` (sin cascade; el dominio borra las l
 | `NumeracionDocumento` | `CodigoObj` | `SerieDfct` | `DocAlias` | `SubTipoDoc` |
 |---|---|---|---|---|
 | Nota Débito Cliente | `7` | `33` | `Nota Debito Cliente` | `--` |
-| Nota Débito Proveedor | `14` | `35` | `Nota Debito Proveedor` | `--` |
+| Nota Débito Proveedor | `14` | `35` | `Nota Debito Prov.` | `--` |
 
 | `NumeracionDocumentoDet` | `CodigoObj` | `Serie` | `NombreSerie` | extra |
 |---|---|---|---|---|
@@ -101,6 +102,8 @@ DEFAULT `'7'`. FK al encabezado por `Entry` (sin cascade; el dominio borra las l
 | Primario proveedor | `14` | `35` | `Primario` | `IniNumero=1`, `SigNumero=1`, `TipoSerie='D'` |
 
 (Mismo formato que los documentos existentes; `SubTipoDoc='--'`, `Bloqueado='N'`.)
+
+Los números de serie 32-35 son los de una base nueva; el script de migración toma las siguientes series libres de `NumeracionDocumentoDet`.
 
 ### Catálogo de permisos (seed `Modulo`)
 
@@ -124,7 +127,7 @@ Por cada documento se clona la pila completa de Factura/FacturaCompra (sin inven
 - **Repos** `NotaDebitoRepositorio`, `NotaDebitoDetalleRepositorio` y los de compra (genéricos EF).
 - **DTOs** (carpetas `notaDebito/`, `notaDebitoCompra/`): `...DTO`, `...CrearDTO` (con `Lineas`),
   `...ActualizarDTO`, y los tres del detalle. `Descripcion` obligatoria en el DTO de línea.
-- **Dominio** `NotaDebitoDomain` / `NotaDebitoCompraDomain` + `...DetalleDomain`:
+- **Dominio** `NotaDebitoDomain` / `NotaDebitoCompraDomain`:
   - `InsertarAsync(nota, lineas)`: fuerza `TipoObjeto` (`7`/`14`), `Cancelado='N'`, `EstadoDoc='A'`,
     `FechaCancelado=null`; valida la serie (existe, **pertenece a su `CodigoObj`**, no bloqueada;
     numeración manual/automática igual que Factura); valida el socio (existe, `TipoSN` `C` para la
@@ -138,17 +141,15 @@ Por cada documento se clona la pila completa de Factura/FacturaCompra (sin inven
     `FechaCancelado`; `EstadoDoc` no cambia, igual que en Factura) o editar el comentario; un documento cancelado no se
     modifica. Sin reversa de inventario (no existe).
   - `EliminarAsync`: exige haber cancelado antes; borra líneas y encabezado en una transacción.
-  - `...DetalleDomain`: mismas reglas de líneas que `FacturaDetalleDomain` (NoLinea =
-    max+1, no se tocan líneas de un documento cancelado), validando los campos de línea.
+  - `ObtenerLineasAsync(id)`: devuelve las líneas del documento (solo lectura; las líneas no se modifican después de crear el documento).
   - Consultas de base: `ObtenerFacturasBaseAsync(codigoSn)` (facturas no canceladas del socio,
     resumen: entry, numDoc, fecha, total, moneda) y `ObtenerFacturaBaseAsync(entry)` (encabezado +
     líneas convertidas a conceptos). Para la nota de proveedor, lo mismo sobre `FacturaCompra`.
-- **Aplicación** `NotaDebitoApplication` / `...DetalleApplication` y de compra (patrón
+- **Aplicación** `NotaDebitoApplication` y de compra (patrón
   `Respuesta<T>`, errores de dominio → `Resultado=false`).
-- **Controllers** `NotaDebitoController` (`api/NotaDebito`), `NotaDebitoDetalleController`
-  (`api/NotaDebitoDetalle`) y los de compra (`api/NotaDebitoCompra`, `api/NotaDebitoCompraDetalle`)
+- **Controllers** `NotaDebitoController` (`api/NotaDebito`) y el de compra (`api/NotaDebitoCompra`)
   con las mismas rutas que Factura: `GET {id}`, `GET`, `POST`, `PUT {id}`, `DELETE {id}`, más
-  `GET FacturasBase/{codigoSn}` y `GET FacturaBase/{entry}`. Permisos:
+  `GET {id:int}/Lineas`, `GET FacturasBase/{codigoSn}` y `GET FacturaBase/{entry}`. Permisos:
   `RequierePermiso("NotasDebito"|"NotasDebitoCompra", Ver/Agregar/Actualizar/Eliminar)`; los
   endpoints de base usan `Ver` del propio módulo (así no hace falta `Ver` sobre Facturas). El
   `PUT` con `Cancelado=="S"` exige además `Eliminar` (mismo chequeo que los demás documentos).
@@ -159,11 +160,11 @@ Por cada documento se clona la pila completa de Factura/FacturaCompra (sin inven
 Clon de `FacturasController`/`FacturasCompraController` y sus vistas, sin las partes de artículo y
 almacén:
 
-- **Clientes de API** `INotaDebitoApiClient`/`NotaDebitoApiClient`, `...DetalleApiClient`,
+- **Clientes de API** `INotaDebitoApiClient`/`NotaDebitoApiClient`
   y de compra; DTOs en `Web.ApiClient/Dtos/NotaDebito*`; registro en `Program.cs`.
 - **Controllers** `NotasDebitoController` y `NotasDebitoCompraController` con las acciones de
   Factura (Index, ObtenerTodos, FormularioCrear/Editar, Crear, Editar, Eliminar, ObtenerDetalle,
-  CrearLinea/EditarLinea/EliminarLinea, BuscarSocios (`C` o `P`), BuscarImpuestos,
+  BuscarSocios (`C` o `P`), BuscarImpuestos,
   ObtenerImpuestoPorCodigo) más `BuscarFacturasBase(codigoSn)` y `ObtenerFacturaBase(entry)`
   (proxies de los endpoints de base). Atributos `[RequierePermiso("NotasDebito"...)]`,
   `[ValidateAntiForgeryToken]` en los POST, y el chequeo de `Eliminar` al cancelar.
@@ -172,7 +173,8 @@ almacén:
   impuesto (sin artículo/almacén); totales calculados igual que en Factura. En el formulario de
   creación, selector opcional **"Basado en factura"**: al elegir el socio lista sus facturas no
   canceladas; al seleccionar una, precarga socio, moneda y líneas (conceptos editables) y fija
-  `BaseTipo`/`BaseEntry`. Botones Nuevo/Editar/Eliminar/Cancelar documento ocultos según permiso
+  `BaseTipo`/`BaseEntry`. En el formulario de edición el documento base se muestra como
+  "Factura (entrada N)". Botones Nuevo/Editar/Eliminar/Cancelar documento ocultos según permiso
   (patrón `datosPermisos<Modulo>` + `puedeGuardar`; "Cancelar documento" por `Eliminar`).
 - **Menú** (`_Layout.cshtml`): "Notas de débito" en Ventas y "Notas de débito" en Compras,
   visibles con `Ver` del módulo respectivo; las listas `EsActivo*`/`Muestra*` incluyen los
