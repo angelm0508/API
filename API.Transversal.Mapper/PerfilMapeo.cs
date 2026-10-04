@@ -17,6 +17,8 @@ using API.Application.DTO.entradaMercancia;
 using API.Application.DTO.salidaMercancia;
 using API.Application.DTO.facturaCompra;
 using API.Application.DTO.factura;
+using API.Application.DTO.notaDebito;
+using API.Application.DTO.notaDebitoCompra;
 using API.Application.DTO.impuesto;
 using API.Application.DTO.pais;
 using API.Application.DTO.departamento;
@@ -194,6 +196,24 @@ namespace API.Transversal.Mapper
             CreateMap<FacturaDetalle, FacturaDetalleDTO>();
             CreateMap<FacturaDetalleCrearDTO, FacturaDetalle>();
             CreateMap<FacturaDetalleActualizarDTO, FacturaDetalle>();
+
+            // NotaDebito
+            CreateMap<NotaDebito, NotaDebitoDTO>();
+            CreateMap<NotaDebitoCrearDTO, NotaDebito>();
+            CreateMap<NotaDebitoActualizarDTO, NotaDebito>();
+
+            // NotaDebitoDetalle
+            CreateMap<NotaDebitoDetalle, NotaDebitoDetalleDTO>();
+            CreateMap<NotaDebitoDetalleCrearDTO, NotaDebitoDetalle>();
+
+            // NotaDebitoCompra
+            CreateMap<NotaDebitoCompra, NotaDebitoCompraDTO>();
+            CreateMap<NotaDebitoCompraCrearDTO, NotaDebitoCompra>();
+            CreateMap<NotaDebitoCompraActualizarDTO, NotaDebitoCompra>();
+
+            // NotaDebitoCompraDetalle
+            CreateMap<NotaDebitoCompraDetalle, NotaDebitoCompraDetalleDTO>();
+            CreateMap<NotaDebitoCompraDetalleCrearDTO, NotaDebitoCompraDetalle>();
 
             // Pedido
             CreateMap<Pedido, PedidoDTO>();
