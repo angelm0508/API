@@ -39,6 +39,9 @@ BEGIN
     );
 END
 
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_NotaCredito_Base' AND object_id = OBJECT_ID('dbo.NotaCredito'))
+    CREATE NONCLUSTERED INDEX IX_NotaCredito_Base ON dbo.NotaCredito (BaseTipo, BaseEntry) INCLUDE (Cancelado, TotalDoc);
+
 IF OBJECT_ID('dbo.NotaCreditoDetalle', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.NotaCreditoDetalle (
@@ -92,6 +95,9 @@ BEGIN
         CONSTRAINT fk_nota_credito_compra_moneda FOREIGN KEY (MonedaDoc) REFERENCES dbo.Moneda(Codigo)
     );
 END
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_NotaCreditoCompra_Base' AND object_id = OBJECT_ID('dbo.NotaCreditoCompra'))
+    CREATE NONCLUSTERED INDEX IX_NotaCreditoCompra_Base ON dbo.NotaCreditoCompra (BaseTipo, BaseEntry) INCLUDE (Cancelado, TotalDoc);
 
 IF OBJECT_ID('dbo.NotaCreditoCompraDetalle', 'U') IS NULL
 BEGIN

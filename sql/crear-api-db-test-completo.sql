@@ -1455,6 +1455,8 @@ CREATE TABLE dbo.NotaCredito (
     CONSTRAINT fk_nota_credito_moneda FOREIGN KEY (MonedaDoc) REFERENCES dbo.Moneda(Codigo)
 );
 
+CREATE NONCLUSTERED INDEX IX_NotaCredito_Base ON dbo.NotaCredito (BaseTipo, BaseEntry) INCLUDE (Cancelado, TotalDoc);
+
 CREATE TABLE dbo.NotaCreditoDetalle (
     Entry          int           NOT NULL,
     NoLinea        int           NOT NULL,
@@ -1502,6 +1504,8 @@ CREATE TABLE dbo.NotaCreditoCompra (
     CONSTRAINT fk_nota_credito_compra_sn     FOREIGN KEY (CodigoSN)  REFERENCES dbo.SocioNegocio(Codigo),
     CONSTRAINT fk_nota_credito_compra_moneda FOREIGN KEY (MonedaDoc) REFERENCES dbo.Moneda(Codigo)
 );
+
+CREATE NONCLUSTERED INDEX IX_NotaCreditoCompra_Base ON dbo.NotaCreditoCompra (BaseTipo, BaseEntry) INCLUDE (Cancelado, TotalDoc);
 
 CREATE TABLE dbo.NotaCreditoCompraDetalle (
     Entry          int           NOT NULL,

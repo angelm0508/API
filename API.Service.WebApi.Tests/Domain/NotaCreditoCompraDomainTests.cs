@@ -536,11 +536,34 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task InsertarAsync_ComparaALosDosDecimales()
         {
-            PrepararFactura(total: 112.004m);                 // se redondea a 112.00
+            PrepararFactura(total: 111.996m);                 // se redondea a 112.00; sin redondear, 112.00 > 111.996 lanzaria
 
             var entry = await _domain.InsertarAsync(NotaConBase(), new[] { Linea() });
 
             Assert.Equal(99, entry);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ExcedeElTotalPorUnCentavo_LanzaYNoGuarda()
+        {
+            PrepararFactura(total: 111.99m);                  // la nota suma 112.00: excede por 0.01
+
+            Assert.Equal(Exceso("112.00", "111.99"), await MensajeAlInsertar(NotaConBase(), Linea()));
+            _repoNota.Verify(r => r.InsertarAsync(It.IsAny<NotaCreditoCompra>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ElLimiteSeConsultaDentroDeLaTransaccion()
+        {
+            PrepararFactura(total: 100m);                     // excederia, pero la transaccion no corre el Func
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), It.IsAny<IsolationLevel>()))
+                .Returns(Task.FromResult(0));
+
+            var entry = await _domain.InsertarAsync(NotaConBase(), new[] { Linea() });
+
+            Assert.Equal(0, entry);
+            _repoNota.Verify(r => r.ObtenerTodoAsync(), Times.Never);     // el limite vive dentro del Func
+            _repoNota.Verify(r => r.InsertarAsync(It.IsAny<NotaCreditoCompra>()), Times.Never);
         }
 
         [Fact]
@@ -568,7 +591,7 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task ActualizarAsync_Cancelar_MarcaCanceladoYFechaSinTocarElComentario()
         {
-            var existente = new NotaCreditoCompra { Entry = 5, Cancelado = "N", Comentario = "original" };
+            var existente = new NotaCreditoCompra { Entry = 5, Cancelado = "N", EstadoDoc = "A", Comentario = "original" };
             _repoNota.Setup(r => r.ObtenerAsync(5)).ReturnsAsync(existente);
 
             var ok = await _domain.ActualizarAsync(5, new NotaCreditoCompra { Cancelado = "S" });
@@ -577,7 +600,7 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal("S", existente.Cancelado);
             Assert.NotNull(existente.FechaCancelado);
             Assert.Equal("original", existente.Comentario);
-            Assert.Equal("A", existente.EstadoDoc ?? "A");   // EstadoDoc no cambia al cancelar
+            Assert.Equal("A", existente.EstadoDoc);   // EstadoDoc no cambia al cancelar
         }
 
         [Fact]
