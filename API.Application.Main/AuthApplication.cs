@@ -28,7 +28,7 @@ namespace API.Application.Main
             {
                 var usuario = await _usuarioDomain.ObtenerAsync(obj.Usuario);
 
-                if (usuario is null)
+                if (usuario is null || usuario.Eliminado == "S")
                 {
                     respuesta.Resultado = false;
                     respuesta.Mensaje = "Usuario o contraseña incorrectos.";

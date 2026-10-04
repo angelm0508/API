@@ -4,7 +4,6 @@ using API.Application.Interface;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Application.Main
@@ -13,13 +12,11 @@ namespace API.Application.Main
     {
         private readonly IUsuarioDomain _usuarioDomain;
         private readonly IMapper _mapper;
-        private readonly IPasswordHasher<Usuario> _passwordHasher;
 
-        public UsuarioApplication(IUsuarioDomain usuarioDomain, IMapper mapper, IPasswordHasher<Usuario> passwordHasher)
+        public UsuarioApplication(IUsuarioDomain usuarioDomain, IMapper mapper)
         {
             _usuarioDomain = usuarioDomain;
             _mapper = mapper;
-            _passwordHasher = passwordHasher;
         }
 
         #region async methods
@@ -28,9 +25,8 @@ namespace API.Application.Main
             var respuesta = new Respuesta<int>();
             try
             {
+                // La contraseña viaja en texto plano hasta el domain, que valida la política y la hashea.
                 var usuario = _mapper.Map<Usuario>(obj);
-                if (!string.IsNullOrEmpty(usuario.Password))
-                    usuario.Password = _passwordHasher.HashPassword(usuario, usuario.Password);
                 respuesta.Dato = await _usuarioDomain.InsertarAsync(usuario);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
@@ -42,15 +38,13 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<bool>> ActualizarAsync(int id, UsuarioActualizarDTO obj)
+        public async Task<Respuesta<bool>> ActualizarAsync(int id, UsuarioActualizarDTO obj, int? usuarioActualId)
         {
             var respuesta = new Respuesta<bool>();
             try
             {
                 var usuario = _mapper.Map<Usuario>(obj);
-                if (!string.IsNullOrEmpty(usuario.Password))
-                    usuario.Password = _passwordHasher.HashPassword(usuario, usuario.Password);
-                respuesta.Dato = await _usuarioDomain.ActualizarAsync(id, usuario);
+                respuesta.Dato = await _usuarioDomain.ActualizarAsync(id, usuario, usuarioActualId);
                 if (respuesta.Dato)
                 {
                     respuesta.Resultado = true;
@@ -64,12 +58,12 @@ namespace API.Application.Main
             return respuesta;
         }
 
-        public async Task<Respuesta<bool>> EliminarAsync(int id)
+        public async Task<Respuesta<bool>> EliminarAsync(int id, int? usuarioActualId)
         {
             var respuesta = new Respuesta<bool>();
             try
             {
-                respuesta.Dato = await _usuarioDomain.EliminarAsync(id);
+                respuesta.Dato = await _usuarioDomain.EliminarAsync(id, usuarioActualId);
                 if (respuesta.Dato)
                 {
                     respuesta.Resultado = true;
@@ -105,6 +99,9 @@ namespace API.Application.Main
             try
             {
                 var usuario = await _usuarioDomain.ObtenerAsync(codigo);
+                // El domain devuelve también los eliminados (lo necesita el login); para la API un eliminado no existe.
+                if (usuario != null && usuario.Eliminado == "S")
+                    usuario = null;
                 respuesta.Dato = _mapper.Map<UsuarioDTO>(usuario);
                 respuesta.Resultado = true;
             }

@@ -113,5 +113,24 @@ namespace API.Service.WebApi.Tests.Application
             Assert.DoesNotContain(LeerClaims(token), c => c.Type == "perm");
             _moduloDomain.Verify(m => m.ObtenerTodoAsync(), Times.Never);
         }
+
+        [Fact]
+        public async Task GenerarTokenAsync_IncluyeElIdDelUsuarioComoClaimNameIdentifier()
+        {
+            var usuario = new Usuario { Id = 42, Codigo = "admin", SuperUsuario = "S" };
+
+            var (token, _) = await _service.GenerarTokenAsync(usuario);
+
+            // Round-trip por el handler (como hace el middleware JWT): "nameid" vuelve como NameIdentifier.
+            var parametros = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidIssuer = "test",
+                ValidAudience = "test",
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+                    System.Text.Encoding.UTF8.GetBytes("una-clave-de-prueba-bien-larga-para-firmar-el-token-1234567890"))
+            };
+            var principal = new JwtSecurityTokenHandler().ValidateToken(token, parametros, out _);
+            Assert.Equal("42", principal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        }
     }
 }

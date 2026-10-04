@@ -120,9 +120,8 @@ namespace API.Transversal.Mapper
             CreateMap<NumeracionDocumentoDetCrearDTO, NumeracionDocumentoDet>();
             CreateMap<NumeracionDocumentoDetActualizarDTO, NumeracionDocumentoDet>();
 
-            // Usuario (el hash de Password nunca se expone en las respuestas de la API)
-            CreateMap<Usuario, UsuarioDTO>()
-                .ForMember(d => d.Password, opt => opt.Ignore());
+            // Usuario (UsuarioDTO no tiene Password ni UltimaContra: el hash nunca se expone en la API)
+            CreateMap<Usuario, UsuarioDTO>();
             CreateMap<UsuarioCrearDTO, Usuario>();
             CreateMap<UsuarioActualizarDTO, Usuario>();
 

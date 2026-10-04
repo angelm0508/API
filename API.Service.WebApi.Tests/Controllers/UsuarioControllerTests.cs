@@ -2,6 +2,8 @@ using API.Application.DTO;
 using API.Application.DTO.usuario.usuario;
 using API.Application.Interface;
 using API.Service.WebApi.Controllers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -191,7 +193,7 @@ namespace API.Service.WebApi.Tests.Controllers
             _applicationMock.Setup(a => a.ObtenerAsync(1))
                 .ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = new UsuarioDTO { Id = 1, Codigo = "U1" } });
             var respuestaUpdate = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
-            _applicationMock.Setup(a => a.ActualizarAsync(1, It.IsAny<UsuarioActualizarDTO>())).ReturnsAsync(respuestaUpdate);
+            _applicationMock.Setup(a => a.ActualizarAsync(1, It.IsAny<UsuarioActualizarDTO>(), null)).ReturnsAsync(respuestaUpdate);
 
             var resultado = await _controller.ActualizarAsync(1, new UsuarioActualizarDTO());
 
@@ -205,7 +207,7 @@ namespace API.Service.WebApi.Tests.Controllers
             _applicationMock.Setup(a => a.ObtenerAsync(1))
                 .ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = new UsuarioDTO { Id = 1, Codigo = "U1" } });
             var respuestaUpdate = new Respuesta<bool> { Resultado = true, Dato = true };
-            _applicationMock.Setup(a => a.ActualizarAsync(1, It.IsAny<UsuarioActualizarDTO>())).ReturnsAsync(respuestaUpdate);
+            _applicationMock.Setup(a => a.ActualizarAsync(1, It.IsAny<UsuarioActualizarDTO>(), null)).ReturnsAsync(respuestaUpdate);
 
             var resultado = await _controller.ActualizarAsync(1, new UsuarioActualizarDTO());
 
@@ -231,7 +233,7 @@ namespace API.Service.WebApi.Tests.Controllers
             _applicationMock.Setup(a => a.ObtenerAsync(1))
                 .ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = new UsuarioDTO { Id = 1, Codigo = "U1" } });
             var respuestaDelete = new Respuesta<bool> { Resultado = false, Mensaje = "error" };
-            _applicationMock.Setup(a => a.EliminarAsync(1)).ReturnsAsync(respuestaDelete);
+            _applicationMock.Setup(a => a.EliminarAsync(1, null)).ReturnsAsync(respuestaDelete);
 
             var resultado = await _controller.EliminarAsync(1);
 
@@ -245,12 +247,160 @@ namespace API.Service.WebApi.Tests.Controllers
             _applicationMock.Setup(a => a.ObtenerAsync(1))
                 .ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = new UsuarioDTO { Id = 1, Codigo = "U1" } });
             var respuestaDelete = new Respuesta<bool> { Resultado = true, Dato = true };
-            _applicationMock.Setup(a => a.EliminarAsync(1)).ReturnsAsync(respuestaDelete);
+            _applicationMock.Setup(a => a.EliminarAsync(1, null)).ReturnsAsync(respuestaDelete);
 
             var resultado = await _controller.EliminarAsync(1);
 
             var ok = Assert.IsType<OkObjectResult>(resultado.Result);
             Assert.Same(respuestaDelete, ok.Value);
+        }
+
+        // ---------- Usuario actual (claim NameIdentifier del JWT) ----------
+
+        private UsuarioController ControllerConClaims(params Claim[] claims) =>
+            new(_applicationMock.Object)
+            {
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(claims, "Test")) }
+                }
+            };
+
+        private void UsuarioExiste(int id) =>
+            _applicationMock.Setup(a => a.ObtenerAsync(id))
+                .ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = new UsuarioDTO { Id = id, Codigo = "U" + id } });
+
+        [Fact]
+        public async Task ActualizarAsync_PasaElIdDelClaimNameIdentifierComoUsuarioActual()
+        {
+            UsuarioExiste(2);
+            var dto = new UsuarioActualizarDTO { Nombre = "N" };
+            _applicationMock.Setup(a => a.ActualizarAsync(2, dto, 7)).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "7"));
+
+            var resultado = await controller.ActualizarAsync(2, dto);
+
+            Assert.IsType<OkObjectResult>(resultado.Result);
+            _applicationMock.Verify(a => a.ActualizarAsync(2, dto, 7), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_SinClaim_PasaNuloYNoFalla()
+        {
+            UsuarioExiste(2);
+            var dto = new UsuarioActualizarDTO { Nombre = "N" };
+            _applicationMock.Setup(a => a.ActualizarAsync(2, dto, null)).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var controller = ControllerConClaims();
+
+            var resultado = await controller.ActualizarAsync(2, dto);
+
+            Assert.IsType<OkObjectResult>(resultado.Result);
+            _applicationMock.Verify(a => a.ActualizarAsync(2, dto, null), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ClaimNoNumerico_SeTrataComoSinClaim()
+        {
+            UsuarioExiste(2);
+            var dto = new UsuarioActualizarDTO { Nombre = "N" };
+            _applicationMock.Setup(a => a.ActualizarAsync(2, dto, null)).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "abc"));
+
+            var resultado = await controller.ActualizarAsync(2, dto);
+
+            Assert.IsType<OkObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ErrorDeAutoProteccion_DevuelveBadRequestConElMensaje()
+        {
+            UsuarioExiste(2);
+            var dto = new UsuarioActualizarDTO { Nombre = "N", Bloqueado = "S" };
+            var respuesta = new Respuesta<bool> { Resultado = false, Mensaje = "No puede bloquear su propio usuario." };
+            _applicationMock.Setup(a => a.ActualizarAsync(2, dto, 2)).ReturnsAsync(respuesta);
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "2"));
+
+            var resultado = await controller.ActualizarAsync(2, dto);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_PasaElIdDelClaimComoUsuarioActual()
+        {
+            UsuarioExiste(3);
+            _applicationMock.Setup(a => a.EliminarAsync(3, 7)).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "7"));
+
+            var resultado = await controller.EliminarAsync(3);
+
+            Assert.IsType<OkObjectResult>(resultado.Result);
+            _applicationMock.Verify(a => a.EliminarAsync(3, 7), Times.Once);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_SinClaim_PasaNulo()
+        {
+            UsuarioExiste(3);
+            _applicationMock.Setup(a => a.EliminarAsync(3, null)).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
+            var controller = ControllerConClaims();
+
+            var resultado = await controller.EliminarAsync(3);
+
+            Assert.IsType<OkObjectResult>(resultado.Result);
+            _applicationMock.Verify(a => a.EliminarAsync(3, null), Times.Once);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_AutoEliminacion_DevuelveBadRequest()
+        {
+            UsuarioExiste(7);
+            var respuesta = new Respuesta<bool> { Resultado = false, Mensaje = "No puede eliminar su propio usuario." };
+            _applicationMock.Setup(a => a.EliminarAsync(7, 7)).ReturnsAsync(respuesta);
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "7"));
+
+            var resultado = await controller.EliminarAsync(7);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(resultado.Result);
+            Assert.Same(respuesta, badRequest.Value);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_UsuarioYaEliminado_DevuelveNotFound_SinLlamarAEliminar()
+        {
+            // ObtenerAsync(id) excluye eliminados: un eliminado llega como Dato nulo.
+            _applicationMock.Setup(a => a.ObtenerAsync(3)).ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = null! });
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "7"));
+
+            var resultado = await controller.EliminarAsync(3);
+
+            Assert.IsType<NotFoundObjectResult>(resultado.Result);
+            _applicationMock.Verify(a => a.EliminarAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_UsuarioEliminado_DevuelveNotFound_SinLlamarAActualizar()
+        {
+            _applicationMock.Setup(a => a.ObtenerAsync(3)).ReturnsAsync(new Respuesta<UsuarioDTO> { Resultado = true, Dato = null! });
+            var controller = ControllerConClaims(new Claim(ClaimTypes.NameIdentifier, "7"));
+
+            var resultado = await controller.ActualizarAsync(3, new UsuarioActualizarDTO());
+
+            Assert.IsType<NotFoundObjectResult>(resultado.Result);
+            _applicationMock.Verify(a => a.ActualizarAsync(It.IsAny<int>(), It.IsAny<UsuarioActualizarDTO>(), It.IsAny<int?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_DevuelveElNuevoIdEnDato()
+        {
+            var crearDto = new UsuarioCrearDTO { Codigo = "U8" };
+            _applicationMock.Setup(a => a.InsertarAsync(crearDto)).ReturnsAsync(new Respuesta<int> { Resultado = true, Dato = 8, Mensaje = "Registro agregado correctamente." });
+
+            var resultado = await _controller.InsertarAsync(crearDto);
+
+            var ok = Assert.IsType<OkObjectResult>(resultado.Result);
+            Assert.Equal(8, Assert.IsType<Respuesta<int>>(ok.Value).Dato);
         }
     }
 }

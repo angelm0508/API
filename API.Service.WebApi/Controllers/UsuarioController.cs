@@ -5,6 +5,7 @@ using API.Domain.Interface;
 using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Service.WebApi.Controllers
 {
@@ -117,7 +118,7 @@ namespace API.Service.WebApi.Controllers
                 return NotFound(usuario);
             }
 
-            var update = await _usuarioApplication.ActualizarAsync(id, obj);
+            var update = await _usuarioApplication.ActualizarAsync(id, obj, ObtenerUsuarioActualId());
 
             if (!update.Resultado)
             {
@@ -140,7 +141,7 @@ namespace API.Service.WebApi.Controllers
                 return NotFound(usuario);
             }
 
-            var delete = await _usuarioApplication.EliminarAsync(id);
+            var delete = await _usuarioApplication.EliminarAsync(id, ObtenerUsuarioActualId());
 
             if (!delete.Resultado)
             {
@@ -148,6 +149,16 @@ namespace API.Service.WebApi.Controllers
             }
 
             return Ok(delete);
+        }
+
+        /// <summary>
+        /// Id del usuario autenticado (claim NameIdentifier del JWT). Null si el claim falta o no es
+        /// numérico (p. ej. tokens anteriores): la auto-protección se omite en ese caso.
+        /// </summary>
+        private int? ObtenerUsuarioActualId()
+        {
+            var valor = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(valor, out var id) ? id : null;
         }
     }
 }
