@@ -21,8 +21,12 @@ la aplicó, y editar el usuario después no afecta la plantilla).
    separados de "módulo asignado" + "acciones permitidas" — `Ver` marcado ES la asignación del
    módulo.
 2. **Plantillas:** copian su matriz al usuario al aplicarse (snapshot editable, sin vínculo vivo).
-3. **Usuarios existentes al desplegar:** acceso total por defecto (ningún usuario queda
-   bloqueado el día del despliegue) hasta que un admin les guarde una matriz propia.
+3. **Usuarios sin permisos asignados:** *deny by default* — sin filas en `UsuarioPermiso` el
+   usuario no tiene acceso a ningún módulo ni acción (solo `SuperUsuario` accede a todo).
+   *(Enmienda 2026-10-03: la decisión original era "acceso total por defecto" para no bloquear a los
+   usuarios existentes al desplegar; se invirtió porque un usuario recién creado sin permisos podía
+   operar todo el sistema. Los usuarios no-superusuario ya existentes necesitan que un admin les
+   asigne permisos o una plantilla.)*
 4. **Alcance de la UI:** bloqueo real en la API (403 si falta el permiso) **y** ocultar/deshabilitar
    los botones correspondientes en la Web — no solo uno de los dos.
 5. **Gestión de permisos restringida a `SuperUsuario`** (campo ya existente en `Usuario`).
@@ -132,10 +136,9 @@ INSERT INTO Modulo (Codigo, Nombre, Grupo) VALUES
 que cualquier entidad existente del proyecto (clave compuesta vía `HasKey` con tupla, igual que
 `FacturaDetalle`).
 
-**Semántica de "sin fila = acceso total" (decisión 3):** un usuario sin ninguna fila en
-`UsuarioPermiso` se trata como si tuviera **todo en `true`** en todos los módulos. Esto se resuelve
-en el punto de evaluación (§2), no sembrando filas — ni falta tocar usuarios existentes ni hay
-migración de datos que correr.
+**Semántica de "sin fila = sin acceso" (decisión 3, enmendada):** un usuario sin ninguna fila en
+`UsuarioPermiso` se trata como si tuviera **todo en `false`** en todos los módulos (el token no
+lleva ningún claim `perm`). Solo `SuperUsuario` se salta la matriz.
 
 ## §2 — Resolución de permisos y propagación (API)
 
@@ -149,7 +152,7 @@ public record PermisoModulo(string CodigoModulo, bool Ver, bool Agregar, bool Ac
 public interface IPermisoDomain
 {
     // Si el usuario no tiene ninguna fila, devuelve una lista vacia -- la interpretacion de
-    // "lista vacia = acceso total" vive en el llamador (TokenService), no aca.
+    // "lista vacia = sin acceso" vive en el llamador (TokenService), no aca.
     Task<IReadOnlyList<PermisoModulo>> ObtenerMatrizUsuarioAsync(int usuarioId);
     Task GuardarMatrizUsuarioAsync(int usuarioId, IReadOnlyList<PermisoModulo> matriz);
     Task<IReadOnlyList<PermisoModulo>> ObtenerMatrizPlantillaAsync(int plantillaId);
@@ -175,30 +178,19 @@ var claims = new List<Claim>
 if (usuario.SuperUsuario != "S")
 {
     var matriz = await _permisoDomain.ObtenerMatrizUsuarioAsync(usuario.Id);
-    if (matriz.Count == 0)
+    // Sin filas = sin acceso (decision 3 enmendada): no se emite ningun claim "perm".
+    foreach (var m in matriz)
     {
-        // Sin fila = acceso total (decision 3): un claim "perm" con TODAS las letras por cada
-        // modulo del catalogo. Requiere IModuloDomain.ObtenerTodoAsync() (catalogo completo).
-        var todosLosModulos = await _moduloDomain.ObtenerTodoAsync();
-        foreach (var m in todosLosModulos)
-            claims.Add(new Claim("perm", $"{m.Codigo}:VAUE"));
-    }
-    else
-    {
-        foreach (var m in matriz)
-        {
-            var letras = (m.Ver ? "V" : "") + (m.Agregar ? "A" : "") + (m.Actualizar ? "U" : "") + (m.Eliminar ? "E" : "");
-            if (letras.Length > 0) claims.Add(new Claim("perm", $"{m.CodigoModulo}:{letras}"));
-        }
+        var letras = (m.Ver ? "V" : "") + (m.Agregar ? "A" : "") + (m.Actualizar ? "U" : "") + (m.Eliminar ? "E" : "");
+        if (letras.Length > 0) claims.Add(new Claim("perm", $"{m.CodigoModulo}:{letras}"));
     }
 }
 // SuperUsuario == "S": no se emite ningun claim "perm" -- el bypass en RequierePermisoAttribute
 // se resuelve solo con el claim SuperUsuario, sin necesitar enumerar modulos.
 ```
 
-`TokenService` pasa a depender de `IPermisoDomain` e `IModuloDomain` (inyectados por constructor,
-agregar a `AddTransient<ITokenService, TokenService>` sin cambios — ya es transient, solo gana
-dependencias nuevas que ya van a estar registradas por los pasos de abajo).
+`TokenService` pasa a depender de `IPermisoDomain` (inyectado por constructor; el registro
+`AddTransient<ITokenService, TokenService>` no cambia).
 
 ### `RequierePermisoAttribute` (API) — `API.Service.WebApi/Authorization/RequierePermisoAttribute.cs`
 
@@ -429,7 +421,7 @@ mínimo (y la acción correspondiente en las de escritura) — en la práctica s
   esperado.
 - `TokenService.GenerarToken`: SuperUsuario → sin claims `perm`; usuario con matriz → un claim
   `perm` por módulo con sus letras exactas, módulos sin nada marcado no emiten claim; usuario sin
-  ninguna fila → un claim `perm:VAUE` por **cada** módulo del catálogo (acceso total).
+  ninguna fila → ningún claim `perm` (sin acceso, *deny by default*).
 - `PermisoDomain.GuardarMatrizUsuarioAsync`/`GuardarMatrizPlantillaAsync`: reemplazo total (una
   fila vieja que no viene en la matriz nueva se borra); fila con las 4 en `false` no se inserta.
 - `PermisoDomain.AplicarPlantillaAsync`: copia exacta de la matriz de la plantilla al usuario,

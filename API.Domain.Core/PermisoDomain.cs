@@ -45,8 +45,8 @@ namespace API.Domain.Core
                 foreach (var fila in existentes)
                     await _repoUsuarioPermiso.EliminarAsync((fila.UsuarioId, fila.CodigoModulo));
 
-                // Se conservan tambien las filas todo-false: "sin acceso" debe poder persistirse y
-                // distinguirse de "sin matriz" (0 filas = acceso total). Matriz vacia = reset al default.
+                // Se conservan tambien las filas todo-false (la matriz queda explicita). Sin filas = sin acceso:
+                // un usuario sin permisos asignados no ve ni puede hacer nada (salvo SuperUsuario).
                 foreach (var m in matriz)
                 {
                     await _repoUsuarioPermiso.AgregarSinGuardarAsync(new UsuarioPermiso
@@ -107,8 +107,8 @@ namespace API.Domain.Core
             var porModulo = matrizPlantilla.ToDictionary(m => m.CodigoModulo);
 
             // Copia completa: una fila por cada modulo del catalogo (flags de la plantilla si los
-            // tiene, todo-false si no), para que el usuario quede con matriz propia y sin
-            // caer en el "sin filas = acceso total".
+            // tiene, todo-false si no), para que el usuario quede con matriz propia y
+            // explicita para todo el catalogo.
             var modulos = await (await _repoModulo.ObtenerTodoAsync()).ToListAsync();
             var matrizUsuario = modulos
                 .Select(mod => porModulo.TryGetValue(mod.Codigo, out var fila)

@@ -14,7 +14,6 @@ namespace API.Service.WebApi.Tests.Application
     public class TokenServiceTests
     {
         private readonly Mock<IPermisoDomain> _permisoDomain = new();
-        private readonly Mock<IModuloDomain> _moduloDomain = new();
         private readonly TokenService _service;
 
         public TokenServiceTests()
@@ -26,7 +25,7 @@ namespace API.Service.WebApi.Tests.Application
                 { "Jwt:Audience", "test" },
                 { "Jwt:ExpirationMinutes", "60" }
             }).Build();
-            _service = new TokenService(config, _permisoDomain.Object, _moduloDomain.Object);
+            _service = new TokenService(config, _permisoDomain.Object);
         }
 
         private static List<Claim> LeerClaims(string token) =>
@@ -63,43 +62,20 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
-        public async Task GenerarTokenAsync_SinNingunaFila_EmiteAccesoTotalATodoElCatalogo()
+        public async Task GenerarTokenAsync_SinNingunaFila_NoEmiteNingunPerm_DenyByDefault()
         {
             var usuario = new Usuario { Id = 3, Codigo = "nuevo", SuperUsuario = "N" };
             _permisoDomain.Setup(p => p.ObtenerMatrizUsuarioAsync(3)).ReturnsAsync(new List<PermisoModulo>());
-            _moduloDomain.Setup(m => m.ObtenerTodoAsync()).ReturnsAsync(new List<Modulo>
-            {
-                new() { Codigo = "Articulos", Nombre = "Artículos", Grupo = "Inventario" },
-                new() { Codigo = "Almacenes", Nombre = "Almacenes", Grupo = "Inventario" },
-            }.AsAsyncQueryable());
 
             var (token, _) = await _service.GenerarTokenAsync(usuario);
 
             var claims = LeerClaims(token);
-            Assert.Contains(claims, c => c.Type == "perm" && c.Value == "Articulos:VAUE");
-            Assert.Contains(claims, c => c.Type == "perm" && c.Value == "Almacenes:VAUE");
+            Assert.Contains(claims, c => c.Type == "SuperUsuario" && c.Value == "N");
+            Assert.DoesNotContain(claims, c => c.Type == "perm");
         }
 
         [Fact]
-        public async Task GenerarTokenAsync_SinNingunaFila_NoOtorgaPorDefectoElModuloUsuarios()
-        {
-            var usuario = new Usuario { Id = 4, Codigo = "nuevo", SuperUsuario = "N" };
-            _permisoDomain.Setup(p => p.ObtenerMatrizUsuarioAsync(4)).ReturnsAsync(new List<PermisoModulo>());
-            _moduloDomain.Setup(m => m.ObtenerTodoAsync()).ReturnsAsync(new List<Modulo>
-            {
-                new() { Codigo = "Articulos", Nombre = "Artículos", Grupo = "Inventario" },
-                new() { Codigo = "Usuarios", Nombre = "Usuarios", Grupo = "Administración" },
-            }.AsAsyncQueryable());
-
-            var (token, _) = await _service.GenerarTokenAsync(usuario);
-
-            var claims = LeerClaims(token);
-            Assert.Contains(claims, c => c.Type == "perm" && c.Value == "Articulos:VAUE");
-            Assert.DoesNotContain(claims, c => c.Type == "perm" && c.Value.StartsWith("Usuarios"));
-        }
-
-        [Fact]
-        public async Task GenerarTokenAsync_ConFilasTodoFalse_NoEmitePermNiAccesoPorDefecto()
+        public async Task GenerarTokenAsync_ConFilasTodoFalse_NoEmitePerm()
         {
             var usuario = new Usuario { Id = 5, Codigo = "bloqueado", SuperUsuario = "N" };
             _permisoDomain.Setup(p => p.ObtenerMatrizUsuarioAsync(5)).ReturnsAsync(new List<PermisoModulo>
@@ -111,7 +87,6 @@ namespace API.Service.WebApi.Tests.Application
             var (token, _) = await _service.GenerarTokenAsync(usuario);
 
             Assert.DoesNotContain(LeerClaims(token), c => c.Type == "perm");
-            _moduloDomain.Verify(m => m.ObtenerTodoAsync(), Times.Never);
         }
 
         [Fact]

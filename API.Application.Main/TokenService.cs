@@ -4,7 +4,6 @@ using System.Text;
 using API.Application.Interface;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,13 +13,11 @@ namespace API.Application.Main
     {
         private readonly IConfiguration _configuration;
         private readonly IPermisoDomain _permisoDomain;
-        private readonly IModuloDomain _moduloDomain;
 
-        public TokenService(IConfiguration configuration, IPermisoDomain permisoDomain, IModuloDomain moduloDomain)
+        public TokenService(IConfiguration configuration, IPermisoDomain permisoDomain)
         {
             _configuration = configuration;
             _permisoDomain = permisoDomain;
-            _moduloDomain = moduloDomain;
         }
 
         public async Task<(string Token, DateTime ExpiraEn)> GenerarTokenAsync(Usuario usuario)
@@ -59,21 +56,12 @@ namespace API.Application.Main
             return (tokenString, expiraEn);
         }
 
-        // Sin fila en la matriz = acceso total (decision de la spec): se emite un claim "perm"
-        // con las 4 letras por cada modulo del catalogo excepto "Usuarios".
+        // Deny by default: un usuario (no SuperUsuario) solo recibe un claim "perm" por cada modulo con
+        // al menos una letra marcada en su matriz. Sin filas en la matriz = sin acceso a ningun modulo.
         private async Task<List<Claim>> ArmarClaimsPermisoAsync(int usuarioId)
         {
             var matriz = await _permisoDomain.ObtenerMatrizUsuarioAsync(usuarioId);
             var claims = new List<Claim>();
-
-            if (matriz.Count == 0)
-            {
-                // "Usuarios" (administración de usuarios/permisos) es exclusivo de SuperUsuario: nunca se otorga por defecto.
-                var modulos = await (await _moduloDomain.ObtenerTodoAsync()).Where(m => m.Codigo != "Usuarios").ToListAsync();
-                foreach (var m in modulos)
-                    claims.Add(new Claim("perm", $"{m.Codigo}:VAUE"));
-                return claims;
-            }
 
             foreach (var m in matriz)
             {
