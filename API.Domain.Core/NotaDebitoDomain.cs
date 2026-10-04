@@ -65,6 +65,7 @@ namespace API.Domain.Core
             obj.TipoObjeto = TipoObjetoNotaDebito;
             obj.Cancelado = "N";                  // un documento recien registrado nunca nace cancelado
             obj.EstadoDoc = "A";
+            obj.Imprimido = "N";                  // nunca nace impreso, ignora lo que mande el cliente
             obj.FechaCancelado = null;
             obj.FechaDoc ??= DateTime.Now;
             obj.FechaEmision ??= obj.FechaDoc;

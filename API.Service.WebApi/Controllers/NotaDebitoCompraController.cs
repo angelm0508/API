@@ -69,7 +69,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(lineas);
         }
 
-        [RequierePermiso("NotasDebitoCompra", Accion.Ver)]
+        [RequierePermiso("NotasDebitoCompra", Accion.Agregar)]
         [HttpGet("FacturasCompraBase/{codigoSn}")]
         public async Task<ActionResult<Respuesta<IEnumerable<NotaDebitoCompraFacturaBaseResumenDTO>>>> ObtenerFacturasCompraBase([FromRoute] string codigoSn)
         {
@@ -83,7 +83,7 @@ namespace API.Service.WebApi.Controllers
             return Ok(facturas);
         }
 
-        [RequierePermiso("NotasDebitoCompra", Accion.Ver)]
+        [RequierePermiso("NotasDebitoCompra", Accion.Agregar)]
         [HttpGet("FacturaCompraBase/{entry:int}")]
         public async Task<ActionResult<Respuesta<NotaDebitoCompraFacturaBaseDTO>>> ObtenerFacturaCompraBase([FromRoute] int entry)
         {

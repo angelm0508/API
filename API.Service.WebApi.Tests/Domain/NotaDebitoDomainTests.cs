@@ -127,6 +127,16 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task InsertarAsync_FuerzaImprimidoEnN()
+        {
+            var nota = Nota(n => n.Imprimido = "S");
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.Equal("N", nota.Imprimido);
+        }
+
+        [Fact]
         public async Task InsertarAsync_SinFechas_UsaLaFechaActual()
         {
             var nota = Nota(n => { n.FechaDoc = null; n.FechaEmision = null; });
