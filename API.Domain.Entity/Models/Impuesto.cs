@@ -16,4 +16,8 @@ public partial class Impuesto
     public virtual ICollection<EntregaCompraDetalle> EntregaCompraDetalles { get; set; } = new List<EntregaCompraDetalle>();
 
     public virtual ICollection<FacturaCompraDetalle> FacturaCompraDetalles { get; set; } = new List<FacturaCompraDetalle>();
+
+    public virtual ICollection<NotaDebitoDetalle> NotaDebitoDetalles { get; set; } = new List<NotaDebitoDetalle>();
+
+    public virtual ICollection<NotaDebitoCompraDetalle> NotaDebitoCompraDetalles { get; set; } = new List<NotaDebitoCompraDetalle>();
 }

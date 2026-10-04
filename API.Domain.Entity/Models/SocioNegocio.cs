@@ -47,6 +47,10 @@ public partial class SocioNegocio
 
     public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
 
+    public virtual ICollection<NotaDebito> NotaDebitos { get; set; } = new List<NotaDebito>();
+
+    public virtual ICollection<NotaDebitoCompra> NotaDebitoCompras { get; set; } = new List<NotaDebitoCompra>();
+
     public virtual ICollection<DireccionSocioNegocio> DireccionSocioNegocios { get; set; } = new List<DireccionSocioNegocio>();
 
     public virtual GrupoSn? GrupoSnNavigation { get; set; }
