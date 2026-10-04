@@ -13,9 +13,22 @@ namespace API.Infraestructure.Repository
             _context = context;
         }
 
-        public async Task<T> EjecutarAsync<T>(Func<Task<T>> operacion)
+        public Task<T> EjecutarAsync<T>(Func<Task<T>> operacion)
         {
-            await using var tx = await _context.Database.BeginTransactionAsync();
+            // Nivel por defecto de la conexión (READ COMMITTED): comportamiento histórico.
+            return EjecutarInternoAsync(operacion, null);
+        }
+
+        public Task<T> EjecutarAsync<T>(Func<Task<T>> operacion, System.Data.IsolationLevel nivel)
+        {
+            return EjecutarInternoAsync(operacion, nivel);
+        }
+
+        private async Task<T> EjecutarInternoAsync<T>(Func<Task<T>> operacion, System.Data.IsolationLevel? nivel)
+        {
+            await using var tx = nivel.HasValue
+                ? await _context.Database.BeginTransactionAsync(nivel.Value)
+                : await _context.Database.BeginTransactionAsync();
             try
             {
                 var resultado = await operacion();

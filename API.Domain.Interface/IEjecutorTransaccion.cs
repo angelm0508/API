@@ -11,5 +11,11 @@ namespace API.Domain.Interface
     public interface IEjecutorTransaccion
     {
         Task<T> EjecutarAsync<T>(Func<Task<T>> operacion);
+
+        /// <summary>
+        /// Igual que la sobrecarga sin nivel pero con un nivel de aislamiento explícito
+        /// (p. ej. Serializable para proteger lecturas de unicidad, máximos y guardas).
+        /// </summary>
+        Task<T> EjecutarAsync<T>(Func<Task<T>> operacion, System.Data.IsolationLevel nivel);
     }
 }

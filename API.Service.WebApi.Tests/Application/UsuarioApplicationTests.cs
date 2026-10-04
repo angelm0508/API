@@ -122,12 +122,32 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task ObtenerPorId_MapeaSinPassword()
         {
-            _domain.Setup(d => d.ObtenerAsync(1)).ReturnsAsync(new Usuario { Id = 1, Codigo = "a", Password = "HASH", UltimaContra = "x", Nombre = "A" });
+            _domain.Setup(d => d.ObtenerAsync(1)).ReturnsAsync(new Usuario
+            {
+                Id = 1,
+                Codigo = "a",
+                Nombre = "Ana Lopez",
+                Email = "ana@x.com",
+                SuperUsuario = "S",
+                Bloqueado = "N",
+                Eliminado = "N",
+                Password = "HASH",
+                UltimaContra = "x"
+            });
 
             var r = await _app.ObtenerAsync(1);
 
             Assert.True(r.Resultado);
+            Assert.Equal(1, r.Dato.Id);
             Assert.Equal("a", r.Dato.Codigo);
+            Assert.Equal("Ana Lopez", r.Dato.Nombre);
+            Assert.Equal("ana@x.com", r.Dato.Email);
+            Assert.Equal("S", r.Dato.SuperUsuario);
+            Assert.Equal("N", r.Dato.Bloqueado);
+
+            var propiedades = r.Dato.GetType().GetProperties().Select(p => p.Name).ToList();
+            Assert.DoesNotContain("Password", propiedades);
+            Assert.DoesNotContain("UltimaContra", propiedades);
         }
 
         [Fact]

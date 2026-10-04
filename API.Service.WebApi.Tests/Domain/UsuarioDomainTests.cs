@@ -1,3 +1,4 @@
+using System.Data;
 using API.Domain.Core;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
@@ -25,8 +26,8 @@ namespace API.Service.WebApi.Tests.Domain
                 .Callback<Usuario>(u => _tabla.Add(u))
                 .Returns(Task.CompletedTask);
             _hasher.Setup(h => h.HashPassword(It.IsAny<Usuario>(), It.IsAny<string>())).Returns((Usuario _, string p) => "HASH(" + p + ")");
-            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
-            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), It.IsAny<IsolationLevel>())).Returns<Func<Task<int>>, IsolationLevel>((f, _) => f());
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), It.IsAny<IsolationLevel>())).Returns<Func<Task<bool>>, IsolationLevel>((f, _) => f());
             _domain = new UsuarioDomain(_repo.Object, _hasher.Object, _tx.Object);
         }
 
@@ -51,7 +52,7 @@ namespace API.Service.WebApi.Tests.Domain
             Nombre = nombre
         };
 
-        private static Usuario Cambios(string nombre = "Nuevo Nombre", string? email = null, string super = "N", string bloqueado = "N", string? password = null, string? codigo = null) => new()
+        private static Usuario Cambios(string nombre = "Nuevo Nombre", string? email = null, string? super = "N", string? bloqueado = "N", string? password = null, string? codigo = null) => new()
         {
             Codigo = codigo!,
             Nombre = nombre,
@@ -106,7 +107,7 @@ namespace API.Service.WebApi.Tests.Domain
         {
             await _domain.InsertarAsync(Nuevo());
 
-            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Once);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), IsolationLevel.Serializable), Times.Once);
         }
 
         [Fact]
@@ -676,6 +677,220 @@ namespace API.Service.WebApi.Tests.Domain
             _tabla.Add(normal);
 
             Assert.True(await _domain.EliminarAsync(4, 1));
+        }
+
+        // ---------- Aislamiento Serializable ----------
+
+        [Fact]
+        public async Task Actualizar_UsaTransaccionSerializable()
+        {
+            _tabla.Add(Existente(2, "maria"));
+
+            await _domain.ActualizarAsync(2, Cambios("Otro"), null);
+
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), IsolationLevel.Serializable), Times.Once);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Eliminar_UsaTransaccionSerializable()
+        {
+            _tabla.Add(Existente(2, "maria"));
+
+            await _domain.EliminarAsync(2, null);
+
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), IsolationLevel.Serializable), Times.Once);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Insertar_NoUsaLaSobrecargaSinNivel()
+        {
+            await _domain.InsertarAsync(Nuevo());
+
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+        }
+
+        // ---------- Auto-protección: 's' minúscula / nulos ----------
+
+        [Fact]
+        public async Task Actualizar_BloquearseASiMismoConSMinuscula_Falla()
+        {
+            var yo = Existente(2, "maria");
+            _tabla.Add(yo);
+
+            var msg = await MensajeDe(() => _domain.ActualizarAsync(2, Cambios(bloqueado: "s"), 2));
+
+            Assert.Equal("No puede bloquear su propio usuario.", msg);
+            Assert.Equal("N", yo.Bloqueado);
+        }
+
+        [Fact]
+        public async Task Actualizar_QuitarseSuperUsuarioASiMismoConFlagNulo_Falla()
+        {
+            var yo = Existente(2, "maria", super: "S");
+            _tabla.Add(Existente(1, "admin", super: "S"));
+            _tabla.Add(yo);
+
+            var msg = await MensajeDe(() => _domain.ActualizarAsync(2, Cambios(super: null), 2));
+
+            Assert.Equal("No puede quitarse a sí mismo el permiso de superusuario.", msg);
+            Assert.Equal("S", yo.SuperUsuario);
+        }
+
+        [Fact]
+        public async Task Actualizar_QuitarseSuperUsuarioASiMismoConValorRaro_Falla()
+        {
+            var yo = Existente(2, "maria", super: "S");
+            _tabla.Add(Existente(1, "admin", super: "S"));
+            _tabla.Add(yo);
+
+            var msg = await MensajeDe(() => _domain.ActualizarAsync(2, Cambios(super: "x"), 2));
+
+            Assert.Equal("No puede quitarse a sí mismo el permiso de superusuario.", msg);
+        }
+
+        [Fact]
+        public async Task Actualizar_ASiMismoConSMinusculaMantieneSuperUsuario_Funciona()
+        {
+            var yo = Existente(2, "maria", super: "S");
+            _tabla.Add(yo);
+
+            var ok = await _domain.ActualizarAsync(2, Cambios("Nuevo", super: "s"), 2);
+
+            Assert.True(ok);
+            Assert.Equal("S", yo.SuperUsuario);
+        }
+
+        [Fact]
+        public async Task Actualizar_BloqueadoNuloSeTrataComoNoBloqueado()
+        {
+            var otro = Existente(2, "maria", bloqueado: "S");
+            _tabla.Add(otro);
+
+            Assert.True(await _domain.ActualizarAsync(2, Cambios(bloqueado: null), 1));
+            Assert.Equal("N", otro.Bloqueado);
+        }
+
+        // ---------- Contraseña solo con espacios ----------
+
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("        ")]
+        [InlineData("\t\t\t\t\t\t\t\t")]
+        public async Task Insertar_PasswordSoloEspacios_Falla(string password)
+        {
+            var msg = await MensajeDe(() => _domain.InsertarAsync(Nuevo(password: password)));
+
+            Assert.Equal("La contraseña no puede estar vacía ni contener solo espacios.", msg);
+            Assert.Empty(_tabla);
+        }
+
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("        ")]
+        public async Task Actualizar_PasswordSoloEspacios_Falla_YNoCambiaNada(string password)
+        {
+            var original = Existente(2, "maria");
+            _tabla.Add(original);
+
+            var msg = await MensajeDe(() => _domain.ActualizarAsync(2, Cambios("Otro", password: password), null));
+
+            Assert.Equal("La contraseña no puede estar vacía ni contener solo espacios.", msg);
+            Assert.Equal("HASH-ORIGINAL-maria", original.Password);
+            Assert.Equal("Nombre maria", original.Nombre);
+        }
+
+        // ---------- Código almacenado con espacios (legado) ----------
+
+        [Fact]
+        public async Task Actualizar_CodigoAlmacenadoConEspacios_ComparaContraElCodigoRecortado()
+        {
+            var original = Existente(2, " maria ");
+            _tabla.Add(original);
+
+            var ok = await _domain.ActualizarAsync(2, Cambios("Otro", codigo: "maria"), null);
+
+            Assert.True(ok);
+            Assert.Equal("Otro", original.Nombre);
+        }
+
+        // ---------- Concurrencia: mensaje amable ----------
+
+        private sealed class FalloSqlSimulado : Exception
+        {
+            public FalloSqlSimulado(int numero, string mensaje) : base(mensaje) { Number = numero; }
+            public int Number { get; }
+        }
+
+        private const string MensajeConcurrencia = "No se pudo crear el usuario porque otra operación se estaba ejecutando. Intente nuevamente.";
+
+        private void LaTransaccionLanza(Exception ex) =>
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), It.IsAny<IsolationLevel>())).ThrowsAsync(ex);
+
+        [Fact]
+        public async Task Insertar_ViolacionDePkEnLaTransaccion_DevuelveMensajeAmable()
+        {
+            LaTransaccionLanza(new InvalidOperationException("Violation of PRIMARY KEY constraint 'pk_usuario'. Cannot insert duplicate key in object 'dbo.Usuario'."));
+
+            var msg = await MensajeDe(() => _domain.InsertarAsync(Nuevo()));
+
+            Assert.Equal(MensajeConcurrencia, msg);
+        }
+
+        [Fact]
+        public async Task Insertar_ViolacionDePkEnExcepcionInterna_DevuelveMensajeAmable()
+        {
+            LaTransaccionLanza(new InvalidOperationException(
+                "An error occurred while saving the entity changes. See the inner exception for details.",
+                new InvalidOperationException("Violation of PRIMARY KEY constraint 'pk_usuario'.")));
+
+            var msg = await MensajeDe(() => _domain.InsertarAsync(Nuevo()));
+
+            Assert.Equal(MensajeConcurrencia, msg);
+        }
+
+        [Theory]
+        [InlineData(2627)]
+        [InlineData(2601)]
+        [InlineData(1205)]
+        public async Task Insertar_ErrorSqlConNumeroDeDuplicadoODeadlock_DevuelveMensajeAmable(int numero)
+        {
+            LaTransaccionLanza(new InvalidOperationException("wrapper", new FalloSqlSimulado(numero, "mensaje sin pistas")));
+
+            var msg = await MensajeDe(() => _domain.InsertarAsync(Nuevo()));
+
+            Assert.Equal(MensajeConcurrencia, msg);
+        }
+
+        [Fact]
+        public async Task Insertar_Deadlock_DevuelveMensajeAmable()
+        {
+            LaTransaccionLanza(new InvalidOperationException("Transaction was deadlocked on lock resources with another process and has been chosen as the deadlock victim."));
+
+            var msg = await MensajeDe(() => _domain.InsertarAsync(Nuevo()));
+
+            Assert.Equal(MensajeConcurrencia, msg);
+        }
+
+        [Fact]
+        public async Task Insertar_OtroErrorDeInfraestructura_NoSeTraduce()
+        {
+            LaTransaccionLanza(new InvalidOperationException("Timeout expired."));
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => _domain.InsertarAsync(Nuevo()));
+
+            Assert.Equal("Timeout expired.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Insertar_ErrorDeValidacionDelDomain_NoSeTraduce()
+        {
+            _tabla.Add(Existente(1, "jperez"));
+
+            var msg = await MensajeDe(() => _domain.InsertarAsync(Nuevo("jperez")));
+
+            Assert.Equal("Ya existe un usuario con el código: jperez", msg);
         }
     }
 }
