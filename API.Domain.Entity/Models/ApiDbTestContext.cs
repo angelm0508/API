@@ -1285,6 +1285,8 @@ public partial class ApiDbTestContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("pk_usuario");
 
+            entity.HasIndex(e => e.Codigo, "UX_Usuario_Codigo").IsUnique();
+
             entity.ToTable("Usuario");
 
             entity.Property(e => e.Id)
