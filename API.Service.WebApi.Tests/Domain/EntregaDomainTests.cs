@@ -16,13 +16,14 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>> _repoNumeracion = new();
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IInventarioAsientoService> _asiento = new();
+        private readonly Mock<IDocumentoBaseService> _documentoBase = new();
         private readonly EntregaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
         public EntregaDomainTests()
         {
-            _domain = new EntregaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object);
+            _domain = new EntregaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object);
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
@@ -44,6 +45,8 @@ namespace API.Service.WebApi.Tests.Domain
         private static EntregaDetalle Linea(string art, string alm, decimal? cant, decimal? precio) =>
             new() { CodArticulo = art, CodAlmacen = alm, Cantidad = cant, Precio = precio };
 
+        private static EntregaDetalle LineaDe(string art, string alm, decimal? cant, decimal? precio, int? baseTipo, int? baseEntry, int? baseLinea) =>
+            new() { CodArticulo = art, CodAlmacen = alm, Cantidad = cant, Precio = precio, BaseTipo = baseTipo, BaseEntry = baseEntry, BaseLinea = baseLinea };
         [Fact]
         public async Task InsertarAsync_ConLineas_NumeraAsientaYMarcaEstadoInv()
         {
@@ -231,5 +234,71 @@ namespace API.Service.WebApi.Tests.Domain
             _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 7 && k.NoLinea == 2)), Times.Once);
             _repoHeader.Verify(r => r.EliminarAsync(7), Times.Once);
         }
-    }
+
+        [Fact]
+        public async Task InsertarAsync_LineaConBase_SigueAsentandoInventario()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+
+            await _domain.InsertarAsync(new Entrega { Serie = 4 }, new[] { LineaDe("ART1", "01", 10m, 25m, baseTipo: 4, baseEntry: 500, baseLinea: 1) });
+
+            var m = Assert.Single(_movimientosAsentados);
+            Assert.Equal(-10m, m.Cantidad);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LineasConBase_ValidaConElServicio()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Entrega { Serie = 4, CodigoSn = "CL-1" };
+
+            await _domain.InsertarAsync(obj, new[]
+            {
+                LineaDe("ART1", "01", 10m, 25m, baseTipo: 3, baseEntry: 500, baseLinea: 2),
+                LineaDe("ART2", "01", 1m, 25m, baseTipo: null, baseEntry: null, baseLinea: null),
+            });
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(TipoDocumentoVenta.Entrega, "CL-1",
+                It.Is<IReadOnlyList<LineaBaseRequest>>(l => l.Count == 1 && l[0] == new LineaBaseRequest(3, 500, 2, "ART1", 10m))), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinLineasConBase_NoLlamaAlServicio()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+
+            await _domain.InsertarAsync(new Entrega { Serie = 4 }, new[] { Linea("ART1", "01", 10m, 25m) });
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ValidacionDeBaseFalla_NoNumeraNiGuardaNiAsienta()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            _documentoBase.Setup(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()))
+                .ThrowsAsync(new Exception("El socio del documento debe ser el del documento base Pedido 3 (CL-1)."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(new Entrega { Serie = 4 }, new[] { LineaDe("ART1", "01", 10m, 25m, baseTipo: 4, baseEntry: 500, baseLinea: 1) }));
+
+            Assert.Equal("El socio del documento debe ser el del documento base Pedido 3 (CL-1).", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<Entrega>()), Times.Never);
+            Assert.Empty(_movimientosAsentados);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_CabeceraSiempreConBaseTipoMenosUno()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Entrega { Serie = 4, BaseTipo = 4, BaseEntry = 77 };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal(-1, obj.BaseTipo);
+            Assert.Null(obj.BaseEntry);
+        }    }
 }

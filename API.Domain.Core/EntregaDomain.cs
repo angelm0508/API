@@ -15,19 +15,22 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoNumeracion;
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
+        private readonly IDocumentoBaseService _documentoBase;
 
         public EntregaDomain(
             IRepositorioGenerico<Entrega, int> repoEntrega,
             IRepositorioGenerico<EntregaDetalle, (int Entry, int NoLinea)> repoDetalle,
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
-            IInventarioAsientoService asiento)
+            IInventarioAsientoService asiento,
+            IDocumentoBaseService documentoBase)
         {
             _repoEntrega = repoEntrega;
             _repoDetalle = repoDetalle;
             _repoNumeracion = repoNumeracion;
             _tx = tx;
             _asiento = asiento;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -38,11 +41,23 @@ namespace API.Domain.Core
             obj.Cancelado = "N";                  // un documento recién registrado nunca nace cancelado
             obj.FechaCancelado = null;
 
+            // CK de la cabecera: solo BaseTipo = -1. La referencia al documento base vive únicamente en las líneas.
+            obj.BaseTipo = -1;
+            obj.BaseEntry = null;
+
             var serie = await _repoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
             if (serie.Bloqueado == "S")
                 throw new Exception("La serie está bloqueada y no se puede usar para registrar entregas.");
+
+            var lineasList = lineas?.ToList() ?? new List<EntregaDetalle>();
+
+            // Líneas copiadas de una cotización o de un pedido: se validan antes de numerar, así un error no avanza el
+            // consecutivo (ver DocumentoBaseService.ValidarLineasAsync).
+            var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
+            if (basadas.Count > 0)
+                await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Entrega, obj.CodigoSn, basadas);
 
             if (serie.Manual == "S")
             {
@@ -59,8 +74,6 @@ namespace API.Domain.Core
                 obj.NumDoc = serie.SigNumero.Value;
                 serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transacción
             }
-
-            var lineasList = lineas?.ToList() ?? new List<EntregaDetalle>();
 
             return await _tx.EjecutarAsync(async () =>
             {
