@@ -171,11 +171,78 @@ namespace API.Domain.Core
                 .ToList();
         }
 
-        public Task<BorradorDocumentoBase> ObtenerBorradorAsync(int tipoOrigen, int entry, int tipoDestino) =>
-            throw new NotImplementedException("Task 3");
+        public async Task<BorradorDocumentoBase> ObtenerBorradorAsync(int tipoOrigen, int entry, int tipoDestino)
+        {
+            if (!TipoDocumentoVenta.EsCombinacionValida(tipoOrigen, tipoDestino))
+                throw new Exception($"No se puede copiar {TipoDocumentoVenta.Nombre(tipoOrigen)} a {TipoDocumentoVenta.Nombre(tipoDestino)}.");
 
-        public Task ValidarLineasAsync(int tipoDestino, string? codigoSnDestino, IReadOnlyList<LineaBaseRequest> lineas) =>
-            throw new NotImplementedException("Task 3");
+            var cab = await CabeceraAsync(tipoOrigen, entry)
+                ?? throw new Exception(DocumentoBaseMensajes.OrigenNoExiste);
+
+            if (!cab.Activo)
+                throw new Exception("El documento origen está cancelado.");
+
+            var lineas = await LineasDeAsync(tipoOrigen, entry);
+            var consumos = await ConsumosAsync(tipoOrigen, entry);
+
+            var abiertas = new List<LineaAbiertaVenta>();
+            foreach (var l in lineas)
+            {
+                var abierta = (l.Cantidad ?? 0m) - Consumido(consumos, l.NoLinea);
+                if (abierta <= 0m) continue;
+                abiertas.Add(new LineaAbiertaVenta(tipoOrigen, entry, l.NoLinea, l.CodArticulo, l.Descripcion,
+                    l.Cantidad ?? 0m, abierta, l.Precio, l.PrecioBruto, l.PrctjeDesc, l.CodigoImpuesto, l.Impuesto, l.CodAlmacen));
+            }
+
+            if (abiertas.Count == 0)
+                throw new Exception("El documento no tiene líneas abiertas.");
+
+            return new BorradorDocumentoBase(tipoOrigen, entry, cab.NumDoc,
+                new CabeceraBorrador(cab.CodigoSn, cab.NombreSn, cab.Direccion, cab.MonedaDoc, cab.PrctjeDesc, cab.PrctjeImpuesto, cab.Comentario),
+                abiertas);
+        }
+
+        public async Task ValidarLineasAsync(int tipoDestino, string? codigoSnDestino, IReadOnlyList<LineaBaseRequest> lineas)
+        {
+            foreach (var documento in lineas.GroupBy(l => (l.BaseTipo, l.BaseEntry)))
+            {
+                var (tipoOrigen, entryOrigen) = documento.Key;
+
+                if (!TipoDocumentoVenta.EsCombinacionValida(tipoOrigen, tipoDestino))
+                    throw new Exception($"No se puede copiar {TipoDocumentoVenta.Nombre(tipoOrigen)} a {TipoDocumentoVenta.Nombre(tipoDestino)}.");
+
+                var cab = await CabeceraAsync(tipoOrigen, entryOrigen)
+                    ?? throw new Exception($"El documento base {TipoDocumentoVenta.Nombre(tipoOrigen)} {entryOrigen} no existe.");
+                var etiqueta = cab.Etiqueta(tipoOrigen);
+
+                if (!cab.Activo)
+                    throw new Exception($"El documento base {etiqueta} está cancelado.");
+
+                if (!string.Equals(cab.CodigoSn, codigoSnDestino, StringComparison.OrdinalIgnoreCase))
+                    throw new Exception($"El socio del documento debe ser el del documento base {etiqueta} ({cab.CodigoSn}).");
+
+                var origenLineas = await LineasDeAsync(tipoOrigen, entryOrigen);
+                var consumos = await ConsumosAsync(tipoOrigen, entryOrigen);
+
+                foreach (var porLinea in documento.GroupBy(l => l.BaseLinea))
+                {
+                    var origen = origenLineas.FirstOrDefault(x => x.NoLinea == porLinea.Key)
+                        ?? throw new Exception($"La línea {porLinea.Key} de {etiqueta} no existe.");
+
+                    foreach (var l in porLinea)
+                    {
+                        if (!string.Equals(l.CodArticulo, origen.CodArticulo, StringComparison.Ordinal))
+                            throw new Exception($"El artículo de la línea {porLinea.Key} de {etiqueta} no se puede cambiar.");
+                        if (l.Cantidad <= 0m)
+                            throw new Exception($"La cantidad de la línea {porLinea.Key} de {etiqueta} debe ser mayor que cero.");
+                    }
+
+                    var abierta = (origen.Cantidad ?? 0m) - Consumido(consumos, porLinea.Key);
+                    if (porLinea.Sum(l => l.Cantidad) > abierta)
+                        throw new Exception($"La cantidad de la línea {porLinea.Key} de {etiqueta} excede la cantidad abierta ({Fmt(abierta)}).");
+                }
+            }
+        }
 
         public Task ValidarOrigenModificableAsync(int tipoOrigen, int entry, string accion) =>
             throw new NotImplementedException("Task 4");

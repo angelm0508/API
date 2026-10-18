@@ -176,5 +176,256 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Empty(await _svc.ObtenerDerivadosAsync(TipoDocumentoVenta.Factura, 40));
         }
+
+        // ---------- ObtenerBorradorAsync ----------
+
+        [Fact]
+        public async Task Borrador_CopiaCabeceraYLineasAbiertas_ConCantidadAbierta()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m, precio: 25m);
+            LineaCot(1, 2, "ART2", 5m, precio: 8m, alm: null);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 4m, baseTipo: 3, baseEntry: 1, baseLinea: 1);   // consume 4 de las 10
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 1, TipoDocumentoVenta.Factura);
+
+            Assert.Equal((3, 1, 12), (b.OrigenTipo, b.OrigenEntry, b.OrigenNumDoc));
+            Assert.Equal(("CL-1", "Cliente", "Dir", "QTZ", 12m, "nota"),
+                (b.Cabecera.CodigoSn, b.Cabecera.NombreSn, b.Cabecera.Direccion, b.Cabecera.MonedaDoc, b.Cabecera.PrctjeImpuesto, b.Cabecera.Comentario));
+            Assert.Equal(2, b.Lineas.Count);
+            Assert.Equal((3, 1, 1, "ART1", 10m, 6m, 25m, "01"),
+                (b.Lineas[0].BaseTipo, b.Lineas[0].BaseEntry, b.Lineas[0].BaseLinea, b.Lineas[0].CodArticulo,
+                 b.Lineas[0].CantidadOrigen, b.Lineas[0].CantidadAbierta, b.Lineas[0].Precio, b.Lineas[0].CodAlmacen));
+            Assert.Equal(("ART2", 5m, 5m), (b.Lineas[1].CodArticulo, b.Lineas[1].CantidadOrigen, b.Lineas[1].CantidadAbierta));
+            Assert.Null(b.Lineas[1].CodAlmacen);
+        }
+
+        [Fact]
+        public async Task Borrador_OmiteLasLineasAgotadas()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            LineaCot(1, 2, "ART2", 5m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 10m, 3, 1, 1);   // agota la línea 1
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 1, TipoDocumentoVenta.Pedido);
+
+            Assert.Equal(new[] { "ART2" }, b.Lineas.Select(l => l.CodArticulo));
+        }
+
+        [Fact]
+        public async Task Borrador_UnDestinoCanceladoLiberaLaCantidad()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ped(30, 3, estadoDoc: "C");
+            LineaPed(30, 1, "ART1", 10m, 3, 1, 1);
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 1, TipoDocumentoVenta.Entrega);
+
+            Assert.Equal(10m, b.Lineas.Single().CantidadAbierta);
+        }
+
+        [Fact]
+        public async Task Borrador_SumaLosConsumosDeVariosDestinos()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 2m, 3, 1, 1);
+            Fac(40, 7);
+            LineaFac(40, 1, "ART1", 3m, 3, 1, 1);
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 1, TipoDocumentoVenta.Entrega);
+
+            Assert.Equal(5m, b.Lineas.Single().CantidadAbierta);
+        }
+
+        [Theory]
+        [InlineData(4, 3)]    // Pedido -> Cotización (hacia atrás)
+        [InlineData(5, 4)]
+        [InlineData(6, 6)]
+        public async Task Borrador_CombinacionInvalida_Lanza(int origen, int destino)
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() => _svc.ObtenerBorradorAsync(origen, 1, destino));
+            Assert.Equal($"No se puede copiar {TipoDocumentoVenta.Nombre(origen)} a {TipoDocumentoVenta.Nombre(destino)}.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Borrador_OrigenInexistente_Lanza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() => _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 99, TipoDocumentoVenta.Pedido));
+            Assert.Equal(DocumentoBaseMensajes.OrigenNoExiste, ex.Message);
+        }
+
+        [Theory]
+        [InlineData("C", "N")]
+        [InlineData("A", "S")]
+        public async Task Borrador_OrigenInactivo_Lanza(string estadoDoc, string cancelado)
+        {
+            Cot(1, 12, estadoDoc: estadoDoc, cancelado: cancelado);
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 1, TipoDocumentoVenta.Pedido));
+            Assert.Equal("El documento origen está cancelado.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Borrador_SinLineasAbiertas_Lanza()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 10m, 3, 1, 1);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _svc.ObtenerBorradorAsync(TipoDocumentoVenta.Cotizacion, 1, TipoDocumentoVenta.Pedido));
+            Assert.Equal("El documento no tiene líneas abiertas.", ex.Message);
+        }
+
+        // ---------- ValidarLineasAsync ----------
+
+        private static LineaBaseRequest Req(int baseTipo, int baseEntry, int baseLinea, string art, decimal cant) =>
+            new(baseTipo, baseEntry, baseLinea, art, cant);
+
+        [Fact]
+        public async Task Validar_SinLineas_NoHaceNadaNiLeeNada()
+        {
+            await _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", Array.Empty<LineaBaseRequest>());
+
+            _cot.Verify(r => r.ObtenerAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Validar_LineasCorrectasConCantidadParcial_Pasa()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+
+            await _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 1, 1, "ART1", 10m) });
+            await _svc.ValidarLineasAsync(TipoDocumentoVenta.Entrega, "cl-1", new[] { Req(3, 1, 1, "ART1", 0.5m) });   // socio sin distinguir mayúsculas
+        }
+
+        [Fact]
+        public async Task Validar_CombinacionInvalida_Lanza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(5, 1, 1, "ART1", 1m) }));
+            Assert.Equal("No se puede copiar Entrega a Pedido.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_OrigenInexistente_Lanza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 99, 1, "ART1", 1m) }));
+            Assert.Equal("El documento base Cotización 99 no existe.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_OrigenCancelado_Lanza()
+        {
+            Cot(1, 12, estadoDoc: "C");
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 1, 1, "ART1", 1m) }));
+            Assert.Equal("El documento base Cotización 12 está cancelado.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_SocioDistinto_Lanza()
+        {
+            Cot(1, 12, sn: "CL-1");
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-2", new[] { Req(3, 1, 1, "ART1", 1m) }));
+            Assert.Equal("El socio del documento debe ser el del documento base Cotización 12 (CL-1).", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_LineaOrigenInexistente_Lanza()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 1, 7, "ART1", 1m) }));
+            Assert.Equal("La línea 7 de Cotización 12 no existe.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_ArticuloDistinto_Lanza()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 1, 1, "OTRO", 1m) }));
+            Assert.Equal("El artículo de la línea 1 de Cotización 12 no se puede cambiar.", ex.Message);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-2)]
+        public async Task Validar_CantidadNoPositiva_Lanza(double cantidad)
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 1, 1, "ART1", (decimal)cantidad) }));
+            Assert.Equal("La cantidad de la línea 1 de Cotización 12 debe ser mayor que cero.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_CantidadMayorQueLaAbierta_Lanza()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 4m, 3, 1, 1);   // abierta = 6
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Entrega, "CL-1", new[] { Req(3, 1, 1, "ART1", 6.5m) }));
+            Assert.Equal("La cantidad de la línea 1 de Cotización 12 excede la cantidad abierta (6).", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_VariasLineasContraLaMismaLineaOrigen_SeSuman()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1", new[] { Req(3, 1, 1, "ART1", 6m), Req(3, 1, 1, "ART1", 5m) }));
+            Assert.Equal("La cantidad de la línea 1 de Cotización 12 excede la cantidad abierta (10).", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_DestinoCanceladoNoCuentaComoConsumo()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ent(31, 4, cancelado: "S");
+            LineaEnt(31, 1, "ART1", 10m, 3, 1, 1);
+
+            await _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(3, 1, 1, "ART1", 10m) });
+        }
+
+        [Fact]
+        public async Task Validar_EntregaAFactura_ValidaContraLaEntrega()
+        {
+            Ent(31, 4);
+            LineaEnt(31, 1, "ART1", 5m);
+
+            await _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(5, 31, 1, "ART1", 5m) });
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(5, 31, 1, "ART1", 5.01m) }));
+            Assert.Equal("La cantidad de la línea 1 de Entrega 4 excede la cantidad abierta (5).", ex.Message);
+        }
     }
 }
