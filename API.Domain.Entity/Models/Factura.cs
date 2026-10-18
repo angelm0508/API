@@ -23,6 +23,12 @@ public partial class Factura
 
     public string? TipoObjeto { get; set; }
 
+    /// <summary>'--' = factura; 'ND' = nota de débito de cliente (modelo SAP B1: misma tabla, distinto subtipo).</summary>
+    public string DocSubType { get; set; } = "--";
+
+    /// <summary>'I' = por artículos (mueve inventario); 'S' = por concepto. La factura normal es siempre 'I'.</summary>
+    public string DocType { get; set; } = "I";
+
     public DateTime? FechaDoc { get; set; }
 
     public DateTime? FechaEmision { get; set; }
