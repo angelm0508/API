@@ -40,7 +40,9 @@ namespace API.Domain.Core
             var (codigoObj, subTipo) = NumeracionClave.Separar(codigo);
             var queryable = await _repoNumeracion.ObtenerTodoAsync();
             var numeracion = subTipo is null
-                ? await queryable.FirstOrDefaultAsync(x => x.CodigoObj == codigoObj)
+                ? await queryable.Where(x => x.CodigoObj == codigoObj)
+                    .OrderBy(x => x.SubTipoDoc == "--" ? 0 : 1)
+                    .FirstOrDefaultAsync()
                 : await queryable.FirstOrDefaultAsync(x => x.CodigoObj == codigoObj && x.SubTipoDoc == subTipo);
 
             return numeracion;

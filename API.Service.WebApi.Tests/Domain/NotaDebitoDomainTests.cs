@@ -1,4 +1,5 @@
 using API.Domain.Core;
+using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
@@ -277,12 +278,22 @@ namespace API.Service.WebApi.Tests.Domain
         public async Task InsertarAsync_PorArticulos_SiElAsientoFalla_PropagaElError()
         {
             _asiento.Setup(a => a.AsentarAsync(It.IsAny<IEnumerable<MovimientoRequest>>(), It.IsAny<bool>()))
-                .ThrowsAsync(new InvalidOperationException("fallo de inventario"));
+                .ThrowsAsync(new StockInsuficienteException("ART1", "01", 1m, 2m));
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            await Assert.ThrowsAsync<StockInsuficienteException>(() =>
                 _domain.InsertarAsync(NotaArticulos(), new[] { LineaArticulo() }));
+        }
 
-            Assert.Equal("fallo de inventario", ex.Message);
+        [Fact]
+        public async Task InsertarAsync_PorArticulos_ElAsientoVaDentroDeLaTransaccion()
+        {
+            // Un ejecutor que NO corre el Func: si el asiento o el guardado estuvieran fuera, se llamarian igual.
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).ReturnsAsync(0);
+
+            await _domain.InsertarAsync(NotaArticulos(), new[] { LineaArticulo() });
+
+            _asiento.Verify(a => a.AsentarAsync(It.IsAny<IEnumerable<MovimientoRequest>>(), It.IsAny<bool>()), Times.Never);
+            _repoFactura.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
         }
 
         // ---------------- InsertarAsync: modo ----------------
@@ -494,6 +505,32 @@ namespace API.Service.WebApi.Tests.Domain
             _asiento.Verify(a => a.AsentarAsync(It.IsAny<IEnumerable<MovimientoRequest>>(), It.IsAny<bool>()), Times.Never);
         }
 
+        [Fact]
+        public async Task InsertarAsync_ConBaseInvalida_NoAvanzaLaSerie()
+        {
+            var serie = CrearSerie(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+
+            await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(Nota(n => { n.BaseTipo = TipoBase; n.BaseEntry = 777; }), new[] { Linea() }));
+
+            Assert.Equal(5, serie.SigNumero);
+            _repoFactura.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_PorArticulos_ConArticuloInexistente_NoAvanzaLaSerie()
+        {
+            var serie = CrearSerie(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+
+            await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(NotaArticulos(), new[] { LineaArticulo(l => l.CodArticulo = "ZZZ") }));
+
+            Assert.Equal(5, serie.SigNumero);
+            _repoFactura.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
+        }
+
         // ---------------- InsertarAsync: factura base ----------------
 
         private void PrepararFactura(int entry = 12, string socio = "SN1", string cancelado = "N", string subTipo = "--") =>
@@ -591,7 +628,7 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task ActualizarAsync_CancelarPorConcepto_MarcaCanceladoSinTocarInventarioNiComentario()
         {
-            var existente = new Factura { Entry = 5, DocSubType = SubTipoNota, DocType = "S", Cancelado = "N", EstadoDoc = "A", EstadoInv = "C", Comentario = "original" };
+            var existente = new Factura { Entry = 5, DocSubType = SubTipoNota, DocType = "S", Cancelado = "N", EstadoDoc = "A", EstadoInv = null, Comentario = "original" };
             PrepararNota(existente);
 
             var ok = await _domain.ActualizarAsync(5, new Factura { Cancelado = "S" });

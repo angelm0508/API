@@ -33,6 +33,30 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal("--", fila.SubTipoDoc);
         }
 
+        [Fact]
+        public async Task ObtenerPorCodigo_SoloConCodigo_PrefiereLaFilaPorDefectoAunqueNoSeaLaPrimera()
+        {
+            var filas = new List<NumeracionDocumento>
+            {
+                new() { CodigoObj = "6", SubTipoDoc = "ND", DocAlias = "Nota Debito Cliente", SerieDfct = 33 },
+                new() { CodigoObj = "6", SubTipoDoc = "--", DocAlias = "Factura", SerieDfct = 11 }
+            };
+            _repo.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(filas.AsAsyncQueryable());
+
+            var fila = await _domain.ObtenerPorCodigoAsync("6");
+
+            Assert.Equal("--", fila.SubTipoDoc);
+            Assert.Equal("Factura", fila.DocAlias);
+        }
+
+        [Fact]
+        public async Task ObtenerPorCodigo_SoloConCodigoSinFilaPorDefecto_DevuelveLaPrimeraFila()
+        {
+            var fila = await _domain.ObtenerPorCodigoAsync("1");
+
+            Assert.Equal("C", fila.SubTipoDoc);
+        }
+
         [Theory]
         [InlineData("6:ND", "Nota Debito Cliente")]
         [InlineData("6:--", "Factura")]
@@ -54,7 +78,7 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task Insertar_MismoObjetoConOtroSubtipo_Permite()
         {
-            var nueva = new NumeracionDocumento { CodigoObj = "13", SubTipoDoc = "DN", DocAlias = "Nota Debito Prov." };
+            var nueva = new NumeracionDocumento { CodigoObj = "6", SubTipoDoc = "XX", DocAlias = "Otro subtipo" };
             _repo.Setup(r => r.InsertarAsync(nueva)).ReturnsAsync(nueva);
 
             Assert.True(await _domain.InsertarAsync(nueva));

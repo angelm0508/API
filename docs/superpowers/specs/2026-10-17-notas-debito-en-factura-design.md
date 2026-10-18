@@ -177,7 +177,7 @@ Las notas de crédito siguen en tablas propias (como `ORIN`/`ORPC` en SAP).
 - Las pantallas de notas de débito (cliente y proveedor) cambian así:
   - el formulario ofrece **"Tipo de nota: Artículos / Concepto"** (un selector al crear; no editable
     después). En modo Artículos el editor de líneas es el de Facturas/Facturas de compra (selector de
-    artículo, almacén, cantidad, precio, descuento, impuesto; muestra existencias en cliente); en modo
+    artículo, almacén, cantidad, precio, descuento, impuesto); en modo
     Concepto queda el editor actual. Cambiar de modo con líneas ya cargadas pide confirmación y las
     limpia. Al cargar una factura base se precargan según el modo elegido;
   - la tabla y el detalle de la nota muestran artículo y almacén en las notas por artículos y una

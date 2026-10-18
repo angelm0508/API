@@ -163,9 +163,9 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
-        public async Task ObtenerFacturaBase_DevuelveLasLineasConArticuloYAlmacen()
+        public async Task ObtenerFacturaCompraBase_DevuelveLasLineasConArticuloYAlmacen()
         {
-            var factura = new FacturaCompra { Entry = 12, NumDoc = 100, CodigoSn = "SN1", NombreSn = "Cliente", MonedaDoc = "QTZ", Direccion = "Zona 1" };
+            var factura = new FacturaCompra { Entry = 12, NumDoc = 100, CodigoSn = "SN1", NombreSn = "Proveedor", MonedaDoc = "QTZ", Direccion = "Zona 1" };
             var lineas = new List<FacturaCompraDetalle>
             {
                 new() { Entry = 12, NoLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", Descripcion = "Tornillo", Cantidad = 3m, Precio = 5m, PrecioBruto = 15m, PrctjeDesc = 0m, CodigoImpuesto = "IVA", Impuesto = 1.8m, TotalLinea = 16.8m },
@@ -177,7 +177,7 @@ namespace API.Service.WebApi.Tests.Application
 
             Assert.True(respuesta.Resultado);
             var dato = respuesta.Dato;
-            Assert.Equal((12, 100, "SN1", "Cliente", "QTZ", "Zona 1"), (dato.Entry, dato.NumDoc, dato.CodigoSn, dato.NombreSn, dato.MonedaDoc, dato.Direccion));
+            Assert.Equal((12, 100, "SN1", "Proveedor", "QTZ", "Zona 1"), (dato.Entry, dato.NumDoc, dato.CodigoSn, dato.NombreSn, dato.MonedaDoc, dato.Direccion));
             Assert.Equal(2, dato.Lineas.Count);
             Assert.Equal(("ART1", "01", "Tornillo", 16.8m), (dato.Lineas[0].CodArticulo, dato.Lineas[0].CodAlmacen, dato.Lineas[0].Descripcion, dato.Lineas[0].TotalLinea));
             Assert.Equal(("ART2", "02", "ART2"), (dato.Lineas[1].CodArticulo, dato.Lineas[1].CodAlmacen, dato.Lineas[1].Descripcion));   // sin descripcion: usa el codigo del articulo

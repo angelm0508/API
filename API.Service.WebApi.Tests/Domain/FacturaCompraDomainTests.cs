@@ -253,12 +253,15 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task InsertarAsync_LineaSinAlmacen_Lanza()
         {
-            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
 
             var ex = await Assert.ThrowsAsync<Exception>(() =>
                 _domain.InsertarAsync(new FacturaCompra { Serie = 4 }, new[] { Linea("ART1", null!, 1m, 10m) }));
 
             Assert.Equal("Línea 1: el almacén es requerido.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<FacturaCompra>()), Times.Never);
         }
 
         [Fact]

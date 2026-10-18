@@ -32,6 +32,14 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
+        public void CrearDtoSinTipoDeNota_NoSeConvierteEnArticulos()
+        {
+            // Un tipo de nota ausente debe llegar nulo al dominio (que lo rechaza), nunca como 'I'.
+            Assert.Null(_mapper.Map<Factura>(new NotaDebitoCrearDTO()).DocType);
+            Assert.Null(_mapper.Map<FacturaCompra>(new NotaDebitoCompraCrearDTO()).DocType);
+        }
+
+        [Fact]
         public void Cliente_DetalleCrearDtoAEntidad_MapeaConceptos()
         {
             var dto = new NotaDebitoDetalleCrearDTO { Descripcion = "Intereses", Cantidad = 2, Precio = 50m, PrctjeDesc = 5m, CodigoImpuesto = "IVA", Impuesto = 11.4m, TotalLinea = 106.4m };
