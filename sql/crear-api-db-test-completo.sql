@@ -550,9 +550,9 @@ VALUES(59, 29, 'Entrada Mercancia', '--');
 INSERT INTO NumeracionDocumento(CodigoObj, SerieDfct, DocAlias, SubTipoDoc)
 VALUES(60, 31, 'Salida Mercancia', '--');
 INSERT INTO NumeracionDocumento(CodigoObj, SerieDfct, DocAlias, SubTipoDoc)
-VALUES(7, 33, 'Nota Debito Cliente', '--');
+VALUES(6, 33, 'Nota Debito Cliente', 'ND');
 INSERT INTO NumeracionDocumento(CodigoObj, SerieDfct, DocAlias, SubTipoDoc)
-VALUES(14, 35, 'Nota Debito Prov.', '--');
+VALUES(13, 35, 'Nota Debito Prov.', 'DN');
 INSERT INTO NumeracionDocumento(CodigoObj, SerieDfct, DocAlias, SubTipoDoc)
 VALUES(8, 37, 'Nota Credito Cliente', '--');
 INSERT INTO NumeracionDocumento(CodigoObj, SerieDfct, DocAlias, SubTipoDoc)
@@ -625,13 +625,13 @@ VALUES(60, 30,'Manual', 'N', '--', 'D', 'S');
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, IniNumero, SigNumero)
 VALUES(60, 31,'Primario', 'N', '--', 'D', 1, 1);
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, Manual)
-VALUES(7, 32,'Manual', 'N', '--', 'D', 'S');
+VALUES(6, 32,'Manual', 'N', 'ND', 'D', 'S');
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, IniNumero, SigNumero)
-VALUES(7, 33,'Primario', 'N', '--', 'D', 1, 1);
+VALUES(6, 33,'Primario', 'N', 'ND', 'D', 1, 1);
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, Manual)
-VALUES(14, 34,'Manual', 'N', '--', 'D', 'S');
+VALUES(13, 34,'Manual', 'N', 'DN', 'D', 'S');
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, IniNumero, SigNumero)
-VALUES(14, 35,'Primario', 'N', '--', 'D', 1, 1);
+VALUES(13, 35,'Primario', 'N', 'DN', 'D', 1, 1);
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, Manual)
 VALUES(8, 36,'Manual', 'N', '--', 'D', 'S');
 INSERT INTO NumeracionDocumentoDet(CodigoObj, Serie, NombreSerie, Bloqueado, SubTipoDoc, TipoSerie, IniNumero, SigNumero)
@@ -988,6 +988,8 @@ CREATE TABLE FacturaCompra(
 	EstadoDoc NVARCHAR(1) CHECK (EstadoDoc IN ('A', 'C')) DEFAULT 'A', -- A = Abierto, C = Cerrado
 	EstadoInv NVARCHAR(1) CHECK (EstadoInv IN ('A', 'C')) DEFAULT 'A', -- A = Abierto, C = Cerrado
 	TipoObjeto NVARCHAR(11) CHECK (TipoObjeto IN ('13')) DEFAULT '13', -- 13 = Factura Compra
+	DocSubType NVARCHAR(2) NOT NULL CONSTRAINT DF_FacturaCompra_DocSubType DEFAULT ('--') CONSTRAINT CK_FacturaCompra_DocSubType CHECK (DocSubType IN ('--', 'DN')), -- -- = factura, DN = nota de debito de proveedor
+	DocType NVARCHAR(1) NOT NULL CONSTRAINT DF_FacturaCompra_DocType DEFAULT ('I') CONSTRAINT CK_FacturaCompra_DocType CHECK (DocType IN ('I', 'S')), -- I = articulos (mueve inventario), S = concepto (la factura normal es siempre I)
 	FechaDoc DATETIME NOT NULL,
 	FechaEmision DATETIME NOT NULL,
 	FechaCancelado DATETIME,
@@ -995,7 +997,7 @@ CREATE TABLE FacturaCompra(
 	NombreSN NVARCHAR(200),
 	Direccion NVARCHAR(254),
 	MonedaDoc NVARCHAR(3) NOT NULL, -- FK
-	BaseTipo INT CHECK(BaseTipo IN (-1)) DEFAULT -1,
+	BaseTipo INT DEFAULT -1,
 	BaseEntry INT,
 	PrctjeImpuesto DECIMAL(19, 6),
 	TotalImp DECIMAL(19, 6),
@@ -1004,11 +1006,14 @@ CREATE TABLE FacturaCompra(
 	TotalBruto DECIMAL(19, 6),
 	TotalDoc DECIMAL(19, 6),
 	Comentario NVARCHAR(254),
+	CONSTRAINT CK_FacturaCompra_DocType_Subtipo CHECK (DocSubType <> '--' OR DocType = 'I'),
+	CONSTRAINT CK_FacturaCompra_Base CHECK ((DocSubType = '--' AND BaseTipo = -1) OR (DocSubType = 'DN' AND BaseTipo IN (-1, 13))),
 	CONSTRAINT pk_factura_compra PRIMARY KEY(Entry),
 	CONSTRAINT fk_factura_compra_serie FOREIGN KEY(Serie) REFERENCES NumeracionDocumentoDet(Serie),
 	CONSTRAINT fk_factura_compra_sn FOREIGN KEY(CodigoSN) REFERENCES SocioNegocio(Codigo),
 	CONSTRAINT fk_factura_compra_moneda FOREIGN KEY(MonedaDoc) REFERENCES Moneda(Codigo)
 );
+CREATE NONCLUSTERED INDEX IX_FacturaCompra_DocSubType ON FacturaCompra (DocSubType, CodigoSN);
 
 
 CREATE TABLE FacturaCompraDetalle(
@@ -1021,7 +1026,7 @@ CREATE TABLE FacturaCompraDetalle(
 	BaseEntry INT,
 	BaseLinea INT,
 	EstadoLinea NVARCHAR(1) CHECK (EstadoLinea IN ('A', 'C')) DEFAULT 'A',
-	CodArticulo NVARCHAR(15) NOT NULL, -- FK
+	CodArticulo NVARCHAR(15), -- FK (NULL en notas de debito por concepto)
 	Descripcion NVARCHAR(200),
 	Cantidad DECIMAL(19, 6),
 	Precio DECIMAL(19, 6),
@@ -1031,7 +1036,7 @@ CREATE TABLE FacturaCompraDetalle(
 	Impuesto DECIMAL(19, 6),
 	TotalLinea DECIMAL(19, 6),
 	TipoObjeto NVARCHAR(20) CHECK(TipoObjeto IN ('13')) DEFAULT '13',
-	CodAlmacen NVARCHAR(8) NOT NULL, -- FK
+	CodAlmacen NVARCHAR(8), -- FK (NULL en notas de debito por concepto)
 	CONSTRAINT pk_factura_compra_det PRIMARY KEY(Entry, NoLinea),
 	CONSTRAINT fk_factura_compra_det_cod_art FOREIGN KEY(CodArticulo) REFERENCES Articulo(Codigo),
 	CONSTRAINT fk_factura_compra_det_almacen FOREIGN KEY(CodAlmacen) REFERENCES Almacen(Codigo),
@@ -1259,7 +1264,7 @@ FechaDoc NOT NULL
 FechaEmision NOT NULL
 CodigoSN NOT NULL
 MonedaDoc NOT NULL
-BaseTipo se agrega CHECK(BaseTipo IN (-1)
+BaseTipo: CK_Factura_Base
  */
 CREATE TABLE Factura(
 	Entry INT NOT NULL IDENTITY(1,1),
@@ -1271,6 +1276,8 @@ CREATE TABLE Factura(
 	EstadoDoc NVARCHAR(1) CHECK (EstadoDoc IN ('A', 'C')) DEFAULT 'A', -- A = Abierto, C = Cerrado
 	EstadoInv NVARCHAR(1) CHECK (EstadoInv IN ('A', 'C')) DEFAULT 'A', -- A = Abierto, C = Cerrado
 	TipoObjeto NVARCHAR(11) CHECK (TipoObjeto IN ('6')) DEFAULT '6', -- 6 = Factura
+	DocSubType NVARCHAR(2) NOT NULL CONSTRAINT DF_Factura_DocSubType DEFAULT ('--') CONSTRAINT CK_Factura_DocSubType CHECK (DocSubType IN ('--', 'ND')), -- -- = factura, ND = nota de debito de cliente
+	DocType NVARCHAR(1) NOT NULL CONSTRAINT DF_Factura_DocType DEFAULT ('I') CONSTRAINT CK_Factura_DocType CHECK (DocType IN ('I', 'S')), -- I = articulos (mueve inventario), S = concepto (la factura normal es siempre I)
 	FechaDoc DATETIME NOT NULL,
 	FechaEmision DATETIME NOT NULL,
 	FechaCancelado DATETIME,
@@ -1278,7 +1285,7 @@ CREATE TABLE Factura(
 	NombreSN NVARCHAR(200),
 	Direccion NVARCHAR(254),
 	MonedaDoc NVARCHAR(3) NOT NULL, -- FK
-	BaseTipo INT CHECK(BaseTipo IN (-1)) DEFAULT -1,
+	BaseTipo INT DEFAULT -1,
 	BaseEntry INT,
 	PrctjeImpuesto DECIMAL(19, 6),
 	TotalImp DECIMAL(19, 6),
@@ -1287,17 +1294,19 @@ CREATE TABLE Factura(
 	TotalBruto DECIMAL(19, 6),
 	TotalDoc DECIMAL(19, 6),
 	Comentario NVARCHAR(254),
+	CONSTRAINT CK_Factura_DocType_Subtipo CHECK (DocSubType <> '--' OR DocType = 'I'),
+	CONSTRAINT CK_Factura_Base CHECK ((DocSubType = '--' AND BaseTipo = -1) OR (DocSubType = 'ND' AND BaseTipo IN (-1, 6))),
 	CONSTRAINT pk_factura PRIMARY KEY(Entry),
 	CONSTRAINT fk_factura_serie FOREIGN KEY(Serie) REFERENCES NumeracionDocumentoDet(Serie),
 	CONSTRAINT fk_factura_sn FOREIGN KEY(CodigoSN) REFERENCES SocioNegocio(Codigo),
 	CONSTRAINT fk_factura_moneda FOREIGN KEY(MonedaDoc) REFERENCES Moneda(Codigo)
 );
+CREATE NONCLUSTERED INDEX IX_Factura_DocSubType ON Factura (DocSubType, CodigoSN);
 
 -- se agrega llave foranea para CodigoImpuesto
 -- TipoDocDestino se agrega CHECK(TipoDocDestino IN (-1)) -1 =
 -- BaseTipo CHECK(BaseTipo IN (-1, 3, 4, 5)) -1 =, 3 = Cotizacion, 4 = Pedido, 5 = Entrega
--- CodArticulo NOT NULL
--- CodAlmacen NOT NULL
+-- CodArticulo y CodAlmacen: NOT NULL en facturas (lo exige FacturaDomain); NULL solo en notas de debito por concepto
 -- TipoObjeto se agrega CHECK(TipoObjeto IN ('6')) 6 = Factura
 CREATE TABLE FacturaDetalle(
 	Entry INT,
@@ -1309,7 +1318,7 @@ CREATE TABLE FacturaDetalle(
 	BaseEntry INT,
 	BaseLinea INT,
 	EstadoLinea NVARCHAR(1) CHECK (EstadoLinea IN ('A', 'C')) DEFAULT 'A',
-	CodArticulo NVARCHAR(15) NOT NULL, -- FK
+	CodArticulo NVARCHAR(15), -- FK (NULL en notas de debito por concepto)
 	Descripcion NVARCHAR(200),
 	Cantidad DECIMAL(19, 6),
 	Precio DECIMAL(19, 6),
@@ -1319,108 +1328,11 @@ CREATE TABLE FacturaDetalle(
 	Impuesto DECIMAL(19, 6),
 	TotalLinea DECIMAL(19, 6),
 	TipoObjeto NVARCHAR(20) CHECK(TipoObjeto IN ('6')) DEFAULT '6',
-	CodAlmacen NVARCHAR(8) NOT NULL, -- FK
+	CodAlmacen NVARCHAR(8), -- FK (NULL en notas de debito por concepto)
 	CONSTRAINT pk_factura_det PRIMARY KEY(Entry, NoLinea),
 	CONSTRAINT fk_factura_det_cod_art FOREIGN KEY(CodArticulo) REFERENCES Articulo(Codigo),
 	CONSTRAINT fk_factura_det_almacen FOREIGN KEY(CodAlmacen) REFERENCES Almacen(Codigo),
 	CONSTRAINT fk_factura_det_cod_impuesto FOREIGN KEY(CodigoImpuesto) REFERENCES Impuesto(Codigo)
-);
-
--- Notas de debito de cliente (objeto 7) y de proveedor (objeto 14). Sin inventario.
--- ===== NotaDebito (cliente, ObjType 7) =====
-CREATE TABLE dbo.NotaDebito (
-    Entry          int identity(1,1) NOT NULL,
-    NumDoc         int           NOT NULL,
-    Serie          int           NOT NULL,
-    Cancelado      nvarchar(1)   NULL CONSTRAINT DF_NotaDebito_Cancelado DEFAULT ('N') CONSTRAINT CK_NotaDebito_Cancelado CHECK (Cancelado IN ('S','N')),
-    NumManual      nvarchar(1)   NULL CONSTRAINT DF_NotaDebito_NumManual DEFAULT ('N') CONSTRAINT CK_NotaDebito_NumManual CHECK (NumManual IN ('S','N')),
-    Imprimido      nvarchar(1)   NULL CONSTRAINT DF_NotaDebito_Imprimido DEFAULT ('N') CONSTRAINT CK_NotaDebito_Imprimido CHECK (Imprimido IN ('S','N')),
-    EstadoDoc      nvarchar(1)   NULL CONSTRAINT DF_NotaDebito_EstadoDoc DEFAULT ('A') CONSTRAINT CK_NotaDebito_EstadoDoc CHECK (EstadoDoc IN ('A','C')),
-    TipoObjeto     nvarchar(11)  NULL CONSTRAINT DF_NotaDebito_TipoObjeto DEFAULT ('7') CONSTRAINT CK_NotaDebito_TipoObjeto CHECK (TipoObjeto IN ('7')),
-    FechaDoc       datetime      NOT NULL,
-    FechaEmision   datetime      NOT NULL,
-    FechaCancelado datetime      NULL,
-    CodigoSN       nvarchar(15)  NOT NULL,
-    NombreSN       nvarchar(200) NULL,
-    Direccion      nvarchar(254) NULL,
-    MonedaDoc      nvarchar(3)   NOT NULL,
-    BaseTipo       int           NULL CONSTRAINT DF_NotaDebito_BaseTipo DEFAULT (-1) CONSTRAINT CK_NotaDebito_BaseTipo CHECK (BaseTipo IN (-1, 6)),
-    BaseEntry      int           NULL,
-    PrctjeImpuesto decimal(19,6) NULL,
-    TotalImp       decimal(19,6) NULL,
-    PrctjeDesc     decimal(19,6) NULL,
-    TotalDesc      decimal(19,6) NULL,
-    TotalBruto     decimal(19,6) NULL,
-    TotalDoc       decimal(19,6) NULL,
-    Comentario     nvarchar(254) NULL,
-    CONSTRAINT pk_nota_debito PRIMARY KEY (Entry),
-    CONSTRAINT fk_nota_debito_serie  FOREIGN KEY (Serie)     REFERENCES dbo.NumeracionDocumentoDet(Serie),
-    CONSTRAINT fk_nota_debito_sn     FOREIGN KEY (CodigoSN)  REFERENCES dbo.SocioNegocio(Codigo),
-    CONSTRAINT fk_nota_debito_moneda FOREIGN KEY (MonedaDoc) REFERENCES dbo.Moneda(Codigo)
-);
-
-CREATE TABLE dbo.NotaDebitoDetalle (
-    Entry          int           NOT NULL,
-    NoLinea        int           NOT NULL,
-    Descripcion    nvarchar(200) NOT NULL,
-    Cantidad       decimal(19,6) NULL,
-    Precio         decimal(19,6) NULL,
-    PrecioBruto    decimal(19,6) NULL,
-    PrctjeDesc     decimal(19,6) NULL,
-    CodigoImpuesto nvarchar(8)   NOT NULL,
-    Impuesto       decimal(19,6) NULL,
-    TotalLinea     decimal(19,6) NULL,
-    TipoObjeto     nvarchar(20)  NULL CONSTRAINT DF_NotaDebitoDet_TipoObjeto DEFAULT ('7') CONSTRAINT CK_NotaDebitoDet_TipoObjeto CHECK (TipoObjeto IN ('7')),
-    CONSTRAINT pk_nota_debito_det PRIMARY KEY (Entry, NoLinea),
-    CONSTRAINT fk_nota_debito_det_cod_impuesto FOREIGN KEY (CodigoImpuesto) REFERENCES dbo.Impuesto(Codigo)
-);
-
--- ===== NotaDebitoCompra (proveedor, ObjType 14) =====
-CREATE TABLE dbo.NotaDebitoCompra (
-    Entry          int identity(1,1) NOT NULL,
-    NumDoc         int           NOT NULL,
-    Serie          int           NOT NULL,
-    Cancelado      nvarchar(1)   NULL CONSTRAINT DF_NotaDebitoCompra_Cancelado DEFAULT ('N') CONSTRAINT CK_NotaDebitoCompra_Cancelado CHECK (Cancelado IN ('S','N')),
-    NumManual      nvarchar(1)   NULL CONSTRAINT DF_NotaDebitoCompra_NumManual DEFAULT ('N') CONSTRAINT CK_NotaDebitoCompra_NumManual CHECK (NumManual IN ('S','N')),
-    Imprimido      nvarchar(1)   NULL CONSTRAINT DF_NotaDebitoCompra_Imprimido DEFAULT ('N') CONSTRAINT CK_NotaDebitoCompra_Imprimido CHECK (Imprimido IN ('S','N')),
-    EstadoDoc      nvarchar(1)   NULL CONSTRAINT DF_NotaDebitoCompra_EstadoDoc DEFAULT ('A') CONSTRAINT CK_NotaDebitoCompra_EstadoDoc CHECK (EstadoDoc IN ('A','C')),
-    TipoObjeto     nvarchar(11)  NULL CONSTRAINT DF_NotaDebitoCompra_TipoObjeto DEFAULT ('14') CONSTRAINT CK_NotaDebitoCompra_TipoObjeto CHECK (TipoObjeto IN ('14')),
-    FechaDoc       datetime      NOT NULL,
-    FechaEmision   datetime      NOT NULL,
-    FechaCancelado datetime      NULL,
-    CodigoSN       nvarchar(15)  NOT NULL,
-    NombreSN       nvarchar(200) NULL,
-    Direccion      nvarchar(254) NULL,
-    MonedaDoc      nvarchar(3)   NOT NULL,
-    BaseTipo       int           NULL CONSTRAINT DF_NotaDebitoCompra_BaseTipo DEFAULT (-1) CONSTRAINT CK_NotaDebitoCompra_BaseTipo CHECK (BaseTipo IN (-1, 13)),
-    BaseEntry      int           NULL,
-    PrctjeImpuesto decimal(19,6) NULL,
-    TotalImp       decimal(19,6) NULL,
-    PrctjeDesc     decimal(19,6) NULL,
-    TotalDesc      decimal(19,6) NULL,
-    TotalBruto     decimal(19,6) NULL,
-    TotalDoc       decimal(19,6) NULL,
-    Comentario     nvarchar(254) NULL,
-    CONSTRAINT pk_nota_debito_compra PRIMARY KEY (Entry),
-    CONSTRAINT fk_nota_debito_compra_serie  FOREIGN KEY (Serie)     REFERENCES dbo.NumeracionDocumentoDet(Serie),
-    CONSTRAINT fk_nota_debito_compra_sn     FOREIGN KEY (CodigoSN)  REFERENCES dbo.SocioNegocio(Codigo),
-    CONSTRAINT fk_nota_debito_compra_moneda FOREIGN KEY (MonedaDoc) REFERENCES dbo.Moneda(Codigo)
-);
-
-CREATE TABLE dbo.NotaDebitoCompraDetalle (
-    Entry          int           NOT NULL,
-    NoLinea        int           NOT NULL,
-    Descripcion    nvarchar(200) NOT NULL,
-    Cantidad       decimal(19,6) NULL,
-    Precio         decimal(19,6) NULL,
-    PrecioBruto    decimal(19,6) NULL,
-    PrctjeDesc     decimal(19,6) NULL,
-    CodigoImpuesto nvarchar(8)   NOT NULL,
-    Impuesto       decimal(19,6) NULL,
-    TotalLinea     decimal(19,6) NULL,
-    TipoObjeto     nvarchar(20)  NULL CONSTRAINT DF_NotaDebitoCompraDet_TipoObjeto DEFAULT ('14') CONSTRAINT CK_NotaDebitoCompraDet_TipoObjeto CHECK (TipoObjeto IN ('14')),
-    CONSTRAINT pk_nota_debito_compra_det PRIMARY KEY (Entry, NoLinea),
-    CONSTRAINT fk_nota_debito_compra_det_cod_impuesto FOREIGN KEY (CodigoImpuesto) REFERENCES dbo.Impuesto(Codigo)
 );
 
 -- ===== NotaCredito (cliente, ObjType 8) =====
