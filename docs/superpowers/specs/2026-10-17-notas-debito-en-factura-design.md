@@ -150,9 +150,13 @@ Las notas de crédito siguen en tablas propias (como `ORIN`/`ORPC` en SAP).
   siguen intactos.
 - **Numeración (API):** hoy `NumeracionDocumento` se identifica solo por `CodigoObj` (`GET/PUT/DELETE
   api/NumeracionDocumento/{codigo}` y `GET api/NumeracionDocumentoDet/PorDocumento/{codigoObj}`), lo cual
-  ya es ambiguo con las dos filas del objeto 1 (`C` y `P`) y lo sería con `(6,'--')`/`(6,'ND')`. Se agrega
-  un parámetro opcional `subTipo` a esos endpoints: si llega, filtra por `(CodigoObj, SubTipoDoc)` exacto;
-  si no, conserva el comportamiento actual. La pantalla Web de numeración lo envía desde la fila.
+  ya es ambiguo con las dos filas del objeto 1 (`C` y `P`) y lo sería con `(6,'--')`/`(6,'ND')`. En vez
+  de agregar parámetros a cada endpoint, el `{codigo}` acepta una **clave compuesta** `"CodigoObj:SubTipoDoc"`
+  (p. ej. `6:ND`, `1:P`; el `:` no aparece en ningún CodigoObj y es válido en un segmento de URL): con `:` se
+  filtra por `(CodigoObj, SubTipoDoc)` exacto; sin `:` se conserva el comportamiento actual (primera fila del
+  objeto). El duplicado al insertar se detecta por `(CodigoObj, SubTipoDoc)`. `PorDocumento/{codigoObj}` no
+  cambia (los controllers Web de documentos ya filtran las series por `SubTipoDoc`). La pantalla Web de
+  numeración usa la clave compuesta al editar una fila.
 - **Compatibilidad:** rutas, DTOs, códigos de permiso y mensajes de las notas de débito no cambian.
 
 ## 6. Notas de crédito
@@ -183,7 +187,7 @@ Las notas de crédito siguen en tablas propias (como `ORIN`/`ORPC` en SAP).
   - las constantes de CodigoObj de las notas de débito pasan de `7`/`14` a `6`/`13` con
     `SubTipoDoc` `ND`/`DN`, y el selector de series filtra por ese subtipo (el de Facturas ya filtra
     por `SubTipoDoc == "--"`);
-  - la pantalla de numeración de documentos envía `subTipo` en editar/ver series;
+  - la pantalla de numeración de documentos edita cada fila por su clave compuesta (`6`, `6:ND`, `1:C`…);
   - el selector de factura base de notas de crédito muestra también las notas de débito.
 - Las pantallas de Facturas no cambian (la API ya excluye las notas).
 
@@ -200,7 +204,7 @@ Las notas de crédito siguen en tablas propias (como `ORIN`/`ORPC` en SAP).
 - Regresión nueva: (a) `FacturaDomain` ignora filas `ND` en listar/obtener/actualizar/eliminar/líneas;
   (b) serie de nota rechazada en una factura y serie de factura rechazada en una nota; (c) la nota no
   puede basarse en otra nota; (d) nota de crédito sobre una nota de débito (límite y cálculo);
-  (e) endpoints de numeración con `subTipo`.
+  (e) numeración por clave compuesta (`6:ND`).
 - Humo de la API contra una base temporal (con inventario real): nota por artículos de cliente baja la
   existencia y cancelarla la restaura; nota por artículos de proveedor la sube; salida mayor a la
   existencia → 400; nota por concepto no toca el stock. Además: crear una nota de débito, verificar que no aparece en
