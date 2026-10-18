@@ -2724,10 +2724,11 @@ $dll = Get-ChildItem "$SP\apismoke" -Recurse -Filter API.Service.WebApi.dll | Se
 $env:ConnectionStrings__API_DB = "Server=localhost;Database=$db;User Id=sa;Password=$pw;TrustServerCertificate=True;"
 $env:ASPNETCORE_URLS = 'http://localhost:5199'
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
-$api = Start-Process dotnet -ArgumentList "`"$($dll.FullName)`"" -PassThru -WindowStyle Hidden -RedirectStandardOutput "$SP\api-copia.log" -RedirectStandardError "$SP\api-copia.err"
+$api = Start-Process dotnet -ArgumentList "`"$($dll.FullName)`"" -WorkingDirectory "$repoAPIAPI.Service.WebApi" -PassThru -WindowStyle Hidden -RedirectStandardOutput "$SP\api-copia.log" -RedirectStandardError "$SP\api-copia.err"
 # esperar a que escuche
 1..30 | ForEach-Object { try { Invoke-WebRequest http://localhost:5199/swagger -UseBasicParsing -SkipHttpErrorCheck | Out-Null; break } catch { Start-Sleep 1 } }
 ```
+Nota (hallada al ejecutar la Task 10): `-WorkingDirectory` debe ser `API.Service.WebApi`; si el proceso arranca con el directorio raíz de la API no carga `appsettings.json` (falta la sección `Jwt`) y todo endpoint autenticado responde 500. Lo mismo vale para la Web en la Task 17 (`-WorkingDirectory Web.UI`).
 Expected: el script SQL corre sin errores, el build termina en 0 errores y la API responde en el puerto 5199 (comprobar que `$SP\api-copia.log` muestra la base `API_DB_COPIA_A` y **nunca** `API_DB_TEST`). La contraseña no se imprime en ningún paso.
 
 - [ ] **Step 3: Escribir y correr la prueba de humo**
