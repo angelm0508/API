@@ -204,5 +204,103 @@ namespace API.Service.WebApi.Tests.Domain
             _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 7 && k.NoLinea == 2)), Times.Once);
             _repoHeader.Verify(r => r.EliminarAsync(7), Times.Once);
         }
+
+        // ---------------- Aislamiento de las notas de débito de proveedor (DocSubType) ----------------
+
+        [Fact]
+        public async Task InsertarAsync_ForzaDocSubTypeFacturaYModoArticulos()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new FacturaCompra { Serie = 4, DocSubType = "DN", DocType = "S" };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 10m) });
+
+            Assert.Equal("--", obj.DocSubType);
+            Assert.Equal("I", obj.DocType);
+        }
+
+        [Theory]
+        [InlineData("13", "DN")]   // serie de nota de débito de proveedor
+        [InlineData("12", "--")]   // serie de otro documento (Entrega de compra)
+        public async Task InsertarAsync_SerieQueNoEsDeFacturaDeCompra_Lanza_YNoInserta(string codigoObj, string subTipo)
+        {
+            var serie = SerieAuto(sig: 5);
+            serie.CodigoObj = codigoObj;
+            serie.SubTipoDoc = subTipo;
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(new FacturaCompra { Serie = 4 }, new[] { Linea("ART1", "01", 1m, 10m) }));
+
+            Assert.Equal("La serie no corresponde a facturas de compra.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<FacturaCompra>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LineaSinArticulo_Lanza_YNoAvanzaLaSerie()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(new FacturaCompra { Serie = 4 }, new[] { Linea("ART1", "01", 1m, 10m), Linea(" ", "01", 1m, 10m) }));
+
+            Assert.Equal("Línea 2: el artículo es requerido.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LineaSinAlmacen_Lanza()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(new FacturaCompra { Serie = 4 }, new[] { Linea("ART1", null!, 1m, 10m) }));
+
+            Assert.Equal("Línea 1: el almacén es requerido.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ObtenerAsync_DeUnaNotaDeDebito_DevuelveNull()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new FacturaCompra { Entry = 7, DocSubType = "DN" });
+
+            Assert.Null(await _domain.ObtenerAsync(7));
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_DeUnaNotaDeDebito_DevuelveFalse_SinRevertirInventario()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new FacturaCompra { Entry = 7, DocSubType = "DN", Cancelado = "N" });
+
+            Assert.False(await _domain.ActualizarAsync(7, new FacturaCompra { Cancelado = "S" }));
+
+            _asiento.Verify(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_DeUnaNotaDeDebito_DevuelveFalse_SinBorrar()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new FacturaCompra { Entry = 7, DocSubType = "DN", Cancelado = "S" });
+
+            Assert.False(await _domain.EliminarAsync(7));
+
+            _repoHeader.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ObtenerTodoAsync_ExcluyeLasNotasDeDebito()
+        {
+            var filas = new List<FacturaCompra>
+            {
+                new() { Entry = 1, DocSubType = "--" }, new() { Entry = 2, DocSubType = "DN" }, new() { Entry = 3, DocSubType = "--" }
+            };
+            _repoHeader.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(filas.AsAsyncQueryable());
+
+            var resultado = (await _domain.ObtenerTodoAsync()).ToList();
+
+            Assert.Equal(new[] { 1, 3 }, resultado.Select(f => f.Entry));
+        }
     }
 }

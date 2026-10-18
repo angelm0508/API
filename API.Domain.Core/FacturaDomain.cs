@@ -9,6 +9,7 @@ namespace API.Domain.Core
     {
         // CHECK constraint de la tabla: TipoObjeto='6'. Se fuerza siempre en el servidor.
         private const string TipoObjetoFactura = "6";
+        private const string SubTipoFactura = "--";
 
         private readonly IRepositorioGenerico<Factura, int> _repoFactura;
         private readonly IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> _repoDetalle;
@@ -34,6 +35,8 @@ namespace API.Domain.Core
         public async Task<int> InsertarAsync(Factura obj, IEnumerable<FacturaDetalle> lineas)
         {
             obj.TipoObjeto = TipoObjetoFactura;
+            obj.DocSubType = SubTipoFactura;
+            obj.DocType = "I";
             obj.EstadoInv = "A";
             obj.Cancelado = "N";                  // un documento recién registrado nunca nace cancelado
             obj.FechaCancelado = null;
@@ -41,8 +44,14 @@ namespace API.Domain.Core
             var serie = await _repoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
+            if (serie.CodigoObj != TipoObjetoFactura || serie.SubTipoDoc != SubTipoFactura)
+                throw new Exception("La serie no corresponde a facturas.");
+
             if (serie.Bloqueado == "S")
                 throw new Exception("La serie está bloqueada y no se puede usar para registrar facturas.");
+
+            var lineasList = lineas?.ToList() ?? new List<FacturaDetalle>();
+            ValidarLineas(lineasList); // antes de numerar: un error de línea no debe avanzar el consecutivo
 
             if (serie.Manual == "S")
             {
@@ -59,8 +68,6 @@ namespace API.Domain.Core
                 obj.NumDoc = serie.SigNumero.Value;
                 serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transacción
             }
-
-            var lineasList = lineas?.ToList() ?? new List<FacturaDetalle>();
 
             return await _tx.EjecutarAsync(async () =>
             {
@@ -96,7 +103,7 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(int id, Factura obj)
         {
-            var existente = await _repoFactura.ObtenerAsync(id);
+            var existente = await ObtenerFacturaAsync(id);
             if (existente is null)
                 return false;
 
@@ -131,7 +138,7 @@ namespace API.Domain.Core
 
         public async Task<bool> EliminarAsync(int id)
         {
-            var existente = await _repoFactura.ObtenerAsync(id);
+            var existente = await ObtenerFacturaAsync(id);
             if (existente is null)
                 return false;
 
@@ -152,12 +159,33 @@ namespace API.Domain.Core
 
         public async Task<Factura> ObtenerAsync(int id)
         {
-            return await _repoFactura.ObtenerAsync(id);
+            return await ObtenerFacturaAsync(id);
         }
 
         public async Task<IQueryable<Factura>> ObtenerTodoAsync()
         {
-            return await _repoFactura.ObtenerTodoAsync();
+            var facturas = await _repoFactura.ObtenerTodoAsync();
+            return facturas.Where(f => f.DocSubType == SubTipoFactura);
+        }
+        #endregion
+
+        #region validaciones
+        // Una fila de Factura con DocSubType distinto de '--' es una nota de débito: su API es otra.
+        private async Task<Factura?> ObtenerFacturaAsync(int id)
+        {
+            var factura = await _repoFactura.ObtenerAsync(id);
+            return factura is not null && factura.DocSubType == SubTipoFactura ? factura : null;
+        }
+
+        private static void ValidarLineas(IList<FacturaDetalle> lineas)
+        {
+            for (var i = 0; i < lineas.Count; i++)
+            {
+                if (string.IsNullOrWhiteSpace(lineas[i].CodArticulo))
+                    throw new Exception($"Línea {i + 1}: el artículo es requerido.");
+                if (string.IsNullOrWhiteSpace(lineas[i].CodAlmacen))
+                    throw new Exception($"Línea {i + 1}: el almacén es requerido.");
+            }
         }
         #endregion
     }

@@ -7,6 +7,8 @@ namespace API.Domain.Core
 {
     public class FacturaDetalleDomain : IFacturaDetalleDomain
     {
+        private const string SubTipoFactura = "--";
+
         private readonly IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> _repoGenericoDet;
         private readonly IRepositorioGenerico<Factura, int> _repoEncabezado;
 
@@ -42,16 +44,28 @@ namespace API.Domain.Core
 
         public async Task<FacturaDetalle> ObtenerAsync(int entry, int noLinea)
         {
+            // Las líneas de una nota de débito no se exponen por este recurso.
+            var encabezado = await _repoEncabezado.ObtenerAsync(entry);
+            if (encabezado is not null && encabezado.DocSubType != SubTipoFactura)
+                return null;
             return await _repoGenericoDet.ObtenerAsync((entry, noLinea));
         }
 
         public async Task<IQueryable<FacturaDetalle>> ObtenerTodoAsync()
         {
-            return await _repoGenericoDet.ObtenerTodoAsync();
+            var lineas = await _repoGenericoDet.ObtenerTodoAsync();
+            var entradasDeNotas = (await _repoEncabezado.ObtenerTodoAsync())
+                .Where(h => h.DocSubType != SubTipoFactura)
+                .Select(h => h.Entry);
+            return lineas.Where(l => !entradasDeNotas.Contains(l.Entry));
         }
 
         public async Task<IEnumerable<FacturaDetalle>> ObtenerPorFacturaAsync(int entry)
         {
+            var encabezado = await _repoEncabezado.ObtenerAsync(entry);
+            if (encabezado is not null && encabezado.DocSubType != SubTipoFactura)
+                return Array.Empty<FacturaDetalle>();
+
             var queryable = await _repoGenericoDet.ObtenerTodoAsync();
             return await queryable.Where(x => x.Entry == entry).ToListAsync();
         }
