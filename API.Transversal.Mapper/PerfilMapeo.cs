@@ -209,13 +209,13 @@ namespace API.Transversal.Mapper
             CreateMap<NotaDebitoDetalleCrearDTO, FacturaDetalle>();
 
             // NotaDebitoCompra
-            CreateMap<NotaDebitoCompra, NotaDebitoCompraDTO>();
-            CreateMap<NotaDebitoCompraCrearDTO, NotaDebitoCompra>();
-            CreateMap<NotaDebitoCompraActualizarDTO, NotaDebitoCompra>();
+            CreateMap<FacturaCompra, NotaDebitoCompraDTO>();
+            CreateMap<NotaDebitoCompraCrearDTO, FacturaCompra>();
+            CreateMap<NotaDebitoCompraActualizarDTO, FacturaCompra>();
 
             // NotaDebitoCompraDetalle
-            CreateMap<NotaDebitoCompraDetalle, NotaDebitoCompraDetalleDTO>();
-            CreateMap<NotaDebitoCompraDetalleCrearDTO, NotaDebitoCompraDetalle>();
+            CreateMap<FacturaCompraDetalle, NotaDebitoCompraDetalleDTO>();
+            CreateMap<NotaDebitoCompraDetalleCrearDTO, FacturaCompraDetalle>();
 
             // NotaCredito
             CreateMap<NotaCredito, NotaCreditoDTO>();

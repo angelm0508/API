@@ -59,10 +59,10 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public void Proveedor_Mapeos_EquivalentesAlCliente()
         {
-            var entidad = _mapper.Map<NotaDebitoCompra>(new NotaDebitoCompraCrearDTO { Serie = 35, CodigoSn = "P001", BaseTipo = 13, BaseEntry = 4 });
-            var detalle = _mapper.Map<NotaDebitoCompraDetalle>(new NotaDebitoCompraDetalleCrearDTO { Descripcion = "Diferencia de precio", CodigoImpuesto = "EXE" });
-            var dto = _mapper.Map<NotaDebitoCompraDTO>(new NotaDebitoCompra { Entry = 1, CodigoSn = "P001" });
-            var lineaDto = _mapper.Map<NotaDebitoCompraDetalleDTO>(new NotaDebitoCompraDetalle { Entry = 1, NoLinea = 1, Descripcion = "Z", CodigoImpuesto = "EXE" });
+            var entidad = _mapper.Map<FacturaCompra>(new NotaDebitoCompraCrearDTO { Serie = 35, CodigoSn = "P001", BaseTipo = 13, BaseEntry = 4 });
+            var detalle = _mapper.Map<FacturaCompraDetalle>(new NotaDebitoCompraDetalleCrearDTO { Descripcion = "Diferencia de precio", CodigoImpuesto = "EXE" });
+            var dto = _mapper.Map<NotaDebitoCompraDTO>(new FacturaCompra { Entry = 1, CodigoSn = "P001" });
+            var lineaDto = _mapper.Map<NotaDebitoCompraDetalleDTO>(new FacturaCompraDetalle { Entry = 1, NoLinea = 1, Descripcion = "Z", CodigoImpuesto = "EXE" });
 
             Assert.Equal(13, entidad.BaseTipo);
             Assert.Equal("Diferencia de precio", detalle.Descripcion);
@@ -77,6 +77,20 @@ namespace API.Service.WebApi.Tests.Application
             var linea = _mapper.Map<FacturaDetalle>(new NotaDebitoDetalleCrearDTO { CodArticulo = "ART1", CodAlmacen = "01", CodigoImpuesto = "IVA" });
             var dto = _mapper.Map<NotaDebitoDTO>(new Factura { Entry = 4, DocType = "S", DocSubType = "ND" });
             var lineaDto = _mapper.Map<NotaDebitoDetalleDTO>(new FacturaDetalle { Entry = 4, NoLinea = 1, CodArticulo = "ART1", CodAlmacen = "01" });
+
+            Assert.Equal("I", entidad.DocType);
+            Assert.Equal(("ART1", "01"), (linea.CodArticulo, linea.CodAlmacen));
+            Assert.Equal("S", dto.DocType);
+            Assert.Equal(("ART1", "01"), (lineaDto.CodArticulo, lineaDto.CodAlmacen));
+        }
+
+        [Fact]
+        public void Proveedor_MapeaElModoYElArticuloEnAmbosSentidos()
+        {
+            var entidad = _mapper.Map<FacturaCompra>(new NotaDebitoCompraCrearDTO { DocType = "I", Serie = 35 });
+            var linea = _mapper.Map<FacturaCompraDetalle>(new NotaDebitoCompraDetalleCrearDTO { CodArticulo = "ART1", CodAlmacen = "01", CodigoImpuesto = "EXE" });
+            var dto = _mapper.Map<NotaDebitoCompraDTO>(new FacturaCompra { Entry = 4, DocType = "S", DocSubType = "DN" });
+            var lineaDto = _mapper.Map<NotaDebitoCompraDetalleDTO>(new FacturaCompraDetalle { Entry = 4, NoLinea = 1, CodArticulo = "ART1", CodAlmacen = "01" });
 
             Assert.Equal("I", entidad.DocType);
             Assert.Equal(("ART1", "01"), (linea.CodArticulo, linea.CodAlmacen));

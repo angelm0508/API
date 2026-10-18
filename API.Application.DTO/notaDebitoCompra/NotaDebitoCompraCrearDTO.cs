@@ -16,6 +16,8 @@ namespace API.Application.DTO.notaDebitoCompra
         public string? Imprimido { get; set; }
         public string? EstadoDoc { get; set; }
         public string? TipoObjeto { get; set; }
+        /// <summary>Tipo de nota: "I" = por artículos (mueve inventario), "S" = por concepto. Obligatorio al crear.</summary>
+        public string? DocType { get; set; }
         public DateTime? FechaDoc { get; set; }
         public DateTime? FechaEmision { get; set; }
         public DateTime? FechaCancelado { get; set; }
@@ -33,8 +35,7 @@ namespace API.Application.DTO.notaDebitoCompra
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
 
-        /// <summary>Lineas (conceptos) del documento: se registran junto con el encabezado y no se
-        /// pueden modificar despues.</summary>
+        /// <summary>Lineas del documento (artículos o conceptos según DocType): se registran junto con el encabezado y no se pueden modificar despues.</summary>
         public List<NotaDebitoCompraDetalleCrearDTO> Lineas { get; set; } = new();
     }
 }
