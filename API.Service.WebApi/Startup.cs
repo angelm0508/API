@@ -272,6 +272,8 @@ namespace API.Service.WebApi
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IEjecutorTransaccion, EjecutorTransaccion>();
             services.AddTransient<IInventarioAsientoService, InventarioAsientoService>();
+            services.AddTransient<IDocumentoBaseService, DocumentoBaseService>();
+            services.AddTransient<IDocumentoBaseApplication, DocumentoBaseApplication>();
 
             services.AddTransient<IExistenciaDomain, ExistenciaDomain>();
             services.AddTransient<IExistenciaApplication, ExistenciaApplication>();
