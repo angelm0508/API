@@ -119,6 +119,9 @@ namespace API.Domain.Core
             // Cancelación: Cancelado pasa a 'S'.
             if (obj.Cancelado == "S")
             {
+                // Una entrega que ya se facturó (total o parcialmente) no se cancela: primero se cancela la factura.
+                await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Entrega, id, "cancelar el documento");
+
                 return await _tx.EjecutarAsync(async () =>
                 {
                     await _asiento.RevertirAsync(TipoObjetoEntrega, id);

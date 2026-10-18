@@ -1,5 +1,6 @@
 using API.Domain.Core;
 using API.Domain.Entity.Models;
+using API.Domain.Interface;
 using API.Infraestructure.Interface;
 using Moq;
 using Xunit;
@@ -11,6 +12,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<Cotizacion, int>> _repoCotizacionMock;
         private readonly Mock<IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)>> _repoDetalleMock;
         private readonly Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>> _repoNumeracionMock;
+        private readonly Mock<IDocumentoBaseService> _documentoBase = new();
         private readonly CotizacionDomain _domain;
 
         public CotizacionDomainTests()
@@ -18,7 +20,7 @@ namespace API.Service.WebApi.Tests.Domain
             _repoCotizacionMock = new Mock<IRepositorioGenerico<Cotizacion, int>>();
             _repoDetalleMock = new Mock<IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)>>();
             _repoNumeracionMock = new Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>>();
-            _domain = new CotizacionDomain(_repoCotizacionMock.Object, _repoDetalleMock.Object, _repoNumeracionMock.Object);
+            _domain = new CotizacionDomain(_repoCotizacionMock.Object, _repoDetalleMock.Object, _repoNumeracionMock.Object, _documentoBase.Object);
         }
 
         private static NumeracionDocumentoDet SerieAutogenerada(int? sigNumero = 5, int? finNumero = null, string bloqueado = "N") => new()
@@ -128,6 +130,67 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.True(resultado);
             Assert.Equal("3", obj.TipoObjeto);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_ConDerivados_Lanza_YNoBorraNada()
+        {
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, 1, "eliminar el documento"))
+                .ThrowsAsync(new Exception("No se puede eliminar el documento: lo usan Pedido 3. Cancele primero esos documentos."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.EliminarAsync(1));
+
+            Assert.Equal("No se puede eliminar el documento: lo usan Pedido 3. Cancele primero esos documentos.", ex.Message);
+            _repoDetalleMock.Verify(r => r.EliminarAsync(It.IsAny<(int, int)>()), Times.Never);
+            _repoCotizacionMock.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_PasarAEstadoCancelado_ValidaElOrigen()
+        {
+            _repoCotizacionMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Cotizacion { Entry = 1, EstadoDoc = "A", CodigoSn = "CL-1" });
+            _repoCotizacionMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Cotizacion>())).ReturnsAsync(true);
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, 1, "cancelar el documento"))
+                .ThrowsAsync(new Exception("bloqueado"));
+
+            await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(1, new Cotizacion { EstadoDoc = "C", CodigoSn = "CL-1" }));
+
+            _repoCotizacionMock.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Cotizacion>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CambiarElSocio_ValidaElOrigen()
+        {
+            _repoCotizacionMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Cotizacion { Entry = 1, EstadoDoc = "A", CodigoSn = "CL-1" });
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, 1, "cambiar el socio de negocio"))
+                .ThrowsAsync(new Exception("bloqueado"));
+
+            await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(1, new Cotizacion { EstadoDoc = "A", CodigoSn = "CL-2" }));
+
+            _repoCotizacionMock.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Cotizacion>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_SinCancelarNiCambiarSocio_NoValida()
+        {
+            _repoCotizacionMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Cotizacion { Entry = 1, EstadoDoc = "A", CodigoSn = "CL-1" });
+            _repoCotizacionMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Cotizacion>())).ReturnsAsync(true);
+
+            var ok = await _domain.ActualizarAsync(1, new Cotizacion { EstadoDoc = "A", CodigoSn = "cl-1", Comentario = "x" });
+
+            Assert.True(ok);
+            _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_YaCancelada_NoRevalida()
+        {
+            _repoCotizacionMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Cotizacion { Entry = 1, EstadoDoc = "C", CodigoSn = "CL-1" });
+            _repoCotizacionMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Cotizacion>())).ReturnsAsync(true);
+
+            await _domain.ActualizarAsync(1, new Cotizacion { EstadoDoc = "C", CodigoSn = "CL-1" });
+
+            _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
         }
     }
 }

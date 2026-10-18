@@ -207,5 +207,50 @@ namespace API.Service.WebApi.Tests.Domain
             _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
             _documentoBase.Verify(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()), Times.Never);
         }
+
+        [Fact]
+        public async Task EliminarAsync_ConDerivados_Lanza_YNoBorraNada()
+        {
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, 1, "eliminar el documento"))
+                .ThrowsAsync(new Exception("No se puede eliminar el documento: lo usan Entrega 4. Cancele primero esos documentos."));
+
+            await Assert.ThrowsAsync<Exception>(() => _domain.EliminarAsync(1));
+
+            _repoDetalleMock.Verify(r => r.EliminarAsync(It.IsAny<(int, int)>()), Times.Never);
+            _repoPedidoMock.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_PasarAEstadoCancelado_ValidaElOrigen()
+        {
+            _repoPedidoMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Pedido { Entry = 1, EstadoDoc = "A", CodigoSn = "CL-1" });
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, 1, "cancelar el documento"))
+                .ThrowsAsync(new Exception("bloqueado"));
+
+            await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "C", CodigoSn = "CL-1" }));
+
+            _repoPedidoMock.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Pedido>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CambiarElSocio_ValidaElOrigen()
+        {
+            _repoPedidoMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Pedido { Entry = 1, EstadoDoc = "A", CodigoSn = "CL-1" });
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, 1, "cambiar el socio de negocio"))
+                .ThrowsAsync(new Exception("bloqueado"));
+
+            await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-2" }));
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_SinCancelarNiCambiarSocio_NoValida()
+        {
+            _repoPedidoMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Pedido { Entry = 1, EstadoDoc = "A", CodigoSn = "CL-1" });
+            _repoPedidoMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Pedido>())).ReturnsAsync(true);
+
+            await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-1" });
+
+            _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
     }
 }

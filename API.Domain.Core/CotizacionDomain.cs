@@ -15,15 +15,18 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<Cotizacion, int> _repoGenericoCotizacion;
         private readonly IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> _repoGenericoDetalle;
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
+        private readonly IDocumentoBaseService _documentoBase;
 
         public CotizacionDomain(
             IRepositorioGenerico<Cotizacion, int> repoGenericoCotizacion,
             IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> repoGenericoDetalle,
-            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion)
+            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion,
+            IDocumentoBaseService documentoBase)
         {
             _repoGenericoCotizacion = repoGenericoCotizacion;
             _repoGenericoDetalle = repoGenericoDetalle;
             _repoGenericoNumeracion = repoGenericoNumeracion;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -82,11 +85,27 @@ namespace API.Domain.Core
         public async Task<bool> ActualizarAsync(int id, Cotizacion obj)
         {
             obj.TipoObjeto = TipoObjetoCotizacion;
+
+            // Un origen con documentos derivados activos no se cancela ni cambia de socio (se calcula antes de actualizar:
+            // la entidad existente está rastreada y el update la pisa).
+            var existente = await _repoGenericoCotizacion.ObtenerAsync(id);
+            if (existente is not null)
+            {
+                var seCancela = existente.EstadoDoc != "C" && existente.Cancelado != "S" && (obj.EstadoDoc == "C" || obj.Cancelado == "S");
+                var cambiaSocio = !string.Equals(existente.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase);
+                if (seCancela)
+                    await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, id, "cancelar el documento");
+                else if (cambiaSocio)
+                    await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, id, "cambiar el socio de negocio");
+            }
+
             return await _repoGenericoCotizacion.ActualizarAsync(id, obj);
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
+            await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, id, "eliminar el documento");
+
             // No existe FK/cascada entre CotizacionDetalle.Entry y Cotizacion.Entry en la base de
             // datos, así que las líneas de detalle se borran a mano antes que el encabezado.
             var detalles = await _repoGenericoDetalle.ObtenerTodoAsync();

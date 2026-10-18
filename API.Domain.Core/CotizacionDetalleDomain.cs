@@ -9,9 +9,14 @@ namespace API.Domain.Core
     {
         private readonly IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> _repoGenericoDet;
 
-        public CotizacionDetalleDomain(IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> repoGenericoDet)
+        private readonly IDocumentoBaseService _documentoBase;
+
+        public CotizacionDetalleDomain(
+            IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> repoGenericoDet,
+            IDocumentoBaseService documentoBase)
         {
             _repoGenericoDet = repoGenericoDet;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -26,11 +31,13 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(int entry, int noLinea, CotizacionDetalle obj)
         {
+            await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoVenta.Cotizacion, entry, noLinea, "modificar");
             return await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
         }
 
         public async Task<bool> EliminarAsync(int entry, int noLinea)
         {
+            await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoVenta.Cotizacion, entry, noLinea, "eliminar");
             return await _repoGenericoDet.EliminarAsync((entry, noLinea));
         }
 

@@ -121,11 +121,27 @@ namespace API.Domain.Core
         public async Task<bool> ActualizarAsync(int id, Pedido obj)
         {
             obj.TipoObjeto = TipoObjetoPedido;
+
+            // Un origen con documentos derivados activos no se cancela ni cambia de socio (se calcula antes de actualizar:
+            // la entidad existente está rastreada y el update la pisa).
+            var existente = await _repoGenericoPedido.ObtenerAsync(id);
+            if (existente is not null)
+            {
+                var seCancela = existente.EstadoDoc != "C" && existente.Cancelado != "S" && (obj.EstadoDoc == "C" || obj.Cancelado == "S");
+                var cambiaSocio = !string.Equals(existente.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase);
+                if (seCancela)
+                    await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, id, "cancelar el documento");
+                else if (cambiaSocio)
+                    await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, id, "cambiar el socio de negocio");
+            }
+
             return await _repoGenericoPedido.ActualizarAsync(id, obj);
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
+            await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, id, "eliminar el documento");
+
             // No existe FK/cascada entre PedidoDetalle.Entry y Pedido.Entry en la base de datos,
             // así que las líneas de detalle se borran a mano antes que el encabezado.
             var detalles = await _repoGenericoDetalle.ObtenerTodoAsync();

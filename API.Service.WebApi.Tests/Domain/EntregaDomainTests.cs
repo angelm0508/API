@@ -300,5 +300,29 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(-1, obj.BaseTipo);
             Assert.Null(obj.BaseEntry);
-        }    }
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelar_ConDerivados_Lanza_YNoRevierteInventario()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new Entrega { Entry = 7, Cancelado = "N", EstadoInv = "A" });
+            _documentoBase.Setup(d => d.ValidarOrigenModificableAsync(TipoDocumentoVenta.Entrega, 7, "cancelar el documento"))
+                .ThrowsAsync(new Exception("No se puede cancelar el documento: lo usan Factura 2. Cancele primero esos documentos."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(7, new Entrega { Cancelado = "S" }));
+
+            Assert.Equal("No se puede cancelar el documento: lo usan Factura 2. Cancele primero esos documentos.", ex.Message);
+            _asiento.Verify(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_EdicionDeComentario_NoValidaElOrigen()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new Entrega { Entry = 7, Cancelado = "N", EstadoInv = "A" });
+
+            await _domain.ActualizarAsync(7, new Entrega { Comentario = "x" });
+
+            _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+    }
 }
