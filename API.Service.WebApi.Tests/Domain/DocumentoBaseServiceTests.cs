@@ -427,5 +427,75 @@ namespace API.Service.WebApi.Tests.Domain
                 _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(5, 31, 1, "ART1", 5.01m) }));
             Assert.Equal("La cantidad de la línea 1 de Entrega 4 excede la cantidad abierta (5).", ex.Message);
         }
+
+        // ---------- Integridad del origen ----------
+
+        [Fact]
+        public async Task OrigenModificable_SinDerivados_NoLanza()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+
+            await _svc.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, 1, "cancelar el documento");
+        }
+
+        [Fact]
+        public async Task OrigenModificable_ConDerivados_NombraLosDocumentos()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 4m, 3, 1, 1);
+            Fac(40, 2);
+            LineaFac(40, 1, "ART1", 3m, 3, 1, 1);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, 1, "cancelar el documento"));
+            Assert.Equal("No se puede cancelar el documento: lo usan Pedido 3 y Factura 2. Cancele primero esos documentos.", ex.Message);
+        }
+
+        [Fact]
+        public async Task OrigenModificable_TresDerivados_UsaComasYY()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 1m, 3, 1, 1);
+            Ent(31, 4);
+            LineaEnt(31, 1, "ART1", 1m, 3, 1, 1);
+            Fac(40, 2);
+            LineaFac(40, 1, "ART1", 1m, 3, 1, 1);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarOrigenModificableAsync(TipoDocumentoVenta.Cotizacion, 1, "eliminar el documento"));
+            Assert.Equal("No se puede eliminar el documento: lo usan Pedido 3, Entrega 4 y Factura 2. Cancele primero esos documentos.", ex.Message);
+        }
+
+        [Fact]
+        public async Task OrigenModificable_DerivadoCancelado_NoBloquea()
+        {
+            Ent(31, 4);
+            LineaEnt(31, 1, "ART1", 5m);
+            Fac(40, 2, cancelado: "S");
+            LineaFac(40, 1, "ART1", 5m, 5, 31, 1);
+
+            await _svc.ValidarOrigenModificableAsync(TipoDocumentoVenta.Entrega, 31, "cancelar el documento");
+        }
+
+        [Fact]
+        public async Task LineaModificable_SoloBloqueaLaLineaConsumida()
+        {
+            Cot(1, 12);
+            LineaCot(1, 1, "ART1", 10m);
+            LineaCot(1, 2, "ART2", 10m);
+            Ped(30, 3);
+            LineaPed(30, 1, "ART1", 4m, 3, 1, 1);
+
+            await _svc.ValidarLineaModificableAsync(TipoDocumentoVenta.Cotizacion, 1, 2, "modificar");   // la 2 está libre
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineaModificableAsync(TipoDocumentoVenta.Cotizacion, 1, 1, "eliminar"));
+            Assert.Equal("No se puede eliminar la línea 1: la usan Pedido 3. Cancele primero esos documentos.", ex.Message);
+        }
     }
 }

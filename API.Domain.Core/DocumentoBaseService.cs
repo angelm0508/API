@@ -244,10 +244,20 @@ namespace API.Domain.Core
             }
         }
 
-        public Task ValidarOrigenModificableAsync(int tipoOrigen, int entry, string accion) =>
-            throw new NotImplementedException("Task 4");
+        public async Task ValidarOrigenModificableAsync(int tipoOrigen, int entry, string accion)
+        {
+            var derivados = await ObtenerDerivadosAsync(tipoOrigen, entry);
+            if (derivados.Count == 0) return;
 
-        public Task ValidarLineaModificableAsync(int tipoOrigen, int entry, int noLinea, string accion) =>
-            throw new NotImplementedException("Task 4");
+            throw new Exception($"No se puede {accion}: lo usan {Listar(derivados.Select(d => d.Etiqueta))}. Cancele primero esos documentos.");
+        }
+
+        public async Task ValidarLineaModificableAsync(int tipoOrigen, int entry, int noLinea, string accion)
+        {
+            var derivados = await ObtenerDerivadosAsync(tipoOrigen, entry, noLinea);
+            if (derivados.Count == 0) return;
+
+            throw new Exception($"No se puede {accion} la línea {noLinea}: la usan {Listar(derivados.Select(d => d.Etiqueta))}. Cancele primero esos documentos.");
+        }
     }
 }
