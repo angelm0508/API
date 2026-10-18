@@ -16,19 +16,22 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoNumeracion;
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
+        private readonly IDocumentoBaseService _documentoBase;
 
         public FacturaDomain(
             IRepositorioGenerico<Factura, int> repoFactura,
             IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> repoDetalle,
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
-            IInventarioAsientoService asiento)
+            IInventarioAsientoService asiento,
+            IDocumentoBaseService documentoBase)
         {
             _repoFactura = repoFactura;
             _repoDetalle = repoDetalle;
             _repoNumeracion = repoNumeracion;
             _tx = tx;
             _asiento = asiento;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -41,6 +44,11 @@ namespace API.Domain.Core
             obj.Cancelado = "N";                  // un documento recién registrado nunca nace cancelado
             obj.FechaCancelado = null;
 
+            // CK_Factura_Base: una factura ('--') solo admite BaseTipo = -1 en la cabecera. La referencia al documento
+            // base (copiar a) vive únicamente en las líneas.
+            obj.BaseTipo = -1;
+            obj.BaseEntry = null;
+
             var serie = await _repoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
@@ -52,6 +60,12 @@ namespace API.Domain.Core
 
             var lineasList = lineas?.ToList() ?? new List<FacturaDetalle>();
             ValidarLineas(lineasList); // antes de numerar: un error de línea no debe avanzar el consecutivo
+
+            // Líneas copiadas de una cotización, un pedido o una entrega: se validan antes de numerar, así un error no
+            // avanza el consecutivo (ver DocumentoBaseService.ValidarLineasAsync).
+            var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
+            if (basadas.Count > 0)
+                await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Factura, obj.CodigoSn, basadas);
 
             if (serie.Manual == "S")
             {
@@ -82,7 +96,7 @@ namespace API.Domain.Core
                 }
 
                 var movimientos = lineasList
-                    .Where(l => (l.Cantidad ?? 0m) > 0m && l.BaseEntry == null)   // BaseEntry != null -> esa mercancia ya la movio su Entrega
+                    .Where(l => (l.Cantidad ?? 0m) > 0m && l.BaseTipo != TipoDocumentoVenta.Entrega)   // BaseTipo 5: esa mercancía ya la movió su Entrega; con base Cotización o Pedido nadie entregó todavía
                     .Select(l => new MovimientoRequest(
                         TipoDoc: TipoObjetoFactura,
                         DocEntry: obj.Entry,

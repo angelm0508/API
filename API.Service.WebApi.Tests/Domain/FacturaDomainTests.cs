@@ -16,13 +16,14 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>> _repoNumeracion = new();
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IInventarioAsientoService> _asiento = new();
+        private readonly Mock<IDocumentoBaseService> _documentoBase = new();
         private readonly FacturaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
         public FacturaDomainTests()
         {
-            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object);
+            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object);
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
@@ -46,6 +47,9 @@ namespace API.Service.WebApi.Tests.Domain
 
         private static FacturaDetalle LineaBase(string art, string alm, decimal? cant, decimal? precio, int? baseEntry) =>
             new() { CodArticulo = art, CodAlmacen = alm, Cantidad = cant, Precio = precio, BaseEntry = baseEntry };
+
+        private static FacturaDetalle LineaDe(string art, string alm, decimal? cant, decimal? precio, int? baseTipo, int? baseEntry, int? baseLinea) =>
+            new() { CodArticulo = art, CodAlmacen = alm, Cantidad = cant, Precio = precio, BaseTipo = baseTipo, BaseEntry = baseEntry, BaseLinea = baseLinea };
 
         [Fact]
         public async Task InsertarAsync_ConLineas_NumeraAsientaYMarcaEstadoInv()
@@ -113,12 +117,12 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task InsertarAsync_LineaConBaseEntry_NoGeneraMovimiento_PeroSiSeInsertaLinea()
+        public async Task InsertarAsync_LineaConBaseEntrega_NoGeneraMovimiento_PeroSiSeInsertaLinea()
         {
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
             var obj = new Factura { Serie = 4 };
 
-            await _domain.InsertarAsync(obj, new[] { LineaBase("ART1", "01", 10m, 25m, baseEntry: 500) });
+            await _domain.InsertarAsync(obj, new[] { LineaDe("ART1", "01", 10m, 25m, baseTipo: 5, baseEntry: 500, baseLinea: 1) });
 
             Assert.Empty(_movimientosAsentados);
             _repoDetalle.Verify(r => r.AgregarSinGuardarAsync(It.Is<FacturaDetalle>(l => l.Entry == 99 && l.NoLinea == 1)), Times.Once);
@@ -137,15 +141,15 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task InsertarAsync_Mezcla_SoloLaLineaSinBaseEntryGeneraMovimiento()
+        public async Task InsertarAsync_Mezcla_SoloLaLineaQueNoVieneDeEntregaGeneraMovimiento()
         {
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
             var obj = new Factura { Serie = 4 };
 
             await _domain.InsertarAsync(obj, new[]
             {
-                LineaBase("ART1", "01", 10m, 25m, baseEntry: 500),
-                LineaBase("ART2", "01", 4m, 30m, baseEntry: null),
+                LineaDe("ART1", "01", 10m, 25m, baseTipo: 5, baseEntry: 500, baseLinea: 1),
+                LineaDe("ART2", "01", 4m, 30m, baseTipo: null, baseEntry: null, baseLinea: null),
             });
 
             Assert.Single(_movimientosAsentados);
@@ -375,6 +379,78 @@ namespace API.Service.WebApi.Tests.Domain
             var resultado = (await _domain.ObtenerTodoAsync()).ToList();
 
             Assert.Equal(new[] { 1, 3 }, resultado.Select(f => f.Entry));
+        }
+
+        [Theory]
+        [InlineData(3)]   // base Cotización
+        [InlineData(4)]   // base Pedido
+        public async Task InsertarAsync_LineaConBaseCotizacionOPedido_SiGeneraMovimiento(int baseTipo)
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4 };
+
+            await _domain.InsertarAsync(obj, new[] { LineaDe("ART1", "01", 10m, 25m, baseTipo: baseTipo, baseEntry: 500, baseLinea: 1) });
+
+            var m = Assert.Single(_movimientosAsentados);
+            Assert.Equal(-10m, m.Cantidad);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LineasConBase_ValidaConElServicioAntesDeNumerar()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var obj = new Factura { Serie = 4, CodigoSn = "CL-1" };
+
+            await _domain.InsertarAsync(obj, new[]
+            {
+                LineaDe("ART1", "01", 10m, 25m, baseTipo: 3, baseEntry: 500, baseLinea: 2),
+                LineaDe("ART2", "01", 1m, 25m, baseTipo: null, baseEntry: null, baseLinea: null),
+            });
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1",
+                It.Is<IReadOnlyList<LineaBaseRequest>>(l => l.Count == 1 && l[0] == new LineaBaseRequest(3, 500, 2, "ART1", 10m))), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinLineasConBase_NoLlamaAlServicio()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+
+            await _domain.InsertarAsync(new Factura { Serie = 4 }, new[] { Linea("ART1", "01", 10m, 25m) });
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ValidacionDeBaseFalla_NoNumeraNiGuardaNiAsienta()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            _documentoBase.Setup(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()))
+                .ThrowsAsync(new Exception("La cantidad de la línea 1 de Cotización 12 excede la cantidad abierta (6)."));
+            var obj = new Factura { Serie = 4 };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _domain.InsertarAsync(obj, new[] { LineaDe("ART1", "01", 10m, 25m, baseTipo: 3, baseEntry: 500, baseLinea: 1) }));
+
+            Assert.Equal("La cantidad de la línea 1 de Cotización 12 excede la cantidad abierta (6).", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el consecutivo no avanzó
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
+            Assert.Empty(_movimientosAsentados);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_CabeceraSiempreConBaseTipoMenosUno()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4, BaseTipo = 5, BaseEntry = 77 };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal(-1, obj.BaseTipo);
+            Assert.Null(obj.BaseEntry);
         }
     }
 }
