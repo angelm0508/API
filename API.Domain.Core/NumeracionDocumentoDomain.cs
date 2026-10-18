@@ -1,3 +1,4 @@
+using API.Domain.Entity;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
@@ -16,9 +17,10 @@ namespace API.Domain.Core
         #region async methods
         public async Task<bool> InsertarAsync(NumeracionDocumento obj)
         {
-            if (await ObtenerPorCodigoAsync(obj.CodigoObj) != null)
+            if (await ObtenerPorCodigoAsync(NumeracionClave.Componer(obj.CodigoObj, obj.SubTipoDoc)) != null)
             {
-                throw new Exception($"Ya existe un registro con el código: {obj.CodigoObj}");
+                var sufijo = string.IsNullOrEmpty(obj.SubTipoDoc) || obj.SubTipoDoc == "--" ? string.Empty : $" ({obj.SubTipoDoc})";
+                throw new Exception($"Ya existe un registro con el código: {obj.CodigoObj}{sufijo}");
             }
 
             await _repoNumeracion.InsertarAsync(obj);
@@ -35,8 +37,11 @@ namespace API.Domain.Core
 
         public async Task<NumeracionDocumento> ObtenerPorCodigoAsync(string codigo)
         {
+            var (codigoObj, subTipo) = NumeracionClave.Separar(codigo);
             var queryable = await _repoNumeracion.ObtenerTodoAsync();
-            var numeracion = await queryable.FirstOrDefaultAsync(x => x.CodigoObj == codigo);
+            var numeracion = subTipo is null
+                ? await queryable.FirstOrDefaultAsync(x => x.CodigoObj == codigoObj)
+                : await queryable.FirstOrDefaultAsync(x => x.CodigoObj == codigoObj && x.SubTipoDoc == subTipo);
 
             return numeracion;
         }
