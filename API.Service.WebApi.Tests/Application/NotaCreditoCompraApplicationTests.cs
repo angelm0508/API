@@ -146,6 +146,20 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
+        public async Task ObtenerFacturasCompraBase_MapeaElSubtipoDelDocumento()
+        {
+            _domain.Setup(d => d.ObtenerFacturasCompraBaseAsync("SN1")).ReturnsAsync(new List<FacturaCompraAcreditable>
+            {
+                new(new FacturaCompra { Entry = 12, NumDoc = 100, TotalDoc = 112m, MonedaDoc = "QTZ", CodigoSn = "SN1", DocSubType = "--" }, 0m),
+                new(new FacturaCompra { Entry = 13, NumDoc = 7, TotalDoc = 50m, MonedaDoc = "QTZ", CodigoSn = "SN1", DocSubType = "DN" }, 0m)
+            });
+
+            var lista = (await _app.ObtenerFacturasCompraBaseAsync("SN1")).Dato.ToList();
+
+            Assert.Equal(new[] { "--", "DN" }, lista.Select(f => f.DocSubType));
+        }
+
+        [Fact]
         public async Task ObtenerFacturasCompraBase_MapeaElResumenConAcreditadoYDisponible()
         {
             _domain.Setup(d => d.ObtenerFacturasCompraBaseAsync("SN1")).ReturnsAsync(new List<FacturaCompraAcreditable>

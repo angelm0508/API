@@ -9,6 +9,9 @@ namespace API.Application.DTO.notaCredito
         public decimal? TotalDoc { get; set; }
         public string? MonedaDoc { get; set; }
 
+        /// <summary>"--" = factura; "ND" (cliente) = nota de débito usada como base.</summary>
+        public string? DocSubType { get; set; }
+
         /// <summary>Suma de las notas de credito no canceladas ya emitidas sobre esta factura.</summary>
         public decimal TotalAcreditado { get; set; }
 

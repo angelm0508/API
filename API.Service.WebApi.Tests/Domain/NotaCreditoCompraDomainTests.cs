@@ -395,10 +395,10 @@ namespace API.Service.WebApi.Tests.Domain
 
         // ---------------- InsertarAsync: factura base ----------------
 
-        private void PrepararFactura(int entry = 12, string socio = "SN1", string cancelado = "N", string moneda = "QTZ", decimal total = 1000m) =>
+        private void PrepararFactura(int entry = 12, string socio = "SN1", string cancelado = "N", string moneda = "QTZ", decimal total = 1000m, string subTipo = "--") =>
             _repoFacturaCompra.Setup(r => r.ObtenerAsync(entry)).ReturnsAsync(new FacturaCompra
             {
-                Entry = entry, CodigoSn = socio, Cancelado = cancelado, MonedaDoc = moneda, TotalDoc = total
+                Entry = entry, CodigoSn = socio, Cancelado = cancelado, MonedaDoc = moneda, TotalDoc = total, DocSubType = subTipo
             });
 
         private static NotaCreditoCompra NotaConBase(int entry = 12) => Nota(n => { n.BaseTipo = TipoBase; n.BaseEntry = entry; });
@@ -487,6 +487,42 @@ namespace API.Service.WebApi.Tests.Domain
             var entry = await _domain.InsertarAsync(NotaConBase(), new[] { Linea() });
 
             Assert.Equal(99, entry);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ConBaseUnaNotaDeDebito_LaAceptaYAplicaElLimiteSobreSuTotal()
+        {
+            PrepararFactura(total: 112m, subTipo: "DN");
+
+            var entry = await _domain.InsertarAsync(NotaConBase(), new[] { Linea() });   // la nota suma exactamente 112
+
+            Assert.Equal(99, entry);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ConBaseUnaNotaDeDebito_QueSeExcede_Lanza()
+        {
+            PrepararFactura(total: 100m, subTipo: "DN");
+
+            Assert.Equal(Exceso("112.00", "100.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+        }
+
+        [Fact]
+        public async Task ObtenerFacturasCompraBaseAsync_IncluyeLasNotasDeDebitoDelSocio()
+        {
+            var filas = new List<FacturaCompra>
+            {
+                new() { Entry = 1, CodigoSn = "SN1", Cancelado = "N", TotalDoc = 112m, DocSubType = "--" },
+                new() { Entry = 2, CodigoSn = "SN1", Cancelado = "N", TotalDoc = 50m, DocSubType = "DN" }
+            };
+            _repoFacturaCompra.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(filas.AsAsyncQueryable());
+            NotasPrevias(Previa(2, 20m));
+
+            var resultado = (await _domain.ObtenerFacturasCompraBaseAsync("SN1")).ToList();
+
+            Assert.Equal(new[] { 2, 1 }, resultado.Select(f => f.Documento.Entry));
+            Assert.Equal("DN", resultado[0].Documento.DocSubType);
+            Assert.Equal(20m, resultado[0].TotalAcreditado);
         }
 
         [Fact]

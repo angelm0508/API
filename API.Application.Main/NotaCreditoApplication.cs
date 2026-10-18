@@ -139,6 +139,7 @@ namespace API.Application.Main
                     FechaDoc = f.Documento.FechaDoc,
                     TotalDoc = f.Documento.TotalDoc,
                     MonedaDoc = f.Documento.MonedaDoc,
+                    DocSubType = f.Documento.DocSubType,
                     TotalAcreditado = f.TotalAcreditado,
                     Disponible = Disponible(f.Documento.TotalDoc, f.TotalAcreditado)
                 }).ToList();
