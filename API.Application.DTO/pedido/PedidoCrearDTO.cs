@@ -34,5 +34,11 @@ namespace API.Application.DTO.pedido
         public decimal? TotalBruto { get; set; }
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
+
+        /// <summary>
+        /// Líneas del pedido (opcional). Si vienen, el pedido se guarda con sus líneas en una sola petición y una sola
+        /// transacción (lo usa "Copiar a"); si no, se mantiene el flujo anterior de cabecera y luego cada línea.
+        /// </summary>
+        public List<PedidoDetalleCrearDTO> Lineas { get; set; } = new();
     }
 }

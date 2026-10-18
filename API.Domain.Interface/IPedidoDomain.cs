@@ -6,6 +6,8 @@ namespace API.Domain.Interface
     {
         #region async methods
         Task<int> InsertarAsync(Pedido obj);
+        /// <summary>Alta atómica: cabecera + líneas (con o sin documento base) en una sola transacción.</summary>
+        Task<int> InsertarAsync(Pedido obj, IEnumerable<PedidoDetalle> lineas);
         Task<bool> ActualizarAsync(int id, Pedido obj);
         Task<bool> EliminarAsync(int id);
         Task<Pedido> ObtenerAsync(int id);

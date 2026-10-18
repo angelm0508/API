@@ -15,22 +15,69 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<Pedido, int> _repoGenericoPedido;
         private readonly IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)> _repoGenericoDetalle;
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
+        private readonly IEjecutorTransaccion _tx;
+        private readonly IDocumentoBaseService _documentoBase;
 
         public PedidoDomain(
             IRepositorioGenerico<Pedido, int> repoGenericoPedido,
             IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)> repoGenericoDetalle,
-            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion)
+            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion,
+            IEjecutorTransaccion tx,
+            IDocumentoBaseService documentoBase)
         {
             _repoGenericoPedido = repoGenericoPedido;
             _repoGenericoDetalle = repoGenericoDetalle;
             _repoGenericoNumeracion = repoGenericoNumeracion;
+            _tx = tx;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
         public async Task<int> InsertarAsync(Pedido obj)
         {
             obj.TipoObjeto = TipoObjetoPedido;
+            await AsignarNumeroAsync(obj);
 
+            var creado = await _repoGenericoPedido.InsertarAsync(obj);
+            return creado.Entry;
+        }
+
+        public async Task<int> InsertarAsync(Pedido obj, IEnumerable<PedidoDetalle> lineas)
+        {
+            obj.TipoObjeto = TipoObjetoPedido;
+            // CK de la cabecera: solo BaseTipo = -1. La referencia al documento base vive únicamente en las líneas.
+            obj.BaseTipo = -1;
+            obj.BaseEntry = null;
+
+            var lineasList = lineas?.ToList() ?? new List<PedidoDetalle>();
+
+            // Líneas copiadas de una cotización: se validan antes de numerar, así un error no avanza el consecutivo.
+            var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
+            if (basadas.Count > 0)
+                await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Pedido, obj.CodigoSn, basadas);
+
+            await AsignarNumeroAsync(obj);
+
+            return await _tx.EjecutarAsync(async () =>
+            {
+                var creado = await _repoGenericoPedido.InsertarAsync(obj); // Save #1: asigna Entry
+
+                var noLinea = 1;
+                foreach (var linea in lineasList)
+                {
+                    linea.Entry = creado.Entry;
+                    linea.NoLinea = noLinea++;
+                    await _repoGenericoDetalle.AgregarSinGuardarAsync(linea);
+                }
+
+                return creado.Entry;
+            });
+            // EjecutarAsync: Save #2 (líneas + consecutivo) + Commit
+        }
+
+        /// <summary>Valida la serie y asigna el número de documento (manual o el consecutivo de la serie).</summary>
+        private async Task AsignarNumeroAsync(Pedido obj)
+        {
             var serie = await _repoGenericoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
@@ -63,18 +110,12 @@ namespace API.Domain.Core
 
                 obj.NumDoc = serie.SigNumero.Value;
 
-                // No se llama a _repoGenericoNumeracion.ActualizarAsync aquí a propósito: "serie"
-                // ya es una entidad rastreada por el mismo ApiDbTestContext que usa
-                // _repoGenericoPedido (ambos repos genéricos se resuelven en el mismo scope de la
-                // petición), así que este cambio en memoria queda pendiente y se guarda junto con
-                // el INSERT del pedido en el único SaveChangesAsync de abajo -- las dos operaciones
-                // quedan en la misma transacción implícita: si el INSERT falla, el incremento del
-                // consecutivo tampoco se guarda.
+                // No se llama a _repoGenericoNumeracion.ActualizarAsync a propósito: "serie" ya es una entidad
+                // rastreada por el mismo ApiDbTestContext que usan los otros repos genéricos (mismo scope de la
+                // petición), así que el cambio queda pendiente y se guarda junto con el INSERT en el mismo Save --
+                // si el INSERT falla, el incremento del consecutivo tampoco se guarda.
                 serie.SigNumero = serie.SigNumero.Value + 1;
             }
-
-            var creado = await _repoGenericoPedido.InsertarAsync(obj);
-            return creado.Entry;
         }
 
         public async Task<bool> ActualizarAsync(int id, Pedido obj)

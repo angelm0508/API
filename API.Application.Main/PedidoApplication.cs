@@ -26,7 +26,15 @@ namespace API.Application.Main
             try
             {
                 var pedido = _mapper.Map<Pedido>(obj);
-                respuesta.Dato = await _pedidoDomain.InsertarAsync(pedido);
+                if (obj.Lineas is { Count: > 0 })
+                {
+                    var lineas = _mapper.Map<IEnumerable<PedidoDetalle>>(obj.Lineas);
+                    respuesta.Dato = await _pedidoDomain.InsertarAsync(pedido, lineas);
+                }
+                else
+                {
+                    respuesta.Dato = await _pedidoDomain.InsertarAsync(pedido);
+                }
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
             }
