@@ -40,7 +40,7 @@ Cada tarea las incluye implícitamente.
 
 ## Ajustes respecto al spec (decididos al planificar, con el código leído)
 
-1. **`Impuesto` en la línea del borrador.** `LineaAbierta`/`DocumentoBaseLineaDTO` incluyen `Impuesto` (monto en la cantidad del origen) para que el formulario calcule el impuesto de la cantidad abierta (`impuesto × abierta ÷ cantidadOrigen`) sin conocer la tasa. El spec no lo listaba.
+1. **`Impuesto` en la línea del borrador.** `LineaAbiertaVenta` (nombre propio: ya existe un `LineaAbierta` del lado de compras en `API.Domain.Interface/DocumentoAbierto.cs`) y `DocumentoBaseLineaDTO` incluyen `Impuesto` (monto en la cantidad del origen) para que el formulario calcule el impuesto de la cantidad abierta (`impuesto × abierta ÷ cantidadOrigen`) sin conocer la tasa. El spec no lo listaba.
 2. **`EntregaDetalleDomain` no se modifica.** Sus métodos `ActualizarAsync`/`EliminarAsync` ya lanzan siempre (las líneas de una entrega no se tocan después de crearla): es una regla más estricta que la del spec. La integridad de líneas se agrega solo en Cotización y Pedido.
 3. **Cotización y Pedido se "cancelan" editando `EstadoDoc` a `'C'`** (no tienen acción de cancelar); `ValidarOrigenModificableAsync` se invoca en `ActualizarAsync` cuando el estado pasa a `'C'` (o `Cancelado` a `'S'`) o cambia `CodigoSn`, y en `EliminarAsync`.
 4. **Punto de entrada en la Web:** el botón "Copiar a" navega al listado del destino con `?baseTipo=&baseEntry=` y ese listado abre su formulario precargado (`App.abrirCopiaSiCorresponde`). Es la misma experiencia que "abre el formulario del destino" sin incrustar los tres modales en cada listado.
@@ -78,7 +78,7 @@ Cada tarea las incluye implícitamente.
 - Test: `API.Service.WebApi.Tests/Domain/DocumentoBaseContratosTests.cs`
 
 **Interfaces:**
-- Produces (namespace `API.Domain.Interface`): `TipoDocumentoVenta` (constantes `Cotizacion=3, Pedido=4, Entrega=5, Factura=6`; `Nombre(int)`, `DestinosDe(int)`, `EsCombinacionValida(int,int)`); records `LineaBaseRequest`, `LineaAbierta`, `CabeceraBorrador`, `BorradorDocumentoBase`, `DocumentoDerivado`; `DocumentoBaseMensajes.OrigenNoExiste`; `LineasBase.Extraer(...)`; `IDocumentoBaseService`. Las tareas 2–9 usan estos nombres exactos.
+- Produces (namespace `API.Domain.Interface`): `TipoDocumentoVenta` (constantes `Cotizacion=3, Pedido=4, Entrega=5, Factura=6`; `Nombre(int)`, `DestinosDe(int)`, `EsCombinacionValida(int,int)`); records `LineaBaseRequest`, `LineaAbiertaVenta`, `CabeceraBorrador`, `BorradorDocumentoBase`, `DocumentoDerivado`; `DocumentoBaseMensajes.OrigenNoExiste`; `LineasBase.Extraer(...)`; `IDocumentoBaseService`. Las tareas 2–9 usan estos nombres exactos.
 
 - [ ] **Step 1: Escribir las pruebas que fallan**
 
@@ -230,7 +230,7 @@ namespace API.Domain.Interface
     public sealed record LineaBaseRequest(int BaseTipo, int BaseEntry, int BaseLinea, string? CodArticulo, decimal Cantidad);
 
     /// <summary>Línea abierta de un origen, lista para cargarse en el formulario del destino.</summary>
-    public sealed record LineaAbierta(
+    public sealed record LineaAbiertaVenta(
         int BaseTipo, int BaseEntry, int BaseLinea, string? CodArticulo, string? Descripcion,
         decimal CantidadOrigen, decimal CantidadAbierta, decimal? Precio, decimal? PrecioBruto, decimal? PrctjeDesc,
         string? CodigoImpuesto, decimal? Impuesto, string? CodAlmacen);
@@ -240,7 +240,7 @@ namespace API.Domain.Interface
         decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario);
 
     public sealed record BorradorDocumentoBase(
-        int OrigenTipo, int OrigenEntry, int OrigenNumDoc, CabeceraBorrador Cabecera, IReadOnlyList<LineaAbierta> Lineas);
+        int OrigenTipo, int OrigenEntry, int OrigenNumDoc, CabeceraBorrador Cabecera, IReadOnlyList<LineaAbiertaVenta> Lineas);
 
     /// <summary>Documento destino activo que consume (en todo o en parte) un documento origen.</summary>
     public sealed record DocumentoDerivado(int Tipo, int Entry, int NumDoc, int BaseLinea)
@@ -1009,12 +1009,12 @@ Run: `dotnet test … --filter "FullyQualifiedName~DocumentoBaseServiceTests"` �
             var lineas = await LineasDeAsync(tipoOrigen, entry);
             var consumos = await ConsumosAsync(tipoOrigen, entry);
 
-            var abiertas = new List<LineaAbierta>();
+            var abiertas = new List<LineaAbiertaVenta>();
             foreach (var l in lineas)
             {
                 var abierta = (l.Cantidad ?? 0m) - Consumido(consumos, l.NoLinea);
                 if (abierta <= 0m) continue;
-                abiertas.Add(new LineaAbierta(tipoOrigen, entry, l.NoLinea, l.CodArticulo, l.Descripcion,
+                abiertas.Add(new LineaAbiertaVenta(tipoOrigen, entry, l.NoLinea, l.CodArticulo, l.Descripcion,
                     l.Cantidad ?? 0m, abierta, l.Precio, l.PrecioBruto, l.PrctjeDesc, l.CodigoImpuesto, l.Impuesto, l.CodAlmacen));
             }
 
@@ -1219,7 +1219,7 @@ Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 - Test: `API.Service.WebApi.Tests/Application/DocumentoBaseApplicationTests.cs`, `API.Service.WebApi.Tests/Controllers/DocumentoBaseControllerTests.cs`
 
 **Interfaces:**
-- Consumes: `IDocumentoBaseService.ObtenerBorradorAsync`, `BorradorDocumentoBase`, `LineaAbierta`, `DocumentoBaseMensajes.OrigenNoExiste`, `TipoDocumentoVenta` (tareas 1–3); `PermisoUsuario.Tiene` / `PermisoUsuario.Denegado()`, `Accion` (existentes).
+- Consumes: `IDocumentoBaseService.ObtenerBorradorAsync`, `BorradorDocumentoBase`, `LineaAbiertaVenta`, `DocumentoBaseMensajes.OrigenNoExiste`, `TipoDocumentoVenta` (tareas 1–3); `PermisoUsuario.Tiene` / `PermisoUsuario.Denegado()`, `Accion` (existentes).
 - Produces: `IDocumentoBaseApplication.ObtenerBorradorAsync(int tipoOrigen, int entry, int tipoDestino) : Task<Respuesta<DocumentoBaseBorradorDTO>>`; endpoint con respuestas 200 / 400 / 401 / 403 / 404; DTOs `DocumentoBaseBorradorDTO`, `DocumentoBaseCabeceraDTO`, `DocumentoBaseLineaDTO` (JSON camelCase en el cable: `origenTipo`, `origenEntry`, `origenNumDoc`, `cabecera{codigoSn,nombreSn,direccion,monedaDoc,prctjeDesc,prctjeImpuesto,comentario}`, `lineas[{baseTipo,baseEntry,baseLinea,codArticulo,descripcion,cantidadOrigen,cantidadAbierta,precio,precioBruto,prctjeDesc,codigoImpuesto,impuesto,codAlmacen}]`) que consume la Web en la Task 11.
 
 - [ ] **Step 1: Escribir las pruebas que fallan**
@@ -1250,7 +1250,7 @@ namespace API.Service.WebApi.Tests.Application
             _servicio.Setup(s => s.ObtenerBorradorAsync(3, 10, 4)).ReturnsAsync(new BorradorDocumentoBase(
                 3, 10, 12,
                 new CabeceraBorrador("CL-1", "Cliente", "Dir", "QTZ", 5m, 12m, "nota"),
-                new[] { new LineaAbierta(3, 10, 2, "ART1", "Desc", 10m, 6m, 25m, 25m, 0m, "IVA", 30m, "01") }));
+                new[] { new LineaAbiertaVenta(3, 10, 2, "ART1", "Desc", 10m, 6m, 25m, 25m, 0m, "IVA", 30m, "01") }));
 
             var r = await _app.ObtenerBorradorAsync(3, 10, 4);
 
