@@ -31,10 +31,6 @@ public partial class Monedum
 
     public virtual ICollection<Factura> Facturas { get; set; } = new List<Factura>();
 
-    public virtual ICollection<NotaDebito> NotaDebitos { get; set; } = new List<NotaDebito>();
-
-    public virtual ICollection<NotaDebitoCompra> NotaDebitoCompras { get; set; } = new List<NotaDebitoCompra>();
-
     public virtual ICollection<NotaCredito> NotaCreditos { get; set; } = new List<NotaCredito>();
 
     public virtual ICollection<NotaCreditoCompra> NotaCreditoCompras { get; set; } = new List<NotaCreditoCompra>();

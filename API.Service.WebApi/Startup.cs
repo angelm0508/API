@@ -231,13 +231,9 @@ namespace API.Service.WebApi
             services.AddTransient<IFacturaDetalleDomain, FacturaDetalleDomain>();
             services.AddTransient<IFacturaDetalleApplication, FacturaDetalleApplication>();
 
-            services.AddTransient<IRepositorioGenerico<NotaDebito, int>, NotaDebitoRepositorio>();
-            services.AddTransient<IRepositorioGenerico<NotaDebitoDetalle, (int Entry, int NoLinea)>, NotaDebitoDetalleRepositorio>();
             services.AddTransient<INotaDebitoDomain, NotaDebitoDomain>();
             services.AddTransient<INotaDebitoApplication, NotaDebitoApplication>();
 
-            services.AddTransient<IRepositorioGenerico<NotaDebitoCompra, int>, NotaDebitoCompraRepositorio>();
-            services.AddTransient<IRepositorioGenerico<NotaDebitoCompraDetalle, (int Entry, int NoLinea)>, NotaDebitoCompraDetalleRepositorio>();
             services.AddTransient<INotaDebitoCompraDomain, NotaDebitoCompraDomain>();
             services.AddTransient<INotaDebitoCompraApplication, NotaDebitoCompraApplication>();
 
