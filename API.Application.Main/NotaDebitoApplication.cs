@@ -25,8 +25,8 @@ namespace API.Application.Main
             var respuesta = new Respuesta<int>();
             try
             {
-                var nota = _mapper.Map<NotaDebito>(obj);
-                var lineas = _mapper.Map<IEnumerable<NotaDebitoDetalle>>(obj.Lineas);
+                var nota = _mapper.Map<Factura>(obj);
+                var lineas = _mapper.Map<IEnumerable<FacturaDetalle>>(obj.Lineas);
                 respuesta.Dato = await _domain.InsertarAsync(nota, lineas);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
@@ -43,7 +43,7 @@ namespace API.Application.Main
             var respuesta = new Respuesta<bool>();
             try
             {
-                var nota = _mapper.Map<NotaDebito>(obj);
+                var nota = _mapper.Map<Factura>(obj);
                 respuesta.Dato = await _domain.ActualizarAsync(id, nota);
                 if (respuesta.Dato)
                 {
@@ -163,9 +163,12 @@ namespace API.Application.Main
                     NombreSn = baseDoc.Documento.NombreSn,
                     MonedaDoc = baseDoc.Documento.MonedaDoc,
                     Direccion = baseDoc.Documento.Direccion,
-                    // Las lineas de la factura se convierten en conceptos: sin articulo ni almacen.
+                    // Las lineas de la factura se devuelven con su articulo y almacen: la nota por articulos
+                    // las usa tal cual y la nota por concepto (Web) descarta esos dos campos.
                     Lineas = baseDoc.Lineas.Select(l => new NotaDebitoDetalleCrearDTO
                     {
+                        CodArticulo = l.CodArticulo,
+                        CodAlmacen = l.CodAlmacen,
                         Descripcion = string.IsNullOrWhiteSpace(l.Descripcion) ? (l.CodArticulo ?? string.Empty) : l.Descripcion,
                         Cantidad = l.Cantidad,
                         Precio = l.Precio,

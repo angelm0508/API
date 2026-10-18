@@ -22,7 +22,7 @@ namespace API.Service.WebApi.Tests.Application
                 Lineas = { new NotaDebitoDetalleCrearDTO { Descripcion = "Flete", Cantidad = 1, Precio = 100m, CodigoImpuesto = "IVA" } }
             };
 
-            var entidad = _mapper.Map<NotaDebito>(dto);
+            var entidad = _mapper.Map<Factura>(dto);
 
             Assert.Equal(33, entidad.Serie);
             Assert.Equal("C001", entidad.CodigoSn);
@@ -36,7 +36,7 @@ namespace API.Service.WebApi.Tests.Application
         {
             var dto = new NotaDebitoDetalleCrearDTO { Descripcion = "Intereses", Cantidad = 2, Precio = 50m, PrctjeDesc = 5m, CodigoImpuesto = "IVA", Impuesto = 11.4m, TotalLinea = 106.4m };
 
-            var entidad = _mapper.Map<NotaDebitoDetalle>(dto);
+            var entidad = _mapper.Map<FacturaDetalle>(dto);
 
             Assert.Equal("Intereses", entidad.Descripcion);
             Assert.Equal(2m, entidad.Cantidad);
@@ -47,8 +47,8 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public void Cliente_EntidadADto_MapeaEncabezadoYDetalle()
         {
-            var nota = _mapper.Map<NotaDebitoDTO>(new NotaDebito { Entry = 9, NumDoc = 3, Serie = 33, CodigoSn = "C001", TotalDoc = 10m, Cancelado = "N" });
-            var linea = _mapper.Map<NotaDebitoDetalleDTO>(new NotaDebitoDetalle { Entry = 9, NoLinea = 2, Descripcion = "X", CodigoImpuesto = "IVA" });
+            var nota = _mapper.Map<NotaDebitoDTO>(new Factura { Entry = 9, NumDoc = 3, Serie = 33, CodigoSn = "C001", TotalDoc = 10m, Cancelado = "N" });
+            var linea = _mapper.Map<NotaDebitoDetalleDTO>(new FacturaDetalle { Entry = 9, NoLinea = 2, Descripcion = "X", CodigoImpuesto = "IVA" });
 
             Assert.Equal(9, nota.Entry);
             Assert.Equal("C001", nota.CodigoSn);
@@ -68,6 +68,20 @@ namespace API.Service.WebApi.Tests.Application
             Assert.Equal("Diferencia de precio", detalle.Descripcion);
             Assert.Equal("P001", dto.CodigoSn);
             Assert.Equal("Z", lineaDto.Descripcion);
+        }
+
+        [Fact]
+        public void Cliente_MapeaElModoYElArticuloEnAmbosSentidos()
+        {
+            var entidad = _mapper.Map<Factura>(new NotaDebitoCrearDTO { DocType = "I", Serie = 33 });
+            var linea = _mapper.Map<FacturaDetalle>(new NotaDebitoDetalleCrearDTO { CodArticulo = "ART1", CodAlmacen = "01", CodigoImpuesto = "IVA" });
+            var dto = _mapper.Map<NotaDebitoDTO>(new Factura { Entry = 4, DocType = "S", DocSubType = "ND" });
+            var lineaDto = _mapper.Map<NotaDebitoDetalleDTO>(new FacturaDetalle { Entry = 4, NoLinea = 1, CodArticulo = "ART1", CodAlmacen = "01" });
+
+            Assert.Equal("I", entidad.DocType);
+            Assert.Equal(("ART1", "01"), (linea.CodArticulo, linea.CodAlmacen));
+            Assert.Equal("S", dto.DocType);
+            Assert.Equal(("ART1", "01"), (lineaDto.CodArticulo, lineaDto.CodAlmacen));
         }
     }
 }

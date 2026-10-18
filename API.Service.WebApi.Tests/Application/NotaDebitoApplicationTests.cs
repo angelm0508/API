@@ -25,10 +25,10 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task Insertar_MapeaEncabezadoYLineas_YDevuelveElEntry()
         {
-            NotaDebito? recibida = null;
-            List<NotaDebitoDetalle>? lineasRecibidas = null;
-            _domain.Setup(d => d.InsertarAsync(It.IsAny<NotaDebito>(), It.IsAny<IEnumerable<NotaDebitoDetalle>>()))
-                .Callback<NotaDebito, IEnumerable<NotaDebitoDetalle>>((n, l) => { recibida = n; lineasRecibidas = l.ToList(); })
+            Factura? recibida = null;
+            List<FacturaDetalle>? lineasRecibidas = null;
+            _domain.Setup(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()))
+                .Callback<Factura, IEnumerable<FacturaDetalle>>((n, l) => { recibida = n; lineasRecibidas = l.ToList(); })
                 .ReturnsAsync(42);
             var dto = new NotaDebitoCrearDTO
             {
@@ -50,7 +50,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task Insertar_ErrorDelDominio_DevuelveResultadoFalseConElMensaje()
         {
-            _domain.Setup(d => d.InsertarAsync(It.IsAny<NotaDebito>(), It.IsAny<IEnumerable<NotaDebitoDetalle>>()))
+            _domain.Setup(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()))
                 .ThrowsAsync(new Exception("La serie no existe."));
 
             var respuesta = await _app.InsertarAsync(new NotaDebitoCrearDTO());
@@ -62,7 +62,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task Actualizar_DominioDevuelveTrue_ResultadoTrue()
         {
-            _domain.Setup(d => d.ActualizarAsync(5, It.IsAny<NotaDebito>())).ReturnsAsync(true);
+            _domain.Setup(d => d.ActualizarAsync(5, It.IsAny<Factura>())).ReturnsAsync(true);
 
             var respuesta = await _app.ActualizarAsync(5, new NotaDebitoActualizarDTO { Cancelado = "S" });
 
@@ -74,7 +74,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task Actualizar_DominioDevuelveFalse_ResultadoFalse()
         {
-            _domain.Setup(d => d.ActualizarAsync(5, It.IsAny<NotaDebito>())).ReturnsAsync(false);
+            _domain.Setup(d => d.ActualizarAsync(5, It.IsAny<Factura>())).ReturnsAsync(false);
 
             var respuesta = await _app.ActualizarAsync(5, new NotaDebitoActualizarDTO());
 
@@ -84,7 +84,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task Actualizar_ErrorDelDominio_DevuelveElMensaje()
         {
-            _domain.Setup(d => d.ActualizarAsync(5, It.IsAny<NotaDebito>()))
+            _domain.Setup(d => d.ActualizarAsync(5, It.IsAny<Factura>()))
                 .ThrowsAsync(new Exception("El documento está cancelado y no se puede modificar."));
 
             var respuesta = await _app.ActualizarAsync(5, new NotaDebitoActualizarDTO());
@@ -111,7 +111,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task Obtener_MapeaElEncabezado()
         {
-            _domain.Setup(d => d.ObtenerAsync(5)).ReturnsAsync(new NotaDebito { Entry = 5, NumDoc = 9, CodigoSn = "SN1" });
+            _domain.Setup(d => d.ObtenerAsync(5)).ReturnsAsync(new Factura { Entry = 5, NumDoc = 9, CodigoSn = "SN1" });
 
             var respuesta = await _app.ObtenerAsync(5);
 
@@ -122,7 +122,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task ObtenerTodo_MapeaTodos()
         {
-            var lista = new List<NotaDebito> { new() { Entry = 1 }, new() { Entry = 2 } };
+            var lista = new List<Factura> { new() { Entry = 1 }, new() { Entry = 2 } };
             _domain.Setup(d => d.ObtenerTodoAsync()).ReturnsAsync(lista.AsAsyncQueryable());
 
             var respuesta = await _app.ObtenerTodoAsync();
@@ -134,7 +134,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task ObtenerLineas_MapeaLasLineas()
         {
-            _domain.Setup(d => d.ObtenerLineasAsync(5)).ReturnsAsync(new List<NotaDebitoDetalle>
+            _domain.Setup(d => d.ObtenerLineasAsync(5)).ReturnsAsync(new List<FacturaDetalle>
             {
                 new() { Entry = 5, NoLinea = 1, Descripcion = "A", CodigoImpuesto = "IVA" }
             });
@@ -163,13 +163,13 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
-        public async Task ObtenerFacturaBase_ConvierteLasLineasEnConceptos()
+        public async Task ObtenerFacturaBase_DevuelveLasLineasConArticuloYAlmacen()
         {
             var factura = new Factura { Entry = 12, NumDoc = 100, CodigoSn = "SN1", NombreSn = "Cliente", MonedaDoc = "QTZ", Direccion = "Zona 1" };
             var lineas = new List<FacturaDetalle>
             {
-                new() { Entry = 12, NoLinea = 1, CodArticulo = "ART1", Descripcion = "Tornillo", Cantidad = 3m, Precio = 5m, PrecioBruto = 15m, PrctjeDesc = 0m, CodigoImpuesto = "IVA", Impuesto = 1.8m, TotalLinea = 16.8m },
-                new() { Entry = 12, NoLinea = 2, CodArticulo = "ART2", Descripcion = "  ", Cantidad = 1m, Precio = 10m, CodigoImpuesto = "IVA" }
+                new() { Entry = 12, NoLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", Descripcion = "Tornillo", Cantidad = 3m, Precio = 5m, PrecioBruto = 15m, PrctjeDesc = 0m, CodigoImpuesto = "IVA", Impuesto = 1.8m, TotalLinea = 16.8m },
+                new() { Entry = 12, NoLinea = 2, CodArticulo = "ART2", CodAlmacen = "02", Descripcion = "  ", Cantidad = 1m, Precio = 10m, CodigoImpuesto = "IVA" }
             };
             _domain.Setup(d => d.ObtenerFacturaBaseAsync(12)).ReturnsAsync(new FacturaBase(factura, lineas));
 
@@ -179,9 +179,8 @@ namespace API.Service.WebApi.Tests.Application
             var dato = respuesta.Dato;
             Assert.Equal((12, 100, "SN1", "Cliente", "QTZ", "Zona 1"), (dato.Entry, dato.NumDoc, dato.CodigoSn, dato.NombreSn, dato.MonedaDoc, dato.Direccion));
             Assert.Equal(2, dato.Lineas.Count);
-            Assert.Equal("Tornillo", dato.Lineas[0].Descripcion);
-            Assert.Equal(16.8m, dato.Lineas[0].TotalLinea);
-            Assert.Equal("ART2", dato.Lineas[1].Descripcion);   // sin descripcion: usa el codigo del articulo
+            Assert.Equal(("ART1", "01", "Tornillo", 16.8m), (dato.Lineas[0].CodArticulo, dato.Lineas[0].CodAlmacen, dato.Lineas[0].Descripcion, dato.Lineas[0].TotalLinea));
+            Assert.Equal(("ART2", "02", "ART2"), (dato.Lineas[1].CodArticulo, dato.Lineas[1].CodAlmacen, dato.Lineas[1].Descripcion));   // sin descripcion: usa el codigo del articulo
         }
 
         [Fact]
@@ -193,6 +192,28 @@ namespace API.Service.WebApi.Tests.Application
 
             Assert.False(respuesta.Resultado);
             Assert.Equal("La factura no existe.", respuesta.Mensaje);
+        }
+
+        [Fact]
+        public async Task Insertar_MapeaElModoYElArticuloDeLasLineas()
+        {
+            Factura? recibida = null;
+            List<FacturaDetalle>? lineasRecibidas = null;
+            _domain.Setup(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()))
+                .Callback<Factura, IEnumerable<FacturaDetalle>>((n, l) => { recibida = n; lineasRecibidas = l.ToList(); })
+                .ReturnsAsync(7);
+            var dto = new NotaDebitoCrearDTO
+            {
+                Serie = 33, CodigoSn = "SN1", MonedaDoc = "QTZ", DocType = "I",
+                Lineas = { new NotaDebitoDetalleCrearDTO { CodArticulo = "ART1", CodAlmacen = "01", Cantidad = 2, Precio = 10m, CodigoImpuesto = "IVA" } }
+            };
+
+            var respuesta = await _app.InsertarAsync(dto);
+
+            Assert.True(respuesta.Resultado);
+            Assert.Equal("I", recibida!.DocType);
+            var linea = Assert.Single(lineasRecibidas!);
+            Assert.Equal(("ART1", "01"), (linea.CodArticulo, linea.CodAlmacen));
         }
     }
 }

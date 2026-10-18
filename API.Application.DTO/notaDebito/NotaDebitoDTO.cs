@@ -10,6 +10,7 @@ namespace API.Application.DTO.notaDebito
         public string? Imprimido { get; set; }
         public string? EstadoDoc { get; set; }
         public string? TipoObjeto { get; set; }
+        public string? DocType { get; set; }
         public DateTime? FechaDoc { get; set; }
         public DateTime? FechaEmision { get; set; }
         public DateTime? FechaCancelado { get; set; }
