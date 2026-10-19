@@ -2,6 +2,7 @@ using API.Domain.Core;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
+using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
 using Xunit;
 
@@ -251,6 +252,104 @@ namespace API.Service.WebApi.Tests.Domain
             await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-1" });
 
             _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+
+        // ---- I-2a / I-2b: edición de un Pedido que ya tiene líneas copiadas ----
+
+        private void ConPedidoGuardado(string estadoDoc = "A", string cancelado = "N", string codigoSn = "CL-1", params PedidoDetalle[] lineas)
+        {
+            _repoPedidoMock.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Pedido { Entry = 1, EstadoDoc = estadoDoc, Cancelado = cancelado, CodigoSn = codigoSn });
+            _repoPedidoMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Pedido>())).ReturnsAsync(true);
+            _repoDetalleMock.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(lineas.Select(l => { l.Entry = 1; return l; }).ToList().AsAsyncQueryable());
+        }
+
+        [Theory]
+        [InlineData("C", "N")]
+        [InlineData("A", "S")]
+        public async Task ActualizarAsync_ReabrirPedidoConLineasCopiadas_RevalidaAntesDeGuardar(string estadoGuardado, string canceladoGuardado)
+        {
+            ConPedidoGuardado(estadoGuardado, canceladoGuardado, "CL-1",
+                LineaPedido("ART1", 4m, baseTipo: 3, baseEntry: 12, baseLinea: 1), LineaPedido("ART2", 1m));
+            var orden = new List<string>();
+            _documentoBase.Setup(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()))
+                .Callback(() => orden.Add("validar")).Returns(Task.CompletedTask);
+            _repoPedidoMock.Setup(r => r.ActualizarAsync(1, It.IsAny<Pedido>())).Callback(() => orden.Add("guardar")).ReturnsAsync(true);
+
+            await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1" });
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(TipoDocumentoVenta.Pedido, "CL-1",
+                It.Is<IReadOnlyList<LineaBaseRequest>>(l => l.Count == 1 && l[0] == new LineaBaseRequest(3, 12, 1, "ART1", 4m))), Times.Once);
+            Assert.Equal(new[] { "validar", "guardar" }, orden);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ReabrirPedidoSinSuficienteCantidadAbierta_Lanza_YNoGuarda()
+        {
+            ConPedidoGuardado("C", "N", "CL-1", LineaPedido("ART1", 10m, baseTipo: 3, baseEntry: 12, baseLinea: 1));
+            _documentoBase.Setup(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()))
+                .ThrowsAsync(new Exception("La cantidad de la línea 1 de Cotización 12 excede la cantidad abierta (0)."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-1" }));
+
+            Assert.Equal("La cantidad de la línea 1 de Cotización 12 excede la cantidad abierta (0).", ex.Message);
+            _repoPedidoMock.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Pedido>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ReabrirPedidoSinLineasCopiadas_NoRevalida()
+        {
+            ConPedidoGuardado("C", "N", "CL-1", LineaPedido("ART1", 4m), LineaPedido("ART2", 1m, baseTipo: -1));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-1" }));
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_PedidoCanceladoQueSigueCancelado_NoRevalida()
+        {
+            ConPedidoGuardado("C", "N", "CL-1", LineaPedido("ART1", 4m, baseTipo: 3, baseEntry: 12, baseLinea: 1));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "C", CodigoSn = "CL-1", Comentario = "nota" }));
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_PedidoActivoQueSigueActivo_NoRevalida()
+        {
+            ConPedidoGuardado("A", "N", "CL-1", LineaPedido("ART1", 4m, baseTipo: 3, baseEntry: 12, baseLinea: 1));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-1" }));
+
+            _documentoBase.Verify(d => d.ValidarLineasAsync(It.IsAny<int>(), It.IsAny<string?>(), It.IsAny<IReadOnlyList<LineaBaseRequest>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CambiarSocioConLineasCopiadas_Lanza_YNoGuarda()
+        {
+            ConPedidoGuardado("A", "N", "CL-1", LineaPedido("ART1", 4m, baseTipo: 3, baseEntry: 12, baseLinea: 1));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-2" }));
+
+            Assert.Equal("No se puede cambiar el socio: el pedido tiene líneas copiadas de otro documento.", ex.Message);
+            _repoPedidoMock.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Pedido>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CambiarSocioSinLineasCopiadas_Guarda()
+        {
+            ConPedidoGuardado("A", "N", "CL-1", LineaPedido("ART1", 4m), LineaPedido("ART2", 1m, baseTipo: -1));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "CL-2" }));
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_MismoSocioConOtraMayusculaYLineasCopiadas_Guarda()
+        {
+            ConPedidoGuardado("A", "N", "CL-1", LineaPedido("ART1", 4m, baseTipo: 3, baseEntry: 12, baseLinea: 1));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "cl-1" }));
         }
     }
 }

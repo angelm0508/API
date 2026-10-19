@@ -133,6 +133,25 @@ namespace API.Domain.Core
                     await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, id, "cancelar el documento");
                 else if (cambiaSocio)
                     await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, id, "cambiar el socio de negocio");
+
+                // Como DESTINO: si el pedido tiene líneas copiadas de otro documento, ni cambia de socio ni se reabre sin
+                // revalidar. El pedido guardado inactivo no cuenta en ConsumosAsync (solo suman destinos activos), así que
+                // la revalidación previa al guardado no lo cuenta contra sí mismo.
+                var seReabre = (existente.EstadoDoc == "C" || existente.Cancelado == "S") && obj.EstadoDoc != "C" && obj.Cancelado != "S";
+                if (cambiaSocio || seReabre)
+                {
+                    var detalles = await _repoGenericoDetalle.ObtenerTodoAsync();
+                    var lineas = await detalles.Where(d => d.Entry == id).ToListAsync();
+                    var copiadas = LineasBase.Extraer(lineas.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
+
+                    if (copiadas.Count > 0)
+                    {
+                        if (cambiaSocio)
+                            throw new Exception("No se puede cambiar el socio: el pedido tiene líneas copiadas de otro documento.");
+
+                        await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Pedido, obj.CodigoSn, copiadas);
+                    }
+                }
             }
 
             return await _repoGenericoPedido.ActualizarAsync(id, obj);

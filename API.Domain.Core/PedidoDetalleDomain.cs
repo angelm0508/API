@@ -22,6 +22,11 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(PedidoDetalle obj)
         {
+            // Una línea suelta no puede traer documento base: la referencia (y la validación de cantidad abierta) se define
+            // únicamente al crear el documento con sus líneas (PedidoDomain.InsertarAsync(Pedido, líneas)).
+            if (obj.BaseTipo > 0)
+                throw new Exception("Las líneas copiadas se definen al crear el documento.");
+
             var lineasExistentes = await ObtenerPorPedidoAsync(obj.Entry);
             obj.NoLinea = lineasExistentes.Any() ? lineasExistentes.Max(x => x.NoLinea) + 1 : 1;
 
@@ -32,6 +37,29 @@ namespace API.Domain.Core
         public async Task<bool> ActualizarAsync(int entry, int noLinea, PedidoDetalle obj)
         {
             await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoVenta.Pedido, entry, noLinea, "modificar");
+
+            // La referencia al documento base es inmutable: se toma siempre de la línea guardada, nunca de lo que llegue
+            // (el panel de edición de la Web no envía estos campos y el repositorio genérico copia todas las columnas,
+            // así que sin esto una edición normal borraría la referencia o permitiría fabricarla).
+            var guardada = await _repoGenericoDet.ObtenerAsync((entry, noLinea));
+            if (guardada is not null)
+            {
+                if (guardada.BaseTipo > 0)
+                {
+                    if (!string.Equals(obj.CodArticulo, guardada.CodArticulo, StringComparison.Ordinal))
+                        throw new Exception("El artículo de una línea copiada no se puede cambiar.");
+                    if ((obj.Cantidad ?? 0m) > (guardada.Cantidad ?? 0m))
+                        throw new Exception("La cantidad de una línea copiada no puede aumentar. Cree otro documento con lo que falta.");
+                }
+
+                obj.BaseTipo = guardada.BaseTipo;
+                obj.BaseEntry = guardada.BaseEntry;
+                obj.BaseLinea = guardada.BaseLinea;
+                obj.TipoDocDestino = guardada.TipoDocDestino;
+                obj.DocDestinoEntry = guardada.DocDestinoEntry;
+                obj.BaseRef = guardada.BaseRef;
+            }
+
             return await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
         }
 
