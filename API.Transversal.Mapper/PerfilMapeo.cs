@@ -27,6 +27,7 @@ using API.Application.DTO.departamento;
 using API.Application.DTO.municipio;
 using API.Application.DTO.almacen;
 using API.Application.DTO.mecanico;
+using API.Application.DTO.motocicleta;
 using API.Application.DTO.socioNegocio;
 using API.Application.DTO.direccionSocioNegocio;
 using API.Application.DTO.numeracionDocumento;
@@ -74,6 +75,12 @@ namespace API.Transversal.Mapper
             CreateMap<Mecanico, MecanicoDTO>();
             CreateMap<MecanicoCrearDTO, Mecanico>();
             CreateMap<MecanicoActualizarDTO, Mecanico>();
+
+            // Motocicleta
+            CreateMap<Motocicleta, MotocicletaDTO>()
+                .ForMember(d => d.NombreSn, o => o.MapFrom(s => s.CodigoSnNavigation != null ? s.CodigoSnNavigation.Nombre : null));
+            CreateMap<MotocicletaCrearDTO, Motocicleta>();
+            CreateMap<MotocicletaActualizarDTO, Motocicleta>();
 
             // SocioNegocio
             CreateMap<SocioNegocio, SocioNegocioDTO>();

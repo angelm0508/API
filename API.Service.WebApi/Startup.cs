@@ -248,6 +248,8 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<OrdenServicioDetalle, (int Entry, int NoLinea)>, OrdenServicioDetalleRepositorio>();
             services.AddTransient<IMecanicoDomain, MecanicoDomain>();
             services.AddTransient<IMecanicoApplication, MecanicoApplication>();
+            services.AddTransient<IMotocicletaDomain, MotocicletaDomain>();
+            services.AddTransient<IMotocicletaApplication, MotocicletaApplication>();
 
             services.AddTransient<IRepositorioGenerico<NotaCreditoCompra, int>, NotaCreditoCompraRepositorio>();
             services.AddTransient<IRepositorioGenerico<NotaCreditoCompraDetalle, (int Entry, int NoLinea)>, NotaCreditoCompraDetalleRepositorio>();
