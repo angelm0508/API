@@ -39,21 +39,30 @@ namespace API.Domain.Core
             }
         }
 
-        public async Task RevertirAsync(string tipoDoc, int docEntry)
+        public Task RevertirAsync(string tipoDoc, int docEntry) =>
+            RevertirInternoAsync(tipoDoc, docEntry, null);
+
+        public Task RevertirLineaAsync(string tipoDoc, int docEntry, int docLinea) =>
+            RevertirInternoAsync(tipoDoc, docEntry, docLinea);
+
+        private async Task RevertirInternoAsync(string tipoDoc, int docEntry, int? docLinea)
         {
             var queryable = await _repoMovimiento.ObtenerTodoAsync();
-            var delDocumento = await queryable
-                .Where(x => x.TipoDoc == tipoDoc && x.DocEntry == docEntry)
+            var delDocumento = queryable.Where(x => x.TipoDoc == tipoDoc && x.DocEntry == docEntry);
+            if (docLinea.HasValue)
+                delDocumento = delDocumento.Where(x => x.DocLinea == docLinea.Value);
+
+            var movimientos = await delDocumento
                 // orden determinista: el promedio móvil es sensible al orden en que se aplican las reversas
                 .OrderBy(x => x.Entry)
                 .ToListAsync();
 
-            var yaRevertidos = delDocumento
+            var yaRevertidos = movimientos
                 .Where(x => x.MovReversaDe != null)
                 .Select(x => x.MovReversaDe!.Value)
                 .ToHashSet();
 
-            foreach (var orig in delDocumento.Where(x => x.MovReversaDe == null && !yaRevertidos.Contains(x.Entry)))
+            foreach (var orig in movimientos.Where(x => x.MovReversaDe == null && !yaRevertidos.Contains(x.Entry)))
             {
                 var cantidadOriginal = orig.CantidadEntra - orig.CantidadSale;   // + entrada, - salida
                 await AplicarMovimientoAsync(

@@ -21,5 +21,11 @@ namespace API.Domain.Interface
         Task AsentarAsync(IEnumerable<MovimientoRequest> movimientos, bool permitirNegativo = false);
 
         Task RevertirAsync(string tipoDoc, int docEntry);
+
+        /// <summary>
+        /// Revierte los movimientos de UNA línea de un documento (los que aún no tengan reversa), por ejemplo al
+        /// quitar o cambiar una línea de una orden de servicio. Idempotente: repetirla no genera nada.
+        /// </summary>
+        Task RevertirLineaAsync(string tipoDoc, int docEntry, int docLinea);
     }
 }

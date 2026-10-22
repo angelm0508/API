@@ -236,5 +236,76 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Empty(_movAgregados);
         }
+
+        [Fact]
+        public async Task RevertirLineaAsync_SoloRevierteLaLineaIndicada()
+        {
+            // Documento ("70", 100) con dos líneas: salida de 4 (línea 1) y salida de 6 (línea 2).
+            var linea1 = new MovimientoInventario
+            {
+                Entry = 600, TipoDoc = "70", DocEntry = 100, DocLinea = 1,
+                CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 10, 22),
+                CantidadEntra = 0m, CantidadSale = 4m, CostoUnitario = 20m, MovReversaDe = null
+            };
+            var linea2 = new MovimientoInventario
+            {
+                Entry = 601, TipoDoc = "70", DocEntry = 100, DocLinea = 2,
+                CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 10, 22),
+                CantidadEntra = 0m, CantidadSale = 6m, CostoUnitario = 20m, MovReversaDe = null
+            };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { linea1, linea2 }.AsAsyncQueryable());
+            ArticuloDeInventario("ART1", costoProm: 20m, cantActual: 90m);
+            ConExistencia("ART1", "01", 90m);
+
+            await _svc.RevertirLineaAsync("70", 100, 1);
+
+            var rev = Assert.Single(_movAgregados);
+            Assert.Equal(4m, rev.CantidadEntra);
+            Assert.Equal(0m, rev.CantidadSale);
+            Assert.Equal(1, rev.DocLinea);
+            Assert.Equal(600, rev.MovReversaDe);
+            Assert.Equal(94m, rev.SaldoCantidad);
+        }
+
+        [Fact]
+        public async Task RevertirLineaAsync_YaRevertida_NoGeneraNada()
+        {
+            var original = new MovimientoInventario { Entry = 600, TipoDoc = "70", DocEntry = 100, DocLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", CantidadSale = 4m, MovReversaDe = null };
+            var reversa  = new MovimientoInventario { Entry = 601, TipoDoc = "70", DocEntry = 100, DocLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", CantidadEntra = 4m, MovReversaDe = 600 };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { original, reversa }.AsAsyncQueryable());
+
+            await _svc.RevertirLineaAsync("70", 100, 1);
+
+            Assert.Empty(_movAgregados);
+        }
+
+        [Fact]
+        public async Task RevertirLineaAsync_LineaSinMovimientos_NoHaceNada()
+        {
+            var otraLinea = new MovimientoInventario { Entry = 600, TipoDoc = "70", DocEntry = 100, DocLinea = 2, CodArticulo = "ART1", CodAlmacen = "01", CantidadSale = 4m, MovReversaDe = null };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { otraLinea }.AsAsyncQueryable());
+
+            await _svc.RevertirLineaAsync("70", 100, 1);
+
+            Assert.Empty(_movAgregados);
+        }
+
+        [Fact]
+        public async Task RevertirLineaAsync_UnaLineaEditadaVariasVeces_RevierteSoloLosMovimientosVigentes()
+        {
+            // Línea 1: salida de 4 ya revertida (edición previa) y nueva salida de 7 vigente.
+            var salidaVieja = new MovimientoInventario { Entry = 600, TipoDoc = "70", DocEntry = 100, DocLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", CantidadSale = 4m, CostoUnitario = 20m, MovReversaDe = null };
+            var reversaVieja = new MovimientoInventario { Entry = 601, TipoDoc = "70", DocEntry = 100, DocLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", CantidadEntra = 4m, CostoUnitario = 20m, MovReversaDe = 600 };
+            var salidaNueva = new MovimientoInventario { Entry = 602, TipoDoc = "70", DocEntry = 100, DocLinea = 1, CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 10, 22), CantidadSale = 7m, CostoUnitario = 20m, MovReversaDe = null };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { salidaVieja, reversaVieja, salidaNueva }.AsAsyncQueryable());
+            ArticuloDeInventario("ART1", costoProm: 20m, cantActual: 93m);
+            ConExistencia("ART1", "01", 93m);
+
+            await _svc.RevertirLineaAsync("70", 100, 1);
+
+            var rev = Assert.Single(_movAgregados);
+            Assert.Equal(7m, rev.CantidadEntra);
+            Assert.Equal(602, rev.MovReversaDe);
+        }
     }
 }
