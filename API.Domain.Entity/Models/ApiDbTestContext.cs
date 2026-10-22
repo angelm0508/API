@@ -17,6 +17,14 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<Almacen> Almacens { get; set; }
 
+    public virtual DbSet<Mecanico> Mecanicos { get; set; }
+
+    public virtual DbSet<Motocicleta> Motocicletas { get; set; }
+
+    public virtual DbSet<OrdenServicio> OrdenServicios { get; set; }
+
+    public virtual DbSet<OrdenServicioDetalle> OrdenServicioDetalles { get; set; }
+
     public virtual DbSet<Articulo> Articulos { get; set; }
 
     public virtual DbSet<Cotizacion> Cotizacions { get; set; }
@@ -1596,6 +1604,143 @@ public partial class ApiDbTestContext : DbContext
                 .HasForeignKey(d => d.CodigoModulo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_plantilla_permiso_modulo");
+        });
+
+        modelBuilder.Entity<Mecanico>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("pk_mecanico");
+
+            entity.ToTable("Mecanico");
+
+            entity.Property(e => e.Codigo).HasMaxLength(10);
+            entity.Property(e => e.Activo)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('S')");
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.Telefono).HasMaxLength(30);
+        });
+
+        modelBuilder.Entity<Motocicleta>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_motocicleta");
+
+            entity.ToTable("Motocicleta");
+
+            entity.HasIndex(e => e.Placa, "uq_motocicleta_placa").IsUnique();
+
+            entity.Property(e => e.Activo)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('S')");
+            entity.Property(e => e.CodigoSn)
+                .HasMaxLength(15)
+                .HasColumnName("CodigoSN");
+            entity.Property(e => e.Color).HasMaxLength(30);
+            entity.Property(e => e.Comentario).HasMaxLength(254);
+            entity.Property(e => e.Marca).HasMaxLength(50);
+            entity.Property(e => e.Modelo).HasMaxLength(50);
+            entity.Property(e => e.Placa).HasMaxLength(15);
+            entity.Property(e => e.Vin).HasMaxLength(30);
+
+            entity.HasOne(d => d.CodigoSnNavigation).WithMany()
+                .HasForeignKey(d => d.CodigoSn)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_motocicleta_sn");
+        });
+
+        modelBuilder.Entity<OrdenServicio>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_orden_servicio");
+
+            entity.ToTable("OrdenServicio");
+
+            entity.Property(e => e.Cancelado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.CodMecanico).HasMaxLength(10);
+            entity.Property(e => e.CodigoSn)
+                .HasMaxLength(15)
+                .HasColumnName("CodigoSN");
+            entity.Property(e => e.Comentario).HasMaxLength(254);
+            entity.Property(e => e.Diagnostico).HasMaxLength(500);
+            entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.EstadoServicio)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('R')");
+            entity.Property(e => e.FallaReportada).HasMaxLength(500);
+            entity.Property(e => e.FechaCancelado).HasColumnType("datetime");
+            entity.Property(e => e.FechaDoc).HasColumnType("datetime");
+            entity.Property(e => e.FechaEntrega).HasColumnType("datetime");
+            entity.Property(e => e.FechaIngreso).HasColumnType("datetime");
+            entity.Property(e => e.FechaPromesa).HasColumnType("datetime");
+            entity.Property(e => e.MonedaDoc).HasMaxLength(3);
+            entity.Property(e => e.NombreSn)
+                .HasMaxLength(200)
+                .HasColumnName("NombreSN");
+            entity.Property(e => e.NumManual)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Observaciones).HasMaxLength(500);
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(11)
+                .HasDefaultValueSql("('70')");
+            entity.Property(e => e.TotalBruto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TotalDesc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TotalImp).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodigoSnNavigation).WithMany()
+                .HasForeignKey(d => d.CodigoSn)
+                .HasConstraintName("fk_orden_servicio_sn");
+
+            entity.HasOne(d => d.MonedaDocNavigation).WithMany()
+                .HasForeignKey(d => d.MonedaDoc)
+                .HasConstraintName("fk_orden_servicio_moneda");
+
+            entity.HasOne(d => d.SerieNavigation).WithMany()
+                .HasForeignKey(d => d.Serie)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_orden_servicio_serie");
+
+            entity.HasOne(d => d.MotoNavigation).WithMany()
+                .HasForeignKey(d => d.MotoEntry)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_orden_servicio_moto");
+
+            entity.HasOne(d => d.MecanicoNavigation).WithMany()
+                .HasForeignKey(d => d.CodMecanico)
+                .HasConstraintName("fk_orden_servicio_mecanico");
+        });
+
+        modelBuilder.Entity<OrdenServicioDetalle>(entity =>
+        {
+            entity.HasKey(e => new { e.Entry, e.NoLinea }).HasName("pk_orden_servicio_det");
+
+            entity.ToTable("OrdenServicioDetalle");
+
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);
+            entity.Property(e => e.CodMecanico).HasMaxLength(10);
+            entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
+            entity.Property(e => e.Descripcion).HasMaxLength(200);
+            entity.Property(e => e.EsInsumo)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.Impuesto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Precio).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.PrctjeDesc).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("('70')");
+            entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodAlmacenNavigation).WithMany()
+                .HasForeignKey(d => d.CodAlmacen)
+                .HasConstraintName("fk_orden_servicio_det_almacen");
+
+            entity.HasOne(d => d.CodArticuloNavigation).WithMany()
+                .HasForeignKey(d => d.CodArticulo)
+                .HasConstraintName("fk_orden_servicio_det_cod_art");
         });
 
         OnModelCreatingPartial(modelBuilder);
