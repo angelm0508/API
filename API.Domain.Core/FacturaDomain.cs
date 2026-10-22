@@ -96,7 +96,9 @@ namespace API.Domain.Core
                 }
 
                 var movimientos = lineasList
-                    .Where(l => (l.Cantidad ?? 0m) > 0m && l.BaseTipo != TipoDocumentoVenta.Entrega)   // BaseTipo 5: esa mercancía ya la movió su Entrega; con base Cotización o Pedido nadie entregó todavía
+                    .Where(l => (l.Cantidad ?? 0m) > 0m
+                        && l.BaseTipo != TipoDocumentoVenta.Entrega            // BaseTipo 5: esa mercancía ya la movió su Entrega
+                        && l.BaseTipo != TipoDocumentoVenta.OrdenServicio)     // BaseTipo 70: los insumos ya salieron al agregarse a la orden; con base Cotización o Pedido nadie entregó todavía
                     .Select(l => new MovimientoRequest(
                         TipoDoc: TipoObjetoFactura,
                         DocEntry: obj.Entry,

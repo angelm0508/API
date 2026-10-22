@@ -158,6 +158,36 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task InsertarAsync_LineaConBaseOrdenDeServicio_NoGeneraMovimiento_PeroSiSeInsertaLinea()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4 };
+
+            await _domain.InsertarAsync(obj, new[] { LineaDe("ACE-1", "01", 2m, 100m, baseTipo: 70, baseEntry: 500, baseLinea: 1) });
+
+            Assert.Empty(_movimientosAsentados);
+            _repoDetalle.Verify(r => r.AgregarSinGuardarAsync(It.Is<FacturaDetalle>(l => l.Entry == 99 && l.NoLinea == 1 && l.BaseTipo == 70)), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_MezclaOrdenEntregaYSuelta_SoloLaSueltaGeneraMovimiento()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4 };
+
+            await _domain.InsertarAsync(obj, new[]
+            {
+                LineaDe("ACE-1", "01", 2m, 100m, baseTipo: 70, baseEntry: 500, baseLinea: 1),
+                LineaDe("ART1", "01", 10m, 25m, baseTipo: 5, baseEntry: 501, baseLinea: 1),
+                LineaDe("ART2", "01", 4m, 30m, baseTipo: null, baseEntry: null, baseLinea: null),
+            });
+
+            var m = Assert.Single(_movimientosAsentados);
+            Assert.Equal("ART2", m.CodArticulo);
+            Assert.Equal(3, m.DocLinea);
+            Assert.Equal(-4m, m.Cantidad);
+        }
+        [Fact]
         public async Task InsertarAsync_SerieBloqueada_Lanza_YNoInserta()
         {
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(bloqueado: "S"));
