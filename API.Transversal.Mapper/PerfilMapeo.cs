@@ -34,6 +34,7 @@ using API.Application.DTO.numeracionDocumento;
 using API.Application.DTO.moneda;
 using API.Application.DTO.inventario;
 using API.Application.DTO.permiso;
+using API.Application.DTO.ordenServicio;
 using API.Domain.Entity.Models;
 using AutoMapper;
 
@@ -81,6 +82,21 @@ namespace API.Transversal.Mapper
                 .ForMember(d => d.NombreSn, o => o.MapFrom(s => s.CodigoSnNavigation != null ? s.CodigoSnNavigation.Nombre : null));
             CreateMap<MotocicletaCrearDTO, Motocicleta>();
             CreateMap<MotocicletaActualizarDTO, Motocicleta>();
+
+            // OrdenServicio
+            CreateMap<OrdenServicio, OrdenServicioDTO>()
+                .ForMember(d => d.Placa, o => o.MapFrom(s => s.MotoNavigation != null ? s.MotoNavigation.Placa : null))
+                .ForMember(d => d.MotoDescripcion, o => o.MapFrom(s => s.MotoNavigation != null
+                    ? ((s.MotoNavigation.Marca ?? "") + " " + (s.MotoNavigation.Modelo ?? "")).Trim()
+                    : null))
+                .ForMember(d => d.NombreMecanico, o => o.MapFrom(s => s.MecanicoNavigation != null ? s.MecanicoNavigation.Nombre : null));
+            CreateMap<OrdenServicioCrearDTO, OrdenServicio>();
+            CreateMap<OrdenServicioActualizarDTO, OrdenServicio>();
+
+            // OrdenServicioDetalle
+            CreateMap<OrdenServicioDetalle, OrdenServicioDetalleDTO>();
+            CreateMap<OrdenServicioDetalleCrearDTO, OrdenServicioDetalle>();
+            CreateMap<OrdenServicioDetalleActualizarDTO, OrdenServicioDetalle>();
 
             // SocioNegocio
             CreateMap<SocioNegocio, SocioNegocioDTO>();

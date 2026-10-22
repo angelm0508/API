@@ -253,6 +253,8 @@ namespace API.Service.WebApi
             services.AddTransient<IOrdenServicioLineaService, OrdenServicioLineaService>();
             services.AddTransient<IOrdenServicioDomain, OrdenServicioDomain>();
             services.AddTransient<IOrdenServicioDetalleDomain, OrdenServicioDetalleDomain>();
+            services.AddTransient<IOrdenServicioApplication, OrdenServicioApplication>();
+            services.AddTransient<IOrdenServicioDetalleApplication, OrdenServicioDetalleApplication>();
 
             services.AddTransient<IRepositorioGenerico<NotaCreditoCompra, int>, NotaCreditoCompraRepositorio>();
             services.AddTransient<IRepositorioGenerico<NotaCreditoCompraDetalle, (int Entry, int NoLinea)>, NotaCreditoCompraDetalleRepositorio>();

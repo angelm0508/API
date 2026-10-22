@@ -1,5 +1,6 @@
 using API.Application.DTO;
 using API.Application.DTO.motocicleta;
+using API.Application.DTO.ordenServicio;
 
 namespace API.Application.Interface
 {
@@ -11,6 +12,7 @@ namespace API.Application.Interface
         Task<Respuesta<bool>> EliminarAsync(int entry);
         Task<Respuesta<MotocicletaDTO>> ObtenerAsync(int entry);
         Task<Respuesta<IEnumerable<MotocicletaDTO>>> BuscarAsync(string? codigoSn, string? placa);
+        Task<Respuesta<IEnumerable<OrdenServicioDTO>>> ObtenerHistorialAsync(int entry);
         #endregion
     }
 }

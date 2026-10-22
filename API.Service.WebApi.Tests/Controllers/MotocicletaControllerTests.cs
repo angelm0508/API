@@ -1,7 +1,10 @@
+using System.Security.Claims;
 using API.Application.DTO;
 using API.Application.DTO.motocicleta;
+using API.Application.DTO.ordenServicio;
 using API.Application.Interface;
 using API.Service.WebApi.Controllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -78,6 +81,47 @@ namespace API.Service.WebApi.Tests.Controllers
 
             Assert.IsType<NotFoundObjectResult>((await Crear().Eliminar(5)).Result);
             Assert.Same(buena, Assert.IsType<OkObjectResult>((await Crear().Eliminar(5)).Result).Value);
+        }
+
+        private MotocicletaController CrearConPermisos(params Claim[] claims) => new(_app.Object)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(claims, "Test")) }
+            }
+        };
+
+        [Fact]
+        public async Task ObtenerHistorial_SinVerOrdenesDeServicio_Devuelve403()
+        {
+            var c = CrearConPermisos(new Claim("SuperUsuario", "N"), new Claim("perm", "Motocicletas:V"));
+
+            var r = await c.ObtenerHistorial(5);
+
+            Assert.Equal(403, Assert.IsType<ObjectResult>(r.Result).StatusCode);
+            _app.Verify(a => a.ObtenerHistorialAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ObtenerHistorial_ConVerOrdenesDeServicio_DevuelveOk()
+        {
+            var c = CrearConPermisos(new Claim("SuperUsuario", "N"), new Claim("perm", "Motocicletas:V"), new Claim("perm", "OrdenesServicio:V"));
+            var buena = new Respuesta<IEnumerable<OrdenServicioDTO>> { Resultado = true, Dato = new[] { new OrdenServicioDTO() } };
+            _app.Setup(a => a.ObtenerHistorialAsync(5)).ReturnsAsync(buena);
+
+            var r = await c.ObtenerHistorial(5);
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task ObtenerHistorial_BadRequest_CuandoResultadoEsFalso()
+        {
+            var c = CrearConPermisos(new Claim("SuperUsuario", "S"));
+            var mala = new Respuesta<IEnumerable<OrdenServicioDTO>> { Resultado = false, Mensaje = "error" };
+            _app.Setup(a => a.ObtenerHistorialAsync(5)).ReturnsAsync(mala);
+
+            Assert.Same(mala, Assert.IsType<BadRequestObjectResult>((await c.ObtenerHistorial(5)).Result).Value);
         }
     }
 }

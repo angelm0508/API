@@ -1,5 +1,6 @@
 using API.Application.DTO;
 using API.Application.DTO.motocicleta;
+using API.Application.DTO.ordenServicio;
 using API.Application.Interface;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
@@ -91,6 +92,22 @@ namespace API.Application.Main
             try
             {
                 respuesta.Dato = _mapper.Map<IEnumerable<MotocicletaDTO>>(await _domain.BuscarAsync(codigoSn, placa));
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Consulta realizada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
+
+        public async Task<Respuesta<IEnumerable<OrdenServicioDTO>>> ObtenerHistorialAsync(int entry)
+        {
+            var respuesta = new Respuesta<IEnumerable<OrdenServicioDTO>>();
+            try
+            {
+                respuesta.Dato = _mapper.Map<IEnumerable<OrdenServicioDTO>>(await _domain.ObtenerHistorialAsync(entry));
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Consulta realizada correctamente.";
             }

@@ -1,5 +1,6 @@
 using API.Application.DTO;
 using API.Application.DTO.motocicleta;
+using API.Application.DTO.ordenServicio;
 using API.Application.Interface;
 using API.Domain.Interface;
 using API.Service.WebApi.Authorization;
@@ -49,6 +50,22 @@ namespace API.Service.WebApi.Controllers
             }
 
             return Ok(moto);
+        }
+
+        // Muestra órdenes de servicio: además de ver motocicletas exige ver órdenes de servicio.
+        [RequierePermiso("Motocicletas", Accion.Ver)]
+        [HttpGet("{entry:int}/Historial")]
+        public async Task<ActionResult<Respuesta<IEnumerable<OrdenServicioDTO>>>> ObtenerHistorial([FromRoute] int entry)
+        {
+            if (!PermisoUsuario.Tiene(User, "OrdenesServicio", Accion.Ver))
+                return PermisoUsuario.Denegado();
+
+            var historial = await _application.ObtenerHistorialAsync(entry);
+
+            if (!historial.Resultado)
+                return BadRequest(historial);
+
+            return Ok(historial);
         }
 
         [RequierePermiso("Motocicletas", Accion.Agregar)]
