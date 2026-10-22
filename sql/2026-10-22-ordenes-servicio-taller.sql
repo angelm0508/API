@@ -111,6 +111,7 @@ END
 -- ===== FacturaDetalle.BaseTipo admite 70 (orden de servicio como documento base) =====
 -- El CHECK original es de columna y tiene nombre generado por SQL Server: se busca por definicion.
 DECLARE @ck sysname;
+DECLARE @sqlck nvarchar(400);
 WHILE 1 = 1
 BEGIN
     SET @ck = NULL;
@@ -120,7 +121,8 @@ BEGIN
       AND cc.definition LIKE '%BaseTipo%'
       AND cc.definition NOT LIKE '%70%';
     IF @ck IS NULL BREAK;
-    EXEC (N'ALTER TABLE dbo.FacturaDetalle DROP CONSTRAINT ' + QUOTENAME(@ck));
+    SET @sqlck = N'ALTER TABLE dbo.FacturaDetalle DROP CONSTRAINT ' + QUOTENAME(@ck);
+    EXEC (@sqlck);
 END
 
 IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('dbo.FacturaDetalle') AND name = 'CK_FacturaDetalle_BaseTipo')
