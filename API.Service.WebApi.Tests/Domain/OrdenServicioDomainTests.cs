@@ -409,6 +409,70 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal("La motocicleta no pertenece a este cliente.", ex.Message);
         }
 
+        // Dar de baja un mecánico/moto impide NUEVAS asignaciones, pero no bloquea la edición de órdenes abiertas.
+
+        [Fact]
+        public async Task ActualizarAsync_MecanicoInactivoQueNoCambia_Guarda()
+        {
+            var existente = Existente(o => o.CodMecanico = "M02");
+            _repoMecanico.Setup(r => r.ObtenerAsync("M02")).ReturnsAsync(new Mecanico { Codigo = "M02", Nombre = "Pedro", Activo = "N" });
+
+            Assert.True(await _domain.ActualizarAsync(50, Orden(o => { o.CodMecanico = "M02"; o.Comentario = "editado"; })));
+
+            Assert.Equal("editado", existente.Comentario);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_AsignarMecanicoInactivo_Lanza()
+        {
+            Existente(o => o.CodMecanico = "M01");
+            _repoMecanico.Setup(r => r.ObtenerAsync("M02")).ReturnsAsync(new Mecanico { Codigo = "M02", Nombre = "Pedro", Activo = "N" });
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(50, Orden(o => o.CodMecanico = "M02")));
+            Assert.Equal("El mecánico está inactivo.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_MecanicoInexistente_Lanza()
+        {
+            Existente(o => o.CodMecanico = "M99");
+            _repoMecanico.Setup(r => r.ObtenerAsync("M99")).ReturnsAsync((Mecanico?)null);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(50, Orden(o => o.CodMecanico = "M99")));
+            Assert.Equal("El mecánico no existe.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_MotoInactivaQueNoCambia_Guarda()
+        {
+            var existente = Existente(o => o.MotoEntry = 11);
+            _repoMoto.Setup(r => r.ObtenerAsync(11)).ReturnsAsync(new Motocicleta { Entry = 11, CodigoSn = "SN1", Placa = "M1", Activo = "N" });
+
+            Assert.True(await _domain.ActualizarAsync(50, Orden(o => { o.MotoEntry = 11; o.Comentario = "editado"; })));
+
+            Assert.Equal("editado", existente.Comentario);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CambiarAMotoInactiva_Lanza()
+        {
+            Existente();   // moto 10
+            _repoMoto.Setup(r => r.ObtenerAsync(11)).ReturnsAsync(new Motocicleta { Entry = 11, CodigoSn = "SN1", Placa = "M1", Activo = "N" });
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(50, Orden(o => o.MotoEntry = 11)));
+            Assert.Equal("La motocicleta está inactiva.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_MotoQueNoCambiaPeroEsDeOtroCliente_Lanza()
+        {
+            Existente();   // moto 10
+            _repoMoto.Setup(r => r.ObtenerAsync(10)).ReturnsAsync(new Motocicleta { Entry = 10, CodigoSn = "SN7", Placa = "M123ABC", Activo = "S" });
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(50, Orden()));
+            Assert.Equal("La motocicleta no pertenece a este cliente.", ex.Message);
+        }
+
         // ---------------- CambiarEstadoAsync ----------------
 
         [Theory]

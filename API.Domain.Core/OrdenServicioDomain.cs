@@ -115,7 +115,9 @@ namespace API.Domain.Core
                 await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.OrdenServicio, id, "cambiar el cliente");
 
             await ValidarClienteYMonedaAsync(obj);
-            await ValidarMotoYMecanicoAsync(obj);
+            // Dar de baja una moto/mecánico impide nuevas asignaciones, no la edición de órdenes abiertas:
+            // "activo" solo se exige cuando el valor cambia respecto de lo guardado.
+            await ValidarMotoYMecanicoAsync(obj, existente.MotoEntry, existente.CodMecanico);
 
             return await _tx.EjecutarAsync(async () =>
             {
@@ -268,14 +270,16 @@ namespace API.Domain.Core
                 throw new Exception("La moneda no existe.");
         }
 
-        private async Task ValidarMotoYMecanicoAsync(OrdenServicio obj)
+        // motoGuardada / mecanicoGuardado (solo en la actualización): si coinciden con el valor entrante se omite
+        // únicamente el chequeo de "activo"; existencia y pertenencia al cliente se validan siempre.
+        private async Task ValidarMotoYMecanicoAsync(OrdenServicio obj, int? motoGuardada = null, string? mecanicoGuardado = null)
         {
             if (obj.MotoEntry <= 0)
                 throw new Exception("La motocicleta es requerida.");
 
             var moto = await _repoMoto.ObtenerAsync(obj.MotoEntry)
                 ?? throw new Exception("La motocicleta no existe.");
-            if (moto.Activo == "N")
+            if (moto.Activo == "N" && motoGuardada != obj.MotoEntry)
                 throw new Exception("La motocicleta está inactiva.");
             if (!string.Equals(moto.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase))
                 throw new Exception("La motocicleta no pertenece a este cliente.");
@@ -284,7 +288,7 @@ namespace API.Domain.Core
             {
                 var mecanico = await _repoMecanico.ObtenerAsync(obj.CodMecanico)
                     ?? throw new Exception("El mecánico no existe.");
-                if (mecanico.Activo == "N")
+                if (mecanico.Activo == "N" && !string.Equals(mecanicoGuardado, obj.CodMecanico, StringComparison.Ordinal))
                     throw new Exception("El mecánico está inactivo.");
             }
 
