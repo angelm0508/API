@@ -27,6 +27,7 @@ namespace API.Service.WebApi.Controllers
             TipoDocumentoVenta.Pedido => "Pedidos",
             TipoDocumentoVenta.Entrega => "Entregas",
             TipoDocumentoVenta.Factura => "Facturas",
+            TipoDocumentoVenta.OrdenServicio => "OrdenesServicio",
             _ => null
         };
 

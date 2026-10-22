@@ -10,6 +10,7 @@ namespace API.Domain.Interface
         public const int Pedido = 4;
         public const int Entrega = 5;
         public const int Factura = 6;
+        public const int OrdenServicio = 70;
 
         public static string Nombre(int tipo) => tipo switch
         {
@@ -17,6 +18,7 @@ namespace API.Domain.Interface
             Pedido => "Pedido",
             Entrega => "Entrega",
             Factura => "Factura",
+            OrdenServicio => "Orden de servicio",
             _ => $"Documento {tipo}"
         };
 
@@ -25,6 +27,7 @@ namespace API.Domain.Interface
             Cotizacion => new[] { Pedido, Entrega, Factura },
             Pedido => new[] { Entrega, Factura },
             Entrega => new[] { Factura },
+            OrdenServicio => new[] { Factura },
             _ => Array.Empty<int>()
         };
 
@@ -34,6 +37,7 @@ namespace API.Domain.Interface
     public static class DocumentoBaseMensajes
     {
         public const string OrigenNoExiste = "El documento origen no existe.";
+        public const string OrdenNoFacturable = "La orden de servicio debe estar Terminada o Entregada para facturarse.";
     }
 
     /// <summary>Línea de un documento destino que apunta a una línea de su documento origen.</summary>

@@ -18,9 +18,22 @@ namespace API.Service.WebApi.Tests.Domain
         [InlineData(6, 3, false)]
         [InlineData(3, 3, false)]
         [InlineData(9, 6, false)]
+        [InlineData(70, 6, true)]
+        [InlineData(70, 5, false)]
+        [InlineData(70, 4, false)]
+        [InlineData(70, 3, false)]
+        [InlineData(6, 70, false)]
+        [InlineData(3, 70, false)]
         public void EsCombinacionValida_SoloLaCadenaHaciaAdelante(int origen, int destino, bool esperado)
         {
             Assert.Equal(esperado, TipoDocumentoVenta.EsCombinacionValida(origen, destino));
+        }
+
+        [Fact]
+        public void DestinosDe_OrdenDeServicio_EsSoloFactura()
+        {
+            Assert.Equal(new[] { 6 }, TipoDocumentoVenta.DestinosDe(TipoDocumentoVenta.OrdenServicio));
+            Assert.Equal(70, TipoDocumentoVenta.OrdenServicio);
         }
 
         [Fact]
@@ -35,6 +48,7 @@ namespace API.Service.WebApi.Tests.Domain
         [InlineData(4, "Pedido")]
         [InlineData(5, "Entrega")]
         [InlineData(6, "Factura")]
+        [InlineData(70, "Orden de servicio")]
         [InlineData(99, "Documento 99")]
         public void Nombre_DevuelveElNombreEnEspanol(int tipo, string esperado)
         {

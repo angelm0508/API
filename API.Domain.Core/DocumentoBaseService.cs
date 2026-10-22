@@ -21,6 +21,8 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<EntregaDetalle, (int Entry, int NoLinea)> _entregaDet;
         private readonly IRepositorioGenerico<Factura, int> _factura;
         private readonly IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> _facturaDet;
+        private readonly IRepositorioGenerico<OrdenServicio, int> _orden;
+        private readonly IRepositorioGenerico<OrdenServicioDetalle, (int Entry, int NoLinea)> _ordenDet;
 
         public DocumentoBaseService(
             IRepositorioGenerico<Cotizacion, int> cotizacion,
@@ -30,7 +32,9 @@ namespace API.Domain.Core
             IRepositorioGenerico<Entrega, int> entrega,
             IRepositorioGenerico<EntregaDetalle, (int Entry, int NoLinea)> entregaDet,
             IRepositorioGenerico<Factura, int> factura,
-            IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> facturaDet)
+            IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> facturaDet,
+            IRepositorioGenerico<OrdenServicio, int> orden,
+            IRepositorioGenerico<OrdenServicioDetalle, (int Entry, int NoLinea)> ordenDet)
         {
             _cotizacion = cotizacion;
             _cotizacionDet = cotizacionDet;
@@ -40,6 +44,8 @@ namespace API.Domain.Core
             _entregaDet = entregaDet;
             _factura = factura;
             _facturaDet = facturaDet;
+            _orden = orden;
+            _ordenDet = ordenDet;
         }
 
         // ---------------------------------------------------------------------------------------------
@@ -47,7 +53,7 @@ namespace API.Domain.Core
         // ---------------------------------------------------------------------------------------------
 
         private sealed record Cab(int Entry, int NumDoc, string? CodigoSn, string? NombreSn, string? Direccion, string? MonedaDoc,
-            decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario, string? Cancelado, string? EstadoDoc)
+            decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario, string? Cancelado, string? EstadoDoc, string? EstadoServicio = null)
         {
             // Un documento está activo si no está cancelado ni por Cancelado ni por EstadoDoc.
             public bool Activo => Cancelado != "S" && EstadoDoc != "C";
@@ -69,6 +75,17 @@ namespace API.Domain.Core
         private static Lin Mapear(EntregaDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
         private static Lin Mapear(FacturaDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
 
+        private static Cab Mapear(OrdenServicio h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, null, null, h.Comentario, h.Cancelado, null, h.EstadoServicio);
+
+        private static Lin Mapear(OrdenServicioDetalle d) => new(d.Entry, d.NoLinea, null, null, null, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, null, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
+
+        /// <summary>Una orden de servicio solo se factura cuando está Terminada o Entregada.</summary>
+        private static void ValidarOrdenFacturable(int tipoOrigen, Cab cab)
+        {
+            if (tipoOrigen == TipoDocumentoVenta.OrdenServicio && cab.EstadoServicio is not ("T" or "E"))
+                throw new Exception(DocumentoBaseMensajes.OrdenNoFacturable);
+        }
+
         // ---------------------------------------------------------------------------------------------
         // Lectura
         // ---------------------------------------------------------------------------------------------
@@ -86,6 +103,8 @@ namespace API.Domain.Core
                     { var h = await _entrega.ObtenerAsync(entry); return h is null ? null : Mapear(h); }
                 case TipoDocumentoVenta.Factura:
                     { var h = await _factura.ObtenerAsync(entry); return h is null || h.DocSubType != "--" ? null : Mapear(h); }
+                case TipoDocumentoVenta.OrdenServicio:
+                    { var h = await _orden.ObtenerAsync(entry); return h is null ? null : Mapear(h); }
                 default:
                     return null;
             }
@@ -104,6 +123,8 @@ namespace API.Domain.Core
                     return (await (await _entregaDet.ObtenerTodoAsync()).Where(d => d.Entry == entry).ToListAsync()).Select(d => Mapear(d)).OrderBy(l => l.NoLinea).ToList();
                 case TipoDocumentoVenta.Factura:
                     return (await (await _facturaDet.ObtenerTodoAsync()).Where(d => d.Entry == entry).ToListAsync()).Select(d => Mapear(d)).OrderBy(l => l.NoLinea).ToList();
+                case TipoDocumentoVenta.OrdenServicio:
+                    return (await (await _ordenDet.ObtenerTodoAsync()).Where(d => d.Entry == entry).ToListAsync()).Select(d => Mapear(d)).OrderBy(l => l.NoLinea).ToList();
                 default:
                     return new List<Lin>();
             }
@@ -182,6 +203,8 @@ namespace API.Domain.Core
             if (!cab.Activo)
                 throw new Exception("El documento origen está cancelado.");
 
+            ValidarOrdenFacturable(tipoOrigen, cab);
+
             var lineas = await LineasDeAsync(tipoOrigen, entry);
             var consumos = await ConsumosAsync(tipoOrigen, entry);
 
@@ -217,6 +240,8 @@ namespace API.Domain.Core
 
                 if (!cab.Activo)
                     throw new Exception($"El documento base {etiqueta} está cancelado.");
+
+                ValidarOrdenFacturable(tipoOrigen, cab);
 
                 if (!string.Equals(cab.CodigoSn, codigoSnDestino, StringComparison.OrdinalIgnoreCase))
                     throw new Exception($"El socio del documento debe ser el del documento base {etiqueta} ({cab.CodigoSn}).");

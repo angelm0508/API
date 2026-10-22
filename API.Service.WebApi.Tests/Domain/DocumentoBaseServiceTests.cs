@@ -18,6 +18,8 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<EntregaDetalle, (int Entry, int NoLinea)>> _entDet = new();
         private readonly Mock<IRepositorioGenerico<Factura, int>> _fac = new();
         private readonly Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>> _facDet = new();
+        private readonly Mock<IRepositorioGenerico<OrdenServicio, int>> _ord = new();
+        private readonly Mock<IRepositorioGenerico<OrdenServicioDetalle, (int Entry, int NoLinea)>> _ordDet = new();
 
         private readonly List<Cotizacion> _cotizaciones = new();
         private readonly List<CotizacionDetalle> _cotLineas = new();
@@ -27,6 +29,8 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly List<EntregaDetalle> _entLineas = new();
         private readonly List<Factura> _facturas = new();
         private readonly List<FacturaDetalle> _facLineas = new();
+        private readonly List<OrdenServicio> _ordenes = new();
+        private readonly List<OrdenServicioDetalle> _ordLineas = new();
 
         private readonly DocumentoBaseService _svc;
 
@@ -41,8 +45,11 @@ namespace API.Service.WebApi.Tests.Domain
             _entDet.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(() => _entLineas.AsAsyncQueryable());
             _facDet.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(() => _facLineas.AsAsyncQueryable());
 
+            _ord.Setup(r => r.ObtenerAsync(It.IsAny<int>())).ReturnsAsync((int id) => _ordenes.FirstOrDefault(x => x.Entry == id)!);
+            _ordDet.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(() => _ordLineas.AsAsyncQueryable());
+
             _svc = new DocumentoBaseService(_cot.Object, _cotDet.Object, _ped.Object, _pedDet.Object,
-                _ent.Object, _entDet.Object, _fac.Object, _facDet.Object);
+                _ent.Object, _entDet.Object, _fac.Object, _facDet.Object, _ord.Object, _ordDet.Object);
         }
 
         // ---------- fábricas de datos ----------
@@ -91,6 +98,18 @@ namespace API.Service.WebApi.Tests.Domain
         private void LineaFac(int entry, int noLinea, string art, decimal cant, int? baseTipo = null, int? baseEntry = null, int? baseLinea = null) =>
             _facLineas.Add(new FacturaDetalle { Entry = entry, NoLinea = noLinea, CodArticulo = art, Cantidad = cant, Precio = 10m,
                 BaseTipo = baseTipo ?? -1, BaseEntry = baseEntry, BaseLinea = baseLinea });
+
+        private OrdenServicio Ord(int entry, int numDoc, string sn = "CL-1", string estado = "T", string cancelado = "N")
+        {
+            var o = new OrdenServicio { Entry = entry, NumDoc = numDoc, CodigoSn = sn, NombreSn = "Cliente", Direccion = "Dir", MonedaDoc = "QTZ",
+                Comentario = "nota", EstadoServicio = estado, Cancelado = cancelado };
+            _ordenes.Add(o);
+            return o;
+        }
+
+        private void LineaOrd(int entry, int noLinea, string art, decimal cant, string? alm = "01", string esInsumo = "S") =>
+            _ordLineas.Add(new OrdenServicioDetalle { Entry = entry, NoLinea = noLinea, CodArticulo = art, Descripcion = "Desc " + art, Cantidad = cant,
+                Precio = 10m, PrctjeDesc = 0m, CodigoImpuesto = "IVA", Impuesto = cant * 10m * 0.12m, CodAlmacen = alm, EsInsumo = esInsumo });
 
         // ---------- ObtenerDerivadosAsync ----------
 
@@ -496,6 +515,181 @@ namespace API.Service.WebApi.Tests.Domain
             var ex = await Assert.ThrowsAsync<Exception>(() =>
                 _svc.ValidarLineaModificableAsync(TipoDocumentoVenta.Cotizacion, 1, 1, "eliminar"));
             Assert.Equal("No se puede eliminar la línea 1: la usan Pedido 3. Cancele primero esos documentos.", ex.Message);
+        }
+
+        // ---------- Orden de servicio como origen ----------
+
+        [Theory]
+        [InlineData("T")]
+        [InlineData("E")]
+        public async Task Borrador_OrdenTerminadaOEntregada_CopiaLasLineasAbiertas(string estado)
+        {
+            Ord(1, 5, estado: estado);
+            LineaOrd(1, 1, "ACE-1", 2m);
+            LineaOrd(1, 2, "MO-1", 1m, alm: null, esInsumo: "N");
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 1, TipoDocumentoVenta.Factura);
+
+            Assert.Equal((70, 1, 5), (b.OrigenTipo, b.OrigenEntry, b.OrigenNumDoc));
+            Assert.Equal(("CL-1", "Cliente", "Dir", "QTZ"), (b.Cabecera.CodigoSn, b.Cabecera.NombreSn, b.Cabecera.Direccion, b.Cabecera.MonedaDoc));
+            Assert.Null(b.Cabecera.PrctjeDesc);
+            Assert.Equal(new[] { "ACE-1", "MO-1" }, b.Lineas.Select(l => l.CodArticulo));
+            Assert.All(b.Lineas, l => Assert.Equal(70, l.BaseTipo));
+            Assert.Null(b.Lineas[1].CodAlmacen);
+        }
+
+        [Theory]
+        [InlineData("R")]
+        [InlineData("P")]
+        public async Task Borrador_OrdenSinTerminar_Lanza(string estado)
+        {
+            Ord(1, 5, estado: estado);
+            LineaOrd(1, 1, "ACE-1", 2m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 1, TipoDocumentoVenta.Factura));
+            Assert.Equal("La orden de servicio debe estar Terminada o Entregada para facturarse.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Borrador_OrdenCancelada_Lanza()
+        {
+            Ord(1, 5, estado: "T", cancelado: "S");
+            LineaOrd(1, 1, "ACE-1", 2m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 1, TipoDocumentoVenta.Factura));
+            Assert.Equal("El documento origen está cancelado.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Borrador_OrdenParcialmenteFacturada_MuestraLoQueFalta()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+            Fac(40, 2);
+            LineaFac(40, 1, "ACE-1", 3m, baseTipo: 70, baseEntry: 1, baseLinea: 1);
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 1, TipoDocumentoVenta.Factura);
+
+            Assert.Equal(1m, b.Lineas.Single().CantidadAbierta);
+        }
+
+        [Fact]
+        public async Task Borrador_OrdenConFacturaCancelada_LiberaLaCantidad()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+            Fac(40, 2, cancelado: "S");
+            LineaFac(40, 1, "ACE-1", 4m, baseTipo: 70, baseEntry: 1, baseLinea: 1);
+
+            var b = await _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 1, TipoDocumentoVenta.Factura);
+
+            Assert.Equal(4m, b.Lineas.Single().CantidadAbierta);
+        }
+
+        [Theory]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        public async Task Borrador_OrdenAOtroDestino_Lanza(int destino)
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 2m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 1, destino));
+            Assert.Equal($"No se puede copiar Orden de servicio a {TipoDocumentoVenta.Nombre(destino)}.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Borrador_OrdenInexistente_Lanza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ObtenerBorradorAsync(TipoDocumentoVenta.OrdenServicio, 99, TipoDocumentoVenta.Factura));
+            Assert.Equal(DocumentoBaseMensajes.OrigenNoExiste, ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_FacturaDeOrdenTerminada_ParcialPasa()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+
+            await _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(70, 1, 1, "ACE-1", 3m) });
+        }
+
+        [Fact]
+        public async Task Validar_FacturaDeOrdenEnProceso_Lanza()
+        {
+            Ord(1, 5, estado: "P");
+            LineaOrd(1, 1, "ACE-1", 4m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(70, 1, 1, "ACE-1", 1m) }));
+            Assert.Equal("La orden de servicio debe estar Terminada o Entregada para facturarse.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_FacturaDeOrden_CantidadMayorQueLaAbierta_Lanza()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+            Fac(40, 2);
+            LineaFac(40, 1, "ACE-1", 3m, baseTipo: 70, baseEntry: 1, baseLinea: 1);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-1", new[] { Req(70, 1, 1, "ACE-1", 2m) }));
+            Assert.Equal("La cantidad de la línea 1 de Orden de servicio 5 excede la cantidad abierta (1).", ex.Message);
+        }
+
+        [Fact]
+        public async Task Validar_FacturaDeOrden_OtroCliente_Lanza()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineasAsync(TipoDocumentoVenta.Factura, "CL-2", new[] { Req(70, 1, 1, "ACE-1", 1m) }));
+            Assert.Equal("El socio del documento debe ser el del documento base Orden de servicio 5 (CL-1).", ex.Message);
+        }
+
+        [Fact]
+        public async Task OrigenModificable_OrdenConFactura_NombraLaFactura()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+            Fac(40, 2);
+            LineaFac(40, 1, "ACE-1", 1m, baseTipo: 70, baseEntry: 1, baseLinea: 1);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarOrigenModificableAsync(TipoDocumentoVenta.OrdenServicio, 1, "cancelar el documento"));
+            Assert.Equal("No se puede cancelar el documento: lo usan Factura 2. Cancele primero esos documentos.", ex.Message);
+        }
+
+        [Fact]
+        public async Task OrigenModificable_OrdenSinFacturas_NoLanza()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+
+            await _svc.ValidarOrigenModificableAsync(TipoDocumentoVenta.OrdenServicio, 1, "cancelar el documento");
+        }
+
+        [Fact]
+        public async Task LineaModificable_OrdenSoloBloqueaLaLineaFacturada()
+        {
+            Ord(1, 5);
+            LineaOrd(1, 1, "ACE-1", 4m);
+            LineaOrd(1, 2, "MO-1", 1m, alm: null, esInsumo: "N");
+            Fac(40, 2);
+            LineaFac(40, 1, "ACE-1", 1m, baseTipo: 70, baseEntry: 1, baseLinea: 1);
+
+            await _svc.ValidarLineaModificableAsync(TipoDocumentoVenta.OrdenServicio, 1, 2, "modificar");
+
+            var ex = await Assert.ThrowsAsync<Exception>(() =>
+                _svc.ValidarLineaModificableAsync(TipoDocumentoVenta.OrdenServicio, 1, 1, "eliminar"));
+            Assert.Equal("No se puede eliminar la línea 1: la usan Factura 2. Cancele primero esos documentos.", ex.Message);
         }
     }
 }

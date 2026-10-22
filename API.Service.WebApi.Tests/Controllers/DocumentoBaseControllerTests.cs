@@ -109,5 +109,38 @@ namespace API.Service.WebApi.Tests.Controllers
 
             Assert.Same(respuesta, Assert.IsType<BadRequestObjectResult>(r.Result).Value);
         }
+
+        [Fact]
+        public async Task Abierto_DesdeOrdenDeServicio_ConVerEnOrdenesYAgregarEnFacturas_DevuelveOk()
+        {
+            var (c, app) = Crear(Ambos("OrdenesServicio:V", "Facturas:A"));
+            var respuesta = new Respuesta<DocumentoBaseBorradorDTO> { Resultado = true, Dato = new DocumentoBaseBorradorDTO() };
+            app.Setup(a => a.ObtenerBorradorAsync(70, 5, 6)).ReturnsAsync(respuesta);
+
+            var r = await c.ObtenerAbiertoAsync(70, 5, 6);
+
+            Assert.Same(respuesta, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task Abierto_DesdeOrdenDeServicio_SinVerEnOrdenes_Devuelve403()
+        {
+            var (c, app) = Crear(Ambos("Facturas:A", "Facturas:V"));
+
+            var r = await c.ObtenerAbiertoAsync(70, 5, 6);
+
+            Assert.Equal(403, Assert.IsType<ObjectResult>(r.Result).StatusCode);
+            app.Verify(a => a.ObtenerBorradorAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Abierto_DesdeOrdenDeServicio_SinAgregarEnFacturas_Devuelve403()
+        {
+            var (c, _) = Crear(Ambos("OrdenesServicio:V", "Facturas:V"));
+
+            var r = await c.ObtenerAbiertoAsync(70, 5, 6);
+
+            Assert.Equal(403, Assert.IsType<ObjectResult>(r.Result).StatusCode);
+        }
     }
 }
