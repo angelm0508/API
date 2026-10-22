@@ -114,7 +114,9 @@ namespace API.Domain.Core
             if (!string.Equals(existente.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase))
                 await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.OrdenServicio, id, "cambiar el cliente");
 
-            await ValidarClienteYMonedaAsync(obj);
+            // Dar de baja un cliente impide nuevas órdenes o reasignarle la orden, no editar las órdenes abiertas que ya
+            // tiene: "activo" solo se exige cuando el cliente cambia respecto de lo guardado.
+            await ValidarClienteYMonedaAsync(obj, existente.CodigoSn);
             // Dar de baja una moto/mecánico impide nuevas asignaciones, no la edición de órdenes abiertas:
             // "activo" solo se exige cuando el valor cambia respecto de lo guardado.
             await ValidarMotoYMecanicoAsync(obj, existente.MotoEntry, existente.CodMecanico);
@@ -246,7 +248,9 @@ namespace API.Domain.Core
             serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transacción
         }
 
-        private async Task ValidarClienteYMonedaAsync(OrdenServicio obj)
+        // clienteGuardado (solo en la actualización): si coincide con el cliente entrante se omite únicamente el chequeo
+        // de "activo"; existencia y tipo cliente se validan siempre.
+        private async Task ValidarClienteYMonedaAsync(OrdenServicio obj, string? clienteGuardado = null)
         {
             if (string.IsNullOrWhiteSpace(obj.CodigoSn))
                 throw new Exception("El socio de negocio es requerido.");
@@ -257,7 +261,7 @@ namespace API.Domain.Core
             if (socio.TipoSn != TipoSocioCliente)
                 throw new Exception("El socio de negocio debe ser un cliente.");
 
-            if (socio.Activo == "N")
+            if (socio.Activo == "N" && !string.Equals(clienteGuardado, obj.CodigoSn, StringComparison.OrdinalIgnoreCase))
                 throw new Exception("El socio de negocio está inactivo.");
 
             if (string.IsNullOrWhiteSpace(obj.NombreSn))

@@ -463,6 +463,33 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal("La motocicleta está inactiva.", ex.Message);
         }
 
+        // Dar de baja a un cliente impide NUEVAS órdenes o cambiarle la orden a él, pero no bloquea editar sus órdenes abiertas.
+
+        [Fact]
+        public async Task ActualizarAsync_ClienteInactivoQueNoCambia_Guarda()
+        {
+            var existente = Existente();   // cliente SN1
+            _repoSocio.Setup(r => r.ObtenerAsync("SN1")).ReturnsAsync(new SocioNegocio { Codigo = "SN1", Nombre = "Cliente Uno", TipoSn = "C", Activo = "N" });
+
+            Assert.True(await _domain.ActualizarAsync(50, Orden(o => o.Diagnostico = "Bujía")));
+
+            Assert.Equal("Bujía", existente.Diagnostico);
+            _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CambiarAClienteInactivo_Lanza()
+        {
+            var existente = Existente();   // cliente SN1
+            _repoSocio.Setup(r => r.ObtenerAsync("SN3")).ReturnsAsync(new SocioNegocio { Codigo = "SN3", Nombre = "Cliente Tres", TipoSn = "C", Activo = "N" });
+            _repoMoto.Setup(r => r.ObtenerAsync(13)).ReturnsAsync(new Motocicleta { Entry = 13, CodigoSn = "SN3", Placa = "M3", Activo = "S" });
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(50, Orden(o => { o.CodigoSn = "SN3"; o.MotoEntry = 13; })));
+
+            Assert.Equal("El socio de negocio está inactivo.", ex.Message);
+            Assert.Equal("SN1", existente.CodigoSn);
+        }
+
         [Fact]
         public async Task ActualizarAsync_MotoQueNoCambiaPeroEsDeOtroCliente_Lanza()
         {

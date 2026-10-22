@@ -1743,6 +1743,10 @@ END
 
 -- ===== FacturaDetalle.BaseTipo admite 70 (orden de servicio como documento base) =====
 -- El CHECK original es de columna y tiene nombre generado por SQL Server: se busca por definicion.
+-- Todo el bloque (quitar el CHECK viejo + crear el nuevo) va en una transaccion: si algo falla, FacturaDetalle
+-- no queda sin CHECK de BaseTipo.
+SET XACT_ABORT ON;
+BEGIN TRAN;
 DECLARE @ck sysname;
 DECLARE @sqlck nvarchar(400);
 WHILE 1 = 1
@@ -1760,6 +1764,8 @@ END
 
 IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID('dbo.FacturaDetalle') AND name = 'CK_FacturaDetalle_BaseTipo')
     ALTER TABLE dbo.FacturaDetalle ADD CONSTRAINT CK_FacturaDetalle_BaseTipo CHECK (BaseTipo IN (-1, 3, 4, 5, 70));
+COMMIT;
+SET XACT_ABORT OFF;
 
 -- ===== Numeracion (serie "Primario" y fila padre para la pantalla "Numeracion de documentos") =====
 IF NOT EXISTS (SELECT 1 FROM dbo.NumeracionDocumentoDet WHERE CodigoObj = '70')
