@@ -26,6 +26,7 @@ using API.Application.DTO.pais;
 using API.Application.DTO.departamento;
 using API.Application.DTO.municipio;
 using API.Application.DTO.almacen;
+using API.Application.DTO.mecanico;
 using API.Application.DTO.socioNegocio;
 using API.Application.DTO.direccionSocioNegocio;
 using API.Application.DTO.numeracionDocumento;
@@ -68,6 +69,11 @@ namespace API.Transversal.Mapper
             CreateMap<Almacen, AlmacenDTO>();
             CreateMap<AlmacenCrearDTO, Almacen>();
             CreateMap<AlmacenActualizarDTO, Almacen>();
+
+            // Mecanico
+            CreateMap<Mecanico, MecanicoDTO>();
+            CreateMap<MecanicoCrearDTO, Mecanico>();
+            CreateMap<MecanicoActualizarDTO, Mecanico>();
 
             // SocioNegocio
             CreateMap<SocioNegocio, SocioNegocioDTO>();
