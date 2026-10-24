@@ -9,6 +9,7 @@ using API.Application.DTO.precio.listado_precio;
 using API.Application.DTO.numeracion.numeracion_documento_det;
 using API.Application.DTO.usuario.usuario;
 using API.Application.DTO.cotizacion;
+using API.Application.DTO.formaPago;
 using API.Application.DTO.entrega;
 using API.Application.DTO.pedido;
 using API.Application.DTO.pedidoCompra;
@@ -76,6 +77,11 @@ namespace API.Transversal.Mapper
             CreateMap<Mecanico, MecanicoDTO>();
             CreateMap<MecanicoCrearDTO, Mecanico>();
             CreateMap<MecanicoActualizarDTO, Mecanico>();
+
+            // FormaPago
+            CreateMap<FormaPago, FormaPagoDTO>();
+            CreateMap<FormaPagoCrearDTO, FormaPago>();
+            CreateMap<FormaPagoActualizarDTO, FormaPago>();
 
             // Motocicleta
             CreateMap<Motocicleta, MotocicletaDTO>()
