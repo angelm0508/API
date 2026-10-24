@@ -17,6 +17,7 @@ namespace API.Domain.Core
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
         private readonly IDocumentoBaseService _documentoBase;
+        private readonly ISaldoFacturaService _saldos;
 
         public FacturaDomain(
             IRepositorioGenerico<Factura, int> repoFactura,
@@ -24,7 +25,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
-            IDocumentoBaseService documentoBase)
+            IDocumentoBaseService documentoBase,
+            ISaldoFacturaService saldos)
         {
             _repoFactura = repoFactura;
             _repoDetalle = repoDetalle;
@@ -32,6 +34,7 @@ namespace API.Domain.Core
             _tx = tx;
             _asiento = asiento;
             _documentoBase = documentoBase;
+            _saldos = saldos;
         }
 
         #region async methods
@@ -129,6 +132,8 @@ namespace API.Domain.Core
             // Cancelación: Cancelado pasa a 'S'.
             if (obj.Cancelado == "S")
             {
+                await GuardaPagos.ValidarSinPagosAsync(_saldos, id);
+
                 return await _tx.EjecutarAsync(async () =>
                 {
                     await _asiento.RevertirAsync(TipoObjetoFactura, id);
@@ -157,6 +162,8 @@ namespace API.Domain.Core
             var existente = await ObtenerFacturaAsync(id);
             if (existente is null)
                 return false;
+
+            await GuardaPagos.ValidarSinPagosAsync(_saldos, id);
 
             if (existente.EstadoInv == "A" && existente.Cancelado != "S")
                 throw new Exception("Cancele el documento (Cancelado='S') antes de eliminarlo.");

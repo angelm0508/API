@@ -42,6 +42,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<Almacen, string>> _repoAlmacen = new();
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IInventarioAsientoService> _asiento = new();
+        private readonly Mock<ISaldoFacturaService> _saldos = new();
         private readonly NotaDebitoDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientos = new();
@@ -51,7 +52,7 @@ namespace API.Service.WebApi.Tests.Domain
             _domain = new NotaDebitoDomain(
                 _repoFactura.Object, _repoDetalle.Object, _repoNumeracion.Object, _repoSocio.Object,
                 _repoImpuesto.Object, _repoMoneda.Object, _repoArticulo.Object, _repoAlmacen.Object,
-                _tx.Object, _asiento.Object);
+                _tx.Object, _asiento.Object, _saldos.Object);
 
             // El doble del ejecutor corre el Func directo (sin transaccion ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
@@ -63,6 +64,7 @@ namespace API.Service.WebApi.Tests.Domain
                 .Callback<IEnumerable<MovimientoRequest>, bool>((ms, _) => _movimientos.AddRange(ms))
                 .Returns(Task.CompletedTask);
             _asiento.Setup(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+            _saldos.Setup(s => s.ObtenerPagosActivosAsync(It.IsAny<int>())).ReturnsAsync(new List<PagoAplicado>());
 
             // Valores por defecto validos: cada test rompe solo lo que quiere probar.
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(CrearSerie());
@@ -743,6 +745,49 @@ namespace API.Service.WebApi.Tests.Domain
             _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 5 && k.NoLinea == 2)), Times.Once);
             _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 6 && k.NoLinea == 1)), Times.Never);
             _repoFactura.Verify(r => r.EliminarAsync(5), Times.Once);
+        }
+
+        // ---------------- Guarda de pagos ----------------
+
+        private void ConPagosActivos(int entry) =>
+            _saldos.Setup(s => s.ObtenerPagosActivosAsync(entry)).ReturnsAsync(new List<PagoAplicado> { new(1, 3, 40m), new(2, 5, 60m) });
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelar_ConPagosActivos_LanzaYNoCancela()
+        {
+            var existente = new Factura { Entry = 5, DocSubType = SubTipoNota, DocType = "I", Cancelado = "N", EstadoInv = "A", EstadoDoc = "A" };
+            PrepararNota(existente);
+            ConPagosActivos(5);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(5, new Factura { Cancelado = "S" }));
+
+            Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
+            Assert.Equal("N", existente.Cancelado);
+            _asiento.Verify(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_SoloComentario_ConPagosActivos_SePermite()
+        {
+            var existente = new Factura { Entry = 5, DocSubType = SubTipoNota, DocType = "S", Cancelado = "N", Comentario = "viejo" };
+            PrepararNota(existente);
+            ConPagosActivos(5);
+
+            Assert.True(await _domain.ActualizarAsync(5, new Factura { Comentario = "nuevo" }));
+
+            Assert.Equal("nuevo", existente.Comentario);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_ConPagosActivos_LanzaYNoBorra()
+        {
+            PrepararNota(new Factura { Entry = 5, DocSubType = SubTipoNota, Cancelado = "S" });
+            ConPagosActivos(5);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.EliminarAsync(5));
+
+            Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
+            _repoFactura.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
         }
 
         // ---------------- Consultas ----------------

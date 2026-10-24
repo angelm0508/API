@@ -17,13 +17,15 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IInventarioAsientoService> _asiento = new();
         private readonly Mock<IDocumentoBaseService> _documentoBase = new();
+        private readonly Mock<ISaldoFacturaService> _saldos = new();
         private readonly FacturaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
         public FacturaDomainTests()
         {
-            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object);
+            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object);
+            _saldos.Setup(s => s.ObtenerPagosActivosAsync(It.IsAny<int>())).ReturnsAsync(new List<PagoAplicado>());
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
@@ -308,6 +310,50 @@ namespace API.Service.WebApi.Tests.Domain
             _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 7 && k.NoLinea == 1)), Times.Once);
             _repoDetalle.Verify(r => r.EliminarAsync(It.Is<(int Entry, int NoLinea)>(k => k.Entry == 7 && k.NoLinea == 2)), Times.Once);
             _repoHeader.Verify(r => r.EliminarAsync(7), Times.Once);
+        }
+
+        // ---------------- Guarda de pagos ----------------
+
+        private void ConPagosActivos(int entry) =>
+            _saldos.Setup(s => s.ObtenerPagosActivosAsync(entry)).ReturnsAsync(new List<PagoAplicado> { new(1, 3, 40m), new(2, 5, 60m) });
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelado_S_ConPagosActivos_LanzaYNoRevierteNiCancela()
+        {
+            var existente = new Factura { Entry = 7, Cancelado = "N", EstadoInv = "A" };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+            ConPagosActivos(7);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(7, new Factura { Cancelado = "S" }));
+
+            Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
+            Assert.Equal("N", existente.Cancelado);
+            _asiento.Verify(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_SoloComentario_ConPagosActivos_SePermite()
+        {
+            var existente = new Factura { Entry = 7, Cancelado = "N", EstadoInv = "A", Comentario = "viejo" };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+            ConPagosActivos(7);
+
+            Assert.True(await _domain.ActualizarAsync(7, new Factura { Comentario = "nuevo" }));
+
+            Assert.Equal("nuevo", existente.Comentario);
+            Assert.Equal("N", existente.Cancelado);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_ConPagosActivos_LanzaYNoBorra()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new Factura { Entry = 7, EstadoInv = "C", Cancelado = "S" });
+            ConPagosActivos(7);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.EliminarAsync(7));
+
+            Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
+            _repoHeader.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
         }
 
         // ---------------- Aislamiento de las notas de débito (DocSubType) ----------------
