@@ -26,6 +26,7 @@ namespace API.Service.WebApi.Tests.Domain
         private const string MsgBaseOtroSocio = "La factura base pertenece a otro socio de negocio.";
         private const string MsgBaseMoneda = "La moneda de la nota de crédito debe ser la misma de la factura base.";
         private const string MsgExceso = "El total acreditado ({0}) excede el total de la factura base ({1}).";
+        private const string MsgExcesoPagada = "Las notas de crédito ({0}) exceden lo que queda por acreditar de la factura ({1} = total menos pagos aplicados). Cancele primero los pagos si necesita acreditarla por completo.";
         private const string MsgFacturaNoExiste = "La factura no existe.";
         private const string MsgFacturaCancelada = "La factura está cancelada.";
         // ---- fin de constantes ----
@@ -39,13 +40,14 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<Factura, int>> _repoFactura = new();
         private readonly Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>> _repoFacturaDetalle = new();
         private readonly Mock<IEjecutorTransaccion> _tx = new();
+        private readonly Mock<ISaldoFacturaService> _saldos = new();
         private readonly NotaCreditoDomain _domain;
 
         public NotaCreditoDomainTests()
         {
             _domain = new NotaCreditoDomain(
                 _repoNota.Object, _repoDetalle.Object, _repoNumeracion.Object, _repoSocio.Object,
-                _repoImpuesto.Object, _repoMoneda.Object, _repoFactura.Object, _repoFacturaDetalle.Object, _tx.Object);
+                _repoImpuesto.Object, _repoMoneda.Object, _repoFactura.Object, _repoFacturaDetalle.Object, _tx.Object, _saldos.Object);
 
             // El doble del ejecutor corre el Func directo (sin transaccion ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), It.IsAny<IsolationLevel>()))
@@ -55,6 +57,8 @@ namespace API.Service.WebApi.Tests.Domain
                 .ReturnsAsync((NotaCredito n) => { n.Entry = 99; return n; });
             _repoNota.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new List<NotaCredito>().AsAsyncQueryable());
             _repoDetalle.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<NotaCreditoDetalle>())).Returns(Task.CompletedTask);
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync(new Dictionary<int, SaldoFactura>());
 
             // Valores por defecto validos: cada test rompe solo lo que quiere probar.
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(CrearSerie());
@@ -786,6 +790,88 @@ namespace API.Service.WebApi.Tests.Domain
             var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ObtenerFacturaBaseAsync(12));
 
             Assert.Equal(MsgFacturaCancelada, ex.Message);
+        }
+
+        // ---------------- limite acreditable con pagos aplicados ----------------
+
+        private static string ExcesoPagada(string acreditado, string limite) =>
+            string.Format(CultureInfo.InvariantCulture, MsgExcesoPagada, acreditado, limite);
+
+        private void ConPagado(decimal pagado) =>
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync((IEnumerable<int> ids) => (IReadOnlyDictionary<int, SaldoFactura>)ids.Distinct()
+                    .ToDictionary(i => i, i => new SaldoFactura(i, 200m, 0m, pagado, 0m, "Parcial")));
+
+        [Fact]
+        public async Task InsertarAsync_FacturaConPagos_LaNotaNoPuedeExcederTotalMenosPagado()
+        {
+            PrepararFactura(total: 200m);
+            ConPagado(100m);                                   // limite = 200 - 100 = 100; la nota es 112
+
+            Assert.Equal(ExcesoPagada("112.00", "100.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+            _repoNota.Verify(r => r.InsertarAsync(It.IsAny<NotaCredito>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FacturaConPagos_NotaJustoEnElLimite_EsValida()
+        {
+            PrepararFactura(total: 212m);
+            ConPagado(100m);                                   // limite = 112 = la nota
+
+            Assert.Equal(99, await _domain.InsertarAsync(NotaConBase(), new[] { Linea() }));
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FacturaConPagosYNotasPrevias_SumanContraElLimite()
+        {
+            PrepararFactura(total: 300m);
+            ConPagado(100m);                                   // limite = 200
+            NotasPrevias(Previa(12, 90m));                     // 90 + 112 = 202 > 200
+
+            Assert.Equal(ExcesoPagada("202.00", "200.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinPagos_ConservaElMensajeDeExcesoOriginal()
+        {
+            PrepararFactura(total: 100m);
+
+            Assert.Equal(Exceso("112.00", "100.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+        }
+
+        [Fact]
+        public async Task ObtenerFacturasBaseAsync_IncluyeLoPagadoDeCadaFactura()
+        {
+            var facturas = new List<Factura>
+            {
+                new() { Entry = 1, CodigoSn = "SN1", Cancelado = "N", TotalDoc = 112m },
+                new() { Entry = 4, CodigoSn = "SN1", Cancelado = "N", TotalDoc = 200m }
+            };
+            _repoFactura.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(facturas.AsAsyncQueryable());
+            NotasPrevias(Previa(1, 30m));
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync(new Dictionary<int, SaldoFactura> { [1] = new SaldoFactura(1, 112m, 30m, 20m, 62m, "Parcial") });
+
+            var resultado = (await _domain.ObtenerFacturasBaseAsync("SN1")).ToList();
+
+            Assert.Equal(new[] { 4, 1 }, resultado.Select(f => f.Documento.Entry));
+            Assert.Equal(0m, resultado[0].TotalPagado);
+            Assert.Equal(20m, resultado[1].TotalPagado);
+            Assert.Equal(30m, resultado[1].TotalAcreditado);
+        }
+
+        [Fact]
+        public async Task ObtenerFacturaBaseAsync_IncluyeLoPagado()
+        {
+            PrepararFactura(entry: 12, total: 112m);
+            _repoFacturaDetalle.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new List<FacturaDetalle>().AsAsyncQueryable());
+            NotasPrevias();
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync(new Dictionary<int, SaldoFactura> { [12] = new SaldoFactura(12, 112m, 0m, 40m, 72m, "Parcial") });
+
+            var resultado = await _domain.ObtenerFacturaBaseAsync(12);
+
+            Assert.Equal(40m, resultado.TotalPagado);
         }
     }
 }

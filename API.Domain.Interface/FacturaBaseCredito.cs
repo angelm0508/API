@@ -2,11 +2,11 @@ using API.Domain.Entity.Models;
 
 namespace API.Domain.Interface
 {
-    /// <summary>Factura de venta candidata a base de una nota de credito de cliente, con lo ya acreditado.</summary>
-    public record FacturaAcreditable(Factura Documento, decimal TotalAcreditado);
+    /// <summary>Factura de venta candidata a base de una nota de credito de cliente, con lo ya acreditado y lo ya pagado.</summary>
+    public record FacturaAcreditable(Factura Documento, decimal TotalAcreditado, decimal TotalPagado = 0m);
 
-    /// <summary>Factura de venta con sus lineas y lo ya acreditado: base de una nota de credito de cliente.</summary>
-    public record FacturaBaseCredito(Factura Documento, IReadOnlyList<FacturaDetalle> Lineas, decimal TotalAcreditado);
+    /// <summary>Factura de venta con sus lineas, lo ya acreditado y lo ya pagado: base de una nota de credito de cliente.</summary>
+    public record FacturaBaseCredito(Factura Documento, IReadOnlyList<FacturaDetalle> Lineas, decimal TotalAcreditado, decimal TotalPagado = 0m);
 
     /// <summary>Factura de compra candidata a base de una nota de credito de proveedor, con lo ya acreditado.</summary>
     public record FacturaCompraAcreditable(FacturaCompra Documento, decimal TotalAcreditado);
