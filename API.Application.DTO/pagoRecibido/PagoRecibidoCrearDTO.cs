@@ -1,0 +1,15 @@
+namespace API.Application.DTO.pagoRecibido
+{
+    /// <summary>Alta de un pago recibido. El total lo calcula el servidor; no se acepta del cliente.</summary>
+    public class PagoRecibidoCrearDTO
+    {
+        public int Serie { get; set; }
+        /// <summary>Solo para series manuales.</summary>
+        public int NumDoc { get; set; }
+        public DateTime? FechaDoc { get; set; }
+        public string? CodigoSn { get; set; }
+        public string? Comentario { get; set; }
+        public List<PagoRecibidoFacturaCrearDTO> Facturas { get; set; } = new();
+        public List<PagoRecibidoMedioCrearDTO> Medios { get; set; } = new();
+    }
+}
