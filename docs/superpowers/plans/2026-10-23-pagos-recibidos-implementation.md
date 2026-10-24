@@ -6026,7 +6026,7 @@ Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 
 ## Notas de despliegue (para quien integra, fuera de las tareas)
 
-- Ejecutar `sql/2026-10-23-pagos-recibidos.sql` en `API_DB_TEST` (idempotente, UTF-8: `sqlcmd -f 65001`) y asignar los módulos `PagosRecibidos` y `FormasPago` a las plantillas de permisos. Para el cobro hace falta además Ver en `Facturas`/`NotasDebito` (listados con saldo) y en `SociosNegocio` (buscador de clientes); para que "Registrar pago" aparezca, Agregar en `PagosRecibidos`.
+- Ejecutar `sql/2026-10-23-pagos-recibidos.sql` en `API_DB_TEST` (idempotente, UTF-8: `sqlcmd -f 65001`) y asignar los módulos `PagosRecibidos` y `FormasPago` a las plantillas de permisos. Para el cobro hace falta además Ver en `Facturas`/`NotasDebito` (listados con saldo) y en `SociosNegocio` (buscador de clientes); para que "Registrar pago" aparezca, Agregar en `PagosRecibidos`. El alta de pagos exige además Ver en `NumeracionDocumento` (lista de series del objeto 24); sin Ver en `FormasPago`/`SociosNegocio` la página degrada: avisa que no hay series o formas de pago disponibles y deja Guardar deshabilitado (el buscador de clientes queda vacío).
 - No hay migración de datos: las facturas existentes quedan con saldo = total y estado Pendiente.
 - Los saldos se calculan con tres consultas agrupadas por listado; si el listado de facturas creciera mucho, se puede materializar después sin cambiar la API.
 - Riesgos aceptados (ver spec §6): un pago puede cancelarse sin restricción de fecha; sin anticipos, un cliente que pagó de más no tiene dónde registrarlo.

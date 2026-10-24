@@ -256,7 +256,11 @@ en `Facturas`/`NotasDebito` no ve el listado de todos modos.
 **Flujo del taller:** orden de servicio → "Copiar a Factura" → "Registrar pago" desde la factura.
 
 **Dependencias de permisos para armar plantillas:** el pago exige Agregar `PagosRecibidos`, Ver `Facturas` y Ver
-`SociosNegocio`; Formas de pago exige Ver `FormasPago` para poblar la lista del medio de pago.
+`SociosNegocio`; Formas de pago exige Ver `FormasPago` para poblar la lista del medio de pago. El alta exige además
+Ver `NumeracionDocumento` (la lista de series del objeto 24 sale de esa API). Sin esos permisos la página degrada:
+sin series (Ver `NumeracionDocumento`) o sin formas de pago activas (Ver `FormasPago`) muestra un aviso persistente y
+deja Guardar deshabilitado; sin Ver `SociosNegocio` el buscador de clientes queda vacío (desde "Registrar pago" el
+cliente llega precargado).
 
 ## §5 — Pruebas
 
@@ -281,7 +285,9 @@ en `Facturas`/`NotasDebito` no ve el listado de todos modos.
 ## §6 — Despliegue y riesgos
 
 - Ejecutar `sql/2026-10-23-pagos-recibidos.sql` en `API_DB_TEST` (idempotente) y asignar los módulos
-  `PagosRecibidos` y `FormasPago` a las plantillas de permisos.
+  `PagosRecibidos` y `FormasPago` a las plantillas de permisos. Quien registre pagos necesita además Ver en
+  `NumeracionDocumento` (lista de series); sin Ver en `FormasPago`/`SociosNegocio` la página de alta degrada con
+  avisos (ver §4).
 - No hay migración de datos: las facturas existentes quedan con saldo = total.
 - El saldo se calcula con tres consultas agrupadas por listado; para el volumen esperado (listados que ya cargan
   todas las filas en el cliente) es adecuado. Si el listado llegara a ser muy grande, se puede materializar después
