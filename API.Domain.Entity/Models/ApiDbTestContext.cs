@@ -19,6 +19,14 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<Mecanico> Mecanicos { get; set; }
 
+    public virtual DbSet<FormaPago> FormaPagos { get; set; }
+
+    public virtual DbSet<PagoRecibido> PagoRecibidos { get; set; }
+
+    public virtual DbSet<PagoRecibidoFactura> PagoRecibidoFacturas { get; set; }
+
+    public virtual DbSet<PagoRecibidoMedio> PagoRecibidoMedios { get; set; }
+
     public virtual DbSet<Motocicleta> Motocicletas { get; set; }
 
     public virtual DbSet<OrdenServicio> OrdenServicios { get; set; }
@@ -1741,6 +1749,91 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany()
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_orden_servicio_det_cod_art");
+        });
+
+        modelBuilder.Entity<FormaPago>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("pk_forma_pago");
+
+            entity.ToTable("FormaPago");
+
+            entity.Property(e => e.Codigo).HasMaxLength(10);
+            entity.Property(e => e.Activo)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('S')");
+            entity.Property(e => e.Nombre).HasMaxLength(50);
+            entity.Property(e => e.TipoDato)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+        });
+
+        modelBuilder.Entity<PagoRecibido>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_pago_recibido");
+
+            entity.ToTable("PagoRecibido");
+
+            entity.Property(e => e.Cancelado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.CodigoSn)
+                .HasMaxLength(15)
+                .HasColumnName("CodigoSN");
+            entity.Property(e => e.Comentario).HasMaxLength(254);
+            entity.Property(e => e.FechaCancelado).HasColumnType("datetime");
+            entity.Property(e => e.FechaDoc).HasColumnType("datetime");
+            entity.Property(e => e.NombreSn)
+                .HasMaxLength(200)
+                .HasColumnName("NombreSN");
+            entity.Property(e => e.NumManual)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+            entity.Property(e => e.TipoObjeto)
+                .HasMaxLength(11)
+                .HasDefaultValueSql("('24')");
+            entity.Property(e => e.TotalPago).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.CodigoSnNavigation).WithMany()
+                .HasForeignKey(d => d.CodigoSn)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_pago_recibido_sn");
+
+            entity.HasOne(d => d.SerieNavigation).WithMany()
+                .HasForeignKey(d => d.Serie)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_pago_recibido_serie");
+        });
+
+        modelBuilder.Entity<PagoRecibidoFactura>(entity =>
+        {
+            entity.HasKey(e => new { e.Entry, e.NoLinea }).HasName("pk_pago_recibido_factura");
+
+            entity.ToTable("PagoRecibidoFactura");
+
+            entity.Property(e => e.MontoAplicado).HasColumnType("decimal(19, 6)");
+
+            entity.HasOne(d => d.FacturaNavigation).WithMany()
+                .HasForeignKey(d => d.FacturaEntry)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_pago_recibido_factura_factura");
+        });
+
+        modelBuilder.Entity<PagoRecibidoMedio>(entity =>
+        {
+            entity.HasKey(e => new { e.Entry, e.NoLinea }).HasName("pk_pago_recibido_medio");
+
+            entity.ToTable("PagoRecibidoMedio");
+
+            entity.Property(e => e.Banco).HasMaxLength(60);
+            entity.Property(e => e.CodFormaPago).HasMaxLength(10);
+            entity.Property(e => e.FechaCheque).HasColumnType("datetime");
+            entity.Property(e => e.Monto).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Referencia).HasMaxLength(50);
+
+            entity.HasOne(d => d.CodFormaPagoNavigation).WithMany()
+                .HasForeignKey(d => d.CodFormaPago)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_pago_recibido_medio_forma");
         });
 
         OnModelCreatingPartial(modelBuilder);
