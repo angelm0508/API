@@ -240,5 +240,33 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Empty(await _servicio.ObtenerPagosActivosAsync(1));
         }
+
+        [Fact]
+        public async Task TienePagosRegistradosAsync_ConUnPagoCancelado_DevuelveTrue()
+        {
+            Factura(1, 100m);
+            Pago(1, 7, 1, 30m, cancelado: "S");
+
+            Assert.True(await _servicio.TienePagosRegistradosAsync(1));
+        }
+
+        [Fact]
+        public async Task TienePagosRegistradosAsync_ConUnPagoActivo_DevuelveTrue()
+        {
+            Factura(1, 100m);
+            Pago(1, 7, 1, 30m);
+
+            Assert.True(await _servicio.TienePagosRegistradosAsync(1));
+        }
+
+        [Fact]
+        public async Task TienePagosRegistradosAsync_SoloPagosDeOtroDocumento_DevuelveFalse()
+        {
+            Factura(1, 100m);
+            Factura(2, 100m);
+            Pago(1, 7, 2, 30m, cancelado: "S");
+
+            Assert.False(await _servicio.TienePagosRegistradosAsync(1));
+        }
     }
 }

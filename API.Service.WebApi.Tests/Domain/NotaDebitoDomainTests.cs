@@ -1,3 +1,4 @@
+using System.Data;
 using API.Domain.Core;
 using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
@@ -57,6 +58,8 @@ namespace API.Service.WebApi.Tests.Domain
             // El doble del ejecutor corre el Func directo (sin transaccion ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), It.IsAny<IsolationLevel>()))
+                .Returns<Func<Task<bool>>, IsolationLevel>((f, _) => f());
             _repoFactura.Setup(r => r.InsertarAsync(It.IsAny<Factura>()))
                 .ReturnsAsync((Factura n) => { n.Entry = 99; return n; });
             _repoDetalle.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<FacturaDetalle>())).Returns(Task.CompletedTask);
@@ -65,6 +68,7 @@ namespace API.Service.WebApi.Tests.Domain
                 .Returns(Task.CompletedTask);
             _asiento.Setup(a => a.RevertirAsync(It.IsAny<string>(), It.IsAny<int>())).Returns(Task.CompletedTask);
             _saldos.Setup(s => s.ObtenerPagosActivosAsync(It.IsAny<int>())).ReturnsAsync(new List<PagoAplicado>());
+            _saldos.Setup(s => s.TienePagosRegistradosAsync(It.IsAny<int>())).ReturnsAsync(false);
 
             // Valores por defecto validos: cada test rompe solo lo que quiere probar.
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(CrearSerie());
@@ -788,6 +792,59 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
             _repoFactura.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelar_LaGuardaDePagosCorreDentroDeLaTransaccionSerializable()
+        {
+            PrepararNota(new Factura { Entry = 5, DocSubType = SubTipoNota, DocType = "I", Cancelado = "N", EstadoInv = "A", EstadoDoc = "A" });
+            // Doble de tx que NO ejecuta el Func: si la guarda corriera antes de la transaccion, ya se habria consultado.
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), It.IsAny<IsolationLevel>())).ReturnsAsync(true);
+
+            Assert.True(await _domain.ActualizarAsync(5, new Factura { Cancelado = "S" }));
+
+            _saldos.Verify(s => s.ObtenerPagosActivosAsync(It.IsAny<int>()), Times.Never);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), IsolationLevel.Serializable), Times.Once);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelar_ConsultaLosPagosDentroDeLaTransaccionYAntesDeRevertir()
+        {
+            var existente = new Factura { Entry = 5, DocSubType = SubTipoNota, DocType = "I", Cancelado = "N", EstadoInv = "A", EstadoDoc = "A" };
+            PrepararNota(existente);
+            var dentroDeLaTx = false;
+            var guardaDentro = false;
+            var orden = new List<string>();
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), IsolationLevel.Serializable))
+                .Returns<Func<Task<bool>>, IsolationLevel>(async (f, _) =>
+                {
+                    dentroDeLaTx = true;
+                    try { return await f(); } finally { dentroDeLaTx = false; }
+                });
+            _saldos.Setup(s => s.ObtenerPagosActivosAsync(5))
+                .Callback(() => { guardaDentro = dentroDeLaTx; orden.Add("guarda"); })
+                .ReturnsAsync(new List<PagoAplicado>());
+            _asiento.Setup(a => a.RevertirAsync(CodigoObj, 5)).Callback(() => orden.Add("revertir")).Returns(Task.CompletedTask);
+
+            Assert.True(await _domain.ActualizarAsync(5, new Factura { Cancelado = "S" }));
+
+            Assert.True(guardaDentro);
+            Assert.Equal(new[] { "guarda", "revertir" }, orden);
+            Assert.Equal("S", existente.Cancelado);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_ConHistorialDePagosCancelados_LanzaMensajeClaroYNoBorra()
+        {
+            PrepararNota(new Factura { Entry = 5, DocSubType = SubTipoNota, Cancelado = "S" });
+            _saldos.Setup(s => s.TienePagosRegistradosAsync(5)).ReturnsAsync(true);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.EliminarAsync(5));
+
+            Assert.Equal("El documento tiene pagos registrados (cancelados) y no se puede eliminar; consérvelo cancelado.", ex.Message);
+            _repoFactura.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+            _repoDetalle.Verify(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>()), Times.Never);
         }
 
         // ---------------- Consultas ----------------

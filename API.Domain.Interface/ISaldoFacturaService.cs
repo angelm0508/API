@@ -23,5 +23,8 @@ namespace API.Domain.Interface
 
         /// <summary>Pagos no cancelados aplicados a un documento, del más antiguo al más reciente.</summary>
         Task<IReadOnlyList<PagoAplicado>> ObtenerPagosActivosAsync(int facturaEntry);
+
+        /// <summary>True si el documento figura en algún pago, cancelado o no (historial que impide borrarlo).</summary>
+        Task<bool> TienePagosRegistradosAsync(int facturaEntry);
     }
 }

@@ -290,6 +290,17 @@ namespace API.Domain.Core
         /// <summary>Corre dentro de la transaccion Serializable del insert.</summary>
         private async Task ValidarSaldosAsync(List<PagoRecibidoFactura> lineas, Dictionary<int, Factura> documentos)
         {
+            // Relectura del estado dentro de la tx (proyección, sin la caché de FindAsync): un documento cancelado entre
+            // ValidarDocumentosAsync y este punto no puede recibir el pago. La lectura Serializable bloquea la fila hasta el commit.
+            var ids = lineas.Select(l => l.FacturaEntry).Distinct().ToList();
+            var estados = await (await _repoFactura.ObtenerTodoAsync())
+                .Where(f => ids.Contains(f.Entry))
+                .Select(f => new { f.Entry, f.Cancelado })
+                .ToListAsync();
+            var cancelado = estados.FirstOrDefault(e => e.Cancelado == "S");
+            if (cancelado != null)
+                throw new Exception($"{Etiqueta(documentos[cancelado.Entry])} está cancelada.");
+
             var saldos = await _saldos.ObtenerAsync(lineas.Select(l => l.FacturaEntry));
             foreach (var linea in lineas)
             {

@@ -45,6 +45,9 @@ END
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_PagoRecibido_CodigoSN' AND object_id = OBJECT_ID('dbo.PagoRecibido'))
     CREATE NONCLUSTERED INDEX IX_PagoRecibido_CodigoSN ON dbo.PagoRecibido (CodigoSN) INCLUDE (Cancelado);
 
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_PagoRecibido_Serie_NumDoc' AND object_id = OBJECT_ID('dbo.PagoRecibido'))
+    CREATE UNIQUE NONCLUSTERED INDEX UX_PagoRecibido_Serie_NumDoc ON dbo.PagoRecibido (Serie, NumDoc);
+
 -- ===== PagoRecibidoFactura (a que documentos se aplica; FK a Factura cubre facturas y notas de debito) =====
 IF OBJECT_ID('dbo.PagoRecibidoFactura', 'U') IS NULL
 BEGIN

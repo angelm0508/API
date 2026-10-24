@@ -36,5 +36,23 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
         }
+
+        [Fact]
+        public async Task ValidarSinHistorialAsync_SinPagosRegistrados_NoLanza()
+        {
+            _saldos.Setup(s => s.TienePagosRegistradosAsync(7)).ReturnsAsync(false);
+
+            await GuardaPagos.ValidarSinHistorialAsync(_saldos.Object, 7);
+        }
+
+        [Fact]
+        public async Task ValidarSinHistorialAsync_ConPagosRegistrados_Lanza()
+        {
+            _saldos.Setup(s => s.TienePagosRegistradosAsync(7)).ReturnsAsync(true);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => GuardaPagos.ValidarSinHistorialAsync(_saldos.Object, 7));
+
+            Assert.Equal("El documento tiene pagos registrados (cancelados) y no se puede eliminar; consérvelo cancelado.", ex.Message);
+        }
     }
 }

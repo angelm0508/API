@@ -17,5 +17,14 @@ namespace API.Domain.Core
             var etiquetas = string.Join(", ", pagos.Select(p => $"Pago {p.PagoNumDoc}"));
             throw new Exception($"El documento tiene pagos aplicados ({etiquetas}). Cancele primero el pago.");
         }
+
+        /// <summary>
+        /// Un documento que figura en algún pago (aunque esté cancelado) conserva su historial: no se elimina.
+        /// </summary>
+        public static async Task ValidarSinHistorialAsync(ISaldoFacturaService saldos, int facturaEntry)
+        {
+            if (await saldos.TienePagosRegistradosAsync(facturaEntry))
+                throw new Exception("El documento tiene pagos registrados (cancelados) y no se puede eliminar; consérvelo cancelado.");
+        }
     }
 }

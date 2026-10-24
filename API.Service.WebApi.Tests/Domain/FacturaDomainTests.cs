@@ -1,3 +1,4 @@
+using System.Data;
 using API.Domain.Core;
 using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
@@ -26,9 +27,12 @@ namespace API.Service.WebApi.Tests.Domain
         {
             _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object);
             _saldos.Setup(s => s.ObtenerPagosActivosAsync(It.IsAny<int>())).ReturnsAsync(new List<PagoAplicado>());
+            _saldos.Setup(s => s.TienePagosRegistradosAsync(It.IsAny<int>())).ReturnsAsync(false);
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), It.IsAny<IsolationLevel>()))
+                .Returns<Func<Task<bool>>, IsolationLevel>((f, _) => f());
             _repoHeader.Setup(r => r.InsertarAsync(It.IsAny<Factura>()))
                 .ReturnsAsync((Factura c) => { c.Entry = 99; return c; });
             _repoDetalle.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<FacturaDetalle>())).Returns(Task.CompletedTask);
@@ -354,6 +358,60 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal("El documento tiene pagos aplicados (Pago 3, Pago 5). Cancele primero el pago.", ex.Message);
             _repoHeader.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelado_S_LaGuardaDePagosCorreDentroDeLaTransaccionSerializable()
+        {
+            var existente = new Factura { Entry = 7, Cancelado = "N", EstadoInv = "A" };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+            // Doble de tx que NO ejecuta el Func: si la guarda corriera antes de la transacción, ya se habría consultado.
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), It.IsAny<IsolationLevel>())).ReturnsAsync(true);
+
+            Assert.True(await _domain.ActualizarAsync(7, new Factura { Cancelado = "S" }));
+
+            _saldos.Verify(s => s.ObtenerPagosActivosAsync(It.IsAny<int>()), Times.Never);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), IsolationLevel.Serializable), Times.Once);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_Cancelado_S_ConsultaLosPagosDentroDeLaTransaccionYAntesDeRevertir()
+        {
+            var existente = new Factura { Entry = 7, Cancelado = "N", EstadoInv = "A" };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+            var dentroDeLaTx = false;
+            var guardaDentro = false;
+            var orden = new List<string>();
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>(), IsolationLevel.Serializable))
+                .Returns<Func<Task<bool>>, IsolationLevel>(async (f, _) =>
+                {
+                    dentroDeLaTx = true;
+                    try { return await f(); } finally { dentroDeLaTx = false; }
+                });
+            _saldos.Setup(s => s.ObtenerPagosActivosAsync(7))
+                .Callback(() => { guardaDentro = dentroDeLaTx; orden.Add("guarda"); })
+                .ReturnsAsync(new List<PagoAplicado>());
+            _asiento.Setup(a => a.RevertirAsync("6", 7)).Callback(() => orden.Add("revertir")).Returns(Task.CompletedTask);
+
+            Assert.True(await _domain.ActualizarAsync(7, new Factura { Cancelado = "S" }));
+
+            Assert.True(guardaDentro);
+            Assert.Equal(new[] { "guarda", "revertir" }, orden);
+            Assert.Equal("S", existente.Cancelado);
+        }
+
+        [Fact]
+        public async Task EliminarAsync_ConHistorialDePagosCancelados_LanzaMensajeClaroYNoBorra()
+        {
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new Factura { Entry = 7, EstadoInv = "C", Cancelado = "S" });
+            _saldos.Setup(s => s.TienePagosRegistradosAsync(7)).ReturnsAsync(true);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.EliminarAsync(7));
+
+            Assert.Equal("El documento tiene pagos registrados (cancelados) y no se puede eliminar; consérvelo cancelado.", ex.Message);
+            _repoHeader.Verify(r => r.EliminarAsync(It.IsAny<int>()), Times.Never);
+            _repoDetalle.Verify(r => r.EliminarAsync(It.IsAny<(int, int)>()), Times.Never);
         }
 
         // ---------------- Aislamiento de las notas de débito (DocSubType) ----------------

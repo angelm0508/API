@@ -44,6 +44,9 @@ namespace API.Service.WebApi.Tests.Domain
             _repoSocio.Setup(r => r.ObtenerAsync("SN1")).ReturnsAsync(new SocioNegocio { Codigo = "SN1", Nombre = "Cliente SN1", TipoSn = "C", Activo = "S" });
             _repoFactura.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(Doc(1, 10));
             _repoFactura.Setup(r => r.ObtenerAsync(2)).ReturnsAsync(Doc(2, 20, "ND"));
+            // Relectura transaccional del estado (Cancelado) de los documentos: coherente con ObtenerAsync.
+            _repoFactura.Setup(r => r.ObtenerTodoAsync())
+                .ReturnsAsync(() => new List<Factura> { Doc(1, 10), Doc(2, 20, "ND") }.AsAsyncQueryable());
             _repoForma.Setup(r => r.ObtenerAsync("EFE")).ReturnsAsync(Forma("EFE", "Efectivo", "N"));
             _repoForma.Setup(r => r.ObtenerAsync("CHQ")).ReturnsAsync(Forma("CHQ", "Cheque", "C"));
             _repoForma.Setup(r => r.ObtenerAsync("TRF")).ReturnsAsync(Forma("TRF", "Transferencia", "T"));
@@ -321,6 +324,44 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal("El monto a pagar de Factura 10 (100.00) excede su saldo (60.00).", mensaje);
             _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), IsolationLevel.Serializable), Times.Once);
             _repoPago.Verify(r => r.InsertarAsync(It.IsAny<PagoRecibido>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_DocumentoCanceladoAntesDeLaTransaccion_SeRechazaEnLaRelecturaSerializable()
+        {
+            // ObtenerAsync (antes de la tx) ve la ND vigente; otro usuario la cancela antes de que el pago entre a su
+            // transaccion: la relectura dentro de la tx Serializable debe verla cancelada.
+            var dentroDeLaTx = false;
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), IsolationLevel.Serializable))
+                .Returns<Func<Task<int>>, IsolationLevel>(async (f, _) =>
+                {
+                    dentroDeLaTx = true;
+                    try { return await f(); } finally { dentroDeLaTx = false; }
+                });
+            var leidoDentro = false;
+            _repoFactura.Setup(r => r.ObtenerTodoAsync())
+                .ReturnsAsync(() =>
+                {
+                    leidoDentro |= dentroDeLaTx;
+                    return new List<Factura> { Doc(1, 10), Doc(2, 20, "ND", cancelado: "S") }.AsAsyncQueryable();
+                });
+
+            var mensaje = await MensajeAlInsertar(Pago(), new[] { Aplicar(1, 60m), Aplicar(2, 40m) }, new[] { Medio("EFE", 100m) });
+
+            Assert.Equal("Nota de débito 20 está cancelada.", mensaje);
+            Assert.True(leidoDentro);
+            _repoPago.Verify(r => r.InsertarAsync(It.IsAny<PagoRecibido>()), Times.Never);
+            _repoPagoFactura.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<PagoRecibidoFactura>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_DocumentosVigentesEnLaRelectura_Pasa()
+        {
+            var entry = await _domain.InsertarAsync(Pago(), new[] { Aplicar(1, 60m), Aplicar(2, 40m) }, new[] { Medio("EFE", 100m) });
+
+            Assert.Equal(99, entry);
+            _repoFactura.Verify(r => r.ObtenerTodoAsync(), Times.Once);
+            _repoPago.Verify(r => r.InsertarAsync(It.IsAny<PagoRecibido>()), Times.Once);
         }
 
         [Fact]

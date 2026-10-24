@@ -85,6 +85,12 @@ namespace API.Domain.Core
             return filas.Select(f => new PagoAplicado(f.Entry, f.NumDoc, f.MontoAplicado)).ToList();
         }
 
+        public async Task<bool> TienePagosRegistradosAsync(int facturaEntry)
+        {
+            var lineas = await _repoPagoFactura.ObtenerTodoAsync();
+            return await lineas.AnyAsync(pf => pf.FacturaEntry == facturaEntry);
+        }
+
         private static decimal Redondear(decimal valor) => Math.Round(valor, 2, MidpointRounding.AwayFromZero);
     }
 }
