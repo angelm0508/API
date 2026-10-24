@@ -208,9 +208,7 @@ dentro de `IEjecutorTransaccion`. No toca facturas: su saldo se recupera solo po
 | POST | `api/PagoRecibido/{entry}/Cancelar` | Eliminar | cancela |
 | GET | `api/PagoRecibido/FacturasAbiertas/{codigoSn}` | Agregar `PagosRecibidos` | facturas y notas de débito del cliente con saldo > 0, con `Total`, `Acreditado`, `Pagado`, `Saldo` |
 
-`api/Factura/Saldos?entries=1,2,3` (Ver `Facturas`) y `api/NotaDebito/Saldos?entries=…` (Ver `NotasDebito`) devuelven
-`SaldoFactura` por documento, para los listados. La pantalla de Facturas/Notas de débito pide los saldos del
-conjunto listado en una sola llamada.
+`POST api/Factura/Saldos` (Ver `Facturas`) y `POST api/NotaDebito/Saldos` (Ver `NotasDebito`), con el cuerpo JSON `[1,2,3]`, devuelven `SaldoFactura` por documento para los listados (POST y no GET porque un listado grande no cabe en la URL). La pantalla de Facturas/Notas de débito pide los saldos del conjunto listado en una sola llamada.
 
 **DTOs:** `PagoRecibidoCrearDTO { Serie, FechaDoc, CodigoSn, Comentario, Facturas[{FacturaEntry, MontoAplicado}],
 Medios[{CodFormaPago, Monto, Referencia, Banco, FechaCheque}] }`, `PagoRecibidoDTO`, `PagoRecibidoFacturaDTO`,
