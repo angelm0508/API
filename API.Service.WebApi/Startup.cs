@@ -250,6 +250,9 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<PagoRecibido, int>, PagoRecibidoRepositorio>();
             services.AddTransient<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>, PagoRecibidoFacturaRepositorio>();
             services.AddTransient<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>, PagoRecibidoMedioRepositorio>();
+            services.AddTransient<IRepositorioGenerico<PagoEfectuado, int>, PagoEfectuadoRepositorio>();
+            services.AddTransient<IRepositorioGenerico<PagoEfectuadoFactura, (int Entry, int NoLinea)>, PagoEfectuadoFacturaRepositorio>();
+            services.AddTransient<IRepositorioGenerico<PagoEfectuadoMedio, (int Entry, int NoLinea)>, PagoEfectuadoMedioRepositorio>();
             services.AddTransient<IFormaPagoDomain, FormaPagoDomain>();
             services.AddTransient<IFormaPagoApplication, FormaPagoApplication>();
             services.AddTransient<ISaldoFacturaService, SaldoFacturaService>();
