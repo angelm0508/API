@@ -10,6 +10,7 @@ using API.Application.DTO.numeracion.numeracion_documento_det;
 using API.Application.DTO.usuario.usuario;
 using API.Application.DTO.cotizacion;
 using API.Application.DTO.formaPago;
+using API.Application.DTO.pagoEfectuado;
 using API.Application.DTO.pagoRecibido;
 using API.Application.DTO.entrega;
 using API.Application.DTO.pedido;
@@ -94,6 +95,19 @@ namespace API.Transversal.Mapper
                 .ForMember(d => d.DocSubType, o => o.MapFrom(s => s.FacturaNavigation != null ? s.FacturaNavigation.DocSubType : null))
                 .ForMember(d => d.TotalDoc, o => o.MapFrom(s => s.FacturaNavigation != null ? s.FacturaNavigation.TotalDoc : null));
             CreateMap<PagoRecibidoMedio, PagoRecibidoMedioDTO>()
+                .ForMember(d => d.NombreFormaPago, o => o.MapFrom(s => s.CodFormaPagoNavigation != null ? s.CodFormaPagoNavigation.Nombre : null))
+                .ForMember(d => d.TipoDato, o => o.MapFrom(s => s.CodFormaPagoNavigation != null ? s.CodFormaPagoNavigation.TipoDato : null));
+
+            // PagoEfectuado
+            CreateMap<PagoEfectuado, PagoEfectuadoDTO>();
+            CreateMap<PagoEfectuadoCrearDTO, PagoEfectuado>();
+            CreateMap<PagoEfectuadoFacturaCrearDTO, PagoEfectuadoFactura>();
+            CreateMap<PagoEfectuadoMedioCrearDTO, PagoEfectuadoMedio>();
+            CreateMap<PagoEfectuadoFactura, PagoEfectuadoFacturaDTO>()
+                .ForMember(d => d.NumDoc, o => o.MapFrom(s => s.FacturaCompraNavigation != null ? s.FacturaCompraNavigation.NumDoc : 0))
+                .ForMember(d => d.DocSubType, o => o.MapFrom(s => s.FacturaCompraNavigation != null ? s.FacturaCompraNavigation.DocSubType : null))
+                .ForMember(d => d.TotalDoc, o => o.MapFrom(s => s.FacturaCompraNavigation != null ? s.FacturaCompraNavigation.TotalDoc : null));
+            CreateMap<PagoEfectuadoMedio, PagoEfectuadoMedioDTO>()
                 .ForMember(d => d.NombreFormaPago, o => o.MapFrom(s => s.CodFormaPagoNavigation != null ? s.CodFormaPagoNavigation.Nombre : null))
                 .ForMember(d => d.TipoDato, o => o.MapFrom(s => s.CodFormaPagoNavigation != null ? s.CodFormaPagoNavigation.TipoDato : null));
 
