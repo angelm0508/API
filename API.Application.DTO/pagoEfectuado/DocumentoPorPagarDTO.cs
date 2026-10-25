@@ -5,7 +5,7 @@ namespace API.Application.DTO.pagoEfectuado
     {
         public int Entry { get; set; }
         public int NumDoc { get; set; }
-        /// <summary>"--" = factura de compra; "ND" = nota de débito de proveedor.</summary>
+        /// <summary>"--" = factura de compra; "DN" = nota de débito de proveedor.</summary>
         public string? DocSubType { get; set; }
         public DateTime? FechaDoc { get; set; }
         public decimal Total { get; set; }

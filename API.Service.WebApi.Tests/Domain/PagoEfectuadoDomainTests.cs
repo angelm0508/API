@@ -43,10 +43,10 @@ namespace API.Service.WebApi.Tests.Domain
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(CrearSerie());
             _repoSocio.Setup(r => r.ObtenerAsync("SN1")).ReturnsAsync(new SocioNegocio { Codigo = "SN1", Nombre = "Proveedor SN1", TipoSn = "P", Activo = "S" });
             _repoFactura.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(Doc(1, 10));
-            _repoFactura.Setup(r => r.ObtenerAsync(2)).ReturnsAsync(Doc(2, 20, "ND"));
+            _repoFactura.Setup(r => r.ObtenerAsync(2)).ReturnsAsync(Doc(2, 20, "DN"));
             // Relectura transaccional del estado (Cancelado) de los documentos: coherente con ObtenerAsync.
             _repoFactura.Setup(r => r.ObtenerTodoAsync())
-                .ReturnsAsync(() => new List<FacturaCompra> { Doc(1, 10), Doc(2, 20, "ND") }.AsAsyncQueryable());
+                .ReturnsAsync(() => new List<FacturaCompra> { Doc(1, 10), Doc(2, 20, "DN") }.AsAsyncQueryable());
             _repoForma.Setup(r => r.ObtenerAsync("EFE")).ReturnsAsync(Forma("EFE", "Efectivo", "N"));
             _repoForma.Setup(r => r.ObtenerAsync("CHQ")).ReturnsAsync(Forma("CHQ", "Cheque", "C"));
             _repoForma.Setup(r => r.ObtenerAsync("TRF")).ReturnsAsync(Forma("TRF", "Transferencia", "T"));
@@ -295,7 +295,7 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task InsertarAsync_DocumentoCancelado_Lanza()
         {
-            _repoFactura.Setup(r => r.ObtenerAsync(2)).ReturnsAsync(Doc(2, 20, "ND", cancelado: "S"));
+            _repoFactura.Setup(r => r.ObtenerAsync(2)).ReturnsAsync(Doc(2, 20, "DN", cancelado: "S"));
 
             Assert.Equal("Nota de débito de proveedor 20 está cancelada.", await MensajeAlInsertar(Pago(), new[] { Aplicar(2, 100m) }, new[] { Medio("EFE", 100m) }));
         }
@@ -343,7 +343,7 @@ namespace API.Service.WebApi.Tests.Domain
                 .ReturnsAsync(() =>
                 {
                     leidoDentro |= dentroDeLaTx;
-                    return new List<FacturaCompra> { Doc(1, 10), Doc(2, 20, "ND", cancelado: "S") }.AsAsyncQueryable();
+                    return new List<FacturaCompra> { Doc(1, 10), Doc(2, 20, "DN", cancelado: "S") }.AsAsyncQueryable();
                 });
 
             var mensaje = await MensajeAlInsertar(Pago(), new[] { Aplicar(1, 60m), Aplicar(2, 40m) }, new[] { Medio("EFE", 100m) });
@@ -486,7 +486,7 @@ namespace API.Service.WebApi.Tests.Domain
         {
             var docs = new List<FacturaCompra>
             {
-                Doc(1, 10), Doc(2, 20, "ND"), Doc(3, 30, proveedor: "SN2"), Doc(4, 40, cancelado: "S"), Doc(5, 50)
+                Doc(1, 10), Doc(2, 20, "DN"), Doc(3, 30, proveedor: "SN2"), Doc(4, 40, cancelado: "S"), Doc(5, 50)
             };
             docs[1].FechaDoc = new DateTime(2026, 9, 1);   // la ND es la mas antigua
             _repoFactura.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(docs.AsAsyncQueryable());

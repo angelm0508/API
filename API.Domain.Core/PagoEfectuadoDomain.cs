@@ -12,7 +12,7 @@ namespace API.Domain.Core
         // CHECK constraint de la tabla: TipoObjeto='46'. Se fuerza siempre en el servidor.
         private const string TipoObjetoPago = "46";
         private const string TipoSocioProveedor = "P";
-        private const string SubTipoNotaDebito = "ND";
+        private const string SubTipoNotaDebito = "DN";
 
         private readonly IRepositorioGenerico<PagoEfectuado, int> _repoPago;
         private readonly IRepositorioGenerico<PagoEfectuadoFactura, (int Entry, int NoLinea)> _repoPagoFactura;

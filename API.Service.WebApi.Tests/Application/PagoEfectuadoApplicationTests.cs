@@ -95,14 +95,14 @@ namespace API.Service.WebApi.Tests.Application
             _domain.Setup(d => d.ObtenerFacturasAsync(7)).ReturnsAsync(new List<PagoEfectuadoFactura>
             {
                 new() { Entry = 7, NoLinea = 1, FacturaCompraEntry = 3, MontoAplicado = 60m,
-                        FacturaCompraNavigation = new FacturaCompra { Entry = 3, NumDoc = 30, DocSubType = "ND", TotalDoc = 150m } }
+                        FacturaCompraNavigation = new FacturaCompra { Entry = 3, NumDoc = 30, DocSubType = "DN", TotalDoc = 150m } }
             });
 
             var respuesta = await _app.ObtenerFacturasAsync(7);
 
             var fila = Assert.Single(respuesta.Dato);
             Assert.Equal(30, fila.NumDoc);
-            Assert.Equal("ND", fila.DocSubType);
+            Assert.Equal("DN", fila.DocSubType);
             Assert.Equal(150m, fila.TotalDoc);
             Assert.Equal(60m, fila.MontoAplicado);
         }
