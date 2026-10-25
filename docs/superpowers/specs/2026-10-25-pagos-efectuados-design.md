@@ -55,7 +55,7 @@ se hizo en ventas), fechas de vencimiento, estado de cuenta, antigüedad de sald
 
 ## Contexto verificado
 
-- `FacturaCompra` guarda facturas de compra (`DocSubType='--'`) y notas de débito de proveedor (`'ND'`) en las
+- `FacturaCompra` guarda facturas de compra (`DocSubType='--'`) y notas de débito de proveedor (`'DN'`; la de cliente es `'ND'`) en las
   mismas tablas (`FacturaCompra`/`FacturaCompraDetalle`). Cada una tiene su API: `FacturaCompraDomain` y
   `NotaDebitoCompraDomain`. Una clave foránea a `FacturaCompra(Entry)` cubre ambas.
 - Cancelar es `ActualizarAsync` con `obj.Cancelado == "S"` (revierte inventario dentro de `IEjecutorTransaccion`)
@@ -160,7 +160,7 @@ Orden de validación (todas lanzan `Exception` con mensaje de usuario, como el r
 3. **Proveedor:** existe y es de tipo proveedor (`TipoSn='P'`). **No se exige que esté activo**: un proveedor dado
    de baja con deuda debe poder cobrarse.
 4. **Documentos:** al menos uno; sin `FacturaCompraEntry` repetido; cada uno existe, es del proveedor, no está
-   cancelado (factura de compra o nota de débito, `DocSubType` `--` o `ND`) y `MontoAplicado > 0` con a lo sumo
+   cancelado (factura de compra o nota de débito, `DocSubType` `--` o `DN`) y `MontoAplicado > 0` con a lo sumo
    2 decimales.
 5. **Medios:** `ValidadorMediosPago.ValidarMedios`.
 6. **Cuadre:** `ValidadorMediosPago.ValidarCuadre`; ese valor es `TotalPago` (lo calcula el servidor, no se acepta
