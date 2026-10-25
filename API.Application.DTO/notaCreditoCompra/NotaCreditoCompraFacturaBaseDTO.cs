@@ -11,6 +11,9 @@ namespace API.Application.DTO.notaCreditoCompra
         public string? Direccion { get; set; }
         public decimal? TotalDoc { get; set; }
         public decimal TotalAcreditado { get; set; }
+
+        /// <summary>Suma de los pagos activos aplicados a esta factura de compra.</summary>
+        public decimal TotalPagado { get; set; }
         public decimal Disponible { get; set; }
         public List<NotaCreditoCompraDetalleCrearDTO> Lineas { get; set; } = new();
     }

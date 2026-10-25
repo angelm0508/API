@@ -217,5 +217,32 @@ namespace API.Service.WebApi.Tests.Application
             Assert.False(respuesta.Resultado);
             Assert.Equal("La factura de compra no existe.", respuesta.Mensaje);
         }
+
+        [Fact]
+        public async Task ObtenerFacturasCompraBase_ElDisponibleDescuentaLoPagado()
+        {
+            _domain.Setup(d => d.ObtenerFacturasCompraBaseAsync("SN1")).ReturnsAsync(new List<FacturaCompraAcreditable>
+            {
+                new(new FacturaCompra { Entry = 12, NumDoc = 100, TotalDoc = 112m, MonedaDoc = "QTZ", CodigoSn = "SN1" }, 30m, 20m)
+            });
+
+            var fila = Assert.Single((await _app.ObtenerFacturasCompraBaseAsync("SN1")).Dato);
+
+            Assert.Equal(30m, fila.TotalAcreditado);
+            Assert.Equal(20m, fila.TotalPagado);
+            Assert.Equal(62m, fila.Disponible);
+        }
+
+        [Fact]
+        public async Task ObtenerFacturaCompraBase_ElDisponibleDescuentaLoPagado()
+        {
+            var factura = new FacturaCompra { Entry = 12, NumDoc = 100, CodigoSn = "SN1", MonedaDoc = "QTZ", TotalDoc = 112m };
+            _domain.Setup(d => d.ObtenerFacturaCompraBaseAsync(12)).ReturnsAsync(new FacturaCompraBaseCredito(factura, new List<FacturaCompraDetalle>(), 12m, 40m));
+
+            var dato = (await _app.ObtenerFacturaCompraBaseAsync(12)).Dato;
+
+            Assert.Equal(40m, dato.TotalPagado);
+            Assert.Equal(60m, dato.Disponible);
+        }
     }
 }

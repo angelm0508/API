@@ -141,7 +141,8 @@ namespace API.Application.Main
                     MonedaDoc = f.Documento.MonedaDoc,
                     DocSubType = f.Documento.DocSubType,
                     TotalAcreditado = f.TotalAcreditado,
-                    Disponible = Disponible(f.Documento.TotalDoc, f.TotalAcreditado)
+                    TotalPagado = f.TotalPagado,
+                    Disponible = Disponible(f.Documento.TotalDoc, f.TotalAcreditado + f.TotalPagado)
                 }).ToList();
                 respuesta.Resultado = true;
             }
@@ -168,7 +169,8 @@ namespace API.Application.Main
                     Direccion = baseDoc.Documento.Direccion,
                     TotalDoc = baseDoc.Documento.TotalDoc,
                     TotalAcreditado = baseDoc.TotalAcreditado,
-                    Disponible = Disponible(baseDoc.Documento.TotalDoc, baseDoc.TotalAcreditado),
+                    TotalPagado = baseDoc.TotalPagado,
+                    Disponible = Disponible(baseDoc.Documento.TotalDoc, baseDoc.TotalAcreditado + baseDoc.TotalPagado),
                     // Las lineas de la factura se convierten en conceptos: sin articulo ni almacen.
                     Lineas = baseDoc.Lineas.Select(l => new NotaCreditoCompraDetalleCrearDTO
                     {
@@ -192,8 +194,8 @@ namespace API.Application.Main
         }
         #endregion
 
-        /// <summary>Lo que todavia se puede acreditar de una factura: max(0, total - acreditado), a 2 decimales.</summary>
-        private static decimal Disponible(decimal? totalFactura, decimal acreditado) =>
-            Math.Max(0m, Math.Round((totalFactura ?? 0m) - acreditado, 2, MidpointRounding.AwayFromZero));
+        /// <summary>Lo que todavia se puede acreditar de una factura: max(0, total - acreditado - pagado), a 2 decimales.</summary>
+        private static decimal Disponible(decimal? totalFactura, decimal yaDescontado) =>
+            Math.Max(0m, Math.Round((totalFactura ?? 0m) - yaDescontado, 2, MidpointRounding.AwayFromZero));
     }
 }

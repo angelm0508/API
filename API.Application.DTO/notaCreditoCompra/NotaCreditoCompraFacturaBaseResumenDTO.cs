@@ -15,7 +15,10 @@ namespace API.Application.DTO.notaCreditoCompra
         /// <summary>Suma de las notas de credito no canceladas ya emitidas sobre esta factura de compra.</summary>
         public decimal TotalAcreditado { get; set; }
 
-        /// <summary>max(0, TotalDoc - TotalAcreditado): lo que todavia se puede acreditar.</summary>
+        /// <summary>Suma de los pagos activos aplicados a esta factura de compra.</summary>
+        public decimal TotalPagado { get; set; }
+
+        /// <summary>max(0, TotalDoc - TotalAcreditado - TotalPagado): lo que todavia se puede acreditar.</summary>
         public decimal Disponible { get; set; }
     }
 }

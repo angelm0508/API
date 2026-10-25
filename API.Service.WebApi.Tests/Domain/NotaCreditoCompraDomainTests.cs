@@ -26,6 +26,7 @@ namespace API.Service.WebApi.Tests.Domain
         private const string MsgBaseOtroSocio = "La factura de compra base pertenece a otro socio de negocio.";
         private const string MsgBaseMoneda = "La moneda de la nota de crédito debe ser la misma de la factura de compra base.";
         private const string MsgExceso = "El total acreditado ({0}) excede el total de la factura de compra base ({1}).";
+        private const string MsgExcesoPagada = "Las notas de crédito ({0}) exceden lo que queda por acreditar de la factura de compra ({1} = total menos pagos aplicados). Cancele primero los pagos si necesita acreditarla por completo.";
         private const string MsgFacturaNoExiste = "La factura de compra no existe.";
         private const string MsgFacturaCancelada = "La factura de compra está cancelada.";
         // ---- fin de constantes ----
@@ -39,13 +40,14 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<FacturaCompra, int>> _repoFacturaCompra = new();
         private readonly Mock<IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)>> _repoFacturaCompraDetalle = new();
         private readonly Mock<IEjecutorTransaccion> _tx = new();
+        private readonly Mock<ISaldoFacturaCompraService> _saldos = new();
         private readonly NotaCreditoCompraDomain _domain;
 
         public NotaCreditoCompraDomainTests()
         {
             _domain = new NotaCreditoCompraDomain(
                 _repoNota.Object, _repoDetalle.Object, _repoNumeracion.Object, _repoSocio.Object,
-                _repoImpuesto.Object, _repoMoneda.Object, _repoFacturaCompra.Object, _repoFacturaCompraDetalle.Object, _tx.Object);
+                _repoImpuesto.Object, _repoMoneda.Object, _repoFacturaCompra.Object, _repoFacturaCompraDetalle.Object, _tx.Object, _saldos.Object);
 
             // El doble del ejecutor corre el Func directo (sin transaccion ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), It.IsAny<IsolationLevel>()))
@@ -55,6 +57,8 @@ namespace API.Service.WebApi.Tests.Domain
                 .ReturnsAsync((NotaCreditoCompra n) => { n.Entry = 99; return n; });
             _repoNota.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new List<NotaCreditoCompra>().AsAsyncQueryable());
             _repoDetalle.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<NotaCreditoCompraDetalle>())).Returns(Task.CompletedTask);
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync(new Dictionary<int, SaldoFacturaCompra>());
 
             // Valores por defecto validos: cada test rompe solo lo que quiere probar.
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(CrearSerie());
@@ -786,6 +790,88 @@ namespace API.Service.WebApi.Tests.Domain
             var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ObtenerFacturaCompraBaseAsync(12));
 
             Assert.Equal(MsgFacturaCancelada, ex.Message);
+        }
+
+        // ---------------- limite acreditable con pagos aplicados ----------------
+
+        private static string ExcesoPagada(string acreditado, string limite) =>
+            string.Format(CultureInfo.InvariantCulture, MsgExcesoPagada, acreditado, limite);
+
+        private void ConPagado(decimal pagado) =>
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync((IEnumerable<int> ids) => (IReadOnlyDictionary<int, SaldoFacturaCompra>)ids.Distinct()
+                    .ToDictionary(i => i, i => new SaldoFacturaCompra(i, 200m, 0m, pagado, 0m, "Parcial")));
+
+        [Fact]
+        public async Task InsertarAsync_FacturaConPagos_LaNotaNoPuedeExcederTotalMenosPagado()
+        {
+            PrepararFactura(total: 200m);
+            ConPagado(100m);                                   // limite = 200 - 100 = 100; la nota es 112
+
+            Assert.Equal(ExcesoPagada("112.00", "100.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+            _repoNota.Verify(r => r.InsertarAsync(It.IsAny<NotaCreditoCompra>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FacturaConPagos_NotaJustoEnElLimite_EsValida()
+        {
+            PrepararFactura(total: 212m);
+            ConPagado(100m);                                   // limite = 112 = la nota
+
+            Assert.Equal(99, await _domain.InsertarAsync(NotaConBase(), new[] { Linea() }));
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FacturaConPagosYNotasPrevias_SumanContraElLimite()
+        {
+            PrepararFactura(total: 300m);
+            ConPagado(100m);                                   // limite = 200
+            NotasPrevias(Previa(12, 90m));                     // 90 + 112 = 202 > 200
+
+            Assert.Equal(ExcesoPagada("202.00", "200.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinPagos_ConservaElMensajeDeExcesoOriginal()
+        {
+            PrepararFactura(total: 100m);
+
+            Assert.Equal(Exceso("112.00", "100.00"), await MensajeAlInsertar(NotaConBase(), Linea()));
+        }
+
+        [Fact]
+        public async Task ObtenerFacturasCompraBaseAsync_IncluyeLoPagadoDeCadaFactura()
+        {
+            var facturas = new List<FacturaCompra>
+            {
+                new() { Entry = 1, CodigoSn = "SN1", Cancelado = "N", TotalDoc = 112m },
+                new() { Entry = 4, CodigoSn = "SN1", Cancelado = "N", TotalDoc = 200m }
+            };
+            _repoFacturaCompra.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(facturas.AsAsyncQueryable());
+            NotasPrevias(Previa(1, 30m));
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync(new Dictionary<int, SaldoFacturaCompra> { [1] = new SaldoFacturaCompra(1, 112m, 30m, 20m, 62m, "Parcial") });
+
+            var resultado = (await _domain.ObtenerFacturasCompraBaseAsync("SN1")).ToList();
+
+            Assert.Equal(new[] { 4, 1 }, resultado.Select(f => f.Documento.Entry));
+            Assert.Equal(0m, resultado[0].TotalPagado);
+            Assert.Equal(20m, resultado[1].TotalPagado);
+            Assert.Equal(30m, resultado[1].TotalAcreditado);
+        }
+
+        [Fact]
+        public async Task ObtenerFacturaCompraBaseAsync_IncluyeLoPagado()
+        {
+            PrepararFactura(entry: 12, total: 112m);
+            _repoFacturaCompraDetalle.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new List<FacturaCompraDetalle>().AsAsyncQueryable());
+            NotasPrevias();
+            _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
+                .ReturnsAsync(new Dictionary<int, SaldoFacturaCompra> { [12] = new SaldoFacturaCompra(12, 112m, 0m, 40m, 72m, "Parcial") });
+
+            var resultado = await _domain.ObtenerFacturaCompraBaseAsync(12);
+
+            Assert.Equal(40m, resultado.TotalPagado);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace API.Domain.Core
         private const string MsgBaseOtroSocio = "La factura de compra base pertenece a otro socio de negocio.";
         private const string MsgBaseMoneda = "La moneda de la nota de crédito debe ser la misma de la factura de compra base.";
         private const string MsgExceso = "El total acreditado ({0}) excede el total de la factura de compra base ({1}).";
+        private const string MsgExcesoPagada = "Las notas de crédito ({0}) exceden lo que queda por acreditar de la factura de compra ({1} = total menos pagos aplicados). Cancele primero los pagos si necesita acreditarla por completo.";
         private const string MsgFacturaNoExiste = "La factura de compra no existe.";
         private const string MsgFacturaCancelada = "La factura de compra está cancelada.";
         // ---- fin de constantes ----
@@ -38,6 +39,7 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<FacturaCompra, int> _repoFacturaCompra;
         private readonly IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> _repoFacturaCompraDetalle;
         private readonly IEjecutorTransaccion _tx;
+        private readonly ISaldoFacturaCompraService _saldos;
 
         public NotaCreditoCompraDomain(
             IRepositorioGenerico<NotaCreditoCompra, int> repoNota,
@@ -48,7 +50,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<Monedum, string> repoMoneda,
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
             IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> repoFacturaCompraDetalle,
-            IEjecutorTransaccion tx)
+            IEjecutorTransaccion tx,
+            ISaldoFacturaCompraService saldos)
         {
             _repoNota = repoNota;
             _repoDetalle = repoDetalle;
@@ -59,6 +62,7 @@ namespace API.Domain.Core
             _repoFacturaCompra = repoFacturaCompra;
             _repoFacturaCompraDetalle = repoFacturaCompraDetalle;
             _tx = tx;
+            _saldos = saldos;
         }
 
         #region async methods
@@ -196,8 +200,13 @@ namespace API.Domain.Core
                 .GroupBy(n => n.Base!.Value)
                 .ToDictionary(g => g.Key, g => Redondear(g.Sum(n => n.Total)));
 
+            var saldos = await _saldos.ObtenerAsync(entries);
+
             return facturas
-                .Select(f => new FacturaCompraAcreditable(f, acreditadoPorFactura.TryGetValue(f.Entry, out var a) ? a : 0m))
+                .Select(f => new FacturaCompraAcreditable(
+                    f,
+                    acreditadoPorFactura.TryGetValue(f.Entry, out var a) ? a : 0m,
+                    saldos.TryGetValue(f.Entry, out var s) ? s.Pagado : 0m))
                 .ToList();
         }
 
@@ -212,7 +221,8 @@ namespace API.Domain.Core
             var queryable = await _repoFacturaCompraDetalle.ObtenerTodoAsync();
             var lineas = await queryable.Where(l => l.Entry == entry).OrderBy(l => l.NoLinea).ToListAsync();
             var acreditado = await ObtenerAcreditadoAsync(entry);
-            return new FacturaCompraBaseCredito(factura, lineas, acreditado);
+            var pagado = await ObtenerPagadoAsync(entry);
+            return new FacturaCompraBaseCredito(factura, lineas, acreditado, pagado);
         }
         #endregion
 
@@ -398,12 +408,30 @@ namespace API.Domain.Core
             return Redondear(totales.Sum());
         }
 
+        private async Task<decimal> ObtenerPagadoAsync(int facturaEntry)
+        {
+            var saldos = await _saldos.ObtenerAsync(new[] { facturaEntry });
+            return saldos.TryGetValue(facturaEntry, out var s) ? s.Pagado : 0m;
+        }
+
         /// <summary>Corre dentro de la transaccion Serializable del insert.</summary>
         private async Task ValidarLimiteAcreditableAsync(FacturaCompra factura, NotaCreditoCompra obj)
         {
             var acreditado = await ObtenerAcreditadoAsync(factura.Entry);
             var totalConEstaNota = Redondear(acreditado + (obj.TotalDoc ?? 0m));
             var totalFactura = Redondear(factura.TotalDoc ?? 0m);
+
+            var pagado = await ObtenerPagadoAsync(factura.Entry);
+            if (pagado > 0m)
+            {
+                // Con pagos aplicados solo se puede acreditar lo que todavia no se pago: total - pagado.
+                var limite = Redondear(totalFactura - pagado);
+                if (totalConEstaNota > limite)
+                    throw new Exception(string.Format(CultureInfo.InvariantCulture, MsgExcesoPagada,
+                        totalConEstaNota.ToString("0.00", CultureInfo.InvariantCulture),
+                        limite.ToString("0.00", CultureInfo.InvariantCulture)));
+                return;
+            }
 
             if (totalConEstaNota > totalFactura)
                 throw new Exception(string.Format(CultureInfo.InvariantCulture, MsgExceso,
