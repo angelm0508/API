@@ -1,3 +1,4 @@
+using System.Data;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
@@ -16,19 +17,22 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoNumeracion;
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
+        private readonly ISaldoFacturaCompraService _saldos;
 
         public FacturaCompraDomain(
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
             IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> repoDetalle,
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
-            IInventarioAsientoService asiento)
+            IInventarioAsientoService asiento,
+            ISaldoFacturaCompraService saldos)
         {
             _repoFacturaCompra = repoFacturaCompra;
             _repoDetalle = repoDetalle;
             _repoNumeracion = repoNumeracion;
             _tx = tx;
             _asiento = asiento;
+            _saldos = saldos;
         }
 
         #region async methods
@@ -111,8 +115,12 @@ namespace API.Domain.Core
             // Cancelación: Cancelado pasa a 'S'.
             if (obj.Cancelado == "S")
             {
+                // Serializable: la guarda de pagos y la cancelación son una unidad; un pago concurrente sobre esta
+                // factura queda bloqueado (o muere por deadlock) y no puede quedar activo sobre una factura cancelada.
                 return await _tx.EjecutarAsync(async () =>
                 {
+                    await GuardaPagosEfectuados.ValidarSinPagosAsync(_saldos, id);
+
                     await _asiento.RevertirAsync(TipoObjetoFacturaCompra, id);
                     existente.Cancelado = "S";
                     existente.EstadoInv = "C";
@@ -123,7 +131,7 @@ namespace API.Domain.Core
                     if (obj.Comentario != null)
                         existente.Comentario = obj.Comentario;
                     return true;
-                });
+                }, IsolationLevel.Serializable);
             }
 
             // Edición inocua: solo el comentario (replace-semantics: enviar vacío lo borra).
@@ -139,6 +147,9 @@ namespace API.Domain.Core
             var existente = await ObtenerFacturaCompraAsync(id);
             if (existente is null)
                 return false;
+
+            await GuardaPagosEfectuados.ValidarSinPagosAsync(_saldos, id);
+            await GuardaPagosEfectuados.ValidarSinHistorialAsync(_saldos, id);
 
             if (existente.EstadoInv == "A" && existente.Cancelado != "S")
                 throw new Exception("Cancele el documento (Cancelado='S') antes de eliminarlo.");
