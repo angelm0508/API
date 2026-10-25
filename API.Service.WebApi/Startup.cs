@@ -262,6 +262,7 @@ namespace API.Service.WebApi
             services.AddTransient<IPagoRecibidoApplication, PagoRecibidoApplication>();
             services.AddTransient<IPagoEfectuadoApplication, PagoEfectuadoApplication>();
             services.AddTransient<ISaldoFacturaApplication, SaldoFacturaApplication>();
+            services.AddTransient<ISaldoFacturaCompraApplication, SaldoFacturaCompraApplication>();
             services.AddTransient<IMecanicoDomain, MecanicoDomain>();
             services.AddTransient<IMecanicoApplication, MecanicoApplication>();
             services.AddTransient<IMotocicletaDomain, MotocicletaDomain>();
