@@ -233,7 +233,7 @@ namespace API.Domain.Core
 
         private async Task ValidarFormasDePagoAsync(List<PagoEfectuadoMedio> medios)
         {
-            // Reglas y mensajes compartidos con pagos efectuados (ValidadorMediosPago).
+            // Reglas y mensajes compartidos con pagos recibidos (ValidadorMediosPago).
             await ValidadorMediosPago.ValidarAsync(medios, codigo => _repoForma.ObtenerAsync(codigo));
         }
 

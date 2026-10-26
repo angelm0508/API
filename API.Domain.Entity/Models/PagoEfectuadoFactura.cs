@@ -9,7 +9,7 @@ public partial class PagoEfectuadoFactura
 
     public int NoLinea { get; set; }
 
-    /// <summary>Entry de FacturaCompra: una factura de compra (DocSubType '--') o una nota de débito de proveedor ('ND').</summary>
+    /// <summary>Entry de FacturaCompra: una factura de compra (DocSubType '--') o una nota de débito de proveedor ('DN').</summary>
     public int FacturaCompraEntry { get; set; }
 
     public decimal MontoAplicado { get; set; }

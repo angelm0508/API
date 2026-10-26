@@ -329,7 +329,7 @@ namespace API.Service.WebApi.Tests.Domain
         [Fact]
         public async Task InsertarAsync_DocumentoCanceladoAntesDeLaTransaccion_SeRechazaEnLaRelecturaSerializable()
         {
-            // ObtenerAsync (antes de la tx) ve la ND vigente; otro usuario la cancela antes de que el pago entre a su
+            // ObtenerAsync (antes de la tx) ve la DN vigente; otro usuario la cancela antes de que el pago entre a su
             // transaccion: la relectura dentro de la tx Serializable debe verla cancelada.
             var dentroDeLaTx = false;
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>(), IsolationLevel.Serializable))
@@ -488,7 +488,7 @@ namespace API.Service.WebApi.Tests.Domain
             {
                 Doc(1, 10), Doc(2, 20, "DN"), Doc(3, 30, proveedor: "SN2"), Doc(4, 40, cancelado: "S"), Doc(5, 50)
             };
-            docs[1].FechaDoc = new DateTime(2026, 9, 1);   // la ND es la mas antigua
+            docs[1].FechaDoc = new DateTime(2026, 9, 1);   // la DN es la mas antigua
             _repoFactura.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(docs.AsAsyncQueryable());
             _saldos.Setup(s => s.ObtenerAsync(It.IsAny<IEnumerable<int>>()))
                 .ReturnsAsync((IEnumerable<int> ids) => (IReadOnlyDictionary<int, SaldoFacturaCompra>)ids.Distinct().ToDictionary(

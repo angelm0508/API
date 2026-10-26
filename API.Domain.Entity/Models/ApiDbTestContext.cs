@@ -1882,6 +1882,9 @@ public partial class ApiDbTestContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_pago_efectuado_serie");
 
+            // Estas colecciones de navegacion (Facturas/Medios) NO se pueblan al insertar a proposito:
+            // PagoEfectuadoDomain inserta los hijos de forma explicita, y el mapa de creacion en
+            // API.Transversal.Mapper/PerfilMapeo.cs debe seguir ignorandolas (si no, EF los inserta dos veces).
             entity.HasMany(d => d.Facturas).WithOne()
                 .HasForeignKey(f => f.Entry)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -1928,6 +1931,7 @@ public partial class ApiDbTestContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_pago_efectuado_medio_forma");
         });
+
         OnModelCreatingPartial(modelBuilder);
     }
 
