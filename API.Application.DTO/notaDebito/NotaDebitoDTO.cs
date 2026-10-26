@@ -27,5 +27,7 @@ namespace API.Application.DTO.notaDebito
         public decimal? TotalBruto { get; set; }
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
+        public string? CondicionPago { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
     }
 }

@@ -258,6 +258,7 @@ namespace API.Service.WebApi
             services.AddTransient<IFormaPagoApplication, FormaPagoApplication>();
             services.AddTransient<ICondicionPagoDomain, CondicionPagoDomain>();
             services.AddTransient<ICondicionPagoApplication, CondicionPagoApplication>();
+            services.AddTransient<IResolutorVencimiento, ResolutorVencimiento>();
             services.AddTransient<ISaldoFacturaService, SaldoFacturaService>();
             services.AddTransient<ISaldoFacturaCompraService, SaldoFacturaCompraService>();
             services.AddTransient<IPagoRecibidoDomain, PagoRecibidoDomain>();

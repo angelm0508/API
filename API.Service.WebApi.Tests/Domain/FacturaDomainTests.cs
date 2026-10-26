@@ -19,13 +19,18 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IInventarioAsientoService> _asiento = new();
         private readonly Mock<IDocumentoBaseService> _documentoBase = new();
         private readonly Mock<ISaldoFacturaService> _saldos = new();
+        private readonly Mock<IRepositorioGenerico<SocioNegocio, string>> _repoSocio = new();
+        private readonly Mock<IResolutorVencimiento> _resolutor = new();
         private readonly FacturaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
         public FacturaDomainTests()
         {
-            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object);
+            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object);
+            // Por defecto: contado (el vencimiento es la fecha del documento) y ningún socio en el repositorio.
+            _resolutor.Setup(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
+                .ReturnsAsync((string? _, string? _, DateTime? f) => ("CON", (f ?? DateTime.Today).Date));
             _saldos.Setup(s => s.ObtenerPagosActivosAsync(It.IsAny<int>())).ReturnsAsync(new List<PagoAplicado>());
             _saldos.Setup(s => s.TienePagosRegistradosAsync(It.IsAny<int>())).ReturnsAsync(false);
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
@@ -585,6 +590,107 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(-1, obj.BaseTipo);
             Assert.Null(obj.BaseEntry);
+        }
+
+        // ---------------- condición de pago y vencimiento ----------------
+
+        [Fact]
+        public async Task InsertarAsync_AsignaCondicionYVencimientoResueltos()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            _resolutor.Setup(r => r.ResolverAsync("C30", null, new DateTime(2026, 1, 31)))
+                .ReturnsAsync(("C30", new DateTime(2026, 3, 2)));
+            var obj = new Factura { Serie = 4, CondicionPago = "C30", FechaDoc = new DateTime(2026, 1, 31) };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal("C30", obj.CondicionPago);
+            Assert.Equal(new DateTime(2026, 3, 2), obj.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_UsaLaCondicionDelSocio()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            _repoSocio.Setup(r => r.ObtenerAsync("C001")).ReturnsAsync(new SocioNegocio { Codigo = "C001", CondicionPago = "C45" });
+            _resolutor.Setup(r => r.ResolverAsync(null, "C45", new DateTime(2026, 2, 1)))
+                .ReturnsAsync(("C45", new DateTime(2026, 3, 18)));
+            var obj = new Factura { Serie = 4, CodigoSn = "C001", FechaDoc = new DateTime(2026, 2, 1) };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal("C45", obj.CondicionPago);
+            Assert.Equal(new DateTime(2026, 3, 18), obj.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SocioInexistente_NoCambiaElComportamiento_ResuelveSinCondicionDelSocio()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4, CodigoSn = "NOEXISTE", FechaDoc = new DateTime(2026, 2, 1) };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            _resolutor.Verify(r => r.ResolverAsync(null, null, new DateTime(2026, 2, 1)), Times.Once);
+            Assert.Equal("CON", obj.CondicionPago);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinCodigoDeSocio_NoConsultaElSocio()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4, CodigoSn = null };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            _repoSocio.Verify(r => r.ObtenerAsync(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_CondicionInvalida_Propaga_NoAvanzaElConsecutivoNiGuarda()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            _resolutor.Setup(r => r.ResolverAsync("ZZZ", It.IsAny<string?>(), It.IsAny<DateTime?>()))
+                .ThrowsAsync(new Exception("La condición de pago ZZZ no existe."));
+            var obj = new Factura { Serie = 4, CondicionPago = "ZZZ" };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) }));
+
+            Assert.Equal("La condición de pago ZZZ no existe.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el consecutivo no avanzó
+            Assert.Equal(0, obj.NumDoc);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FechaVencimientoEnviadaPorElCliente_SeSobrescribe()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4, FechaDoc = new DateTime(2026, 2, 1), FechaVencimiento = new DateTime(2030, 12, 31) };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal(new DateTime(2026, 2, 1), obj.FechaVencimiento);   // contado: la fecha del documento
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_NoRecalculaCondicionNiVencimiento()
+        {
+            var existente = new Factura
+            {
+                Entry = 7, DocSubType = "--", Cancelado = "N",
+                CondicionPago = "C30", FechaVencimiento = new DateTime(2026, 3, 2), Comentario = "viejo"
+            };
+            _repoHeader.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+
+            await _domain.ActualizarAsync(7, new Factura { Comentario = "nuevo", CondicionPago = "CON", FechaVencimiento = new DateTime(2030, 1, 1) });
+
+            Assert.Equal("nuevo", existente.Comentario);
+            Assert.Equal("C30", existente.CondicionPago);
+            Assert.Equal(new DateTime(2026, 3, 2), existente.FechaVencimiento);
+            _resolutor.Verify(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
     }
 }

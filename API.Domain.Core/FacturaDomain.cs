@@ -19,6 +19,8 @@ namespace API.Domain.Core
         private readonly IInventarioAsientoService _asiento;
         private readonly IDocumentoBaseService _documentoBase;
         private readonly ISaldoFacturaService _saldos;
+        private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocio;
+        private readonly IResolutorVencimiento _resolutor;
 
         public FacturaDomain(
             IRepositorioGenerico<Factura, int> repoFactura,
@@ -27,7 +29,9 @@ namespace API.Domain.Core
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
             IDocumentoBaseService documentoBase,
-            ISaldoFacturaService saldos)
+            ISaldoFacturaService saldos,
+            IRepositorioGenerico<SocioNegocio, string> repoSocio,
+            IResolutorVencimiento resolutor)
         {
             _repoFactura = repoFactura;
             _repoDetalle = repoDetalle;
@@ -36,6 +40,8 @@ namespace API.Domain.Core
             _asiento = asiento;
             _documentoBase = documentoBase;
             _saldos = saldos;
+            _repoSocio = repoSocio;
+            _resolutor = resolutor;
         }
 
         #region async methods
@@ -70,6 +76,13 @@ namespace API.Domain.Core
             var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
             if (basadas.Count > 0)
                 await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Factura, obj.CodigoSn, basadas);
+
+            // Condición de pago y vencimiento: antes de numerar, así una condición inválida no consume el consecutivo.
+            // Un socio inexistente no cambia el comportamiento previo (lo rechaza la FK): se resuelve sin su condición.
+            var socio = string.IsNullOrWhiteSpace(obj.CodigoSn) ? null : await _repoSocio.ObtenerAsync(obj.CodigoSn);
+            var (condicion, vencimiento) = await _resolutor.ResolverAsync(obj.CondicionPago, socio?.CondicionPago, obj.FechaDoc);
+            obj.CondicionPago = condicion;
+            obj.FechaVencimiento = vencimiento;   // el cliente no puede fijarlo: siempre se sobrescribe
 
             if (serie.Manual == "S")
             {

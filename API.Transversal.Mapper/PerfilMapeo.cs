@@ -263,7 +263,10 @@ namespace API.Transversal.Mapper
 
             // Factura
             CreateMap<Factura, FacturaDTO>();
-            CreateMap<FacturaCrearDTO, Factura>();
+            // El vencimiento y la condición efectiva los fija FacturaDomain; AutoMapper nunca llena la navegación.
+            CreateMap<FacturaCrearDTO, Factura>()
+                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
+                .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<FacturaActualizarDTO, Factura>();
 
             // FacturaDetalle
@@ -273,7 +276,9 @@ namespace API.Transversal.Mapper
 
             // NotaDebito
             CreateMap<Factura, NotaDebitoDTO>();
-            CreateMap<NotaDebitoCrearDTO, Factura>();
+            CreateMap<NotaDebitoCrearDTO, Factura>()
+                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
+                .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<NotaDebitoActualizarDTO, Factura>();
 
             // NotaDebitoDetalle
