@@ -10,6 +10,7 @@ using API.Application.DTO.numeracion.numeracion_documento_det;
 using API.Application.DTO.usuario.usuario;
 using API.Application.DTO.cotizacion;
 using API.Application.DTO.formaPago;
+using API.Application.DTO.condicionPago;
 using API.Application.DTO.pagoEfectuado;
 using API.Application.DTO.pagoRecibido;
 using API.Application.DTO.entrega;
@@ -84,6 +85,11 @@ namespace API.Transversal.Mapper
             CreateMap<FormaPago, FormaPagoDTO>();
             CreateMap<FormaPagoCrearDTO, FormaPago>();
             CreateMap<FormaPagoActualizarDTO, FormaPago>();
+
+            // CondicionPago
+            CreateMap<CondicionPago, CondicionPagoDTO>();
+            CreateMap<CondicionPagoCrearDTO, CondicionPago>();
+            CreateMap<CondicionPagoActualizarDTO, CondicionPago>();
 
             // PagoRecibido
             CreateMap<PagoRecibido, PagoRecibidoDTO>();
