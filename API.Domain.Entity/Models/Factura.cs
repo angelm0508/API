@@ -61,7 +61,15 @@ public partial class Factura
 
     public string? Comentario { get; set; }
 
+    /// <summary>Condición de pago con la que se creó el documento (NULL en filas anteriores a la migración).</summary>
+    public string? CondicionPago { get; set; }
+
+    /// <summary>FechaDoc + días de la condición; las lecturas usan COALESCE(FechaVencimiento, FechaDoc).</summary>
+    public DateTime? FechaVencimiento { get; set; }
+
     public virtual SocioNegocio? CodigoSnNavigation { get; set; }
+
+    public virtual CondicionPago? CondicionPagoNavigation { get; set; }
 
     public virtual Monedum? MonedaDocNavigation { get; set; }
 

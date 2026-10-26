@@ -21,6 +21,8 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<FormaPago> FormaPagos { get; set; }
 
+    public virtual DbSet<CondicionPago> CondicionPagos { get; set; }
+
     public virtual DbSet<PagoRecibido> PagoRecibidos { get; set; }
 
     public virtual DbSet<PagoRecibidoFactura> PagoRecibidoFacturas { get; set; }
@@ -879,9 +881,18 @@ public partial class ApiDbTestContext : DbContext
             entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TotalImp).HasColumnType("decimal(19, 6)");
 
+            entity.Property(e => e.CondicionPago).HasMaxLength(10);
+            entity.Property(e => e.FechaVencimiento).HasColumnType("datetime");
+
+            entity.HasIndex(e => e.FechaVencimiento, "IX_Factura_Vencimiento");
+
             entity.HasOne(d => d.CodigoSnNavigation).WithMany(p => p.Facturas)
                 .HasForeignKey(d => d.CodigoSn)
                 .HasConstraintName("fk_factura_sn");
+
+            entity.HasOne(d => d.CondicionPagoNavigation).WithMany()
+                .HasForeignKey(d => d.CondicionPago)
+                .HasConstraintName("fk_factura_condicion_pago");
 
             entity.HasOne(d => d.MonedaDocNavigation).WithMany(p => p.Facturas)
                 .HasForeignKey(d => d.MonedaDoc)
@@ -977,9 +988,18 @@ public partial class ApiDbTestContext : DbContext
             entity.Property(e => e.TotalDoc).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.TotalImp).HasColumnType("decimal(19, 6)");
 
+            entity.Property(e => e.CondicionPago).HasMaxLength(10);
+            entity.Property(e => e.FechaVencimiento).HasColumnType("datetime");
+
+            entity.HasIndex(e => e.FechaVencimiento, "IX_FacturaCompra_Vencimiento");
+
             entity.HasOne(d => d.CodigoSnNavigation).WithMany(p => p.FacturaCompras)
                 .HasForeignKey(d => d.CodigoSn)
                 .HasConstraintName("fk_factura_compra_sn");
+
+            entity.HasOne(d => d.CondicionPagoNavigation).WithMany()
+                .HasForeignKey(d => d.CondicionPago)
+                .HasConstraintName("fk_factura_compra_condicion_pago");
 
             entity.HasOne(d => d.MonedaDocNavigation).WithMany(p => p.FacturaCompras)
                 .HasForeignKey(d => d.MonedaDoc)
@@ -1447,6 +1467,12 @@ public partial class ApiDbTestContext : DbContext
                 .HasMaxLength(1)
                 .HasColumnName("TipoSN");
 
+            entity.Property(e => e.CondicionPago).HasMaxLength(10);
+
+            entity.HasOne(d => d.CondicionPagoNavigation).WithMany()
+                .HasForeignKey(d => d.CondicionPago)
+                .HasConstraintName("fk_sn_condicion_pago");
+
             entity.HasOne(d => d.GrupoSnNavigation).WithMany(p => p.SocioNegocios)
                 .HasForeignKey(d => d.GrupoSn)
                 .HasConstraintName("fk_sn_grupo");
@@ -1755,6 +1781,19 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany()
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_orden_servicio_det_cod_art");
+        });
+
+        modelBuilder.Entity<CondicionPago>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("pk_condicion_pago");
+
+            entity.ToTable("CondicionPago");
+
+            entity.Property(e => e.Codigo).HasMaxLength(10);
+            entity.Property(e => e.Activo)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('S')");
+            entity.Property(e => e.Nombre).HasMaxLength(50);
         });
 
         modelBuilder.Entity<FormaPago>(entity =>

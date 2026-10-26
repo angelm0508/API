@@ -33,6 +33,9 @@ public partial class SocioNegocio
 
     public int Serie { get; set; }
 
+    /// <summary>Condición de pago por defecto del socio (NULL = se usa CON al crear documentos).</summary>
+    public string? CondicionPago { get; set; }
+
     public virtual ICollection<Cotizacion> Cotizacions { get; set; } = new List<Cotizacion>();
 
     public virtual ICollection<Entrega> Entregas { get; set; } = new List<Entrega>();
@@ -52,6 +55,8 @@ public partial class SocioNegocio
     public virtual ICollection<NotaCreditoCompra> NotaCreditoCompras { get; set; } = new List<NotaCreditoCompra>();
 
     public virtual ICollection<DireccionSocioNegocio> DireccionSocioNegocios { get; set; } = new List<DireccionSocioNegocio>();
+
+    public virtual CondicionPago? CondicionPagoNavigation { get; set; }
 
     public virtual GrupoSn? GrupoSnNavigation { get; set; }
 
