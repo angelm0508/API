@@ -49,6 +49,8 @@ namespace API.Domain.Core
 
             if (obj.Activo == "N" && EsContado(codigo))
                 throw new Exception(MensajeContadoNoSeDaDeBaja);
+            if (obj.Dias != 0 && EsContado(codigo))
+                throw new Exception("La condición CON debe tener 0 días.");
 
             return await _repo.ActualizarAsync(codigo, obj);
         }

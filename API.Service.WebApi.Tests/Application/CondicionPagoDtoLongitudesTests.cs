@@ -22,9 +22,9 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public void CondicionPagoCrear_CodigoYNombreLargos_SonInvalidos()
         {
-            Assert.Empty(Validar(new CondicionPagoCrearDTO { Codigo = Texto(10), Nombre = Texto(50) }));
+            Assert.Empty(Validar(new CondicionPagoCrearDTO { Codigo = Texto(10), Nombre = Texto(50), Dias = 0 }));
 
-            var errores = Validar(new CondicionPagoCrearDTO { Codigo = Texto(11), Nombre = Texto(51) });
+            var errores = Validar(new CondicionPagoCrearDTO { Codigo = Texto(11), Nombre = Texto(51), Dias = 0 });
             Assert.Equal(2, errores.Count);
             Assert.Contains(errores, e => e.ErrorMessage == "El código no puede superar 10 caracteres.");
             Assert.Contains(errores, e => e.ErrorMessage == "El nombre no puede superar 50 caracteres.");
@@ -33,9 +33,9 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public void CondicionPagoActualizar_NombreLargo_EsInvalido()
         {
-            Assert.Empty(Validar(new CondicionPagoActualizarDTO { Nombre = Texto(50) }));
+            Assert.Empty(Validar(new CondicionPagoActualizarDTO { Nombre = Texto(50), Dias = 0 }));
 
-            var error = Assert.Single(Validar(new CondicionPagoActualizarDTO { Nombre = Texto(51) }));
+            var error = Assert.Single(Validar(new CondicionPagoActualizarDTO { Nombre = Texto(51), Dias = 0 }));
             Assert.Equal("El nombre no puede superar 50 caracteres.", error.ErrorMessage);
         }
 
@@ -52,6 +52,22 @@ namespace API.Service.WebApi.Tests.Application
                 Assert.Empty(errores);
             else
                 Assert.Equal("Los días de crédito deben estar entre 0 y 365.", Assert.Single(errores).ErrorMessage);
+        }
+
+        [Fact]
+        public void CondicionPagoCrear_DiasNulo_EsInvalido()
+        {
+            var error = Assert.Single(Validar(new CondicionPagoCrearDTO { Codigo = "C", Nombre = "N", Dias = null }));
+            Assert.Equal("Los días de crédito son requeridos.", error.ErrorMessage);
+            Assert.Contains(nameof(CondicionPagoCrearDTO.Dias), error.MemberNames);
+        }
+
+        [Fact]
+        public void CondicionPagoActualizar_DiasNulo_EsInvalido()
+        {
+            var error = Assert.Single(Validar(new CondicionPagoActualizarDTO { Nombre = "N", Dias = null }));
+            Assert.Equal("Los días de crédito son requeridos.", error.ErrorMessage);
+            Assert.Contains(nameof(CondicionPagoActualizarDTO.Dias), error.MemberNames);
         }
 
         [Theory]

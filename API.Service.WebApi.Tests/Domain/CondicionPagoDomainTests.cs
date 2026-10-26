@@ -166,6 +166,29 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.True(await _domain.ActualizarAsync("CON", new CondicionPago { Nombre = "Contado inmediato", Dias = 0, Activo = "S" }));
         }
 
+        [Theory]
+        [InlineData("CON")]
+        [InlineData("con")]
+        public async Task ActualizarAsync_CONConDiasDistintosDeCero_Lanza(string codigo)
+        {
+            Existe(codigo, "Contado", 0);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync(codigo, new CondicionPago { Nombre = "Contado", Dias = 30, Activo = "S" }));
+
+            Assert.Equal("La condición CON debe tener 0 días.", ex.Message);
+            _repo.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<CondicionPago>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_CONConCeroDiasYNuevoNombre_Actualiza()
+        {
+            Existe("CON", "Contado", 0);
+
+            Assert.True(await _domain.ActualizarAsync("CON", new CondicionPago { Nombre = "Pago de contado", Dias = 0, Activo = "S" }));
+
+            _repo.Verify(r => r.ActualizarAsync("CON", It.Is<CondicionPago>(c => c.Nombre == "Pago de contado" && c.Dias == 0)), Times.Once);
+        }
+
         // ---------- EliminarAsync ----------
 
         [Fact]

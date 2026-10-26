@@ -25,6 +25,7 @@ namespace API.Application.Main
             var respuesta = new Respuesta<bool>();
             try
             {
+                ExigirDias(obj.Dias);
                 respuesta.Dato = await _domain.InsertarAsync(_mapper.Map<CondicionPago>(obj));
                 respuesta.Resultado = respuesta.Dato;
                 if (respuesta.Dato)
@@ -42,6 +43,7 @@ namespace API.Application.Main
             var respuesta = new Respuesta<bool>();
             try
             {
+                ExigirDias(obj.Dias);
                 respuesta.Dato = await _domain.ActualizarAsync(codigo, _mapper.Map<CondicionPago>(obj));
                 respuesta.Resultado = respuesta.Dato;
                 if (respuesta.Dato)
@@ -105,5 +107,12 @@ namespace API.Application.Main
             return respuesta;
         }
         #endregion
+
+        /// <summary>Un nulo no se trata como 0 (Contado): cambiaría en silencio el crédito de la condición.</summary>
+        private static void ExigirDias(int? dias)
+        {
+            if (dias is null)
+                throw new Exception("Los días de crédito son requeridos.");
+        }
     }
 }

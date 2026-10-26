@@ -35,6 +35,11 @@ namespace API.Service.WebApi.Tests.Controllers
                 ["ObtenerTodo"] = Accion.Ver, ["ObtenerPorCodigo"] = Accion.Ver, ["Crear"] = Accion.Agregar,
                 ["Actualizar"] = Accion.Actualizar, ["Eliminar"] = Accion.Eliminar
             } };
+            yield return new object[] { typeof(CondicionPagoController), "CondicionesPago", new Dictionary<string, Accion>
+            {
+                ["ObtenerTodo"] = Accion.Ver, ["ObtenerPorCodigo"] = Accion.Ver, ["Crear"] = Accion.Agregar,
+                ["Actualizar"] = Accion.Actualizar, ["Eliminar"] = Accion.Eliminar
+            } };
             yield return new object[] { typeof(PagoRecibidoController), "PagosRecibidos", new Dictionary<string, Accion>
             {
                 ["ObtenerTodo"] = Accion.Ver, ["Obtener"] = Accion.Ver, ["ObtenerFacturas"] = Accion.Ver, ["ObtenerMedios"] = Accion.Ver,
@@ -58,6 +63,7 @@ namespace API.Service.WebApi.Tests.Controllers
 
         [Theory]
         [InlineData(typeof(FormaPagoController))]
+        [InlineData(typeof(CondicionPagoController))]
         [InlineData(typeof(PagoRecibidoController))]
         public void ElControllerExigeAutenticacion(Type controller)
         {
