@@ -44,6 +44,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IInventarioAsientoService> _asiento = new();
         private readonly Mock<ISaldoFacturaCompraService> _saldos = new();
+        private readonly Mock<IResolutorVencimiento> _resolutor = new();
         private readonly NotaDebitoCompraDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientos = new();
@@ -53,7 +54,11 @@ namespace API.Service.WebApi.Tests.Domain
             _domain = new NotaDebitoCompraDomain(
                 _repoFacturaCompra.Object, _repoDetalle.Object, _repoNumeracion.Object, _repoSocio.Object,
                 _repoImpuesto.Object, _repoMoneda.Object, _repoArticulo.Object, _repoAlmacen.Object,
-                _tx.Object, _asiento.Object, _saldos.Object);
+                _tx.Object, _asiento.Object, _saldos.Object, _resolutor.Object);
+
+            // Por defecto: contado (el vencimiento es la fecha del documento).
+            _resolutor.Setup(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
+                .ReturnsAsync((string? _, string? _, DateTime? f) => ("CON", (f ?? DateTime.Today).Date));
 
             // El doble del ejecutor corre el Func directo (sin transaccion ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
@@ -535,6 +540,97 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(5, serie.SigNumero);
             _repoFacturaCompra.Verify(r => r.InsertarAsync(It.IsAny<FacturaCompra>()), Times.Never);
+        }
+
+        // ---------------- InsertarAsync: condición de pago y vencimiento ----------------
+
+        [Fact]
+        public async Task InsertarAsync_AsignaCondicionYVencimientoResueltos()
+        {
+            _resolutor.Setup(r => r.ResolverAsync("C30", null, new DateTime(2026, 1, 31)))
+                .ReturnsAsync(("C30", new DateTime(2026, 3, 2)));
+            var nota = Nota(n => { n.CondicionPago = "C30"; n.FechaDoc = new DateTime(2026, 1, 31); });
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.Equal("C30", nota.CondicionPago);
+            Assert.Equal(new DateTime(2026, 3, 2), nota.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_UsaLaCondicionDelProveedor()
+        {
+            _repoSocio.Setup(r => r.ObtenerAsync("SN1"))
+                .ReturnsAsync(new SocioNegocio { Codigo = "SN1", TipoSn = TipoSocio, Activo = "S", CondicionPago = "C45" });
+            _resolutor.Setup(r => r.ResolverAsync(null, "C45", new DateTime(2026, 10, 4)))
+                .ReturnsAsync(("C45", new DateTime(2026, 11, 18)));
+            var nota = Nota();
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.Equal("C45", nota.CondicionPago);
+            Assert.Equal(new DateTime(2026, 11, 18), nota.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinFechaDoc_ResuelveConLaFechaQueSeAsigna()
+        {
+            DateTime? fechaRecibida = null;
+            _resolutor.Setup(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
+                .Callback<string?, string?, DateTime?>((_, _, f) => fechaRecibida = f)
+                .ReturnsAsync(("CON", DateTime.Today));
+            var nota = Nota(n => n.FechaDoc = null);
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.NotNull(fechaRecibida);
+            Assert.Equal(nota.FechaDoc, fechaRecibida);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_CondicionInvalida_Propaga_NoAvanzaElConsecutivoNiGuarda()
+        {
+            var serie = CrearSerie(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            _resolutor.Setup(r => r.ResolverAsync("C60", It.IsAny<string?>(), It.IsAny<DateTime?>()))
+                .ThrowsAsync(new Exception("La condición de pago C60 está inactiva."));
+            var nota = Nota(n => n.CondicionPago = "C60");
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(nota, new[] { Linea() }));
+
+            Assert.Equal("La condición de pago C60 está inactiva.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el consecutivo no avanzó
+            Assert.Equal(0, nota.NumDoc);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+            _repoFacturaCompra.Verify(r => r.InsertarAsync(It.IsAny<FacturaCompra>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FechaVencimientoEnviadaPorElCliente_SeSobrescribe()
+        {
+            var nota = Nota(n => n.FechaVencimiento = new DateTime(2030, 12, 31));
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.Equal(new DateTime(2026, 10, 4), nota.FechaVencimiento);   // contado: la fecha del documento
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_NoRecalculaCondicionNiVencimiento()
+        {
+            var existente = new FacturaCompra
+            {
+                Entry = 7, DocSubType = SubTipoNota, Cancelado = "N",
+                CondicionPago = "C30", FechaVencimiento = new DateTime(2026, 11, 3), Comentario = "viejo"
+            };
+            _repoFacturaCompra.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(existente);
+
+            await _domain.ActualizarAsync(7, new FacturaCompra { Comentario = "nuevo", CondicionPago = "CON", FechaVencimiento = new DateTime(2030, 1, 1) });
+
+            Assert.Equal("nuevo", existente.Comentario);
+            Assert.Equal("C30", existente.CondicionPago);
+            Assert.Equal(new DateTime(2026, 11, 3), existente.FechaVencimiento);
+            _resolutor.Verify(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
 
         // ---------------- InsertarAsync: factura base ----------------

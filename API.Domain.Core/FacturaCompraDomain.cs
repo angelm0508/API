@@ -18,6 +18,8 @@ namespace API.Domain.Core
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
         private readonly ISaldoFacturaCompraService _saldos;
+        private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocio;
+        private readonly IResolutorVencimiento _resolutor;
 
         public FacturaCompraDomain(
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
@@ -25,7 +27,9 @@ namespace API.Domain.Core
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
-            ISaldoFacturaCompraService saldos)
+            ISaldoFacturaCompraService saldos,
+            IRepositorioGenerico<SocioNegocio, string> repoSocio,
+            IResolutorVencimiento resolutor)
         {
             _repoFacturaCompra = repoFacturaCompra;
             _repoDetalle = repoDetalle;
@@ -33,6 +37,8 @@ namespace API.Domain.Core
             _tx = tx;
             _asiento = asiento;
             _saldos = saldos;
+            _repoSocio = repoSocio;
+            _resolutor = resolutor;
         }
 
         #region async methods
@@ -54,6 +60,13 @@ namespace API.Domain.Core
 
             var lineasList = lineas?.ToList() ?? new List<FacturaCompraDetalle>();
             ValidarLineas(lineasList); // antes de numerar: un error de línea no debe avanzar el consecutivo
+
+            // Condición de pago y vencimiento: antes de numerar, así una condición inválida no consume el consecutivo.
+            // Un socio inexistente no cambia el comportamiento previo (lo rechaza la FK): se resuelve sin su condición.
+            var socio = string.IsNullOrWhiteSpace(obj.CodigoSn) ? null : await _repoSocio.ObtenerAsync(obj.CodigoSn);
+            var (condicion, vencimiento) = await _resolutor.ResolverAsync(obj.CondicionPago, socio?.CondicionPago, obj.FechaDoc);
+            obj.CondicionPago = condicion;
+            obj.FechaVencimiento = vencimiento;   // el cliente no puede fijarlo: siempre se sobrescribe
 
             if (serie.Manual == "S")
             {

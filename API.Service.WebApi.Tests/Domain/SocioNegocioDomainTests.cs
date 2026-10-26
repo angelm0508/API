@@ -1,5 +1,6 @@
 using API.Domain.Core;
 using API.Domain.Entity.Models;
+using API.Domain.Interface;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
@@ -11,13 +12,15 @@ namespace API.Service.WebApi.Tests.Domain
     {
         private readonly Mock<IRepositorioGenerico<SocioNegocio, string>> _repoSocioMock;
         private readonly Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>> _repoNumeracionMock;
+        private readonly Mock<ICondicionPagoDomain> _condicionesMock;
         private readonly SocioNegocioDomain _domain;
 
         public SocioNegocioDomainTests()
         {
             _repoSocioMock = new Mock<IRepositorioGenerico<SocioNegocio, string>>();
             _repoNumeracionMock = new Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>>();
-            _domain = new SocioNegocioDomain(_repoSocioMock.Object, _repoNumeracionMock.Object);
+            _condicionesMock = new Mock<ICondicionPagoDomain>();
+            _domain = new SocioNegocioDomain(_repoSocioMock.Object, _repoNumeracionMock.Object, _condicionesMock.Object);
 
             _repoSocioMock.Setup(r => r.ObtenerTodoAsync())
                 .ReturnsAsync(new List<SocioNegocio>().AsAsyncQueryable());
@@ -212,6 +215,137 @@ namespace API.Service.WebApi.Tests.Domain
 
             await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
             _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        // ---------------- condición de pago por defecto del socio ----------------
+
+        private void CondicionActiva(string codigo, int dias = 30) => _condicionesMock
+            .Setup(c => c.ObtenerActivaAsync(codigo))
+            .ReturnsAsync(new CondicionPago { Codigo = codigo, Nombre = codigo, Dias = dias, Activo = "S" });
+
+        [Fact]
+        public async Task InsertarAsync_ConCondicionValida_LaGuarda()
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoSocioMock.Setup(r => r.InsertarAsync(It.IsAny<SocioNegocio>())).ReturnsAsync((SocioNegocio s) => s);
+            CondicionActiva("C30");
+
+            var obj = new SocioNegocio { Serie = 9, CondicionPago = "C30" };
+            await _domain.InsertarAsync(obj);
+
+            Assert.Equal("C30", obj.CondicionPago);
+            _condicionesMock.Verify(c => c.ObtenerActivaAsync("C30"), Times.Once);
+            _repoSocioMock.Verify(r => r.InsertarAsync(obj), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ConCondicionInexistente_Lanza_NoAvanzaElConsecutivoNiGuarda()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(serie);
+            _condicionesMock.Setup(c => c.ObtenerActivaAsync("ZZZ")).ThrowsAsync(new Exception("La condición de pago ZZZ no existe."));
+
+            var obj = new SocioNegocio { Serie = 9, CondicionPago = "ZZZ" };
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
+
+            Assert.Equal("La condición de pago ZZZ no existe.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ConCondicionInactiva_Lanza()
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _condicionesMock.Setup(c => c.ObtenerActivaAsync("C60")).ThrowsAsync(new Exception("La condición de pago C60 está inactiva."));
+
+            var obj = new SocioNegocio { Serie = 9, CondicionPago = "C60" };
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
+
+            Assert.Equal("La condición de pago C60 está inactiva.", ex.Message);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task InsertarAsync_SinCondicion_SeGuardaNula_YNoConsultaCondiciones(string? condicion)
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoSocioMock.Setup(r => r.InsertarAsync(It.IsAny<SocioNegocio>())).ReturnsAsync((SocioNegocio s) => s);
+
+            var obj = new SocioNegocio { Serie = 9, CondicionPago = condicion };
+            await _domain.InsertarAsync(obj);
+
+            Assert.Null(obj.CondicionPago);
+            _condicionesMock.Verify(c => c.ObtenerActivaAsync(It.IsAny<string>()), Times.Never);
+            _repoSocioMock.Verify(r => r.InsertarAsync(obj), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_CondicionConEspacios_SeRecortaAntesDeValidar()
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoSocioMock.Setup(r => r.InsertarAsync(It.IsAny<SocioNegocio>())).ReturnsAsync((SocioNegocio s) => s);
+            CondicionActiva("C15", 15);
+
+            var obj = new SocioNegocio { Serie = 9, CondicionPago = " C15 " };
+            await _domain.InsertarAsync(obj);
+
+            Assert.Equal("C15", obj.CondicionPago);
+            _condicionesMock.Verify(c => c.ObtenerActivaAsync("C15"), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ConCondicionValida_LaGuarda()
+        {
+            CondicionActiva("C45", 45);
+            _repoSocioMock.Setup(r => r.ActualizarAsync("C001", It.IsAny<SocioNegocio>())).ReturnsAsync(true);
+
+            var obj = new SocioNegocio { Nombre = "Cliente Uno", CondicionPago = "C45" };
+            var resultado = await _domain.ActualizarAsync("C001", obj);
+
+            Assert.True(resultado);
+            _repoSocioMock.Verify(r => r.ActualizarAsync("C001", It.Is<SocioNegocio>(s => s.CondicionPago == "C45")), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ConCondicionInexistente_Lanza_NoActualiza()
+        {
+            _condicionesMock.Setup(c => c.ObtenerActivaAsync("ZZZ")).ThrowsAsync(new Exception("La condición de pago ZZZ no existe."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("C001", new SocioNegocio { CondicionPago = "ZZZ" }));
+
+            Assert.Equal("La condición de pago ZZZ no existe.", ex.Message);
+            _repoSocioMock.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ConCondicionInactiva_Lanza_NoActualiza()
+        {
+            _condicionesMock.Setup(c => c.ObtenerActivaAsync("C60")).ThrowsAsync(new Exception("La condición de pago C60 está inactiva."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("C001", new SocioNegocio { CondicionPago = "C60" }));
+
+            Assert.Equal("La condición de pago C60 está inactiva.", ex.Message);
+            _repoSocioMock.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task ActualizarAsync_SinCondicion_SeGuardaNula_YNoConsultaCondiciones(string? condicion)
+        {
+            _repoSocioMock.Setup(r => r.ActualizarAsync("C001", It.IsAny<SocioNegocio>())).ReturnsAsync(true);
+
+            var obj = new SocioNegocio { Nombre = "Cliente Uno", CondicionPago = condicion };
+            await _domain.ActualizarAsync("C001", obj);
+
+            Assert.Null(obj.CondicionPago);
+            _condicionesMock.Verify(c => c.ObtenerActivaAsync(It.IsAny<string>()), Times.Never);
+            _repoSocioMock.Verify(r => r.ActualizarAsync("C001", It.Is<SocioNegocio>(s => s.CondicionPago == null)), Times.Once);
         }
     }
 }

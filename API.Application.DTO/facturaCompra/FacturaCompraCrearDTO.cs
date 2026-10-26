@@ -35,6 +35,9 @@ namespace API.Application.DTO.facturaCompra
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
 
+        /// <summary>Condición de pago (código). Opcional: sin ella se usa la del proveedor o CON. El vencimiento lo calcula el servidor.</summary>
+        public string? CondicionPago { get; set; }
+
         /// <summary>
         /// Líneas del documento. Con INV-2 el documento se registra con sus líneas en una
         /// sola petición (y una sola transacción). El `Entry` de cada línea se ignora aquí

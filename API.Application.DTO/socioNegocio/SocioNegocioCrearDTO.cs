@@ -30,6 +30,9 @@ namespace API.Application.DTO.socioNegocio
 
         public string? Activo { get; set; }
 
+        /// <summary>Condición de pago por defecto del socio (código). Opcional: vacío = CON al emitir documentos.</summary>
+        public string? CondicionPago { get; set; }
+
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
         public int Serie { get; set; }
     }

@@ -28,6 +28,9 @@ namespace API.Application.DTO.socioNegocio
 
         public string? Activo { get; set; }
 
+        /// <summary>Condición de pago por defecto del socio (código). Vacío la quita (CON al emitir documentos).</summary>
+        public string? CondicionPago { get; set; }
+
         public int Serie { get; set; }
     }
 }

@@ -143,8 +143,11 @@ namespace API.Transversal.Mapper
 
             // SocioNegocio
             CreateMap<SocioNegocio, SocioNegocioDTO>();
-            CreateMap<SocioNegocioCrearDTO, SocioNegocio>();
-            CreateMap<SocioNegocioActualizarDTO, SocioNegocio>();
+            // La condición de pago la valida SocioNegocioDomain; AutoMapper nunca llena la navegación.
+            CreateMap<SocioNegocioCrearDTO, SocioNegocio>()
+                .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
+            CreateMap<SocioNegocioActualizarDTO, SocioNegocio>()
+                .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
 
             // DireccionSocioNegocio
             CreateMap<DireccionSocioNegocio, DireccionSocioNegocioDTO>();
@@ -253,7 +256,10 @@ namespace API.Transversal.Mapper
 
             // FacturaCompra
             CreateMap<FacturaCompra, FacturaCompraDTO>();
-            CreateMap<FacturaCompraCrearDTO, FacturaCompra>();
+            // El vencimiento y la condición efectiva los fija FacturaCompraDomain; AutoMapper nunca llena la navegación.
+            CreateMap<FacturaCompraCrearDTO, FacturaCompra>()
+                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
+                .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<FacturaCompraActualizarDTO, FacturaCompra>();
 
             // FacturaCompraDetalle
@@ -287,7 +293,9 @@ namespace API.Transversal.Mapper
 
             // NotaDebitoCompra
             CreateMap<FacturaCompra, NotaDebitoCompraDTO>();
-            CreateMap<NotaDebitoCompraCrearDTO, FacturaCompra>();
+            CreateMap<NotaDebitoCompraCrearDTO, FacturaCompra>()
+                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
+                .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<NotaDebitoCompraActualizarDTO, FacturaCompra>();
 
             // NotaDebitoCompraDetalle

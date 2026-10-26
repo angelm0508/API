@@ -9,13 +9,16 @@ namespace API.Domain.Core
     {
         private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocioNegocio;
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
+        private readonly ICondicionPagoDomain _condicionesPago;
 
         public SocioNegocioDomain(
             IRepositorioGenerico<SocioNegocio, string> repoSocioNegocio,
-            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion)
+            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion,
+            ICondicionPagoDomain condicionesPago)
         {
             _repoSocioNegocio = repoSocioNegocio;
             _repoGenericoNumeracion = repoGenericoNumeracion;
+            _condicionesPago = condicionesPago;
         }
 
         #region async methods
@@ -23,6 +26,9 @@ namespace API.Domain.Core
         {
             var serie = await _repoGenericoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
+
+            // Antes de numerar: una condición inválida no debe consumir el consecutivo.
+            await NormalizarYValidarCondicionPagoAsync(obj);
 
             if (serie.Manual == "S")
             {
@@ -63,6 +69,8 @@ namespace API.Domain.Core
         }
         public async Task<bool> ActualizarAsync(string codigo, SocioNegocio obj)
         {
+            // Solo cambia la condición por defecto del socio: los documentos ya emitidos conservan la suya.
+            await NormalizarYValidarCondicionPagoAsync(obj);
             return await _repoSocioNegocio.ActualizarAsync(codigo, obj);
         }
         public async Task<bool> EliminarAsync(string codigo)
@@ -106,5 +114,22 @@ namespace API.Domain.Core
             return await queryable.Where(x => x.Codigo.Contains(codigo)).ToListAsync();
         }
         #endregion
+
+        /// <summary>
+        /// Vacío o en blanco se guarda como null (el sistema usará CON); si viene, debe existir y estar activa
+        /// (<see cref="ICondicionPagoDomain.ObtenerActivaAsync"/> lanza "no existe" / "está inactiva").
+        /// </summary>
+        private async Task NormalizarYValidarCondicionPagoAsync(SocioNegocio obj)
+        {
+            var codigo = obj.CondicionPago?.Trim();
+            if (string.IsNullOrEmpty(codigo))
+            {
+                obj.CondicionPago = null;
+                return;
+            }
+
+            var condicion = await _condicionesPago.ObtenerActivaAsync(codigo);
+            obj.CondicionPago = condicion?.Codigo ?? codigo;
+        }
     }
 }

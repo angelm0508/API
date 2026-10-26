@@ -48,6 +48,7 @@ namespace API.Domain.Core
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
         private readonly ISaldoFacturaCompraService _saldos;
+        private readonly IResolutorVencimiento _resolutor;
 
         public NotaDebitoCompraDomain(
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
@@ -60,7 +61,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<Almacen, string> repoAlmacen,
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
-            ISaldoFacturaCompraService saldos)
+            ISaldoFacturaCompraService saldos,
+            IResolutorVencimiento resolutor)
         {
             _repoFacturaCompra = repoFacturaCompra;
             _repoDetalle = repoDetalle;
@@ -73,6 +75,7 @@ namespace API.Domain.Core
             _tx = tx;
             _asiento = asiento;
             _saldos = saldos;
+            _resolutor = resolutor;
         }
 
         #region async methods
@@ -93,9 +96,14 @@ namespace API.Domain.Core
                 throw new Exception(MsgModoInvalido);
 
             var serie = await ValidarSerieAsync(obj);
-            await ValidarSocioYMonedaAsync(obj);
+            var socio = await ValidarSocioYMonedaAsync(obj);
             await ValidarLineasAsync(obj, lineasList);
             await ValidarBaseAsync(obj);
+
+            // Condición de pago y vencimiento: antes de numerar, así una condición inválida no consume el consecutivo.
+            var (condicion, vencimiento) = await _resolutor.ResolverAsync(obj.CondicionPago, socio.CondicionPago, obj.FechaDoc);
+            obj.CondicionPago = condicion;
+            obj.FechaVencimiento = vencimiento;   // el cliente no puede fijarlo: siempre se sobrescribe
 
             // EstadoInv siempre explicito: el DEFAULT 'A' de la base no debe decidir si la nota tiene asiento.
             obj.EstadoInv = obj.DocType == ModoArticulos ? "A" : "C";
@@ -290,7 +298,7 @@ namespace API.Domain.Core
             serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transaccion
         }
 
-        private async Task ValidarSocioYMonedaAsync(FacturaCompra obj)
+        private async Task<SocioNegocio> ValidarSocioYMonedaAsync(FacturaCompra obj)
         {
             if (string.IsNullOrWhiteSpace(obj.CodigoSn))
                 throw new Exception("El socio de negocio es requerido.");
@@ -309,6 +317,8 @@ namespace API.Domain.Core
 
             if (await _repoMoneda.ObtenerAsync(obj.MonedaDoc) is null)
                 throw new Exception("La moneda no existe.");
+
+            return socio;
         }
 
         private async Task ValidarLineasAsync(FacturaCompra obj, IList<FacturaCompraDetalle> lineas)

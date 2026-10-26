@@ -30,6 +30,8 @@ namespace API.Application.DTO.socioNegocio
 
         public string? Activo { get; set; }
 
+        public string? CondicionPago { get; set; }
+
         public int Serie { get; set; }
     }
 }

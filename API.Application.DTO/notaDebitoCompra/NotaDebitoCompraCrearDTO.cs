@@ -35,6 +35,9 @@ namespace API.Application.DTO.notaDebitoCompra
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
 
+        /// <summary>Condición de pago (código). Opcional: sin ella se usa la del proveedor o CON. El vencimiento lo calcula el servidor.</summary>
+        public string? CondicionPago { get; set; }
+
         /// <summary>Lineas del documento (artículos o conceptos según DocType): se registran junto con el encabezado y no se pueden modificar despues.</summary>
         public List<NotaDebitoCompraDetalleCrearDTO> Lineas { get; set; } = new();
     }
