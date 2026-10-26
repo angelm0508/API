@@ -100,7 +100,10 @@ namespace API.Transversal.Mapper
 
             // PagoEfectuado
             CreateMap<PagoEfectuado, PagoEfectuadoDTO>();
-            CreateMap<PagoEfectuadoCrearDTO, PagoEfectuado>();
+            // Los hijos se insertan explicitamente en PagoEfectuadoDomain.InsertarAsync: no llenar las navegaciones.
+            CreateMap<PagoEfectuadoCrearDTO, PagoEfectuado>()
+                .ForMember(d => d.Facturas, o => o.Ignore())
+                .ForMember(d => d.Medios, o => o.Ignore());
             CreateMap<PagoEfectuadoFacturaCrearDTO, PagoEfectuadoFactura>();
             CreateMap<PagoEfectuadoMedioCrearDTO, PagoEfectuadoMedio>();
             CreateMap<PagoEfectuadoFactura, PagoEfectuadoFacturaDTO>()
