@@ -7,6 +7,8 @@ namespace API.Domain.Core
 {
     public class SocioNegocioDomain : ISocioNegocioDomain
     {
+        private const string TipoSocioCliente = "C";
+
         private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocioNegocio;
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
         private readonly ICondicionPagoDomain _condicionesPago;
@@ -29,6 +31,7 @@ namespace API.Domain.Core
 
             // Antes de numerar: una condición inválida no debe consumir el consecutivo.
             await NormalizarYValidarCondicionPagoAsync(obj);
+            NormalizarYValidarCredito(obj);
 
             if (serie.Manual == "S")
             {
@@ -71,6 +74,8 @@ namespace API.Domain.Core
         {
             // Solo cambia la condición por defecto del socio: los documentos ya emitidos conservan la suya.
             await NormalizarYValidarCondicionPagoAsync(obj);
+            // La actualización reemplaza todas las columnas: un límite null lo quita.
+            NormalizarYValidarCredito(obj);
             return await _repoSocioNegocio.ActualizarAsync(codigo, obj);
         }
         public async Task<bool> EliminarAsync(string codigo)
@@ -130,6 +135,33 @@ namespace API.Domain.Core
 
             var condicion = await _condicionesPago.ObtenerActivaAsync(codigo);
             obj.CondicionPago = condicion?.Codigo ?? codigo;
+        }
+
+        /// <summary>
+        /// Límite de crédito: null = sin límite, 0 = solo contado, máximo 2 decimales y solo para clientes.
+        /// El bloqueo por vencido vacío o nulo se guarda como "N"; si viene debe ser "S" o "N" y en un socio
+        /// que no es cliente se guarda siempre como "N".
+        /// </summary>
+        private static void NormalizarYValidarCredito(SocioNegocio obj)
+        {
+            if (obj.LimiteCredito.HasValue)
+            {
+                var limite = obj.LimiteCredito.Value;
+                if (limite < 0)
+                    throw new Exception("El límite de crédito no puede ser negativo.");
+                if (decimal.Round(limite, 2) != limite)
+                    throw new Exception("El límite de crédito admite como máximo 2 decimales.");
+                if (obj.TipoSn != TipoSocioCliente)
+                    throw new Exception("El límite de crédito solo aplica a clientes.");
+            }
+
+            var bloqueo = obj.BloquearSiVencido;
+            if (string.IsNullOrWhiteSpace(bloqueo))
+                bloqueo = "N";
+            else if (bloqueo != "S" && bloqueo != "N")
+                throw new Exception("El bloqueo por vencido debe ser S o N.");
+
+            obj.BloquearSiVencido = obj.TipoSn == TipoSocioCliente ? bloqueo : "N";
         }
     }
 }

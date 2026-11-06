@@ -32,6 +32,12 @@ namespace API.Application.DTO.socioNegocio
 
         public string? CondicionPago { get; set; }
 
+        /// <summary>Límite de crédito del cliente. null = sin límite; 0 = solo contado.</summary>
+        public decimal? LimiteCredito { get; set; }
+
+        /// <summary>"S" bloquea documentos nuevos si el cliente tiene saldo vencido; siempre "S" o "N".</summary>
+        public string? BloquearSiVencido { get; set; }
+
         public int Serie { get; set; }
     }
 }

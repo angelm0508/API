@@ -33,6 +33,12 @@ namespace API.Application.DTO.socioNegocio
         /// <summary>Condición de pago por defecto del socio (código). Opcional: vacío = CON al emitir documentos.</summary>
         public string? CondicionPago { get; set; }
 
+        /// <summary>Límite de crédito (solo clientes). Opcional: null = sin límite; 0 = solo contado.</summary>
+        public decimal? LimiteCredito { get; set; }
+
+        /// <summary>"S" o "N". Opcional: vacío = "N".</summary>
+        public string? BloquearSiVencido { get; set; }
+
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
         public int Serie { get; set; }
     }

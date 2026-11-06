@@ -161,5 +161,30 @@ namespace API.Service.WebApi.Tests.Application
 
             Assert.Equal("C30", dto.CondicionPago);
         }
+
+        [Fact]
+        public void Socio_CrearYActualizarDto_MapeanLimiteYBloqueo()
+        {
+            var nuevo = _mapper.Map<SocioNegocio>(new SocioNegocioCrearDTO { Serie = 9, Nombre = "Cliente", LimiteCredito = 5000.50m, BloquearSiVencido = "S" });
+            var existente = new SocioNegocio { Codigo = "C001", LimiteCredito = 100m, BloquearSiVencido = "S" };
+            _mapper.Map(new SocioNegocioActualizarDTO { Serie = 9, Nombre = "Cliente", LimiteCredito = null, BloquearSiVencido = "N" }, existente);
+
+            Assert.Equal(5000.50m, nuevo.LimiteCredito);
+            Assert.Equal("S", nuevo.BloquearSiVencido);
+            Assert.Null(existente.LimiteCredito);
+            Assert.Equal("N", existente.BloquearSiVencido);
+        }
+
+        [Fact]
+        public void Socio_EntidadADto_ExponeLimiteYBloqueo()
+        {
+            var dto = _mapper.Map<SocioNegocioDTO>(new SocioNegocio { Codigo = "C001", LimiteCredito = 0m, BloquearSiVencido = "S" });
+            var sinLimite = _mapper.Map<SocioNegocioDTO>(new SocioNegocio { Codigo = "C002" });
+
+            Assert.Equal(0m, dto.LimiteCredito);
+            Assert.Equal("S", dto.BloquearSiVencido);
+            Assert.Null(sinLimite.LimiteCredito);
+            Assert.Equal("N", sinLimite.BloquearSiVencido);
+        }
     }
 }

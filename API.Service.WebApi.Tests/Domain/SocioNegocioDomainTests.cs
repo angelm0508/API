@@ -347,5 +347,198 @@ namespace API.Service.WebApi.Tests.Domain
             _condicionesMock.Verify(c => c.ObtenerActivaAsync(It.IsAny<string>()), Times.Never);
             _repoSocioMock.Verify(r => r.ActualizarAsync("C001", It.Is<SocioNegocio>(s => s.CondicionPago == null)), Times.Once);
         }
+
+        // ---------------- límite de crédito y bloqueo por vencido ----------------
+
+        private void PrepararInsercionConSerie()
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoSocioMock.Setup(r => r.InsertarAsync(It.IsAny<SocioNegocio>())).ReturnsAsync((SocioNegocio s) => s);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ClienteConLimiteYBloqueo_LosGuarda()
+        {
+            PrepararInsercionConSerie();
+            var obj = new SocioNegocio { Serie = 9, TipoSn = "C", LimiteCredito = 5000.50m, BloquearSiVencido = "S" };
+
+            await _domain.InsertarAsync(obj);
+
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.Is<SocioNegocio>(s => s.LimiteCredito == 5000.50m && s.BloquearSiVencido == "S")), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LimiteNegativo_Lanza_NoInsertaNiConsumeConsecutivo()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(9)).ReturnsAsync(serie);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "C", LimiteCredito = -1m }));
+
+            Assert.Equal("El límite de crédito no puede ser negativo.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LimiteConMasDeDosDecimales_Lanza()
+        {
+            PrepararInsercionConSerie();
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "C", LimiteCredito = 10.123m }));
+
+            Assert.Equal("El límite de crédito admite como máximo 2 decimales.", ex.Message);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Theory]
+        [InlineData("10")]
+        [InlineData("10.1")]
+        [InlineData("10.10")]
+        [InlineData("10.12")]
+        [InlineData("0")]
+        public async Task InsertarAsync_LimiteConHastaDosDecimales_EsValido(string limite)
+        {
+            PrepararInsercionConSerie();
+
+            await _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "C", LimiteCredito = decimal.Parse(limite, System.Globalization.CultureInfo.InvariantCulture) });
+
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LimiteCero_EsValido_SoloContado()
+        {
+            PrepararInsercionConSerie();
+
+            await _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "C", LimiteCredito = 0m });
+
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.Is<SocioNegocio>(s => s.LimiteCredito == 0m)), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ProveedorConLimite_Lanza_NoInserta()
+        {
+            PrepararInsercionConSerie();
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "P", LimiteCredito = 100m }));
+
+            Assert.Equal("El límite de crédito solo aplica a clientes.", ex.Message);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ProveedorConLimiteCero_Lanza()
+        {
+            PrepararInsercionConSerie();
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "P", LimiteCredito = 0m }));
+
+            Assert.Equal("El límite de crédito solo aplica a clientes.", ex.Message);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_ProveedorSinLimite_Pasa_YElBloqueoSeGuardaComoN()
+        {
+            PrepararInsercionConSerie();
+
+            await _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "P", LimiteCredito = null, BloquearSiVencido = "S" });
+
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.Is<SocioNegocio>(s => s.LimiteCredito == null && s.BloquearSiVencido == "N")), Times.Once);
+        }
+
+        [Theory]
+        [InlineData("X")]
+        [InlineData("s")]
+        [InlineData("SI")]
+        public async Task InsertarAsync_BloqueoInvalido_Lanza_NoInserta(string bloqueo)
+        {
+            PrepararInsercionConSerie();
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "C", BloquearSiVencido = bloqueo }));
+
+            Assert.Equal("El bloqueo por vencido debe ser S o N.", ex.Message);
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task InsertarAsync_BloqueoVacioONulo_SeGuardaComoN(string? bloqueo)
+        {
+            PrepararInsercionConSerie();
+
+            await _domain.InsertarAsync(new SocioNegocio { Serie = 9, TipoSn = "C", BloquearSiVencido = bloqueo! });
+
+            _repoSocioMock.Verify(r => r.InsertarAsync(It.Is<SocioNegocio>(s => s.BloquearSiVencido == "N")), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ReemplazaLimiteYBloqueo()
+        {
+            _repoSocioMock.Setup(r => r.ActualizarAsync("C001", It.IsAny<SocioNegocio>())).ReturnsAsync(true);
+
+            var resultado = await _domain.ActualizarAsync("C001", new SocioNegocio { Codigo = "C001", TipoSn = "C", LimiteCredito = 1200m, BloquearSiVencido = "S" });
+
+            Assert.True(resultado);
+            _repoSocioMock.Verify(r => r.ActualizarAsync("C001", It.Is<SocioNegocio>(s => s.LimiteCredito == 1200m && s.BloquearSiVencido == "S")), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_LimiteNulo_LoLimpia()
+        {
+            _repoSocioMock.Setup(r => r.ActualizarAsync("C001", It.IsAny<SocioNegocio>())).ReturnsAsync(true);
+
+            await _domain.ActualizarAsync("C001", new SocioNegocio { Codigo = "C001", TipoSn = "C", LimiteCredito = null, BloquearSiVencido = "" });
+
+            _repoSocioMock.Verify(r => r.ActualizarAsync("C001", It.Is<SocioNegocio>(s => s.LimiteCredito == null && s.BloquearSiVencido == "N")), Times.Once);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_LimiteNegativo_Lanza_NoActualiza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("C001", new SocioNegocio { TipoSn = "C", LimiteCredito = -0.01m }));
+
+            Assert.Equal("El límite de crédito no puede ser negativo.", ex.Message);
+            _repoSocioMock.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_LimiteConTresDecimales_Lanza_NoActualiza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("C001", new SocioNegocio { TipoSn = "C", LimiteCredito = 1.005m }));
+
+            Assert.Equal("El límite de crédito admite como máximo 2 decimales.", ex.Message);
+            _repoSocioMock.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ProveedorConLimite_Lanza_NoActualiza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("P001", new SocioNegocio { TipoSn = "P", LimiteCredito = 10m }));
+
+            Assert.Equal("El límite de crédito solo aplica a clientes.", ex.Message);
+            _repoSocioMock.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_BloqueoInvalido_Lanza_NoActualiza()
+        {
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("C001", new SocioNegocio { TipoSn = "C", BloquearSiVencido = "X" }));
+
+            Assert.Equal("El bloqueo por vencido debe ser S o N.", ex.Message);
+            _repoSocioMock.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<SocioNegocio>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ProveedorConBloqueoS_SeGuardaComoN()
+        {
+            _repoSocioMock.Setup(r => r.ActualizarAsync("P001", It.IsAny<SocioNegocio>())).ReturnsAsync(true);
+
+            await _domain.ActualizarAsync("P001", new SocioNegocio { Codigo = "P001", TipoSn = "P", BloquearSiVencido = "S" });
+
+            _repoSocioMock.Verify(r => r.ActualizarAsync("P001", It.Is<SocioNegocio>(s => s.BloquearSiVencido == "N")), Times.Once);
+        }
     }
 }
