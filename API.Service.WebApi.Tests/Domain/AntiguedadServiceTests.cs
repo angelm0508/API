@@ -147,6 +147,20 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task ObtenerAsync_CodigoDeDocumentoConOtraCapitalizacion_AgrupaEnLaMismaFilaConElNombreDelSocio()
+        {
+            // La base compara sin distinguir mayúsculas: 'cl001' y 'CL001' son el mismo socio.
+            _repoSocio.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(() => _socios.AsAsyncQueryableSinMayusculas());
+            Socio("CL001", "C", "Ana");
+            Fac(1, "cl001", 10m, 15);
+            Fac(2, "CL001", 20m, 45);
+
+            var f = Assert.Single(await _servicio.ObtenerAsync("C"));
+
+            Assert.Equal(new FilaAntiguedad("CL001", "Ana", 0m, 10m, 20m, 0m, 0m, 30m), f);
+        }
+
+        [Fact]
         public async Task ObtenerAsync_PagoParcial_ReduceElSaldoDelTramo()
         {
             Socio("C1", "C");

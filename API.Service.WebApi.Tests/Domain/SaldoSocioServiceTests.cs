@@ -277,6 +277,27 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task ObtenerAsync_CodigoDeDocumentoConOtraCapitalizacion_SigueSiendoDelSocio()
+        {
+            // La base compara sin distinguir mayúsculas: el documento 'cl001' pertenece al socio 'CL001'.
+            _repoSocio.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(() => _socios.AsAsyncQueryableSinMayusculas());
+            _repoFactura.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(() => _facturas.AsAsyncQueryableSinMayusculas());
+            Socio("CL001", "C");
+            Fac(1, "cl001", 100m, Hoy.AddDays(-1));
+            Fac(2, "CL001", 50m, Hoy.AddDays(10));
+
+            var r = await _servicio.ObtenerAsync(new[] { "cl001" });
+
+            var s = Assert.Single(r).Value;
+            Assert.Equal("CL001", s.CodigoSn);
+            Assert.Equal(150m, s.Saldo);
+            Assert.Equal(100m, s.Vencido);
+            Assert.Equal(2, s.DocumentosAbiertos);
+            Assert.Equal(150m, r["CL001"].Saldo);
+            Assert.Equal(150m, r["cl001"].Saldo);
+        }
+
+        [Fact]
         public async Task ObtenerAsync_RedondeaADosDecimales()
         {
             Socio("C1", "C");

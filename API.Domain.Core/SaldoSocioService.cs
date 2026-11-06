@@ -32,10 +32,10 @@ namespace API.Domain.Core
 
         public async Task<IReadOnlyDictionary<string, SaldoSocio>> ObtenerAsync(IEnumerable<string> codigosSn)
         {
-            var resultado = new Dictionary<string, SaldoSocio>();
+            var resultado = new Dictionary<string, SaldoSocio>(StringComparer.OrdinalIgnoreCase);
             var codigos = (codigosSn ?? Enumerable.Empty<string>())
                 .Where(c => !string.IsNullOrEmpty(c))
-                .Distinct()
+                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
             if (codigos.Count == 0)
                 return resultado;
@@ -52,7 +52,7 @@ namespace API.Domain.Core
             var proveedores = socios.Where(s => s.TipoSn == TipoProveedor).Select(s => s.Codigo).ToList();
 
             // Por socio: (documentos abiertos, saldo, vencido).
-            var acumulado = new Dictionary<string, (int Abiertos, decimal Saldo, decimal Vencido)>();
+            var acumulado = new Dictionary<string, (int Abiertos, decimal Saldo, decimal Vencido)>(StringComparer.OrdinalIgnoreCase);
 
             if (clientes.Count > 0)
             {

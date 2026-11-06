@@ -44,15 +44,16 @@ namespace API.Domain.Core
             if (abiertos.Count == 0)
                 return new List<FilaAntiguedad>();
 
-            var codigos = abiertos.Select(a => a.Doc.CodigoSn).Distinct().ToList();
-            var nombres = (await (await _repoSocio.ObtenerTodoAsync())
+            // La base compara códigos sin distinguir mayúsculas; aquí también, para no partir un socio en dos filas.
+            var codigos = abiertos.Select(a => a.Doc.CodigoSn).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var socios = (await (await _repoSocio.ObtenerTodoAsync())
                     .Where(s => codigos.Contains(s.Codigo))
                     .Select(s => new { s.Codigo, s.Nombre })
                     .ToListAsync())
-                .ToDictionary(s => s.Codigo, s => s.Nombre ?? string.Empty);
+                .ToDictionary(s => s.Codigo, s => s, StringComparer.OrdinalIgnoreCase);
 
             var filas = abiertos
-                .GroupBy(a => a.Doc.CodigoSn)
+                .GroupBy(a => a.Doc.CodigoSn, StringComparer.OrdinalIgnoreCase)
                 .Select(g =>
                 {
                     // Cada saldo va a un solo tramo; ya vienen redondeados, la suma es exacta.
@@ -61,7 +62,8 @@ namespace API.Domain.Core
                     var de31a60 = g.Where(a => a.DiasVencido >= 31 && a.DiasVencido <= 60).Sum(a => a.Saldo);
                     var de61a90 = g.Where(a => a.DiasVencido >= 61 && a.DiasVencido <= 90).Sum(a => a.Saldo);
                     var mas90 = g.Where(a => a.DiasVencido > 90).Sum(a => a.Saldo);
-                    return new FilaAntiguedad(g.Key, nombres.TryGetValue(g.Key, out var nombre) ? nombre : string.Empty,
+                    var conocido = socios.TryGetValue(g.Key, out var socio);
+                    return new FilaAntiguedad(conocido ? socio!.Codigo : g.Key, conocido ? socio!.Nombre ?? string.Empty : string.Empty,
                         vigente, de1a30, de31a60, de61a90, mas90, vigente + de1a30 + de31a60 + de61a90 + mas90);
                 })
                 .OrderByDescending(f => f.Total)
