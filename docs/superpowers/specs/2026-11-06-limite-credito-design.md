@@ -137,3 +137,15 @@ Despliegue: asignar `AutorizarExcesoCredito` a las plantillas que corresponda; s
 - **Moneda:** se asume la moneda de los documentos; no hay conversión.
 - **Reabrir documentos** solo aplica donde el dominio ya lo permite (hoy el pedido). Si una entrega o factura no se reabre, no hay nada que verificar ahí.
 - **Plan:** el plan de implementación debe confirmar en el código los puntos marcados «donde el dominio lo permita» y la forma exacta de leer el permiso del usuario en los controladores antes de fijar las tareas.
+
+## Ajustes del plan (verificados en el código al escribir el plan)
+
+El plan de implementación (`docs/superpowers/plans/2026-11-06-limite-credito-implementation.md`) ajusta este diseño en estos puntos; en caso de duda manda el plan.
+
+1. **Pago al facturar:** la Web crea la factura y luego envía el pago a `/PagosRecibidos/Crear`; la API no lo ve al crear. La factura gana el campo `PagoInmediato` (monto que se cobrará en el acto, `>= 0` y `<= TotalDoc`), que se resta del monto nuevo y solo se acepta con el permiso `PagosRecibidos` / Agregar. Riesgo aceptado: la API no garantiza que ese pago se registre después.
+2. **Autorización:** se pasa al dominio con un contexto por petición (`IAutorizacionCreditoContexto`, *scoped*) que llena el controlador tras comprobar el permiso, en lugar de cambiar las firmas de `InsertarAsync`.
+3. **Cuerpo del 409:** un `Respuesta` normal (`resultado=false`, `mensaje`, `dato=null`) más la propiedad `credito` con `codigo`, `limite`, `saldo`, `comprometido`, `vencido`, `monto`, `exceso`, `disponible`.
+4. **Valor del comprometido:** `CantidadAbierta / Cantidad × TotalLinea × (TotalDoc / Σ TotalLinea)` por línea del origen (incluye descuento e impuesto de cabecera), redondeado por documento.
+5. **Reabrir y cambio de socio:** solo el pedido los tiene (entrega y factura no se reabren); ambos casos vuelven a verificar.
+6. **Fuera de control (riesgos documentados):** el alta de pedido sin líneas y los endpoints sueltos de líneas (`PedidoDetalle`, `EntregaDetalle`, `FacturaDetalle`); la verificación se hace en la creación atómica cabecera + líneas.
+7. **Solo clientes:** `SocioNegocioDomain` rechaza `LimiteCredito` en socios que no son clientes.
