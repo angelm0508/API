@@ -606,5 +606,279 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(0m, await _servicio.ValorAbiertoDocumentoAsync(4, 1));
         }
+
+        // ---- 13. Verificacion de un documento nuevo ----
+
+        [Fact]
+        public async Task Verificar_SinLimite_Permitido()
+        {
+            Socio("C1", limite: null);
+            Saldo("C1", 999999m, 0m);
+
+            var r = await _servicio.VerificarAsync("C1", 5000m);
+
+            Assert.True(r.Permitido);
+            Assert.Null(r.Motivo);
+            Assert.Equal(0m, r.Exceso);
+            Assert.Equal(5000m, r.Monto);
+            Assert.NotNull(r.Posicion);
+        }
+
+        [Fact]
+        public async Task Verificar_ExposicionFinalIgualAlLimite_Permitido()
+        {
+            Socio("C1", limite: 1000m);
+            Saldo("C1", 300m, 0m);
+            Ped(1, "C1", 500m);
+            PedLin(1, 1, 1m, 500m);
+
+            var r = await _servicio.VerificarAsync("C1", 200m);
+
+            Assert.True(r.Permitido); // 300 + 500 + 200 = 1000: no es mayor que el limite
+            Assert.Null(r.Motivo);
+            Assert.Equal(0m, r.Exceso);
+            Assert.Equal(800m, r.Posicion!.Exposicion);
+        }
+
+        [Fact]
+        public async Task Verificar_ExposicionFinalSuperaElLimite_LimiteConExceso()
+        {
+            Socio("C1", limite: 1000m);
+            Saldo("C1", 300m, 0m);
+            Ped(1, "C1", 500m);
+            PedLin(1, 1, 1m, 500m);
+
+            var r = await _servicio.VerificarAsync("C1", 201m);
+
+            Assert.False(r.Permitido);
+            Assert.Equal("LIMITE", r.Motivo);
+            Assert.Equal(1m, r.Exceso);
+            Assert.Equal(201m, r.Monto);
+            Assert.Equal(800m, r.Posicion!.Exposicion);
+        }
+
+        [Fact]
+        public async Task Verificar_LimiteCero_SoloPermiteMontoCero()
+        {
+            Socio("C1", limite: 0m);
+            Saldo("C1", 0m, 0m);
+
+            var conMonto = await _servicio.VerificarAsync("C1", 0.01m);
+            var sinMonto = await _servicio.VerificarAsync("C1", 0m);
+
+            Assert.False(conMonto.Permitido);
+            Assert.Equal("LIMITE", conMonto.Motivo);
+            Assert.Equal(0.01m, conMonto.Exceso);
+            Assert.True(sinMonto.Permitido);
+        }
+
+        [Fact]
+        public async Task Verificar_MontoCero_PermitidoSinConsultarSaldos()
+        {
+            Socio("C1", limite: 0m, bloquear: "S");
+            Saldo("C1", 500m, 100m);
+
+            var r = await _servicio.VerificarAsync("C1", 0m);
+
+            Assert.True(r.Permitido);
+            Assert.Null(r.Motivo);
+            Assert.Equal(0m, r.Monto);
+            Assert.Equal(0m, r.Exceso);
+            _saldoSocio.Verify(s => s.ObtenerAsync(It.IsAny<IEnumerable<string>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Verificar_BloquearSiVencidoConVencido_VencidoConExcesoIgualAlMonto()
+        {
+            Socio("C1", limite: 100000m, bloquear: "S");
+            Saldo("C1", 500m, 10m);
+
+            var r = await _servicio.VerificarAsync("C1", 70m);
+
+            Assert.False(r.Permitido);
+            Assert.Equal("VENCIDO", r.Motivo);
+            Assert.Equal(70m, r.Exceso);
+            Assert.Equal(70m, r.Monto);
+            Assert.Equal(10m, r.Posicion!.Vencido);
+        }
+
+        [Fact]
+        public async Task Verificar_BloquearSiVencidoSinVencido_NoBloquea()
+        {
+            Socio("C1", bloquear: "S");
+            Saldo("C1", 500m, 0m);
+
+            var r = await _servicio.VerificarAsync("C1", 70m);
+
+            Assert.True(r.Permitido);
+            Assert.Null(r.Motivo);
+        }
+
+        [Fact]
+        public async Task Verificar_InterruptorApagadoConVencidoAlto_SoloImportaElLimite()
+        {
+            Socio("C1", limite: 1000m, bloquear: "N");
+            Saldo("C1", 100m, 100m);
+
+            var permitido = await _servicio.VerificarAsync("C1", 100m);
+            var excedido = await _servicio.VerificarAsync("C1", 1000m);
+
+            Assert.True(permitido.Permitido);
+            Assert.False(excedido.Permitido);
+            Assert.Equal("LIMITE", excedido.Motivo);
+            Assert.Equal(100m, excedido.Exceso); // 100 + 1000 - 1000
+        }
+
+        [Fact]
+        public async Task Verificar_VencidoYLimiteFallan_VencidoTienePrioridad()
+        {
+            Socio("C1", limite: 100m, bloquear: "S");
+            Saldo("C1", 500m, 50m);
+
+            var r = await _servicio.VerificarAsync("C1", 30m);
+
+            Assert.False(r.Permitido);
+            Assert.Equal("VENCIDO", r.Motivo);
+            Assert.Equal(30m, r.Exceso);
+        }
+
+        [Theory]
+        [InlineData("P1")]
+        [InlineData("NOEXISTE")]
+        [InlineData("")]
+        [InlineData(null)]
+        public async Task Verificar_SocioNoClienteOInexistente_PermitidoSinConsultarSaldos(string? codigo)
+        {
+            Socio("P1", tipo: "P", limite: 0m);
+            Saldo("P1", 500m, 500m);
+
+            var r = await _servicio.VerificarAsync(codigo, 1000m);
+
+            Assert.True(r.Permitido);
+            Assert.Null(r.Motivo);
+            Assert.Null(r.Posicion);
+            Assert.Equal(1000m, r.Monto);
+            Assert.Equal(0m, r.Exceso);
+            _saldoSocio.Verify(s => s.ObtenerAsync(It.IsAny<IEnumerable<string>>()), Times.Never);
+        }
+
+        // ---- 14. Monto neto del documento ----
+
+        [Fact]
+        public async Task CalcularMonto_FacturaSinBase_EsElTotalMenosElPagoInmediato()
+        {
+            var sinPago = await _servicio.CalcularMontoAsync(6, 500m, 0m, Array.Empty<LineaBaseRequest>());
+            var conPago = await _servicio.CalcularMontoAsync(6, 500m, 500m, Array.Empty<LineaBaseRequest>());
+
+            Assert.Equal(500m, sinPago);
+            Assert.Equal(0m, conPago);
+            // Sin lineas base no se consulta ningun origen.
+            _repoPedido.Verify(x => x.ObtenerTodoAsync(), Times.Never);
+            _repoPedidoDet.Verify(x => x.ObtenerTodoAsync(), Times.Never);
+            _repoEntrega.Verify(x => x.ObtenerTodoAsync(), Times.Never);
+            _repoEntregaDet.Verify(x => x.ObtenerTodoAsync(), Times.Never);
+            _repoFacturaDet.Verify(x => x.ObtenerTodoAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_FacturaDeUnaEntrega_LiberaElValorNetoDeLaEntrega()
+        {
+            EntregaE1(); // 4 u, valor unitario neto 240 x 1.1 / 4 = 66
+
+            var monto = await _servicio.CalcularMontoAsync(6, 264m, 0m,
+                new[] { new LineaBaseRequest(5, 10, 1, null, 4m) });
+
+            Assert.Equal(0m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_FacturaDeUnaEntregaConPagoInmediato_NoLiberaDeMas()
+        {
+            EntregaE1();
+
+            // Lleva 2 de las 4 unidades: libera 132; el documento vale 150 y se cobra 10 en el acto.
+            var monto = await _servicio.CalcularMontoAsync(6, 150m, 10m,
+                new[] { new LineaBaseRequest(5, 10, 1, null, 2m) });
+
+            Assert.Equal(8m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_EntregaDesdePedido_LiberaLoDelPedido()
+        {
+            PedidoP1(); // L1: 10 u, 600 -> unitario 66
+
+            var igual = await _servicio.CalcularMontoAsync(5, 264m, 0m,
+                new[] { new LineaBaseRequest(4, 1, 1, null, 4m) });
+            var masCaro = await _servicio.CalcularMontoAsync(5, 300m, 0m,
+                new[] { new LineaBaseRequest(4, 1, 1, null, 4m) });
+
+            Assert.Equal(0m, igual);
+            Assert.Equal(36m, masCaro);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_LineasConBaseCotizacionOServicio_NoLiberan()
+        {
+            PedidoP1();
+
+            var monto = await _servicio.CalcularMontoAsync(6, 500m, 0m, new[]
+            {
+                new LineaBaseRequest(3, 1, 1, null, 4m),
+                new LineaBaseRequest(70, 1, 1, null, 4m)
+            });
+
+            Assert.Equal(500m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_MezclaDeBases_SoloLiberanPedidoYEntrega()
+        {
+            PedidoP1();
+            EntregaE1();
+
+            // 1 u del pedido (66) + 2 u de la entrega (132) liberan 198; la linea con base 3 no libera nada.
+            var monto = await _servicio.CalcularMontoAsync(6, 300m, 0m, new[]
+            {
+                new LineaBaseRequest(4, 1, 1, null, 1m),
+                new LineaBaseRequest(5, 10, 1, null, 2m),
+                new LineaBaseRequest(3, 1, 1, null, 9m)
+            });
+
+            Assert.Equal(102m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_DocumentoMenorQueLoLiberado_Cero()
+        {
+            EntregaE1();
+
+            var monto = await _servicio.CalcularMontoAsync(6, 100m, 0m,
+                new[] { new LineaBaseRequest(5, 10, 1, null, 4m) });
+
+            Assert.Equal(0m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_OrigenOLineaInexistente_NoLibera()
+        {
+            EntregaE1();
+
+            var monto = await _servicio.CalcularMontoAsync(6, 100m, 0m, new[]
+            {
+                new LineaBaseRequest(5, 999, 1, null, 4m),
+                new LineaBaseRequest(5, 10, 9, null, 4m)
+            });
+
+            Assert.Equal(100m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_RedondeaDosDecimalesAwayFromZero()
+        {
+            var monto = await _servicio.CalcularMontoAsync(6, 10.005m, 0m, Array.Empty<LineaBaseRequest>());
+
+            Assert.Equal(10.01m, monto);
+        }
     }
 }

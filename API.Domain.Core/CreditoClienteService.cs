@@ -300,6 +300,72 @@ namespace API.Domain.Core
             return valores.TryGetValue((tipo, entry), out var origen) ? origen.Valor : 0m;
         }
 
+        public async Task<decimal> CalcularMontoAsync(int tipoDestino, decimal totalDoc, decimal pagoInmediato, IReadOnlyList<LineaBaseRequest> lineasBase)
+        {
+            var liberado = 0m;
+            var conBase = (lineasBase ?? Array.Empty<LineaBaseRequest>())
+                .Where(l => l.BaseTipo == TipoDocumentoVenta.Pedido || l.BaseTipo == TipoDocumentoVenta.Entrega)
+                .ToList();
+            if (conBase.Count > 0)
+            {
+                // Cabeceras de los orígenes (sin importar su estado: el valor unitario no depende de él), una consulta por tabla.
+                var origenes = new List<CabeceraOrigen>();
+                var pedidoIds = conBase.Where(l => l.BaseTipo == TipoDocumentoVenta.Pedido).Select(l => l.BaseEntry).Distinct().ToList();
+                var entregaIds = conBase.Where(l => l.BaseTipo == TipoDocumentoVenta.Entrega).Select(l => l.BaseEntry).Distinct().ToList();
+                if (pedidoIds.Count > 0)
+                {
+                    origenes.AddRange((await (await _repoPedido.ObtenerTodoAsync())
+                            .Where(p => pedidoIds.Contains(p.Entry))
+                            .Select(p => new { p.Entry, p.CodigoSn, p.TotalDoc })
+                            .ToListAsync())
+                        .Select(p => new CabeceraOrigen(TipoDocumentoVenta.Pedido, p.Entry, p.CodigoSn, p.TotalDoc)));
+                }
+                if (entregaIds.Count > 0)
+                {
+                    origenes.AddRange((await (await _repoEntrega.ObtenerTodoAsync())
+                            .Where(e => entregaIds.Contains(e.Entry))
+                            .Select(e => new { e.Entry, e.CodigoSn, e.TotalDoc })
+                            .ToListAsync())
+                        .Select(e => new CabeceraOrigen(TipoDocumentoVenta.Entrega, e.Entry, e.CodigoSn, e.TotalDoc)));
+                }
+
+                var valores = await CargarOrigenesAsync(origenes);
+                foreach (var l in conBase)
+                {
+                    if (!valores.TryGetValue((l.BaseTipo, l.BaseEntry), out var origen))
+                        continue;
+                    var lineaOrigen = origen.Lineas.FirstOrDefault(x => x.NoLinea == l.BaseLinea);
+                    if (lineaOrigen is null)
+                        continue;
+                    liberado += l.Cantidad * lineaOrigen.ValorUnitario;
+                }
+            }
+            return Math.Max(0m, Redondear(totalDoc - pagoInmediato - liberado));
+        }
+
+        public async Task<ResultadoCredito> VerificarAsync(string? codigoSn, decimal monto)
+        {
+            // Sin monto nuevo no hay nada que verificar (ni siquiera se consultan saldos).
+            if (monto == 0m || string.IsNullOrEmpty(codigoSn))
+                return new ResultadoCredito(true, null, null, monto, 0m);
+
+            // Socio inexistente o que no es cliente: no hay posición, no se controla.
+            var posicion = await ObtenerPosicionAsync(codigoSn);
+            if (posicion is null)
+                return new ResultadoCredito(true, null, null, monto, 0m);
+
+            if (posicion.BloquearSiVencido && posicion.Vencido > 0m)
+                return new ResultadoCredito(false, "VENCIDO", posicion, monto, monto);
+
+            if (posicion.Limite.HasValue)
+            {
+                var exceso = posicion.Exposicion + monto - posicion.Limite.Value;
+                if (exceso > 0m)
+                    return new ResultadoCredito(false, "LIMITE", posicion, monto, exceso);
+            }
+            return new ResultadoCredito(true, null, posicion, monto, 0m);
+        }
+
         private static decimal Redondear(decimal valor) => Math.Round(valor, 2, MidpointRounding.AwayFromZero);
     }
 }

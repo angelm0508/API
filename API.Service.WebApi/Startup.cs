@@ -266,6 +266,7 @@ namespace API.Service.WebApi
             services.AddTransient<IEstadoCuentaService, EstadoCuentaService>();
             services.AddTransient<IAntiguedadService, AntiguedadService>();
             services.AddTransient<ICreditoClienteService, CreditoClienteService>();
+            services.AddScoped<IAutorizacionCreditoContexto, AutorizacionCreditoContexto>();
             services.AddTransient<IPagoRecibidoDomain, PagoRecibidoDomain>();
             services.AddTransient<IPagoEfectuadoDomain, PagoEfectuadoDomain>();
             services.AddTransient<IPagoRecibidoApplication, PagoRecibidoApplication>();
