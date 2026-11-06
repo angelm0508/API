@@ -36,6 +36,12 @@ public partial class SocioNegocio
     /// <summary>Condición de pago por defecto del socio (NULL = se usa CON al crear documentos).</summary>
     public string? CondicionPago { get; set; }
 
+    /// <summary>Límite de crédito del cliente (NULL = sin límite; 0 = solo contado).</summary>
+    public decimal? LimiteCredito { get; set; }
+
+    /// <summary>S bloquea documentos nuevos si el cliente tiene saldo vencido; N no bloquea.</summary>
+    public string BloquearSiVencido { get; set; } = "N";
+
     public virtual ICollection<Cotizacion> Cotizacions { get; set; } = new List<Cotizacion>();
 
     public virtual ICollection<Entrega> Entregas { get; set; } = new List<Entrega>();

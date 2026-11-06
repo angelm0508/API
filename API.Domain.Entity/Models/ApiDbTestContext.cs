@@ -23,6 +23,8 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<CondicionPago> CondicionPagos { get; set; }
 
+    public virtual DbSet<AutorizacionCredito> AutorizacionCreditos { get; set; }
+
     public virtual DbSet<PagoRecibido> PagoRecibidos { get; set; }
 
     public virtual DbSet<PagoRecibidoFactura> PagoRecibidoFacturas { get; set; }
@@ -1468,6 +1470,10 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("TipoSN");
 
             entity.Property(e => e.CondicionPago).HasMaxLength(10);
+            entity.Property(e => e.LimiteCredito).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.BloquearSiVencido)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
 
             entity.HasOne(d => d.CondicionPagoNavigation).WithMany()
                 .HasForeignKey(d => d.CondicionPago)
@@ -1794,6 +1800,37 @@ public partial class ApiDbTestContext : DbContext
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('S')");
             entity.Property(e => e.Nombre).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<AutorizacionCredito>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("pk_autorizacion_credito");
+
+            entity.ToTable("AutorizacionCredito");
+
+            entity.HasIndex(e => new { e.TipoDocumento, e.EntryDocumento }, "IX_AutorizacionCredito_Documento");
+
+            entity.HasIndex(e => e.CodigoSn, "IX_AutorizacionCredito_CodigoSN");
+
+            entity.Property(e => e.CodigoSn)
+                .HasMaxLength(15)
+                .HasColumnName("CodigoSN");
+            entity.Property(e => e.Comprometido).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.Exceso).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.Fecha)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Limite).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.Monto).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.Motivo).HasMaxLength(20);
+            entity.Property(e => e.Saldo).HasColumnType("decimal(19, 2)");
+            entity.Property(e => e.Usuario).HasMaxLength(50);
+            entity.Property(e => e.Vencido).HasColumnType("decimal(19, 2)");
+
+            entity.HasOne(d => d.CodigoSnNavigation).WithMany()
+                .HasForeignKey(d => d.CodigoSn)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_autorizacion_credito_sn");
         });
 
         modelBuilder.Entity<FormaPago>(entity =>
