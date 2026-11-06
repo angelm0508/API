@@ -149,3 +149,10 @@ El plan de implementación (`docs/superpowers/plans/2026-11-06-limite-credito-im
 5. **Reabrir y cambio de socio:** solo el pedido los tiene (entrega y factura no se reabren); ambos casos vuelven a verificar.
 6. **Fuera de control (riesgos documentados):** el alta de pedido sin líneas y los endpoints sueltos de líneas (`PedidoDetalle`, `EntregaDetalle`, `FacturaDetalle`); la verificación se hace en la creación atómica cabecera + líneas.
 7. **Solo clientes:** `SocioNegocioDomain` rechaza `LimiteCredito` en socios que no son clientes.
+
+## Resultado de la revisión final (riesgos residuales conocidos)
+
+- **Líneas sueltas:** al editar un pedido, `CrearLinea`/`EditarLinea` no se controlan por sí mismas; el compromiso depende del total de la cabecera, y el `PUT` de cabecera que **sube el total** sí se verifica (aumento = total nuevo − total guardado) y se puede autorizar. Si el `PUT` de cabecera se rechaza, las líneas ya guardadas quedan guardadas; el usuario debe ajustarlas o autorizar el aumento.
+- **Pago al facturar:** `PagoInmediato` es una declaración del cliente de la API (solo con `PagosRecibidos` / Agregar); no se persiste. La deuda resultante queda visible como saldo.
+- **Redondeos:** copias puras pueden bloquearse por 1–2 centavos de diferencia de redondeo entre el valor comprometido y el total del documento copiado.
+- **Seguimientos fuera de esta fase (ya existían):** guardar un socio sin cambios muestra un error genérico; una factura sin `FechaDoc` o con una línea sin impuesto falla con el mensaje crudo de EF; «Copiar a» deja «% Descuento 0.000000»; no se validan los totales de cabecera ni el signo de las líneas al crear; concurrencia entre documentos simultáneos del mismo cliente.
