@@ -159,6 +159,12 @@ namespace API.Domain.Core
                 // revalidar. El pedido guardado inactivo no cuenta en ConsumosAsync (solo suman destinos activos), así que
                 // la revalidación previa al guardado no lo cuenta contra sí mismo.
                 var seReabre = (existente.EstadoDoc == "C" || existente.Cancelado == "S") && obj.EstadoDoc != "C" && obj.Cancelado != "S";
+
+                // El valor comprometido de un pedido va atado al total de su cabecera: subir el total compromete más crédito.
+                // Se lee antes de actualizar (la entidad existente está rastreada y el update la pisa).
+                var aumento = (obj.TotalDoc ?? 0m) - (existente.TotalDoc ?? 0m);
+                var sigueActivo = obj.EstadoDoc != "C" && obj.Cancelado != "S";
+
                 if (cambiaSocio || seReabre)
                 {
                     var detalles = await _repoGenericoDetalle.ObtenerTodoAsync();
@@ -173,14 +179,22 @@ namespace API.Domain.Core
                         await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Pedido, obj.CodigoSn, copiadas);
                     }
 
-                    // Límite de crédito: reabrir o pasar el pedido a otro socio vuelve a comprometer su valor abierto con el
-                    // cliente destino. Un pedido sin líneas no compromete nada. Se calcula antes de actualizar.
-                    if (lineas.Count > 0)
+                    // Límite de crédito: reabrir o pasar el pedido a otro socio vuelve a comprometer su valor abierto (más el
+                    // aumento de total, si lo hay) con el cliente destino. Un pedido sin líneas y sin aumento no compromete
+                    // nada. Se calcula antes de actualizar.
+                    if (lineas.Count > 0 || aumento > 0m)
                     {
-                        var monto = await _credito.ValorAbiertoDocumentoAsync(TipoDocumentoVenta.Pedido, id);
-                        resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
+                        var abierto = lineas.Count > 0 ? await _credito.ValorAbiertoDocumentoAsync(TipoDocumentoVenta.Pedido, id) : 0m;
+                        resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, abierto + Math.Max(0m, aumento));
                         usuarioAutoriza = AutorizacionCreditoResolutor.Resolver(_autorizacionCredito, resultadoCredito, obj.CodigoSn);
                     }
+                }
+                else if (sigueActivo && aumento > 0m)
+                {
+                    // Pedido activo que sigue activo, con el mismo socio: solo el aumento de total es crédito nuevo.
+                    // Bajar el total, dejarlo igual, editar el comentario o cancelar nunca verifica.
+                    resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, aumento);
+                    usuarioAutoriza = AutorizacionCreditoResolutor.Resolver(_autorizacionCredito, resultadoCredito, obj.CodigoSn);
                 }
             }
 

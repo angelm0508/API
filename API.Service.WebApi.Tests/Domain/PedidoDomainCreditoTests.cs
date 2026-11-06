@@ -350,5 +350,172 @@ namespace API.Service.WebApi.Tests.Domain
 
             _credito.Verify(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>()), Times.Never);
         }
+
+        // ---- Aumento del total de la cabecera al editar un pedido activo ----
+
+        private void ConTotalGuardado(string estadoDoc, string cancelado, string codigoSn, decimal? total, params PedidoDetalle[] lineas)
+        {
+            ConPedidoGuardado(estadoDoc, cancelado, codigoSn, lineas);
+            _repoPedido.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new Pedido { Entry = 1, EstadoDoc = estadoDoc, Cancelado = cancelado, CodigoSn = codigoSn, TotalDoc = total });
+        }
+
+        [Fact]
+        public async Task Aumento_PedidoActivo_VerificaConLaDiferenciaDeTotal()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 100m, Linea("A", 1m));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 600m }));
+
+            _credito.Verify(c => c.VerificarAsync("CL-1", 500m), Times.Once);
+            _credito.Verify(c => c.ValorAbiertoDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            _repoAutorizacion.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<AutorizacionCredito>()), Times.Never);
+            _repoPedido.Verify(r => r.ActualizarAsync(1, It.IsAny<Pedido>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Aumento_SobreElLimite_Lanza_YNoActualiza()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 100m, Linea("A", 1m));
+            Rechaza();
+
+            var ex = await Assert.ThrowsAsync<CreditoExcedidoException>(() =>
+                _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 5100m }));
+
+            Assert.Same(Rechazado, ex.Resultado);
+            _repoPedido.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Pedido>()), Times.Never);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>()), Times.Never);
+            _repoAutorizacion.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<AutorizacionCredito>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Aumento_SobreElLimite_ConContextoAutorizado_ActualizaYRegistraUnaFilaEnLaMismaTransaccion()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 100m, Linea("A", 1m));
+            Rechaza();
+            Autoriza("admin");
+            var orden = new List<string>();
+            _repoPedido.Setup(r => r.ActualizarAsync(1, It.IsAny<Pedido>())).Callback(() => orden.Add("actualizar")).ReturnsAsync(true);
+            _repoAutorizacion.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<AutorizacionCredito>())).Callback<AutorizacionCredito>(a => { orden.Add("autorizacion"); _autorizaciones.Add(a); }).Returns(Task.CompletedTask);
+            _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(async f => { orden.Add("tx"); return await f(); });
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 5100m }));
+
+            Assert.Equal(new[] { "tx", "actualizar", "autorizacion" }, orden);
+            var fila = Assert.Single(_autorizaciones);
+            Assert.Equal((4, 1, "CL-1", "admin", "LIMITE"), (fila.TipoDocumento, fila.EntryDocumento, fila.CodigoSn, fila.Usuario, fila.Motivo));
+        }
+
+        [Fact]
+        public async Task Aumento_ContextoAutorizadoPeroPermitido_ActualizaSinRegistrar()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 100m, Linea("A", 1m));
+            Autoriza();
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 150m }));
+
+            _repoAutorizacion.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<AutorizacionCredito>()), Times.Never);
+            _repoPedido.Verify(r => r.ActualizarAsync(1, It.IsAny<Pedido>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Aumento_TotalGuardadoNulo_SeTrataComoCero()
+        {
+            ConTotalGuardado("A", "N", "CL-1", null, Linea("A", 1m));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 70m }));
+
+            _credito.Verify(c => c.VerificarAsync("CL-1", 70m), Times.Once);
+        }
+
+        [Theory]
+        [InlineData(100, 100)]
+        [InlineData(100, 60)]
+        [InlineData(100, null)]
+        public async Task TotalIgualOMenor_NoVerifica(int guardado, int? nuevo)
+        {
+            ConTotalGuardado("A", "N", "CL-1", guardado, Linea("A", 1m));
+            Rechaza();
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = nuevo, Comentario = "nota" }));
+
+            _credito.Verify(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>()), Times.Never);
+            _credito.Verify(c => c.ValorAbiertoDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Cancelar_ConTotalMayor_NoVerifica()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 100m, Linea("A", 1m));
+            Rechaza();
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "C", CodigoSn = "CL-1", TotalDoc = 900m }));
+
+            _credito.Verify(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task PedidoYaCancelado_ConTotalMayor_NoVerifica()
+        {
+            ConTotalGuardado("C", "N", "CL-1", 100m, Linea("A", 1m));
+            Rechaza();
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "C", CodigoSn = "CL-1", TotalDoc = 900m }));
+
+            _credito.Verify(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Reabrir_ConAumento_VerificaValorAbiertoMasAumento()
+        {
+            ConTotalGuardado("C", "N", "CL-1", 100m, Linea("A", 1m)); // ValorAbierto simulado: 50
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 160m }));
+
+            _credito.Verify(c => c.VerificarAsync("CL-1", 110m), Times.Once);
+        }
+
+        [Fact]
+        public async Task Reabrir_ConTotalMenor_VerificaSoloElValorAbierto()
+        {
+            ConTotalGuardado("C", "N", "CL-1", 100m, Linea("A", 1m));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 40m }));
+
+            _credito.Verify(c => c.VerificarAsync("CL-1", 50m), Times.Once);
+        }
+
+        [Fact]
+        public async Task CambiarSocio_ConAumento_VerificaValorAbiertoMasAumentoAlNuevoSocio()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 100m, Linea("A", 1m));
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-2", TotalDoc = 130m }));
+
+            _credito.Verify(c => c.VerificarAsync("CL-2", 80m), Times.Once);
+        }
+
+        [Fact]
+        public async Task SinLineas_ConTotalMayor_VerificaConElAumento()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 0m);
+            Rechaza();
+
+            await Assert.ThrowsAsync<CreditoExcedidoException>(() =>
+                _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 80m }));
+
+            _credito.Verify(c => c.VerificarAsync("CL-1", 80m), Times.Once);
+            _repoPedido.Verify(r => r.ActualizarAsync(It.IsAny<int>(), It.IsAny<Pedido>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task SinLineas_ConTotalSinCambio_NoVerifica()
+        {
+            ConTotalGuardado("A", "N", "CL-1", 0m);
+            Rechaza();
+
+            Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", Cancelado = "N", CodigoSn = "CL-1", TotalDoc = 0m, Comentario = "nota" }));
+
+            _credito.Verify(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>()), Times.Never);
+        }
     }
 }
