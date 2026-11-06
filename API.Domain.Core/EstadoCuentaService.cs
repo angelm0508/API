@@ -103,7 +103,7 @@ namespace API.Domain.Core
             var renglones = new List<Renglon>();
             foreach (var f in facturas)
             {
-                var tipo = f.DocSubType == "ND" ?"Nota de débito" : "Factura";
+                var tipo = f.DocSubType == "ND" ? "Nota de débito" : "Factura";
                 renglones.Add(Cargo(Fecha(f.FechaDoc, f.FechaEmision), tipo, f.NumDoc, f.Comentario, f.TotalDoc ?? 0m));
             }
             foreach (var n in notas)
@@ -134,7 +134,7 @@ namespace API.Domain.Core
             var renglones = new List<Renglon>();
             foreach (var f in facturas)
             {
-                var tipo = f.DocSubType == "DN" ?"Nota de débito de proveedor" : "Factura de compra";
+                var tipo = f.DocSubType == "DN" ? "Nota de débito de proveedor" : "Factura de compra";
                 renglones.Add(Cargo(Fecha(f.FechaDoc, f.FechaEmision), tipo, f.NumDoc, f.Comentario, f.TotalDoc ?? 0m));
             }
             foreach (var n in notas)
