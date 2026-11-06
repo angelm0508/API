@@ -69,7 +69,7 @@ namespace API.Domain.Core
             // numerar, así un rechazo no consume el consecutivo.
             var monto = await _credito.CalcularMontoAsync(TipoDocumentoVenta.Pedido, obj.TotalDoc ?? 0m, 0m, basadas);
             var resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
-            var usuarioAutoriza = ResolverAutorizacionCredito(resultadoCredito, obj.CodigoSn);
+            var usuarioAutoriza = AutorizacionCreditoResolutor.Resolver(_autorizacionCredito, resultadoCredito, obj.CodigoSn);
 
             await AsignarNumeroAsync(obj);
 
@@ -179,7 +179,7 @@ namespace API.Domain.Core
                     {
                         var monto = await _credito.ValorAbiertoDocumentoAsync(TipoDocumentoVenta.Pedido, id);
                         resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
-                        usuarioAutoriza = ResolverAutorizacionCredito(resultadoCredito, obj.CodigoSn);
+                        usuarioAutoriza = AutorizacionCreditoResolutor.Resolver(_autorizacionCredito, resultadoCredito, obj.CodigoSn);
                     }
                 }
             }
@@ -198,26 +198,6 @@ namespace API.Domain.Core
             }
 
             return await _repoGenericoPedido.ActualizarAsync(id, obj);
-        }
-
-        /// <summary>
-        /// Resuelve qué hacer con el resultado de la verificación de crédito. Permitido: null (nada que registrar). Rechazado con
-        /// autorización del contexto y usuario válido: el usuario que se registra. Rechazado sin autorización: lanza
-        /// <see cref="CreditoExcedidoException"/>. Una autorización sin usuario se trata como no autorizada.
-        /// </summary>
-        private string? ResolverAutorizacionCredito(ResultadoCredito resultado, string? codigoSn)
-        {
-            if (resultado.Permitido)
-                return null;
-
-            var usuario = _autorizacionCredito.Usuario?.Trim();
-            if (!_autorizacionCredito.Autorizada || string.IsNullOrEmpty(usuario))
-                throw CreditoExcedidoException.Para(resultado, codigoSn ?? string.Empty);
-
-            if (usuario.Length > 50)
-                throw new Exception("El usuario que autoriza no es válido.");
-
-            return usuario;
         }
 
         public async Task<bool> EliminarAsync(int id)

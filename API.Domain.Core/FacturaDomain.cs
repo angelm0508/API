@@ -21,6 +21,9 @@ namespace API.Domain.Core
         private readonly ISaldoFacturaService _saldos;
         private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocio;
         private readonly IResolutorVencimiento _resolutor;
+        private readonly ICreditoClienteService _credito;
+        private readonly IAutorizacionCreditoContexto _autorizacionCredito;
+        private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
 
         public FacturaDomain(
             IRepositorioGenerico<Factura, int> repoFactura,
@@ -31,8 +34,14 @@ namespace API.Domain.Core
             IDocumentoBaseService documentoBase,
             ISaldoFacturaService saldos,
             IRepositorioGenerico<SocioNegocio, string> repoSocio,
-            IResolutorVencimiento resolutor)
+            IResolutorVencimiento resolutor,
+            ICreditoClienteService credito,
+            IAutorizacionCreditoContexto autorizacionCredito,
+            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito)
         {
+            _credito = credito;
+            _autorizacionCredito = autorizacionCredito;
+            _repoAutorizacionCredito = repoAutorizacionCredito;
             _repoFactura = repoFactura;
             _repoDetalle = repoDetalle;
             _repoNumeracion = repoNumeracion;
@@ -84,6 +93,16 @@ namespace API.Domain.Core
             obj.CondicionPago = condicion;
             obj.FechaVencimiento = vencimiento;   // el cliente no puede fijarlo: siempre se sobrescribe
 
+            // Pago inmediato: se valida antes de verificar el crédito (y de numerar) para no consumir el consecutivo.
+            if (obj.PagoInmediato > (obj.TotalDoc ?? 0m))
+                throw new Exception("El pago inmediato no puede exceder el total del documento.");
+
+            // Límite de crédito: después de validar las líneas con base (el monto no topa la cantidad liberada) y antes de
+            // numerar, así un rechazo no consume el consecutivo. Lo que se cobra en el acto no compromete crédito.
+            var monto = await _credito.CalcularMontoAsync(TipoDocumentoVenta.Factura, obj.TotalDoc ?? 0m, obj.PagoInmediato, basadas);
+            var resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
+            var usuarioAutoriza = AutorizacionCreditoResolutor.Resolver(_autorizacionCredito, resultadoCredito, obj.CodigoSn);
+
             if (serie.Manual == "S")
             {
                 if (obj.NumDoc <= 0)
@@ -103,6 +122,10 @@ namespace API.Domain.Core
             return await _tx.EjecutarAsync(async () =>
             {
                 await _repoFactura.InsertarAsync(obj); // Save #1: asigna obj.Entry
+
+                if (usuarioAutoriza is not null)
+                    await _repoAutorizacionCredito.AgregarSinGuardarAsync(
+                        AutorizacionCreditoRegistro.Crear(TipoDocumentoVenta.Factura, obj.Entry, obj.CodigoSn!, usuarioAutoriza, resultadoCredito));
 
                 var noLinea = 1;
                 foreach (var linea in lineasList)

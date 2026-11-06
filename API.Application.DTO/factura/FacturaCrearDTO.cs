@@ -44,5 +44,14 @@ namespace API.Application.DTO.factura
         /// (lo asigna el servidor al crear el encabezado).
         /// </summary>
         public List<FacturaDetalleCrearDTO> Lineas { get; set; } = new();
+
+        /// <summary>El usuario pide crear la factura aunque supere el límite de crédito del cliente (requiere el permiso AutorizarExcesoCredito).</summary>
+        public bool AutorizarExcesoCredito { get; set; }
+
+        /// <summary>
+        /// Monto que el usuario va a cobrar en el acto (se registra aparte en PagosRecibidos). Se resta del monto que el
+        /// control de crédito compara con el límite; no puede exceder el total del documento. Nulo equivale a 0.
+        /// </summary>
+        public decimal? PagoInmediato { get; set; }
     }
 }

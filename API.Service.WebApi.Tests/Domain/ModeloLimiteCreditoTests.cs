@@ -88,5 +88,14 @@ namespace API.Service.WebApi.Tests.Domain
             var porSocio = et.GetIndexes().Single(i => i.GetDatabaseName() == "IX_AutorizacionCredito_CodigoSN");
             Assert.Equal(new[] { "CodigoSn" }, porSocio.Properties.Select(p => p.Name).ToArray());
         }
+
+        [Fact]
+        public void Factura_PagoInmediatoNoSeMapeaAColumna()
+        {
+            var et = Modelo().FindEntityType(typeof(Factura))!;
+
+            Assert.Null(et.FindProperty("PagoInmediato"));
+            Assert.Equal(0m, new Factura().PagoInmediato);
+        }
     }
 }

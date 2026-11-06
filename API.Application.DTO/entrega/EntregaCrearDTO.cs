@@ -41,5 +41,8 @@ namespace API.Application.DTO.entrega
         /// (lo asigna el servidor al crear el encabezado).
         /// </summary>
         public List<EntregaDetalleCrearDTO> Lineas { get; set; } = new();
+
+        /// <summary>El usuario pide crear la entrega aunque supere el límite de crédito del cliente (requiere el permiso AutorizarExcesoCredito).</summary>
+        public bool AutorizarExcesoCredito { get; set; }
     }
 }

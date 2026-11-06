@@ -17,13 +17,17 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IInventarioAsientoService> _asiento = new();
         private readonly Mock<IDocumentoBaseService> _documentoBase = new();
+        private readonly Mock<ICreditoClienteService> _credito = new();
         private readonly EntregaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
         public EntregaDomainTests()
         {
-            _domain = new EntregaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object);
+            _domain = new EntregaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object,
+                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object);
+            // Sin límite de crédito en estas pruebas: toda verificación resulta permitida.
+            _credito.Setup(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>())).ReturnsAsync(new ResultadoCredito(true, null, null, 0m, 0m));
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());

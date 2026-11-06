@@ -21,13 +21,17 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<ISaldoFacturaService> _saldos = new();
         private readonly Mock<IRepositorioGenerico<SocioNegocio, string>> _repoSocio = new();
         private readonly Mock<IResolutorVencimiento> _resolutor = new();
+        private readonly Mock<ICreditoClienteService> _credito = new();
         private readonly FacturaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
 
         public FacturaDomainTests()
         {
-            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object);
+            _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object,
+                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object);
+            // Sin límite de crédito en estas pruebas: toda verificación resulta permitida.
+            _credito.Setup(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>())).ReturnsAsync(new ResultadoCredito(true, null, null, 0m, 0m));
             // Por defecto: contado (el vencimiento es la fecha del documento) y ningún socio en el repositorio.
             _resolutor.Setup(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
                 .ReturnsAsync((string? _, string? _, DateTime? f) => ("CON", (f ?? DateTime.Today).Date));

@@ -16,6 +16,9 @@ namespace API.Domain.Core
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
         private readonly IDocumentoBaseService _documentoBase;
+        private readonly ICreditoClienteService _credito;
+        private readonly IAutorizacionCreditoContexto _autorizacionCredito;
+        private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
 
         public EntregaDomain(
             IRepositorioGenerico<Entrega, int> repoEntrega,
@@ -23,8 +26,14 @@ namespace API.Domain.Core
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
-            IDocumentoBaseService documentoBase)
+            IDocumentoBaseService documentoBase,
+            ICreditoClienteService credito,
+            IAutorizacionCreditoContexto autorizacionCredito,
+            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito)
         {
+            _credito = credito;
+            _autorizacionCredito = autorizacionCredito;
+            _repoAutorizacionCredito = repoAutorizacionCredito;
             _repoEntrega = repoEntrega;
             _repoDetalle = repoDetalle;
             _repoNumeracion = repoNumeracion;
@@ -59,6 +68,12 @@ namespace API.Domain.Core
             if (basadas.Count > 0)
                 await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Entrega, obj.CodigoSn, basadas);
 
+            // Límite de crédito: después de validar las líneas con base (el monto no topa la cantidad liberada) y antes de
+            // numerar, así un rechazo no consume el consecutivo.
+            var monto = await _credito.CalcularMontoAsync(TipoDocumentoVenta.Entrega, obj.TotalDoc ?? 0m, 0m, basadas);
+            var resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
+            var usuarioAutoriza = AutorizacionCreditoResolutor.Resolver(_autorizacionCredito, resultadoCredito, obj.CodigoSn);
+
             if (serie.Manual == "S")
             {
                 if (obj.NumDoc <= 0)
@@ -78,6 +93,10 @@ namespace API.Domain.Core
             return await _tx.EjecutarAsync(async () =>
             {
                 await _repoEntrega.InsertarAsync(obj); // Save #1: asigna obj.Entry
+
+                if (usuarioAutoriza is not null)
+                    await _repoAutorizacionCredito.AgregarSinGuardarAsync(
+                        AutorizacionCreditoRegistro.Crear(TipoDocumentoVenta.Entrega, obj.Entry, obj.CodigoSn!, usuarioAutoriza, resultadoCredito));
 
                 var noLinea = 1;
                 foreach (var linea in lineasList)
