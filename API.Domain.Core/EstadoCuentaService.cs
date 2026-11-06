@@ -87,7 +87,7 @@ namespace API.Domain.Core
         {
             var facturas = await (await _repoFactura.ObtenerTodoAsync())
                 .Where(f => f.CodigoSn == codigo && (f.DocSubType == "--" || f.DocSubType == "ND") && f.Cancelado != "S")
-                .Select(f => new { f.NumDoc, f.FechaDoc, f.FechaEmision, f.DocSubType, f.TotalDoc, f.Comentario })
+                .Select(f => new { f.Entry, f.NumDoc, f.FechaDoc, f.FechaEmision, f.DocSubType, f.TotalDoc, f.Comentario })
                 .ToListAsync();
             var notas = await (await _repoNota.ObtenerTodoAsync())
                 .Where(n => n.CodigoSn == codigo && n.Cancelado != "S")
@@ -98,15 +98,17 @@ namespace API.Domain.Core
                 .Select(p => new { p.NumDoc, p.FechaDoc, p.TotalPago, p.Comentario })
                 .ToListAsync();
 
+            // Solo cuenta como abono la nota basada en una factura/ND vigente del socio (las facturas ya vienen sin canceladas).
+            var vigentes = facturas.Select(f => f.Entry).ToHashSet();
             var renglones = new List<Renglon>();
             foreach (var f in facturas)
             {
-                var tipo = f.DocSubType == "ND" ? "Nota de débito" : "Factura";
+                var tipo = f.DocSubType == "ND" ?"Nota de débito" : "Factura";
                 renglones.Add(Cargo(Fecha(f.FechaDoc, f.FechaEmision), tipo, f.NumDoc, f.Comentario, f.TotalDoc ?? 0m));
             }
             foreach (var n in notas)
                 renglones.Add(NotaCredito("Nota de crédito", Fecha(n.FechaDoc, n.FechaEmision), n.NumDoc, n.Comentario,
-                    n.TotalDoc ?? 0m, n.BaseTipo == TipoBaseFacturaVenta && n.BaseEntry != null));
+                    n.TotalDoc ?? 0m, n.BaseTipo == TipoBaseFacturaVenta && n.BaseEntry != null && vigentes.Contains(n.BaseEntry.Value)));
             foreach (var p in pagos)
                 renglones.Add(Abono(Fecha(p.FechaDoc, null), "Pago", p.NumDoc, p.Comentario, p.TotalPago));
             return renglones;
@@ -116,7 +118,7 @@ namespace API.Domain.Core
         {
             var facturas = await (await _repoFacturaCompra.ObtenerTodoAsync())
                 .Where(f => f.CodigoSn == codigo && (f.DocSubType == "--" || f.DocSubType == "DN") && f.Cancelado != "S")
-                .Select(f => new { f.NumDoc, f.FechaDoc, f.FechaEmision, f.DocSubType, f.TotalDoc, f.Comentario })
+                .Select(f => new { f.Entry, f.NumDoc, f.FechaDoc, f.FechaEmision, f.DocSubType, f.TotalDoc, f.Comentario })
                 .ToListAsync();
             var notas = await (await _repoNotaCompra.ObtenerTodoAsync())
                 .Where(n => n.CodigoSn == codigo && n.Cancelado != "S")
@@ -127,21 +129,23 @@ namespace API.Domain.Core
                 .Select(p => new { p.NumDoc, p.FechaDoc, p.TotalPago, p.Comentario })
                 .ToListAsync();
 
+            // Solo cuenta como abono la nota basada en una factura/DN vigente del socio (las facturas ya vienen sin canceladas).
+            var vigentes = facturas.Select(f => f.Entry).ToHashSet();
             var renglones = new List<Renglon>();
             foreach (var f in facturas)
             {
-                var tipo = f.DocSubType == "DN" ? "Nota de débito de proveedor" : "Factura de compra";
+                var tipo = f.DocSubType == "DN" ?"Nota de débito de proveedor" : "Factura de compra";
                 renglones.Add(Cargo(Fecha(f.FechaDoc, f.FechaEmision), tipo, f.NumDoc, f.Comentario, f.TotalDoc ?? 0m));
             }
             foreach (var n in notas)
                 renglones.Add(NotaCredito("Nota de crédito de proveedor", Fecha(n.FechaDoc, n.FechaEmision), n.NumDoc, n.Comentario,
-                    n.TotalDoc ?? 0m, n.BaseTipo == TipoBaseFacturaCompra && n.BaseEntry != null));
+                    n.TotalDoc ?? 0m, n.BaseTipo == TipoBaseFacturaCompra && n.BaseEntry != null && vigentes.Contains(n.BaseEntry.Value)));
             foreach (var p in pagos)
                 renglones.Add(Abono(Fecha(p.FechaDoc, null), "Pago efectuado", p.NumDoc, p.Comentario, p.TotalPago));
             return renglones;
         }
 
-        // Una nota de crédito sin factura base es solo informativa: se muestra pero no mueve el saldo.
+        // Una nota de crédito sin factura base vigente (sin base, o base cancelada/inexistente) es solo informativa: se muestra pero no mueve el saldo.
         private static Renglon NotaCredito(string tipo, DateTime fecha, int numDoc, string? comentario, decimal total, bool tieneBase) =>
             tieneBase
                 ? Abono(fecha, tipo, numDoc, comentario, total)

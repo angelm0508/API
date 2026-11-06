@@ -477,5 +477,81 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(1020m, r.SaldoActual);
             Assert.Equal(r.SaldoActual, r.SaldoFinal);
         }
+
+        [Fact]
+        public async Task Cliente_NotaCreditoSobreFacturaCancelada_EsInformativa_YMantieneElInvariante()
+        {
+            Socio("C1", "C");
+            Fac(1, 101, "C1", 1000m, Hoy.AddDays(-30), cancelado: "S");
+            Fac(2, 102, "C1", 300m, Hoy.AddDays(-20));
+            Nc(1, 301, "C1", 200m, Hoy.AddDays(-10), baseTipo: 6, baseEntry: 1);   // base cancelada
+            Nc(2, 302, "C1", 40m, Hoy.AddDays(-9), baseTipo: 6, baseEntry: 99);    // base inexistente
+
+            var r = await _servicioReal.ObtenerAsync("C1", Pasado, Hoy);
+
+            var nota = r.Movimientos.Single(m => m.NumDoc == 301);
+            Assert.True(nota.Informativo);
+            Assert.Equal(0m, nota.Cargo);
+            Assert.Equal(0m, nota.Abono);
+            Assert.True(r.Movimientos.Single(m => m.NumDoc == 302).Informativo);
+            Assert.Equal(300m, r.SaldoActual);
+            Assert.Equal(r.SaldoActual, r.SaldoFinal);
+        }
+
+        [Fact]
+        public async Task Cliente_NotaCreditoSobreFacturaVigente_SigueSiendoAbono()
+        {
+            Socio("C1", "C");
+            Fac(1, 101, "C1", 1000m, Hoy.AddDays(-30));
+            Fac(2, 102, "C1", 100m, Hoy.AddDays(-25), sub: "ND");
+            Nc(1, 301, "C1", 200m, Hoy.AddDays(-10), baseTipo: 6, baseEntry: 1);
+            Nc(2, 302, "C1", 30m, Hoy.AddDays(-9), baseTipo: 6, baseEntry: 2);     // base nota de débito vigente
+
+            var r = await _servicioReal.ObtenerAsync("C1", Pasado, Hoy);
+
+            Assert.False(r.Movimientos.Single(m => m.NumDoc == 301).Informativo);
+            Assert.Equal(200m, r.Movimientos.Single(m => m.NumDoc == 301).Abono);
+            Assert.Equal(30m, r.Movimientos.Single(m => m.NumDoc == 302).Abono);
+            Assert.Equal(870m, r.SaldoFinal);
+            Assert.Equal(r.SaldoActual, r.SaldoFinal);
+        }
+
+        [Fact]
+        public async Task Proveedor_NotaCreditoSobreFacturaCancelada_EsInformativa_YMantieneElInvariante()
+        {
+            Socio("P1", "P");
+            Com(1, 201, "P1", 1000m, Hoy.AddDays(-30), cancelado: "S");
+            Com(2, 202, "P1", 300m, Hoy.AddDays(-20));
+            NcCompra(1, 501, "P1", 200m, Hoy.AddDays(-10), baseTipo: 13, baseEntry: 1);   // base cancelada
+            NcCompra(2, 502, "P1", 40m, Hoy.AddDays(-9), baseTipo: 13, baseEntry: 99);    // base inexistente
+
+            var r = await _servicioReal.ObtenerAsync("P1", Pasado, Hoy);
+
+            var nota = r.Movimientos.Single(m => m.NumDoc == 501);
+            Assert.True(nota.Informativo);
+            Assert.Equal(0m, nota.Cargo);
+            Assert.Equal(0m, nota.Abono);
+            Assert.True(r.Movimientos.Single(m => m.NumDoc == 502).Informativo);
+            Assert.Equal(300m, r.SaldoActual);
+            Assert.Equal(r.SaldoActual, r.SaldoFinal);
+        }
+
+        [Fact]
+        public async Task Proveedor_NotaCreditoSobreFacturaVigente_SigueSiendoAbono()
+        {
+            Socio("P1", "P");
+            Com(1, 201, "P1", 1000m, Hoy.AddDays(-30));
+            Com(2, 202, "P1", 100m, Hoy.AddDays(-25), sub: "DN");
+            NcCompra(1, 501, "P1", 200m, Hoy.AddDays(-10), baseTipo: 13, baseEntry: 1);
+            NcCompra(2, 502, "P1", 30m, Hoy.AddDays(-9), baseTipo: 13, baseEntry: 2);     // base nota de débito vigente
+
+            var r = await _servicioReal.ObtenerAsync("P1", Pasado, Hoy);
+
+            Assert.False(r.Movimientos.Single(m => m.NumDoc == 501).Informativo);
+            Assert.Equal(200m, r.Movimientos.Single(m => m.NumDoc == 501).Abono);
+            Assert.Equal(30m, r.Movimientos.Single(m => m.NumDoc == 502).Abono);
+            Assert.Equal(870m, r.SaldoFinal);
+            Assert.Equal(r.SaldoActual, r.SaldoFinal);
+        }
     }
 }
