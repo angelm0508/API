@@ -31,6 +31,10 @@ namespace API.Application.Main
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
             }
+            catch (CreditoExcedidoException ex)
+            {
+                return CreditoClienteApplication.RespuestaExceso<int>(ex);
+            }
             catch (Exception ex)
             {
                 respuesta.Mensaje = ex.Message;

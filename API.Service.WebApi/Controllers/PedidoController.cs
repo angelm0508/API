@@ -14,10 +14,12 @@ namespace API.Service.WebApi.Controllers
     public class PedidoController : ControllerBase
     {
         private readonly IPedidoApplication _pedidoApplication;
+        private readonly IAutorizacionCreditoContexto _autorizacionCredito;
 
-        public PedidoController(IPedidoApplication pedidoApplication)
+        public PedidoController(IPedidoApplication pedidoApplication, IAutorizacionCreditoContexto autorizacionCredito)
         {
             _pedidoApplication = pedidoApplication;
+            _autorizacionCredito = autorizacionCredito;
         }
 
         [RequierePermiso("Pedidos", Accion.Ver)]
@@ -59,10 +61,16 @@ namespace API.Service.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] PedidoCrearDTO obj)
         {
+            var denegado = AutorizacionCreditoPeticion.Aplicar(User, obj.AutorizarExcesoCredito, _autorizacionCredito);
+            if (denegado != null)
+                return denegado;
+
             var insert = await _pedidoApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
+                if (insert is RespuestaCredito<int> { Credito: not null })
+                    return Conflict(insert);
                 return BadRequest(insert);
             }
 
@@ -73,6 +81,10 @@ namespace API.Service.WebApi.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Respuesta<bool>>> ActualizarAsync([FromRoute] int id, [FromBody] PedidoActualizarDTO obj)
         {
+            var denegado = AutorizacionCreditoPeticion.Aplicar(User, obj.AutorizarExcesoCredito, _autorizacionCredito);
+            if (denegado != null)
+                return denegado;
+
             var pedido = await _pedidoApplication.ObtenerAsync(id);
 
             if (pedido.Dato == null)
@@ -86,6 +98,8 @@ namespace API.Service.WebApi.Controllers
 
             if (!update.Resultado)
             {
+                if (update is RespuestaCredito<bool> { Credito: not null })
+                    return Conflict(update);
                 return BadRequest(update);
             }
 

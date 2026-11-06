@@ -14,10 +14,12 @@ namespace API.Service.WebApi.Controllers
     public class EntregaController : ControllerBase
     {
         private readonly IEntregaApplication _entregaApplication;
+        private readonly IAutorizacionCreditoContexto _autorizacionCredito;
 
-        public EntregaController(IEntregaApplication entregaApplication)
+        public EntregaController(IEntregaApplication entregaApplication, IAutorizacionCreditoContexto autorizacionCredito)
         {
             _entregaApplication = entregaApplication;
+            _autorizacionCredito = autorizacionCredito;
         }
 
         [RequierePermiso("Entregas", Accion.Ver)]
@@ -59,10 +61,16 @@ namespace API.Service.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] EntregaCrearDTO obj)
         {
+            var denegado = AutorizacionCreditoPeticion.Aplicar(User, obj.AutorizarExcesoCredito, _autorizacionCredito);
+            if (denegado != null)
+                return denegado;
+
             var insert = await _entregaApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
+                if (insert is RespuestaCredito<int> { Credito: not null })
+                    return Conflict(insert);
                 return BadRequest(insert);
             }
 

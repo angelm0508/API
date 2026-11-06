@@ -14,10 +14,12 @@ namespace API.Service.WebApi.Controllers
     public class FacturaController : ControllerBase
     {
         private readonly IFacturaApplication _facturaApplication;
+        private readonly IAutorizacionCreditoContexto _autorizacionCredito;
 
-        public FacturaController(IFacturaApplication facturaApplication)
+        public FacturaController(IFacturaApplication facturaApplication, IAutorizacionCreditoContexto autorizacionCredito)
         {
             _facturaApplication = facturaApplication;
+            _autorizacionCredito = autorizacionCredito;
         }
 
         [RequierePermiso("Facturas", Accion.Ver)]
@@ -59,10 +61,17 @@ namespace API.Service.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Respuesta<int>>> InsertarAsync([FromBody] FacturaCrearDTO obj)
         {
+            var denegado = AutorizacionCreditoPeticion.Aplicar(User, obj.AutorizarExcesoCredito, _autorizacionCredito)
+                ?? AutorizacionCreditoPeticion.ValidarPagoInmediato(User, obj.PagoInmediato);
+            if (denegado != null)
+                return denegado;
+
             var insert = await _facturaApplication.InsertarAsync(obj);
 
             if (!insert.Resultado)
             {
+                if (insert is RespuestaCredito<int> { Credito: not null })
+                    return Conflict(insert);
                 return BadRequest(insert);
             }
 

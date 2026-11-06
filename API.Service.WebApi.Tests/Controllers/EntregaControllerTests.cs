@@ -16,7 +16,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public EntregaControllerTests()
         {
             _applicationMock = new Mock<IEntregaApplication>();
-            _controller = new EntregaController(_applicationMock.Object);
+            _controller = new EntregaController(_applicationMock.Object, new API.Domain.Core.AutorizacionCreditoContexto());
         }
 
         [Fact]

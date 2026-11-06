@@ -16,7 +16,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public FacturaControllerTests()
         {
             _applicationMock = new Mock<IFacturaApplication>();
-            _controller = new FacturaController(_applicationMock.Object);
+            _controller = new FacturaController(_applicationMock.Object, new API.Domain.Core.AutorizacionCreditoContexto());
         }
 
         [Fact]

@@ -23,6 +23,11 @@ namespace API.Application.Main
         public async Task<Respuesta<int>> InsertarAsync(FacturaCrearDTO obj)
         {
             var respuesta = new Respuesta<int>();
+            if (obj.PagoInmediato < 0m)
+            {
+                respuesta.Mensaje = "El pago inmediato no puede ser negativo.";
+                return respuesta;
+            }
             try
             {
                 var factura = _mapper.Map<Factura>(obj);
@@ -30,6 +35,10 @@ namespace API.Application.Main
                 respuesta.Dato = await _facturaDomain.InsertarAsync(factura, lineas);
                 respuesta.Resultado = true;
                 respuesta.Mensaje = "Registro agregado correctamente.";
+            }
+            catch (CreditoExcedidoException ex)
+            {
+                return CreditoClienteApplication.RespuestaExceso<int>(ex);
             }
             catch (Exception ex)
             {

@@ -16,7 +16,7 @@ namespace API.Service.WebApi.Tests.Controllers
         public PedidoControllerTests()
         {
             _applicationMock = new Mock<IPedidoApplication>();
-            _controller = new PedidoController(_applicationMock.Object);
+            _controller = new PedidoController(_applicationMock.Object, new API.Domain.Core.AutorizacionCreditoContexto());
         }
 
         [Fact]

@@ -49,7 +49,7 @@ namespace API.Service.WebApi.Tests.Controllers
             var app = new Mock<IFacturaApplication>();
             app.Setup(a => a.ObtenerAsync(1)).ReturnsAsync(new Respuesta<FacturaDTO> { Resultado = true, Dato = new FacturaDTO() });
             app.Setup(a => a.ActualizarAsync(1, It.IsAny<FacturaActualizarDTO>())).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
-            return (new FacturaController(app.Object) { ControllerContext = Contexto(claims) }, app);
+            return (new FacturaController(app.Object, new API.Domain.Core.AutorizacionCreditoContexto()) { ControllerContext = Contexto(claims) }, app);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace API.Service.WebApi.Tests.Controllers
             var app = new Mock<IEntregaApplication>();
             app.Setup(a => a.ObtenerAsync(1)).ReturnsAsync(new Respuesta<EntregaDTO> { Resultado = true, Dato = new EntregaDTO() });
             app.Setup(a => a.ActualizarAsync(1, It.IsAny<EntregaActualizarDTO>())).ReturnsAsync(new Respuesta<bool> { Resultado = true, Dato = true });
-            return (new EntregaController(app.Object) { ControllerContext = Contexto(claims) }, app);
+            return (new EntregaController(app.Object, new API.Domain.Core.AutorizacionCreditoContexto()) { ControllerContext = Contexto(claims) }, app);
         }
 
         [Fact]
