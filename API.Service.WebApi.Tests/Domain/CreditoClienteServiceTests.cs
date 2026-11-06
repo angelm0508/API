@@ -236,8 +236,10 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task ObtenerPosicion_NotaDeDebitoActivaTambienConsume()
+        public async Task ObtenerPosicion_NotaDeDebitoActivaNoConsume_SoloLasFacturasConsumen()
         {
+            // Una nota de debito (DocSubType 'ND') no es destino valido de una copia: DocumentoBaseService la ignora, asi que
+            // sus lineas con base no cierran las lineas del origen.
             Socio("C1");
             Ent(10, "C1", 264m);
             EntLin(10, 1, 4m, 240m);
@@ -246,7 +248,7 @@ namespace API.Service.WebApi.Tests.Domain
 
             var p = await _servicio.ObtenerPosicionAsync("C1");
 
-            Assert.Equal(0m, p!.Comprometido);
+            Assert.Equal(264m, p!.Comprometido);
         }
 
         [Fact]
@@ -337,6 +339,103 @@ namespace API.Service.WebApi.Tests.Domain
             var p = await _servicio.ObtenerPosicionAsync("C1");
 
             Assert.Equal(0m, p!.Comprometido);
+        }
+
+        // ---- 7b. Datos anomalos: total nulo o negativo, lineas de signos mixtos ----
+
+        [Fact]
+        public async Task ObtenerPosicion_PedidoConTotalDocNulo_ComprometeCero()
+        {
+            Socio("C1");
+            _pedidos.Add(new Pedido { Entry = 1, CodigoSn = "C1", TotalDoc = null, Cancelado = "N", EstadoDoc = "O" });
+            PedLin(1, 1, 1m, 500m);
+
+            var p = await _servicio.ObtenerPosicionAsync("C1");
+
+            Assert.Equal(0m, p!.Comprometido);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_CopiaDePedidoConTotalDocNulo_NoLibera()
+        {
+            _pedidos.Add(new Pedido { Entry = 1, CodigoSn = "C1", TotalDoc = null, Cancelado = "N", EstadoDoc = "O" });
+            PedLin(1, 1, 1m, 500m);
+
+            var monto = await _servicio.CalcularMontoAsync(6, 500m, 0m, new[] { new LineaBaseRequest(4, 1, 1, null, 1m) });
+
+            Assert.Equal(500m, monto);
+        }
+
+        [Fact]
+        public async Task ObtenerPosicion_PedidoConTotalDocNegativo_ComprometeCeroYNoReduceOtrosDocumentos()
+        {
+            Socio("C1");
+            Ped(1, "C1", -500m);
+            PedLin(1, 1, 1m, 500m);
+            Ped(2, "C1", 300m);
+            PedLin(2, 1, 1m, 300m);
+
+            var p = await _servicio.ObtenerPosicionAsync("C1");
+
+            Assert.Equal(300m, p!.Comprometido);
+        }
+
+        [Fact]
+        public async Task ObtenerPosicion_PedidoConLineasNegativas_NuncaResta()
+        {
+            Socio("C1");
+            Ped(1, "C1", -200m);
+            PedLin(1, 1, 1m, -200m);
+            Ped(2, "C1", 300m);
+            PedLin(2, 1, 1m, 300m);
+
+            var p = await _servicio.ObtenerPosicionAsync("C1");
+
+            Assert.Equal(300m, p!.Comprometido);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_LineasDeSignosMixtos_NoLiberaMasDeLoComprometido()
+        {
+            // Pedido con +1000 y -1000 y total 0: compromete 0, copiar solo la linea de +1000 no puede liberar 1000.
+            Ped(1, "C1", 0m);
+            PedLin(1, 1, 1m, 1000m);
+            PedLin(1, 2, 1m, -1000m);
+
+            var monto = await _servicio.CalcularMontoAsync(6, 1000m, 0m, new[] { new LineaBaseRequest(4, 1, 1, null, 1m) });
+
+            Assert.Equal(1000m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_LineaNegativaCopiada_NoAumentaElMonto()
+        {
+            Ped(1, "C1", 300m);
+            PedLin(1, 1, 1m, 300m);
+            PedLin(1, 2, 1m, -50m);
+
+            // Copiar la linea de -50 no puede aportar un "liberado" negativo que encarezca el documento.
+            var monto = await _servicio.CalcularMontoAsync(6, 100m, 0m, new[] { new LineaBaseRequest(4, 1, 2, null, 1m) });
+
+            Assert.Equal(100m, monto);
+        }
+
+        [Fact]
+        public async Task CalcularMonto_LiberadoSeTopaPorOrigen_NoPorLaSumaDeVariosOrigenes()
+        {
+            Ped(1, "C1", 100m);
+            PedLin(1, 1, 1m, 100m);
+            Ped(2, "C1", 500m);
+            PedLin(2, 1, 1m, 500m);
+
+            // Cada origen libera como maximo su propio valor abierto: 100 + 500.
+            var monto = await _servicio.CalcularMontoAsync(6, 1000m, 0m, new[]
+            {
+                new LineaBaseRequest(4, 1, 1, null, 1m),
+                new LineaBaseRequest(4, 2, 1, null, 1m)
+            });
+
+            Assert.Equal(400m, monto);
         }
 
         // ---- 8. Redondeo ----

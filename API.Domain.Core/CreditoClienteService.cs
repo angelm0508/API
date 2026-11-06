@@ -59,8 +59,11 @@ namespace API.Domain.Core
         /// <summary>Origen con su factor (TotalDoc / Σ TotalLinea) y sus líneas valoradas.</summary>
         private sealed record OrigenValor(int Tipo, int Entry, string? CodigoSn, decimal Factor, IReadOnlyList<LineaValor> Lineas)
         {
-            /// <summary>Valor abierto del documento, redondeado a 2 decimales.</summary>
-            public decimal Valor => Redondear(Lineas.Sum(l => l.ValorAbierto));
+            /// <summary>
+            /// Valor abierto del documento, redondeado a 2 decimales y nunca negativo: un total o unas líneas negativas
+            /// no pueden reducir la exposición de otros documentos.
+            /// </summary>
+            public decimal Valor => Math.Max(0m, Redondear(Lineas.Sum(l => l.ValorAbierto)));
         }
 
         private sealed record LineaOrigenDb(int Entry, int NoLinea, decimal Cantidad, decimal TotalLinea);
@@ -155,7 +158,8 @@ namespace API.Domain.Core
             if (facturasConsumidoras.Count > 0)
             {
                 var cabeceras = await (await _repoFactura.ObtenerTodoAsync())
-                    .Where(f => facturasConsumidoras.Contains(f.Entry) && f.Cancelado != "S" && f.EstadoDoc != "C")
+                    .Where(f => facturasConsumidoras.Contains(f.Entry) && f.Cancelado != "S" && f.EstadoDoc != "C"
+                                && f.DocSubType == "--") // la nota de débito (ND) no es destino de copia: DocumentoBaseService la ignora
                     .Select(f => f.Entry)
                     .ToListAsync();
                 facturasActivas.UnionWith(cabeceras);
@@ -183,7 +187,8 @@ namespace API.Domain.Core
                     continue;
                 var lineas = lineasPorOrigen[(origen.Tipo, origen.Entry)].ToList();
                 var sumaLineas = lineas.Sum(l => l.TotalLinea);
-                var factor = sumaLineas == 0m ? 1m : (origen.TotalDoc ?? sumaLineas) / sumaLineas;
+                // Un TotalDoc nulo vale 0 (como en SaldoFacturaService): no se compromete lo que la cabecera no declara.
+                var factor = sumaLineas == 0m ? 1m : (origen.TotalDoc ?? 0m) / sumaLineas;
                 var valoradas = lineas.OrderBy(l => l.NoLinea).Select(l =>
                 {
                     consumido.TryGetValue((origen.Tipo, origen.Entry, l.NoLinea), out var copiado);
@@ -330,6 +335,9 @@ namespace API.Domain.Core
                 }
 
                 var valores = await CargarOrigenesAsync(origenes);
+                // Lo liberado se suma por documento origen y se topa en [0, valor abierto del origen]: unas líneas manipuladas
+                // (cantidades o signos extraños) no pueden liberar más de lo que el origen tiene comprometido.
+                var liberadoPorOrigen = new Dictionary<(int Tipo, int Entry), decimal>();
                 foreach (var l in conBase)
                 {
                     if (!valores.TryGetValue((l.BaseTipo, l.BaseEntry), out var origen))
@@ -337,8 +345,11 @@ namespace API.Domain.Core
                     var lineaOrigen = origen.Lineas.FirstOrDefault(x => x.NoLinea == l.BaseLinea);
                     if (lineaOrigen is null)
                         continue;
-                    liberado += l.Cantidad * lineaOrigen.ValorUnitario;
+                    liberadoPorOrigen.TryGetValue((l.BaseTipo, l.BaseEntry), out var actual);
+                    liberadoPorOrigen[(l.BaseTipo, l.BaseEntry)] = actual + l.Cantidad * lineaOrigen.ValorUnitario;
                 }
+                foreach (var (clave, valorLiberado) in liberadoPorOrigen)
+                    liberado += Math.Clamp(valorLiberado, 0m, valores[clave].Valor);
             }
             return Math.Max(0m, Redondear(totalDoc - pagoInmediato - liberado));
         }
