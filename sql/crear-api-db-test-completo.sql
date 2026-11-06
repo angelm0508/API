@@ -2049,8 +2049,8 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_FacturaCompra_Vencimie
 -- ===== Catalogo de permisos =====
 MERGE dbo.Modulo AS target
 USING (VALUES
-    ('CondicionesPago',  N'Condiciones de pago',                'Socios de negocio'),
-    ('EstadoCuenta',     N'Estado de cuenta',                   'Socios de negocio'),
+    ('CondicionesPago',  N'Condiciones de pago',                'SociosNegocio'),
+    ('EstadoCuenta',     N'Estado de cuenta',                   'SociosNegocio'),
     ('AntiguedadCobrar', N'Antigüedad de saldos por cobrar',    'Ventas'),
     ('AntiguedadPagar',  N'Antigüedad de saldos por pagar',     'Compras')
 ) AS source (Codigo, Nombre, Grupo)
