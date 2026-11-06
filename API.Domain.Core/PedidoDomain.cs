@@ -17,19 +17,28 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
         private readonly IEjecutorTransaccion _tx;
         private readonly IDocumentoBaseService _documentoBase;
+        private readonly ICreditoClienteService _credito;
+        private readonly IAutorizacionCreditoContexto _autorizacionCredito;
+        private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
 
         public PedidoDomain(
             IRepositorioGenerico<Pedido, int> repoGenericoPedido,
             IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)> repoGenericoDetalle,
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion,
             IEjecutorTransaccion tx,
-            IDocumentoBaseService documentoBase)
+            IDocumentoBaseService documentoBase,
+            ICreditoClienteService credito,
+            IAutorizacionCreditoContexto autorizacionCredito,
+            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito)
         {
             _repoGenericoPedido = repoGenericoPedido;
             _repoGenericoDetalle = repoGenericoDetalle;
             _repoGenericoNumeracion = repoGenericoNumeracion;
             _tx = tx;
             _documentoBase = documentoBase;
+            _credito = credito;
+            _autorizacionCredito = autorizacionCredito;
+            _repoAutorizacionCredito = repoAutorizacionCredito;
         }
 
         #region async methods
@@ -56,11 +65,21 @@ namespace API.Domain.Core
             if (basadas.Count > 0)
                 await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Pedido, obj.CodigoSn, basadas);
 
+            // Límite de crédito: después de validar las líneas con base (el monto no topa la cantidad liberada) y antes de
+            // numerar, así un rechazo no consume el consecutivo.
+            var monto = await _credito.CalcularMontoAsync(TipoDocumentoVenta.Pedido, obj.TotalDoc ?? 0m, 0m, basadas);
+            var resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
+            var usuarioAutoriza = ResolverAutorizacionCredito(resultadoCredito, obj.CodigoSn);
+
             await AsignarNumeroAsync(obj);
 
             return await _tx.EjecutarAsync(async () =>
             {
                 var creado = await _repoGenericoPedido.InsertarAsync(obj); // Save #1: asigna Entry
+
+                if (usuarioAutoriza is not null)
+                    await _repoAutorizacionCredito.AgregarSinGuardarAsync(
+                        AutorizacionCreditoRegistro.Crear(TipoDocumentoVenta.Pedido, creado.Entry, obj.CodigoSn!, usuarioAutoriza, resultadoCredito));
 
                 var noLinea = 1;
                 foreach (var linea in lineasList)
@@ -125,6 +144,8 @@ namespace API.Domain.Core
             // Un origen con documentos derivados activos no se cancela ni cambia de socio (se calcula antes de actualizar:
             // la entidad existente está rastreada y el update la pisa).
             var existente = await _repoGenericoPedido.ObtenerAsync(id);
+            ResultadoCredito? resultadoCredito = null;
+            string? usuarioAutoriza = null;
             if (existente is not null)
             {
                 var seCancela = existente.EstadoDoc != "C" && existente.Cancelado != "S" && (obj.EstadoDoc == "C" || obj.Cancelado == "S");
@@ -151,10 +172,52 @@ namespace API.Domain.Core
 
                         await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Pedido, obj.CodigoSn, copiadas);
                     }
+
+                    // Límite de crédito: reabrir o pasar el pedido a otro socio vuelve a comprometer su valor abierto con el
+                    // cliente destino. Un pedido sin líneas no compromete nada. Se calcula antes de actualizar.
+                    if (lineas.Count > 0)
+                    {
+                        var monto = await _credito.ValorAbiertoDocumentoAsync(TipoDocumentoVenta.Pedido, id);
+                        resultadoCredito = await _credito.VerificarAsync(obj.CodigoSn, monto);
+                        usuarioAutoriza = ResolverAutorizacionCredito(resultadoCredito, obj.CodigoSn);
+                    }
                 }
             }
 
+            if (usuarioAutoriza is not null && resultadoCredito is not null)
+            {
+                // Autorizado por exceso: la actualización y la fila de autorización se guardan juntas.
+                var registro = AutorizacionCreditoRegistro.Crear(TipoDocumentoVenta.Pedido, id, obj.CodigoSn!, usuarioAutoriza, resultadoCredito);
+                return await _tx.EjecutarAsync(async () =>
+                {
+                    var actualizado = await _repoGenericoPedido.ActualizarAsync(id, obj);
+                    if (actualizado)
+                        await _repoAutorizacionCredito.AgregarSinGuardarAsync(registro);
+                    return actualizado;
+                });
+            }
+
             return await _repoGenericoPedido.ActualizarAsync(id, obj);
+        }
+
+        /// <summary>
+        /// Resuelve qué hacer con el resultado de la verificación de crédito. Permitido: null (nada que registrar). Rechazado con
+        /// autorización del contexto y usuario válido: el usuario que se registra. Rechazado sin autorización: lanza
+        /// <see cref="CreditoExcedidoException"/>. Una autorización sin usuario se trata como no autorizada.
+        /// </summary>
+        private string? ResolverAutorizacionCredito(ResultadoCredito resultado, string? codigoSn)
+        {
+            if (resultado.Permitido)
+                return null;
+
+            var usuario = _autorizacionCredito.Usuario?.Trim();
+            if (!_autorizacionCredito.Autorizada || string.IsNullOrEmpty(usuario))
+                throw CreditoExcedidoException.Para(resultado, codigoSn ?? string.Empty);
+
+            if (usuario.Length > 50)
+                throw new Exception("El usuario que autoriza no es válido.");
+
+            return usuario;
         }
 
         public async Task<bool> EliminarAsync(int id)

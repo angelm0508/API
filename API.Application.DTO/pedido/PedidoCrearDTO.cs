@@ -40,5 +40,8 @@ namespace API.Application.DTO.pedido
         /// transacción (lo usa "Copiar a"); si no, se mantiene el flujo anterior de cabecera y luego cada línea.
         /// </summary>
         public List<PedidoDetalleCrearDTO> Lineas { get; set; } = new();
+
+        /// <summary>El usuario pide crear el pedido aunque supere el límite de crédito del cliente (requiere el permiso AutorizarExcesoCredito).</summary>
+        public bool AutorizarExcesoCredito { get; set; }
     }
 }

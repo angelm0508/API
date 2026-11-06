@@ -15,6 +15,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>> _repoNumeracionMock;
         private readonly Mock<IEjecutorTransaccion> _tx = new();
         private readonly Mock<IDocumentoBaseService> _documentoBase = new();
+        private readonly Mock<ICreditoClienteService> _credito = new();
         private readonly PedidoDomain _domain;
 
         public PedidoDomainTests()
@@ -22,7 +23,10 @@ namespace API.Service.WebApi.Tests.Domain
             _repoPedidoMock = new Mock<IRepositorioGenerico<Pedido, int>>();
             _repoDetalleMock = new Mock<IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)>>();
             _repoNumeracionMock = new Mock<IRepositorioGenerico<NumeracionDocumentoDet, int>>();
-            _domain = new PedidoDomain(_repoPedidoMock.Object, _repoDetalleMock.Object, _repoNumeracionMock.Object, _tx.Object, _documentoBase.Object);
+            _domain = new PedidoDomain(_repoPedidoMock.Object, _repoDetalleMock.Object, _repoNumeracionMock.Object, _tx.Object, _documentoBase.Object,
+                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object);
+            // Sin límite de crédito en estas pruebas: toda verificación resulta permitida.
+            _credito.Setup(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>())).ReturnsAsync(new ResultadoCredito(true, null, null, 0m, 0m));
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _repoDetalleMock.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<PedidoDetalle>())).Returns(Task.CompletedTask);

@@ -26,5 +26,8 @@ namespace API.Application.DTO.pedido
         public decimal? TotalBruto { get; set; }
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
+
+        /// <summary>El usuario pide reabrir el pedido o cambiar su socio aunque supere el límite de crédito del cliente (requiere el permiso AutorizarExcesoCredito).</summary>
+        public bool AutorizarExcesoCredito { get; set; }
     }
 }
