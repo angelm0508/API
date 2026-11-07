@@ -1,7 +1,6 @@
 using API.Application.DTO;
 using API.Application.DTO.inventario;
 using API.Application.Interface;
-using API.Domain.Core;
 using API.Domain.Interface;
 using AutoMapper;
 

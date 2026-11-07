@@ -1,4 +1,4 @@
-using API.Domain.Core;
+using API.Domain.Interface;
 using Xunit;
 
 namespace API.Service.WebApi.Tests.Domain

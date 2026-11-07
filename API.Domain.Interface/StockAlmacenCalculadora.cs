@@ -1,4 +1,4 @@
-namespace API.Domain.Core
+namespace API.Domain.Interface
 {
     /// <summary>
     /// Cálculos puros de la ficha de stock por almacén. El 0 se trata como "sin nivel" (como SAP B1),
