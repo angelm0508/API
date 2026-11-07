@@ -125,6 +125,8 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<ExistenciaArticulo> ExistenciaArticulos { get; set; }
 
+    public virtual DbSet<ArticuloAlmacen> ArticuloAlmacens { get; set; }
+
     public virtual DbSet<Modulo> Modulos { get; set; }
 
     public virtual DbSet<MovimientoInventario> MovimientoInventarios { get; set; }
@@ -1562,6 +1564,31 @@ public partial class ApiDbTestContext : DbContext
                 .HasForeignKey(d => d.CodAlmacen)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_existencia_almacen");
+        });
+
+        modelBuilder.Entity<ArticuloAlmacen>(entity =>
+        {
+            entity.HasKey(e => new { e.CodArticulo, e.CodAlmacen }).HasName("pk_articulo_almacen");
+
+            entity.ToTable("ArticuloAlmacen");
+
+            entity.Property(e => e.CodArticulo).HasMaxLength(15);
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);
+            entity.Property(e => e.Minimo).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Maximo).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.Bloqueado)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
+
+            entity.HasOne(d => d.CodArticuloNavigation).WithMany()
+                .HasForeignKey(d => d.CodArticulo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_articulo_almacen_articulo");
+
+            entity.HasOne(d => d.CodAlmacenNavigation).WithMany()
+                .HasForeignKey(d => d.CodAlmacen)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_articulo_almacen_almacen");
         });
 
         modelBuilder.Entity<MovimientoInventario>(entity =>
