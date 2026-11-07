@@ -77,5 +77,15 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Null(fkAlmacen.PrincipalToDependent);
             Assert.Equal(nameof(ArticuloAlmacen.CodAlmacenNavigation), fkAlmacen.DependentToPrincipal!.Name);
         }
+
+        [Fact]
+        public void ArticuloAlmacen_BorraEnCascadaAlEliminarElArticuloOElAlmacen()
+        {
+            // Borrar un artículo o un almacén debe llevarse su configuración de stock (coincide con el ON DELETE CASCADE del script SQL).
+            var et = Modelo().FindEntityType(typeof(ArticuloAlmacen))!;
+
+            foreach (var fk in et.GetForeignKeys())
+                Assert.Equal(DeleteBehavior.Cascade, fk.DeleteBehavior);
+        }
     }
 }

@@ -1582,12 +1582,12 @@ public partial class ApiDbTestContext : DbContext
 
             entity.HasOne(d => d.CodArticuloNavigation).WithMany()
                 .HasForeignKey(d => d.CodArticulo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_articulo_almacen_articulo");
 
             entity.HasOne(d => d.CodAlmacenNavigation).WithMany()
                 .HasForeignKey(d => d.CodAlmacen)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_articulo_almacen_almacen");
         });
 
