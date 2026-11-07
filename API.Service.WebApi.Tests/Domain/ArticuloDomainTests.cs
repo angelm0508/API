@@ -151,5 +151,37 @@ namespace API.Service.WebApi.Tests.Domain
             await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
             _repoArticuloMock.Verify(r => r.InsertarAsync(It.IsAny<Articulo>()), Times.Never);
         }
+
+        [Fact]
+        public async Task ActualizarAsync_ConCambios_DevuelveTrue()
+        {
+            var obj = new Articulo { Nombre = "Nuevo" };
+            _repoArticuloMock.Setup(r => r.ActualizarAsync("ART-1", obj)).ReturnsAsync(true);
+
+            Assert.True(await _domain.ActualizarAsync("ART-1", obj));
+            _repoArticuloMock.Verify(r => r.ObtenerAsync(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_SinCambiosEnElArticulo_EsExitoYNoUnError()
+        {
+            // El repositorio devuelve false cuando SaveChanges no afecta filas. Guardar la ficha cambiando
+            // solo el minimo/maximo/bloqueo por almacen no toca columnas del articulo y no debe fallar.
+            var obj = new Articulo { Nombre = "Igual" };
+            _repoArticuloMock.Setup(r => r.ActualizarAsync("ART-1", obj)).ReturnsAsync(false);
+            _repoArticuloMock.Setup(r => r.ObtenerAsync("ART-1")).ReturnsAsync(new Articulo { Codigo = "ART-1" });
+
+            Assert.True(await _domain.ActualizarAsync("ART-1", obj));
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ArticuloInexistente_DevuelveFalse()
+        {
+            var obj = new Articulo { Nombre = "X" };
+            _repoArticuloMock.Setup(r => r.ActualizarAsync("NO-EXISTE", obj)).ReturnsAsync(false);
+            _repoArticuloMock.Setup(r => r.ObtenerAsync("NO-EXISTE")).ReturnsAsync((Articulo?)null);
+
+            Assert.False(await _domain.ActualizarAsync("NO-EXISTE", obj));
+        }
     }
 }

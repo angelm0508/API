@@ -63,7 +63,13 @@ namespace API.Domain.Core
         }
         public async Task<bool> ActualizarAsync(string sku, Articulo obj)
         {
-            return await _repoGenericoArticulo.ActualizarAsync(sku, obj);
+            if (await _repoGenericoArticulo.ActualizarAsync(sku, obj))
+                return true;
+
+            // El repositorio devuelve false si SaveChanges no afecta filas: o el artículo no existe, o no hubo
+            // ningún cambio en sus columnas (p. ej. al guardar la ficha cambiando solo el mínimo, máximo o
+            // bloqueo por almacén). Guardar sin cambios no es un error.
+            return await _repoGenericoArticulo.ObtenerAsync(sku) != null;
         }
         public async Task<bool> EliminarAsync(string sku)
         {
