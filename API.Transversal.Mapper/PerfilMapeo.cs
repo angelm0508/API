@@ -346,7 +346,12 @@ namespace API.Transversal.Mapper
             CreateMap<ImpuestoActualizarDTO, Impuesto>();
 
             // Inventario
-            CreateMap<ExistenciaArticulo, ExistenciaArticuloDTO>();
+            // Minimo/Maximo/Bloqueado/Estado los llena ExistenciaApplication desde la configuración por almacén.
+            CreateMap<ExistenciaArticulo, ExistenciaArticuloDTO>()
+                .ForMember(d => d.Minimo, o => o.Ignore())
+                .ForMember(d => d.Maximo, o => o.Ignore())
+                .ForMember(d => d.Bloqueado, o => o.Ignore())
+                .ForMember(d => d.Estado, o => o.Ignore());
             CreateMap<MovimientoInventario, MovimientoInventarioDTO>();
 
             // Plantilla
