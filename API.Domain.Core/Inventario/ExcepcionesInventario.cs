@@ -17,4 +17,10 @@ namespace API.Domain.Core.Inventario
         public StockInsuficienteException(string codArticulo, string codAlmacen, decimal disponible, decimal requerido)
             : base($"Stock insuficiente en el almacén {codAlmacen} para el artículo {codArticulo}: disponible {disponible}, requerido {requerido}.") { }
     }
+
+    public class ArticuloAlmacenBloqueadoException : Exception
+    {
+        public ArticuloAlmacenBloqueadoException(string codArticulo, string codAlmacen)
+            : base($"El artículo {codArticulo} está bloqueado en el almacén {codAlmacen}.") { }
+    }
 }

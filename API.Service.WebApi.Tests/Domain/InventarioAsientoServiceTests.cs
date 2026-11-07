@@ -15,13 +15,14 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)>> _repoExist = new();
         private readonly Mock<IRepositorioGenerico<MovimientoInventario, int>> _repoMov = new();
         private readonly Mock<IRepositorioGenerico<Almacen, string>> _repoAlmacen = new();
+        private readonly Mock<IRepositorioGenerico<ArticuloAlmacen, (string CodArticulo, string CodAlmacen)>> _repoArtAlm = new();
         private readonly InventarioAsientoService _svc;
 
         private readonly List<MovimientoInventario> _movAgregados = new();
 
         public InventarioAsientoServiceTests()
         {
-            _svc = new InventarioAsientoService(_repoArt.Object, _repoExist.Object, _repoMov.Object, new ValuacionInventario(), _repoAlmacen.Object);
+            _svc = new InventarioAsientoService(_repoArt.Object, _repoExist.Object, _repoMov.Object, new ValuacionInventario(), _repoAlmacen.Object, _repoArtAlm.Object);
             _repoMov.Setup(r => r.AgregarSinGuardarAsync(It.IsAny<MovimientoInventario>()))
                 .Callback<MovimientoInventario>(m => _movAgregados.Add(m))
                 .Returns(Task.CompletedTask);
@@ -306,6 +307,163 @@ namespace API.Service.WebApi.Tests.Domain
             var rev = Assert.Single(_movAgregados);
             Assert.Equal(7m, rev.CantidadEntra);
             Assert.Equal(602, rev.MovReversaDe);
+        }
+
+        // ---- Bloqueo del artículo en un almacén (stock por almacén) ----
+
+        private void ConfiguracionAlmacen(string art, string alm, string bloqueado)
+        {
+            var key = (art, alm);
+            _repoArtAlm.Setup(r => r.ObtenerAsync(key)).ReturnsAsync(new ArticuloAlmacen
+            {
+                CodArticulo = art, CodAlmacen = alm, Bloqueado = bloqueado
+            });
+        }
+
+        [Fact]
+        public async Task AsentarAsync_EntradaEnAlmacenBloqueado_LanzaSinAsentar()
+        {
+            ArticuloDeInventario("ART1");
+            SinExistenciaPrevia();
+            ConfiguracionAlmacen("ART1", "01", "S");
+
+            var ex = await Assert.ThrowsAsync<ArticuloAlmacenBloqueadoException>(
+                () => _svc.AsentarAsync(new[] { Req("ART1", "01", 10m, 25m) }));
+
+            Assert.Equal("El artículo ART1 está bloqueado en el almacén 01.", ex.Message);
+            Assert.Empty(_movAgregados);
+            _repoMov.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<MovimientoInventario>()), Times.Never);
+            _repoExist.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<ExistenciaArticulo>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_SalidaEnAlmacenBloqueado_LanzaSinAsentar()
+        {
+            ArticuloDeInventario("ART1", costoProm: 25m, cantActual: 10m);
+            ConExistencia("ART1", "01", 10m);
+            ConfiguracionAlmacen("ART1", "01", "S");
+
+            var ex = await Assert.ThrowsAsync<ArticuloAlmacenBloqueadoException>(
+                () => _svc.AsentarAsync(new[] { Req("ART1", "01", -2m, 0m) }));
+
+            Assert.Equal("El artículo ART1 está bloqueado en el almacén 01.", ex.Message);
+            Assert.Empty(_movAgregados);
+            _repoMov.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<MovimientoInventario>()), Times.Never);
+            _repoExist.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<ExistenciaArticulo>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_ConfiguracionNoBloqueada_AsientaNormalmente()
+        {
+            ArticuloDeInventario("ART1");
+            SinExistenciaPrevia();
+            ConfiguracionAlmacen("ART1", "01", "N");
+
+            await _svc.AsentarAsync(new[] { Req("ART1", "01", 10m, 25m) });
+
+            var mov = Assert.Single(_movAgregados);
+            Assert.Equal(10m, mov.CantidadEntra);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_SinConfiguracionDeAlmacen_AsientaNormalmente()
+        {
+            ArticuloDeInventario("ART1");
+            SinExistenciaPrevia();
+            // _repoArtAlm sin configurar: ObtenerAsync devuelve null (sin configuración).
+
+            await _svc.AsentarAsync(new[] { Req("ART1", "01", 10m, 25m) });
+
+            var mov = Assert.Single(_movAgregados);
+            Assert.Equal(10m, mov.CantidadEntra);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_BloqueadoEnOtroAlmacen_NoAfectaAlAlmacenDelMovimiento()
+        {
+            ArticuloDeInventario("ART1");
+            SinExistenciaPrevia();
+            ConfiguracionAlmacen("ART1", "02", "S");
+
+            await _svc.AsentarAsync(new[] { Req("ART1", "01", 10m, 25m) });
+
+            var mov = Assert.Single(_movAgregados);
+            Assert.Equal("01", mov.CodAlmacen);
+        }
+
+        [Fact]
+        public async Task RevertirAsync_ConArticuloBloqueadoAhora_NoSeBloquea()
+        {
+            var original = new MovimientoInventario
+            {
+                Entry = 500, TipoDoc = "11", DocEntry = 100, DocLinea = 1,
+                CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 8, 30),
+                CantidadEntra = 10m, CantidadSale = 0m, CostoUnitario = 25m, MovReversaDe = null
+            };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { original }.AsAsyncQueryable());
+            ArticuloDeInventario("ART1", costoProm: 25m, cantActual: 10m);
+            ConExistencia("ART1", "01", 10m);
+            ConfiguracionAlmacen("ART1", "01", "S");   // se bloqueó después de asentar el documento
+
+            await _svc.RevertirAsync("11", 100);
+
+            var rev = Assert.Single(_movAgregados);
+            Assert.Equal(10m, rev.CantidadSale);
+            Assert.Equal(500, rev.MovReversaDe);
+        }
+
+        [Fact]
+        public async Task RevertirLineaAsync_ConArticuloBloqueadoAhora_NoSeBloquea()
+        {
+            var linea1 = new MovimientoInventario
+            {
+                Entry = 600, TipoDoc = "70", DocEntry = 100, DocLinea = 1,
+                CodArticulo = "ART1", CodAlmacen = "01", Fecha = new DateTime(2026, 10, 22),
+                CantidadEntra = 0m, CantidadSale = 4m, CostoUnitario = 20m, MovReversaDe = null
+            };
+            _repoMov.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[] { linea1 }.AsAsyncQueryable());
+            ArticuloDeInventario("ART1", costoProm: 20m, cantActual: 90m);
+            ConExistencia("ART1", "01", 90m);
+            ConfiguracionAlmacen("ART1", "01", "S");
+
+            await _svc.RevertirLineaAsync("70", 100, 1);
+
+            var rev = Assert.Single(_movAgregados);
+            Assert.Equal(4m, rev.CantidadEntra);
+            Assert.Equal(600, rev.MovReversaDe);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_ArticuloNoInventarioConBloqueoConfigurado_SeIgnora()
+        {
+            _repoArt.Setup(r => r.ObtenerAsync("SERV1")).ReturnsAsync(new Articulo { Codigo = "SERV1", ArticuloInventario = "N" });
+            ConfiguracionAlmacen("SERV1", "01", "S");
+
+            await _svc.AsentarAsync(new[] { Req("SERV1", "01", 3m, 10m) });
+
+            Assert.Empty(_movAgregados);
+            _repoExist.Verify(r => r.AgregarSinGuardarAsync(It.IsAny<ExistenciaArticulo>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task AsentarAsync_LoteConSegundoMovimientoBloqueado_LanzaAlLlegarAEl()
+        {
+            // El primer movimiento ya quedó adjunto en memoria; no se persiste porque el llamador aborta
+            // al propagarse la excepción. El movimiento bloqueado no llega a agregarse.
+            ArticuloDeInventario("ART1");
+            SinExistenciaPrevia();
+            ConfiguracionAlmacen("ART1", "02", "S");
+
+            var ex = await Assert.ThrowsAsync<ArticuloAlmacenBloqueadoException>(() => _svc.AsentarAsync(new[]
+            {
+                new MovimientoRequest("11", 100, 1, "ART1", "01", 10m, 25m, new DateTime(2026, 8, 30)),
+                new MovimientoRequest("11", 100, 2, "ART1", "02", 5m, 25m, new DateTime(2026, 8, 30))
+            }));
+
+            Assert.Equal("El artículo ART1 está bloqueado en el almacén 02.", ex.Message);
+            var adjunto = Assert.Single(_movAgregados);
+            Assert.Equal("01", adjunto.CodAlmacen);
+            Assert.DoesNotContain(_movAgregados, m => m.CodAlmacen == "02");
         }
     }
 }

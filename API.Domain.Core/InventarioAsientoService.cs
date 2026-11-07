@@ -13,19 +13,22 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<MovimientoInventario, int> _repoMovimiento;
         private readonly IValuacionInventario _valuacion;
         private readonly IRepositorioGenerico<Almacen, string> _repoAlmacen;
+        private readonly IRepositorioGenerico<ArticuloAlmacen, (string CodArticulo, string CodAlmacen)> _repoArticuloAlmacen;
 
         public InventarioAsientoService(
             IRepositorioGenerico<Articulo, string> repoArticulo,
             IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)> repoExistencia,
             IRepositorioGenerico<MovimientoInventario, int> repoMovimiento,
             IValuacionInventario valuacion,
-            IRepositorioGenerico<Almacen, string> repoAlmacen)
+            IRepositorioGenerico<Almacen, string> repoAlmacen,
+            IRepositorioGenerico<ArticuloAlmacen, (string CodArticulo, string CodAlmacen)> repoArticuloAlmacen)
         {
             _repoArticulo = repoArticulo;
             _repoExistencia = repoExistencia;
             _repoMovimiento = repoMovimiento;
             _valuacion = valuacion;
             _repoAlmacen = repoAlmacen;
+            _repoArticuloAlmacen = repoArticuloAlmacen;
         }
 
         public async Task AsentarAsync(IEnumerable<MovimientoRequest> movimientos, bool permitirNegativo = false)
@@ -93,6 +96,14 @@ namespace API.Domain.Core
 
             if (await _repoAlmacen.ObtenerAsync(codAlmacen) is null)
                 throw new AlmacenNoExisteException(codAlmacen);
+
+            // Bloqueo del artículo en este almacén: solo aplica a movimientos nuevos; una reversa nunca se bloquea.
+            if (movReversaDe is null)
+            {
+                var configuracion = await _repoArticuloAlmacen.ObtenerAsync((codArticulo, codAlmacen));
+                if (configuracion?.Bloqueado == "S")
+                    throw new ArticuloAlmacenBloqueadoException(codArticulo, codAlmacen);
+            }
 
             var existencia = await _repoExistencia.ObtenerAsync((codArticulo, codAlmacen));
             var nuevaExistencia = existencia is null;
