@@ -322,6 +322,7 @@ namespace API.Service.WebApi
 
             services.AddTransient<IExistenciaDomain, ExistenciaDomain>();
             services.AddTransient<IExistenciaApplication, ExistenciaApplication>();
+            services.AddTransient<IArticuloAlmacenDomain, ArticuloAlmacenDomain>();
 
             services.AddTransient<IMovimientoInventarioDomain, MovimientoInventarioDomain>();
             services.AddTransient<IMovimientoInventarioApplication, MovimientoInventarioApplication>();
