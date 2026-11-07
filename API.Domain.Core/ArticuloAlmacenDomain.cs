@@ -15,6 +15,9 @@ namespace API.Domain.Core
         private const string Si = "S";
         private const string No = "N";
         private const int DecimalesMaximos = 6;
+        // Máximo que admite decimal(19,6) (13 enteros y 6 decimales); el texto es literal, sin depender de la cultura.
+        private const decimal LimiteSuperior = 9999999999999.999999m;
+        private const string LimiteSuperiorTexto = "9,999,999,999,999.999999";
 
         private readonly IRepositorioGenerico<ArticuloAlmacen, (string CodArticulo, string CodAlmacen)> _repoConfig;
         private readonly IRepositorioGenerico<Articulo, string> _repoArticulo;
@@ -113,6 +116,10 @@ namespace API.Domain.Core
                     throw new Exception($"El stock mínimo del almacén {codAlmacen} no puede ser negativo.");
                 if (fila.Maximo is < 0)
                     throw new Exception($"El stock máximo del almacén {codAlmacen} no puede ser negativo.");
+                if (fila.Minimo > LimiteSuperior)
+                    throw new Exception($"El stock mínimo del almacén {codAlmacen} no puede superar {LimiteSuperiorTexto}.");
+                if (fila.Maximo > LimiteSuperior)
+                    throw new Exception($"El stock máximo del almacén {codAlmacen} no puede superar {LimiteSuperiorTexto}.");
                 if (ExcedeDecimales(fila.Minimo))
                     throw new Exception($"El stock mínimo del almacén {codAlmacen} admite como máximo {DecimalesMaximos} decimales.");
                 if (ExcedeDecimales(fila.Maximo))

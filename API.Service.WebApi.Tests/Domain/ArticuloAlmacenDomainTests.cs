@@ -346,6 +346,71 @@ namespace API.Service.WebApi.Tests.Domain
             NadaTocado();
         }
 
+        // Límite de decimal(19,6): 13 enteros y 6 decimales.
+        private const decimal LimiteSuperior = 9999999999999.999999m;
+
+        [Fact]
+        public async Task GuardarAsync_MinimoYMaximoExactamenteEnElLimite_Pasan()
+        {
+            Articulos(Art("ART1"));
+
+            await _domain.GuardarAsync("ART1", new[]
+            {
+                new ArticuloAlmacenConfig("A1", LimiteSuperior, LimiteSuperior, false),
+            });
+
+            _repoConfig.Verify(r => r.AgregarSinGuardarAsync(It.Is<ArticuloAlmacen>(x => x.Minimo == LimiteSuperior && x.Maximo == LimiteSuperior)), Times.Once);
+        }
+
+        [Theory]
+        [InlineData("10000000000000")]
+        [InlineData("9999999999999.9999995")]
+        [InlineData("79228162514264337593543950335")]
+        public async Task GuardarAsync_MinimoSobreElLimite_LanzaYNoTocaNada(string valor)
+        {
+            Articulos(Art("ART1"));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.GuardarAsync("ART1", new[]
+            {
+                new ArticuloAlmacenConfig("A1", decimal.Parse(valor, System.Globalization.CultureInfo.InvariantCulture), null, false),
+            }));
+
+            Assert.Equal("El stock mínimo del almacén A1 no puede superar 9,999,999,999,999.999999.", ex.Message);
+            NadaTocado();
+        }
+
+        [Theory]
+        [InlineData("10000000000000")]
+        [InlineData("9999999999999.9999995")]
+        [InlineData("79228162514264337593543950335")]
+        public async Task GuardarAsync_MaximoSobreElLimite_LanzaYNoTocaNada(string valor)
+        {
+            Articulos(Art("ART1"));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.GuardarAsync("ART1", new[]
+            {
+                new ArticuloAlmacenConfig("A1", null, decimal.Parse(valor, System.Globalization.CultureInfo.InvariantCulture), false),
+            }));
+
+            Assert.Equal("El stock máximo del almacén A1 no puede superar 9,999,999,999,999.999999.", ex.Message);
+            NadaTocado();
+        }
+
+        [Fact]
+        public async Task GuardarAsync_SobreElLimiteEnUnaFilaConConfiguracionExistente_NoModificaNiElimina()
+        {
+            Articulos(Art("ART1"));
+            Config(Cfg("ART1", "A1", 1m, 2m), Cfg("ART1", "A2", 3m, 4m));
+
+            await Assert.ThrowsAsync<Exception>(() => _domain.GuardarAsync("ART1", new[]
+            {
+                new ArticuloAlmacenConfig("A1", 5m, 6m, false),
+                new ArticuloAlmacenConfig("A2", 1m, 10000000000000m, false),
+            }));
+
+            NadaTocado();
+        }
+
         [Fact]
         public async Task GuardarAsync_MaximoMenorQueMinimo_LanzaYNoTocaNada()
         {

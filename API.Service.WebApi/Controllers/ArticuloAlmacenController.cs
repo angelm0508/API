@@ -41,6 +41,10 @@ namespace API.Service.WebApi.Controllers
         public async Task<ActionResult<Respuesta<bool>>> Guardar(
             [FromRoute] string codigo, [FromBody] List<ArticuloAlmacenGuardarDTO>? filas)
         {
+            // Un cuerpo nulo (ausente o ilegible, p. ej. un número fuera de rango) no es «borrar todo»: solo [] limpia la configuración.
+            if (filas is null)
+                return BadRequest(new Respuesta<bool> { Resultado = false, Mensaje = "El cuerpo de la solicitud es requerido." });
+
             var res = await _application.GuardarAsync(codigo, filas);
             if (res.Resultado)
                 return Ok(res);

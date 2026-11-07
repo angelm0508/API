@@ -60,15 +60,28 @@ namespace API.Service.WebApi.Tests.Controllers
         }
 
         [Fact]
-        public async Task Guardar_CuerpoNulo_SePasaTalCualALaAplicacion()
+        public async Task Guardar_CuerpoNulo_DevuelveBadRequestYNoLlamaALaAplicacion()
         {
-            var buena = new Respuesta<bool> { Resultado = true, Dato = true };
-            _app.Setup(a => a.GuardarAsync("ART1", null)).ReturnsAsync(buena);
-
+            // Un cuerpo nulo (JSON ilegible o ausente) no equivale a «borrar todo»: solo [] borra la configuración.
             var r = await Crear().Guardar("ART1", null);
 
+            var respuesta = Assert.IsType<Respuesta<bool>>(Assert.IsType<BadRequestObjectResult>(r.Result).Value);
+            Assert.False(respuesta.Resultado);
+            Assert.Equal("El cuerpo de la solicitud es requerido.", respuesta.Mensaje);
+            _app.Verify(a => a.GuardarAsync(It.IsAny<string>(), It.IsAny<IEnumerable<ArticuloAlmacenGuardarDTO>?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Guardar_ListaVacia_LlamaALaAplicacionParaLimpiarTodo()
+        {
+            var filas = new List<ArticuloAlmacenGuardarDTO>();
+            var buena = new Respuesta<bool> { Resultado = true, Dato = true };
+            _app.Setup(a => a.GuardarAsync("ART1", filas)).ReturnsAsync(buena);
+
+            var r = await Crear().Guardar("ART1", filas);
+
             Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
-            _app.Verify(a => a.GuardarAsync("ART1", null), Times.Once);
+            _app.Verify(a => a.GuardarAsync("ART1", filas), Times.Once);
         }
 
         [Fact]
