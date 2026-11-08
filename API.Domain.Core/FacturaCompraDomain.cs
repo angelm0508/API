@@ -20,6 +20,7 @@ namespace API.Domain.Core
         private readonly ISaldoFacturaCompraService _saldos;
         private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocio;
         private readonly IResolutorVencimiento _resolutor;
+        private readonly IUnidadMedidaService? _unidades;
 
         public FacturaCompraDomain(
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
@@ -29,7 +30,8 @@ namespace API.Domain.Core
             IInventarioAsientoService asiento,
             ISaldoFacturaCompraService saldos,
             IRepositorioGenerico<SocioNegocio, string> repoSocio,
-            IResolutorVencimiento resolutor)
+            IResolutorVencimiento resolutor,
+            IUnidadMedidaService? unidades = null)
         {
             _repoFacturaCompra = repoFacturaCompra;
             _repoDetalle = repoDetalle;
@@ -39,6 +41,7 @@ namespace API.Domain.Core
             _saldos = saldos;
             _repoSocio = repoSocio;
             _resolutor = resolutor;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -60,6 +63,14 @@ namespace API.Domain.Core
 
             var lineasList = lineas?.ToList() ?? new List<FacturaCompraDetalle>();
             ValidarLineas(lineasList); // antes de numerar: un error de línea no debe avanzar el consecutivo
+            foreach (var linea in lineasList)
+            {
+                if ((linea.Cantidad ?? 0m) <= 0m) continue;
+                var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, linea.CodArticulo, linea.UomEntry, linea.Cantidad);
+                linea.UomEntry = uomEntry;
+                linea.FactorUom = factor;
+                linea.CantidadBase = cantBase;
+            }
 
             // Condición de pago y vencimiento: antes de numerar, así una condición inválida no consume el consecutivo.
             // Un socio inexistente no cambia el comportamiento previo (lo rechaza la FK): se resuelve sin su condición.
@@ -104,8 +115,8 @@ namespace API.Domain.Core
                         DocLinea: l.NoLinea,
                         CodArticulo: l.CodArticulo!,
                         CodAlmacen: l.CodAlmacen!,
-                        Cantidad: l.Cantidad!.Value,
-                        PrecioUnitario: l.Precio ?? 0m,
+                        Cantidad: l.CantidadBase ?? l.Cantidad!.Value,
+                        PrecioUnitario: UnidadesLinea.PrecioBase(l.Precio ?? 0m, l.FactorUom),
                         Fecha: obj.FechaDoc ?? DateTime.Now))
                     .ToList();
 

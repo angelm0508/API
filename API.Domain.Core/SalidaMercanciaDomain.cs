@@ -16,6 +16,7 @@ namespace API.Domain.Core
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
         private readonly IRepositorioGenerico<Articulo, string> _repoArticulo;
+        private readonly IUnidadMedidaService? _unidades;
 
         public SalidaMercanciaDomain(
             IRepositorioGenerico<SalidaMercancia, int> repoSalida,
@@ -23,7 +24,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
-            IRepositorioGenerico<Articulo, string> repoArticulo)
+            IRepositorioGenerico<Articulo, string> repoArticulo,
+            IUnidadMedidaService? unidades = null)
         {
             _repoSalida = repoSalida;
             _repoDetalle = repoDetalle;
@@ -31,6 +33,7 @@ namespace API.Domain.Core
             _tx = tx;
             _asiento = asiento;
             _repoArticulo = repoArticulo;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -47,6 +50,26 @@ namespace API.Domain.Core
             if (serie.Bloqueado == "S")
                 throw new Exception("La serie está bloqueada y no se puede usar para registrar salidas de mercancía.");
 
+            var lineasList = lineas?.ToList() ?? new List<SalidaMercanciaDetalle>();
+
+            // Resolver unidad y costo de cada línea ANTES de avanzar el consecutivo de la serie:
+            // un error de unidad no debe consumir numeración.
+            decimal totalDoc = 0m;
+            foreach (var linea in lineasList)
+            {
+                var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, linea.CodArticulo, linea.UomEntry, linea.Cantidad);
+                linea.UomEntry = uomEntry;
+                linea.FactorUom = factor;
+                linea.CantidadBase = cantBase;
+
+                var costoBase = await CostoVigenteAsync(linea.CodArticulo);
+                var costo = UnidadesLinea.CantidadBase(costoBase, factor);
+                linea.CostoUnitario = costo;
+                linea.TotalLinea = (linea.Cantidad ?? 0m) * costo;
+                totalDoc += linea.TotalLinea.Value;
+            }
+            obj.TotalDoc = totalDoc;
+
             if (serie.Manual == "S")
             {
                 if (obj.NumDoc <= 0)
@@ -62,21 +85,6 @@ namespace API.Domain.Core
                 obj.NumDoc = serie.SigNumero.Value;
                 serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transacción
             }
-
-            var lineasList = lineas?.ToList() ?? new List<SalidaMercanciaDetalle>();
-
-            // Resolver el costo de cada línea y los totales ANTES de abrir la transacción:
-            // el encabezado se guarda primero (Save #1) y SalidaMercancia.TotalDoc es NOT NULL,
-            // así que TotalDoc tiene que estar calculado antes de ese Save.
-            decimal totalDoc = 0m;
-            foreach (var linea in lineasList)
-            {
-                var costo = await CostoVigenteAsync(linea.CodArticulo);
-                linea.CostoUnitario = costo;
-                linea.TotalLinea = (linea.Cantidad ?? 0m) * costo;
-                totalDoc += linea.TotalLinea.Value;
-            }
-            obj.TotalDoc = totalDoc;
 
             return await _tx.EjecutarAsync(async () =>
             {
@@ -98,8 +106,8 @@ namespace API.Domain.Core
                         DocLinea: l.NoLinea,
                         CodArticulo: l.CodArticulo!,
                         CodAlmacen: l.CodAlmacen!,
-                        Cantidad: -(l.Cantidad!.Value),          // negativo = salida
-                        PrecioUnitario: l.CostoUnitario!.Value,  // costo ya resuelto
+                        Cantidad: -(l.CantidadBase ?? l.Cantidad!.Value),                       // negativo = salida (en unidad base)
+                        PrecioUnitario: UnidadesLinea.PrecioBase(l.CostoUnitario!.Value, l.FactorUom),  // costo por unidad base
                         Fecha: obj.FechaContab ?? obj.FechaDoc ?? DateTime.Now))
                     .ToList();
 

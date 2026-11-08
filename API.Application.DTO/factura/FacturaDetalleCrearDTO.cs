@@ -26,5 +26,8 @@ namespace API.Application.DTO.factura
         public decimal? TotalLinea { get; set; }
         public string? TipoObjeto { get; set; }
         public string? CodAlmacen { get; set; }
+        // Unidad de medida de la línea (UnidadMedidaArticulo.Entry). Sin valor: la unidad base del grupo del artículo.
+        // El factor y la cantidad base los fija el servidor.
+        public int? UomEntry { get; set; }
     }
 }

@@ -22,6 +22,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<SocioNegocio, string>> _repoSocio = new();
         private readonly Mock<IResolutorVencimiento> _resolutor = new();
         private readonly Mock<ICreditoClienteService> _credito = new();
+        private readonly Mock<IUnidadMedidaService> _unidades = new();
         private readonly FacturaDomain _domain;
 
         private readonly List<MovimientoRequest> _movimientosAsentados = new();
@@ -29,7 +30,8 @@ namespace API.Service.WebApi.Tests.Domain
         public FacturaDomainTests()
         {
             _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object,
-                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object);
+                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object, _unidades.Object);
+            _unidades.Setup(s => s.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>())).ReturnsAsync(new UnidadResuelta(null, null, 1m));
             // Sin límite de crédito en estas pruebas: toda verificación resulta permitida.
             _credito.Setup(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>())).ReturnsAsync(new ResultadoCredito(true, null, null, 0m, 0m));
             // Por defecto: contado (el vencimiento es la fecha del documento) y ningún socio en el repositorio.
@@ -94,6 +96,76 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(2, _movimientosAsentados[1].DocLinea);
         }
 
+        [Fact]
+        public async Task InsertarAsync_ConUnidadAlternativa_AsientaCantidadYPrecioEnUnidadBase()
+        {
+            // 3 Cajas (factor 12) a Q120 c/u: salen 36 unidades base, a Q10 cada una.
+            _unidades.Setup(s => s.ResolverAsync("ART1", 2)).ReturnsAsync(new UnidadResuelta(2, "CAJA", 12m));
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var linea = Linea("ART1", "01", 3m, 120m);
+            linea.UomEntry = 2;
+            linea.FactorUom = 99m;          // el cliente no controla el factor
+            linea.CantidadBase = 1m;        // ni la cantidad base
+
+            await _domain.InsertarAsync(new Factura { Serie = 4 }, new[] { linea });
+
+            Assert.Equal(2, linea.UomEntry);
+            Assert.Equal(12m, linea.FactorUom);
+            Assert.Equal(36m, linea.CantidadBase);
+            Assert.Equal(3m, linea.Cantidad);     // la línea conserva lo que digitó el usuario
+            Assert.Equal(120m, linea.Precio);
+            var mov = Assert.Single(_movimientosAsentados);
+            Assert.Equal(-36m, mov.Cantidad);
+            Assert.Equal(10m, mov.PrecioUnitario);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinUnidad_UsaLaBaseYAsientaIgualQueAntes()
+        {
+            _unidades.Setup(s => s.ResolverAsync("ART1", null)).ReturnsAsync(new UnidadResuelta(1, "UND", 1m));
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var linea = Linea("ART1", "01", 10m, 25m);
+
+            await _domain.InsertarAsync(new Factura { Serie = 4 }, new[] { linea });
+
+            Assert.Equal(1, linea.UomEntry);
+            Assert.Equal(1m, linea.FactorUom);
+            Assert.Equal(10m, linea.CantidadBase);
+            var mov = Assert.Single(_movimientosAsentados);
+            Assert.Equal((-10m, 25m), (mov.Cantidad, mov.PrecioUnitario));
+        }
+
+        [Fact]
+        public async Task InsertarAsync_UnidadInvalida_NoConsumeConsecutivoNiAsienta()
+        {
+            _unidades.Setup(s => s.ResolverAsync("ART1", 9)).ThrowsAsync(new Exception("La unidad de medida 9 no pertenece al grupo de medida del artículo ART1."));
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var linea = Linea("ART1", "01", 1m, 10m);
+            linea.UomEntry = 9;
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new Factura { Serie = 4 }, new[] { linea }));
+
+            Assert.Equal("La unidad de medida 9 no pertenece al grupo de medida del artículo ART1.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            Assert.Empty(_movimientosAsentados);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_LineaConBaseConUnidadAlternativa_SeRechaza()
+        {
+            _unidades.Setup(s => s.ResolverAsync("ART1", 2)).ReturnsAsync(new UnidadResuelta(2, "CAJA", 12m));
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var linea = LineaDe("ART1", "01", 1m, 10m, 5, 7, 1);
+            linea.UomEntry = 2;
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new Factura { Serie = 4 }, new[] { linea }));
+
+            Assert.Equal("Línea 1: una línea copiada de otro documento debe usar la unidad base del artículo.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+        }
         [Fact]
         public async Task InsertarAsync_ConCanceladoEnviadoPorElCliente_LoIgnora()
         {

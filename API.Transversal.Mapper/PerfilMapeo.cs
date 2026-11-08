@@ -1,4 +1,4 @@
-﻿using API.Application.DTO.articulo.articulo;
+using API.Application.DTO.articulo.articulo;
 using API.Application.DTO.articulo.grupo_articulo;
 using API.Application.DTO.articulo.fabricante_articulo;
 using API.Application.DTO.articulo.unidad_medida_articulo;
@@ -137,9 +137,16 @@ namespace API.Transversal.Mapper
             CreateMap<OrdenServicioActualizarDTO, OrdenServicio>();
 
             // OrdenServicioDetalle
-            CreateMap<OrdenServicioDetalle, OrdenServicioDetalleDTO>();
-            CreateMap<OrdenServicioDetalleCrearDTO, OrdenServicioDetalle>();
-            CreateMap<OrdenServicioDetalleActualizarDTO, OrdenServicioDetalle>();
+            CreateMap<OrdenServicioDetalle, OrdenServicioDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<OrdenServicioDetalleCrearDTO, OrdenServicioDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<OrdenServicioDetalleActualizarDTO, OrdenServicioDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // SocioNegocio
             CreateMap<SocioNegocio, SocioNegocioDTO>();
@@ -210,9 +217,16 @@ namespace API.Transversal.Mapper
             CreateMap<CotizacionActualizarDTO, Cotizacion>();
 
             // CotizacionDetalle
-            CreateMap<CotizacionDetalle, CotizacionDetalleDTO>();
-            CreateMap<CotizacionDetalleCrearDTO, CotizacionDetalle>();
-            CreateMap<CotizacionDetalleActualizarDTO, CotizacionDetalle>();
+            CreateMap<CotizacionDetalle, CotizacionDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<CotizacionDetalleCrearDTO, CotizacionDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<CotizacionDetalleActualizarDTO, CotizacionDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // Entrega
             CreateMap<Entrega, EntregaDTO>();
@@ -220,9 +234,16 @@ namespace API.Transversal.Mapper
             CreateMap<EntregaActualizarDTO, Entrega>();
 
             // EntregaDetalle
-            CreateMap<EntregaDetalle, EntregaDetalleDTO>();
-            CreateMap<EntregaDetalleCrearDTO, EntregaDetalle>();
-            CreateMap<EntregaDetalleActualizarDTO, EntregaDetalle>();
+            CreateMap<EntregaDetalle, EntregaDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<EntregaDetalleCrearDTO, EntregaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<EntregaDetalleActualizarDTO, EntregaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // EntregaCompra
             CreateMap<EntregaCompra, EntregaCompraDTO>();
@@ -230,9 +251,16 @@ namespace API.Transversal.Mapper
             CreateMap<EntregaCompraActualizarDTO, EntregaCompra>();
 
             // EntregaCompraDetalle
-            CreateMap<EntregaCompraDetalle, EntregaCompraDetalleDTO>();
-            CreateMap<EntregaCompraDetalleCrearDTO, EntregaCompraDetalle>();
-            CreateMap<EntregaCompraDetalleActualizarDTO, EntregaCompraDetalle>();
+            CreateMap<EntregaCompraDetalle, EntregaCompraDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<EntregaCompraDetalleCrearDTO, EntregaCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<EntregaCompraDetalleActualizarDTO, EntregaCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // EntradaMercancia
             CreateMap<EntradaMercanciaCrearDTO, EntradaMercancia>();
@@ -240,9 +268,16 @@ namespace API.Transversal.Mapper
             CreateMap<EntradaMercancia, EntradaMercanciaDTO>();
 
             // EntradaMercanciaDetalle
-            CreateMap<EntradaMercanciaDetalleCrearDTO, EntradaMercanciaDetalle>();
-            CreateMap<EntradaMercanciaDetalleActualizarDTO, EntradaMercanciaDetalle>();
-            CreateMap<EntradaMercanciaDetalle, EntradaMercanciaDetalleDTO>();
+            CreateMap<EntradaMercanciaDetalleCrearDTO, EntradaMercanciaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<EntradaMercanciaDetalleActualizarDTO, EntradaMercanciaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<EntradaMercanciaDetalle, EntradaMercanciaDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
 
             // SalidaMercancia
             CreateMap<SalidaMercanciaCrearDTO, SalidaMercancia>();
@@ -250,9 +285,16 @@ namespace API.Transversal.Mapper
             CreateMap<SalidaMercancia, SalidaMercanciaDTO>();
 
             // SalidaMercanciaDetalle
-            CreateMap<SalidaMercanciaDetalleCrearDTO, SalidaMercanciaDetalle>();
-            CreateMap<SalidaMercanciaDetalleActualizarDTO, SalidaMercanciaDetalle>();
-            CreateMap<SalidaMercanciaDetalle, SalidaMercanciaDetalleDTO>();
+            CreateMap<SalidaMercanciaDetalleCrearDTO, SalidaMercanciaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<SalidaMercanciaDetalleActualizarDTO, SalidaMercanciaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<SalidaMercanciaDetalle, SalidaMercanciaDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
 
             // FacturaCompra
             CreateMap<FacturaCompra, FacturaCompraDTO>();
@@ -263,9 +305,16 @@ namespace API.Transversal.Mapper
             CreateMap<FacturaCompraActualizarDTO, FacturaCompra>();
 
             // FacturaCompraDetalle
-            CreateMap<FacturaCompraDetalle, FacturaCompraDetalleDTO>();
-            CreateMap<FacturaCompraDetalleCrearDTO, FacturaCompraDetalle>();
-            CreateMap<FacturaCompraDetalleActualizarDTO, FacturaCompraDetalle>();
+            CreateMap<FacturaCompraDetalle, FacturaCompraDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<FacturaCompraDetalleCrearDTO, FacturaCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<FacturaCompraDetalleActualizarDTO, FacturaCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // Factura
             CreateMap<Factura, FacturaDTO>();
@@ -276,9 +325,18 @@ namespace API.Transversal.Mapper
             CreateMap<FacturaActualizarDTO, Factura>();
 
             // FacturaDetalle
-            CreateMap<FacturaDetalle, FacturaDetalleDTO>();
-            CreateMap<FacturaDetalleCrearDTO, FacturaDetalle>();
-            CreateMap<FacturaDetalleActualizarDTO, FacturaDetalle>();
+            CreateMap<FacturaDetalle, FacturaDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            // Factor y cantidad base los calcula el dominio; AutoMapper nunca llena la navegación de unidad.
+            CreateMap<FacturaDetalleCrearDTO, FacturaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<FacturaDetalleActualizarDTO, FacturaDetalle>()
+                .ForMember(d => d.UomEntry, o => o.Ignore())
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // NotaDebito
             CreateMap<Factura, NotaDebitoDTO>();
@@ -288,8 +346,12 @@ namespace API.Transversal.Mapper
             CreateMap<NotaDebitoActualizarDTO, Factura>();
 
             // NotaDebitoDetalle
-            CreateMap<FacturaDetalle, NotaDebitoDetalleDTO>();
-            CreateMap<NotaDebitoDetalleCrearDTO, FacturaDetalle>();
+            CreateMap<FacturaDetalle, NotaDebitoDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<NotaDebitoDetalleCrearDTO, FacturaDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // NotaDebitoCompra
             CreateMap<FacturaCompra, NotaDebitoCompraDTO>();
@@ -299,8 +361,12 @@ namespace API.Transversal.Mapper
             CreateMap<NotaDebitoCompraActualizarDTO, FacturaCompra>();
 
             // NotaDebitoCompraDetalle
-            CreateMap<FacturaCompraDetalle, NotaDebitoCompraDetalleDTO>();
-            CreateMap<NotaDebitoCompraDetalleCrearDTO, FacturaCompraDetalle>();
+            CreateMap<FacturaCompraDetalle, NotaDebitoCompraDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<NotaDebitoCompraDetalleCrearDTO, FacturaCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // NotaCredito
             CreateMap<NotaCredito, NotaCreditoDTO>();
@@ -326,9 +392,16 @@ namespace API.Transversal.Mapper
             CreateMap<PedidoActualizarDTO, Pedido>();
 
             // PedidoDetalle
-            CreateMap<PedidoDetalle, PedidoDetalleDTO>();
-            CreateMap<PedidoDetalleCrearDTO, PedidoDetalle>();
-            CreateMap<PedidoDetalleActualizarDTO, PedidoDetalle>();
+            CreateMap<PedidoDetalle, PedidoDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<PedidoDetalleCrearDTO, PedidoDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<PedidoDetalleActualizarDTO, PedidoDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // PedidoCompra
             CreateMap<PedidoCompra, PedidoCompraDTO>();
@@ -336,9 +409,16 @@ namespace API.Transversal.Mapper
             CreateMap<PedidoCompraActualizarDTO, PedidoCompra>();
 
             // PedidoCompraDetalle
-            CreateMap<PedidoCompraDetalle, PedidoCompraDetalleDTO>();
-            CreateMap<PedidoCompraDetalleCrearDTO, PedidoCompraDetalle>();
-            CreateMap<PedidoCompraDetalleActualizarDTO, PedidoCompraDetalle>();
+            CreateMap<PedidoCompraDetalle, PedidoCompraDetalleDTO>()
+                .ForMember(d => d.UomCodigo, o => o.MapFrom(s => s.UomEntryNavigation != null ? s.UomEntryNavigation.Codigo : null));
+            CreateMap<PedidoCompraDetalleCrearDTO, PedidoCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
+            CreateMap<PedidoCompraDetalleActualizarDTO, PedidoCompraDetalle>()
+                .ForMember(d => d.FactorUom, o => o.Ignore())
+                .ForMember(d => d.CantidadBase, o => o.Ignore())
+                .ForMember(d => d.UomEntryNavigation, o => o.Ignore());
 
             // Impuesto
             CreateMap<Impuesto, ImpuestoDTO>();

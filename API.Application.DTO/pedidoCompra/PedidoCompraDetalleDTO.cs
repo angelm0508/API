@@ -22,5 +22,9 @@ namespace API.Application.DTO.pedidoCompra
         public decimal? TotalLinea { get; set; }
         public string? TipoObjeto { get; set; }
         public string? CodAlmacen { get; set; }
+        public int? UomEntry { get; set; }
+        public string? UomCodigo { get; set; }
+        public decimal FactorUom { get; set; } = 1m;
+        public decimal? CantidadBase { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace API.Domain.Core
         private readonly ICreditoClienteService _credito;
         private readonly IAutorizacionCreditoContexto _autorizacionCredito;
         private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
+        private readonly IUnidadMedidaService? _unidades;
 
         public PedidoDomain(
             IRepositorioGenerico<Pedido, int> repoGenericoPedido,
@@ -29,7 +30,8 @@ namespace API.Domain.Core
             IDocumentoBaseService documentoBase,
             ICreditoClienteService credito,
             IAutorizacionCreditoContexto autorizacionCredito,
-            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito)
+            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito,
+            IUnidadMedidaService? unidades = null)
         {
             _repoGenericoPedido = repoGenericoPedido;
             _repoGenericoDetalle = repoGenericoDetalle;
@@ -39,6 +41,7 @@ namespace API.Domain.Core
             _credito = credito;
             _autorizacionCredito = autorizacionCredito;
             _repoAutorizacionCredito = repoAutorizacionCredito;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -64,6 +67,14 @@ namespace API.Domain.Core
             var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
             if (basadas.Count > 0)
                 await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Pedido, obj.CodigoSn, basadas);
+
+            foreach (var linea in lineasList)
+            {
+                var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, linea.CodArticulo, linea.UomEntry, linea.Cantidad);
+                linea.UomEntry = uomEntry;
+                linea.FactorUom = factor;
+                linea.CantidadBase = cantBase;
+            }
 
             // Límite de crédito: después de validar las líneas con base (el monto no topa la cantidad liberada) y antes de
             // numerar, así un rechazo no consume el consecutivo.

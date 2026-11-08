@@ -10,18 +10,26 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> _repoGenericoDet;
 
         private readonly IDocumentoBaseService _documentoBase;
+        private readonly IUnidadMedidaService? _unidades;
 
         public CotizacionDetalleDomain(
             IRepositorioGenerico<CotizacionDetalle, (int Entry, int NoLinea)> repoGenericoDet,
-            IDocumentoBaseService documentoBase)
+            IDocumentoBaseService documentoBase,
+            IUnidadMedidaService? unidades = null)
         {
             _repoGenericoDet = repoGenericoDet;
             _documentoBase = documentoBase;
+            _unidades = unidades;
         }
 
         #region async methods
         public async Task<int> InsertarAsync(CotizacionDetalle obj)
         {
+            var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
+            obj.UomEntry = uomEntry;
+            obj.FactorUom = factor;
+            obj.CantidadBase = cantBase;
+
             var lineasExistentes = await ObtenerPorCotizacionAsync(obj.Entry);
             obj.NoLinea = lineasExistentes.Any() ? lineasExistentes.Max(x => x.NoLinea) + 1 : 1;
 
@@ -32,6 +40,12 @@ namespace API.Domain.Core
         public async Task<bool> ActualizarAsync(int entry, int noLinea, CotizacionDetalle obj)
         {
             await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoVenta.Cotizacion, entry, noLinea, "modificar");
+
+            var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
+            obj.UomEntry = uomEntry;
+            obj.FactorUom = factor;
+            obj.CantidadBase = cantBase;
+
             return await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
         }
 

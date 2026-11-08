@@ -20,5 +20,6 @@ namespace API.Application.DTO.pedido
         public decimal? TotalLinea { get; set; }
         public string? TipoObjeto { get; set; }
         public string? CodAlmacen { get; set; }
+        public int? UomEntry { get; set; }
     }
 }

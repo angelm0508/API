@@ -68,7 +68,7 @@ namespace API.Domain.Core
             {
                 Entry = entry, NoLinea = noLinea,
                 CodArticulo = obj.CodArticulo, Descripcion = obj.Descripcion, CodAlmacen = obj.CodAlmacen,
-                Cantidad = obj.Cantidad, Precio = obj.Precio, PrctjeDesc = obj.PrctjeDesc,
+                Cantidad = obj.Cantidad, UomEntry = obj.UomEntry, Precio = obj.Precio, PrctjeDesc = obj.PrctjeDesc,
                 CodigoImpuesto = obj.CodigoImpuesto, CodMecanico = obj.CodMecanico
             };
             var lista = new List<OrdenServicioDetalle> { candidata };
@@ -83,6 +83,9 @@ namespace API.Domain.Core
                 existente.CodAlmacen = candidata.CodAlmacen;
                 existente.EsInsumo = candidata.EsInsumo;
                 existente.Cantidad = candidata.Cantidad;
+                existente.UomEntry = candidata.UomEntry;
+                existente.FactorUom = candidata.FactorUom;
+                existente.CantidadBase = candidata.CantidadBase;
                 existente.Precio = candidata.Precio;
                 existente.PrctjeDesc = candidata.PrctjeDesc;
                 existente.CodigoImpuesto = candidata.CodigoImpuesto;

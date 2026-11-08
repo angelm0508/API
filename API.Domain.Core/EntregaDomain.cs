@@ -19,6 +19,7 @@ namespace API.Domain.Core
         private readonly ICreditoClienteService _credito;
         private readonly IAutorizacionCreditoContexto _autorizacionCredito;
         private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
+        private readonly IUnidadMedidaService? _unidades;
 
         public EntregaDomain(
             IRepositorioGenerico<Entrega, int> repoEntrega,
@@ -29,7 +30,8 @@ namespace API.Domain.Core
             IDocumentoBaseService documentoBase,
             ICreditoClienteService credito,
             IAutorizacionCreditoContexto autorizacionCredito,
-            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito)
+            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito,
+            IUnidadMedidaService? unidades = null)
         {
             _credito = credito;
             _autorizacionCredito = autorizacionCredito;
@@ -40,6 +42,7 @@ namespace API.Domain.Core
             _tx = tx;
             _asiento = asiento;
             _documentoBase = documentoBase;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -67,6 +70,15 @@ namespace API.Domain.Core
             var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
             if (basadas.Count > 0)
                 await _documentoBase.ValidarLineasAsync(TipoDocumentoVenta.Entrega, obj.CodigoSn, basadas);
+
+            foreach (var linea in lineasList)
+            {
+                if ((linea.Cantidad ?? 0m) <= 0m) continue;
+                var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, linea.CodArticulo, linea.UomEntry, linea.Cantidad);
+                linea.UomEntry = uomEntry;
+                linea.FactorUom = factor;
+                linea.CantidadBase = cantBase;
+            }
 
             // Límite de crédito: después de validar las líneas con base (el monto no topa la cantidad liberada) y antes de
             // numerar, así un rechazo no consume el consecutivo.
@@ -114,8 +126,8 @@ namespace API.Domain.Core
                         DocLinea: l.NoLinea,
                         CodArticulo: l.CodArticulo!,
                         CodAlmacen: l.CodAlmacen!,
-                        Cantidad: -(l.Cantidad!.Value),   // negativo = salida de stock
-                        PrecioUnitario: l.Precio ?? 0m,
+                        Cantidad: -(l.CantidadBase ?? l.Cantidad!.Value),   // negativo = salida de stock (siempre en unidad base)
+                        PrecioUnitario: UnidadesLinea.PrecioBase(l.Precio ?? 0m, l.FactorUom),
                         Fecha: obj.FechaDoc ?? DateTime.Now))
                     .ToList();
 

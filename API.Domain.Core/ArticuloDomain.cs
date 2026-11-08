@@ -1,4 +1,4 @@
-﻿using API.Domain.Entity.Models;
+using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -9,13 +9,16 @@ namespace API.Domain.Core
     {
         private readonly IRepositorioGenerico<Articulo, string> _repoGenericoArticulo;
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoGenericoNumeracion;
+        private readonly IUnidadMedidaService? _unidades;
 
         public ArticuloDomain(
             IRepositorioGenerico<Articulo, string> repoGenericoArticulo,
-            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion)
+            IRepositorioGenerico<NumeracionDocumentoDet, int> repoGenericoNumeracion,
+            IUnidadMedidaService? unidades = null)
         {
             _repoGenericoArticulo = repoGenericoArticulo;
             _repoGenericoNumeracion = repoGenericoNumeracion;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -63,6 +66,9 @@ namespace API.Domain.Core
         }
         public async Task<bool> ActualizarAsync(string sku, Articulo obj)
         {
+            if (_unidades is not null)
+                await _unidades.ValidarCambioGrupoAsync(sku, obj.CodigoGrpUnidadMedida);
+
             if (await _repoGenericoArticulo.ActualizarAsync(sku, obj))
                 return true;
 

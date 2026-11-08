@@ -49,6 +49,7 @@ namespace API.Domain.Core
         private readonly IInventarioAsientoService _asiento;
         private readonly ISaldoFacturaService _saldos;
         private readonly IResolutorVencimiento _resolutor;
+        private readonly IUnidadMedidaService? _unidades;
 
         public NotaDebitoDomain(
             IRepositorioGenerico<Factura, int> repoFactura,
@@ -62,7 +63,8 @@ namespace API.Domain.Core
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
             ISaldoFacturaService saldos,
-            IResolutorVencimiento resolutor)
+            IResolutorVencimiento resolutor,
+            IUnidadMedidaService? unidades = null)
         {
             _repoFactura = repoFactura;
             _repoDetalle = repoDetalle;
@@ -76,6 +78,7 @@ namespace API.Domain.Core
             _asiento = asiento;
             _saldos = saldos;
             _resolutor = resolutor;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -132,8 +135,8 @@ namespace API.Domain.Core
                             DocLinea: l.NoLinea,
                             CodArticulo: l.CodArticulo!,
                             CodAlmacen: l.CodAlmacen!,
-                            Cantidad: SignoInventario * l.Cantidad!.Value,
-                            PrecioUnitario: l.Precio ?? 0m,
+                            Cantidad: SignoInventario * (l.CantidadBase ?? l.Cantidad!.Value),
+                            PrecioUnitario: UnidadesLinea.PrecioBase(l.Precio ?? 0m, l.FactorUom),
                             Fecha: obj.FechaDoc ?? DateTime.Now))
                         .ToList();
 
@@ -362,6 +365,20 @@ namespace API.Domain.Core
 
                 if ((linea.Cantidad ?? 0m) <= 0m)
                     throw new Exception($"Línea {n}: la cantidad debe ser mayor que 0.");
+
+                if (porArticulos)
+                {
+                    var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, linea.CodArticulo, linea.UomEntry, linea.Cantidad);
+                    linea.UomEntry = uomEntry;
+                    linea.FactorUom = factor;
+                    linea.CantidadBase = cantBase;
+                }
+                else
+                {
+                    linea.UomEntry = null;
+                    linea.FactorUom = 1m;
+                    linea.CantidadBase = linea.Cantidad;
+                }
 
                 if (linea.Precio is null)
                     throw new Exception($"Línea {n}: el precio es requerido.");

@@ -10,5 +10,6 @@ namespace API.Application.DTO.ordenServicio
         public decimal? PrctjeDesc { get; set; }
         public string? CodigoImpuesto { get; set; }
         public string? CodMecanico { get; set; }
+        public int? UomEntry { get; set; }
     }
 }

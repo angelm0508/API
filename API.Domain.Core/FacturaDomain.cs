@@ -23,6 +23,7 @@ namespace API.Domain.Core
         private readonly IResolutorVencimiento _resolutor;
         private readonly ICreditoClienteService _credito;
         private readonly IAutorizacionCreditoContexto _autorizacionCredito;
+        private readonly IUnidadMedidaService _unidades;
         private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
 
         public FacturaDomain(
@@ -37,8 +38,10 @@ namespace API.Domain.Core
             IResolutorVencimiento resolutor,
             ICreditoClienteService credito,
             IAutorizacionCreditoContexto autorizacionCredito,
-            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito)
+            IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito,
+            IUnidadMedidaService unidades)
         {
+            _unidades = unidades;
             _credito = credito;
             _autorizacionCredito = autorizacionCredito;
             _repoAutorizacionCredito = repoAutorizacionCredito;
@@ -79,6 +82,7 @@ namespace API.Domain.Core
 
             var lineasList = lineas?.ToList() ?? new List<FacturaDetalle>();
             ValidarLineas(lineasList); // antes de numerar: un error de línea no debe avanzar el consecutivo
+            await ResolverUnidadesAsync(lineasList); // idem: unidad inválida no consume consecutivo
 
             // Líneas copiadas de una cotización, un pedido o una entrega: se validan antes de numerar, así un error no
             // avanza el consecutivo (ver DocumentoBaseService.ValidarLineasAsync).
@@ -145,8 +149,8 @@ namespace API.Domain.Core
                         DocLinea: l.NoLinea,
                         CodArticulo: l.CodArticulo!,
                         CodAlmacen: l.CodAlmacen!,
-                        Cantidad: -(l.Cantidad!.Value),   // negativo = salida de stock
-                        PrecioUnitario: l.Precio ?? 0m,
+                        Cantidad: -(l.CantidadBase ?? l.Cantidad!.Value),   // negativo = salida de stock; el inventario va en unidad base
+                        PrecioUnitario: UnidadesLinea.PrecioBase(l.Precio ?? 0m, l.FactorUom),
                         Fecha: obj.FechaDoc ?? DateTime.Now))
                     .ToList();
 
@@ -238,6 +242,23 @@ namespace API.Domain.Core
         {
             var factura = await _repoFactura.ObtenerAsync(id);
             return factura is not null && factura.DocSubType == SubTipoFactura ? factura : null;
+        }
+
+        // Fija unidad, factor y cantidad base de cada línea (el cliente no controla factor ni cantidad base). Las líneas
+        // copiadas de otro documento conservan la unidad base: el cambio de unidad con base llega en una fase posterior.
+        private async Task ResolverUnidadesAsync(IList<FacturaDetalle> lineas)
+        {
+            for (var i = 0; i < lineas.Count; i++)
+            {
+                var l = lineas[i];
+                var unidad = await _unidades.ResolverAsync(l.CodArticulo!, l.UomEntry);
+                if (l.BaseEntry != null && unidad.Factor != 1m)
+                    throw new Exception($"Línea {i + 1}: una línea copiada de otro documento debe usar la unidad base del artículo.");
+
+                l.UomEntry = unidad.UomEntry;
+                l.FactorUom = unidad.Factor;
+                l.CantidadBase = l.Cantidad is null ? null : UnidadesLinea.CantidadBase(l.Cantidad.Value, unidad.Factor);
+            }
         }
 
         private static void ValidarLineas(IList<FacturaDetalle> lineas)

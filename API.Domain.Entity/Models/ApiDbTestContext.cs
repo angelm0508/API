@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -315,6 +315,10 @@ public partial class ApiDbTestContext : DbContext
 
             entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
@@ -339,6 +343,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.CotizacionDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_cot_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_CotizacionDetalle_uom");
         });
 
         modelBuilder.Entity<Pedido>(entity =>
@@ -407,6 +415,10 @@ public partial class ApiDbTestContext : DbContext
 
             entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
@@ -431,6 +443,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.PedidoDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_pedido_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_PedidoDetalle_uom");
         });
 
         modelBuilder.Entity<PedidoCompra>(entity =>
@@ -499,6 +515,10 @@ public partial class ApiDbTestContext : DbContext
 
             entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
@@ -527,6 +547,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodigoImpuestoNavigation).WithMany(p => p.PedidoCompraDetalles)
                 .HasForeignKey(d => d.CodigoImpuesto)
                 .HasConstraintName("fk_pedido_compra_det_cod_impuesto");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_PedidoCompraDetalle_uom");
         });
 
         modelBuilder.Entity<Entrega>(entity =>
@@ -595,6 +619,10 @@ public partial class ApiDbTestContext : DbContext
 
             entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
@@ -619,6 +647,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.EntregaDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_entrega_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_EntregaDetalle_uom");
         });
 
         modelBuilder.Entity<EntregaCompra>(entity =>
@@ -687,6 +719,10 @@ public partial class ApiDbTestContext : DbContext
 
             entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
@@ -715,6 +751,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodigoImpuestoNavigation).WithMany(p => p.EntregaCompraDetalles)
                 .HasForeignKey(d => d.CodigoImpuesto)
                 .HasConstraintName("fk_entrega_compra_det_cod_impuesto");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_EntregaCompraDetalle_uom");
         });
 
         modelBuilder.Entity<EntradaMercancia>(entity =>
@@ -761,6 +801,10 @@ public partial class ApiDbTestContext : DbContext
             entity.ToTable("EntradaMercanciaDetalle");
 
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);    // Almacen.Codigo = 8
             entity.Property(e => e.CodArticulo).HasMaxLength(15);  // Articulo.Codigo = 15
             entity.Property(e => e.CostoUnitario).HasColumnType("decimal(19, 6)");
@@ -774,6 +818,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.EntradaMercanciaDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_entrada_mercancia_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_EntradaMercanciaDetalle_uom");
         });
 
         modelBuilder.Entity<SalidaMercancia>(entity =>
@@ -820,6 +868,10 @@ public partial class ApiDbTestContext : DbContext
             entity.ToTable("SalidaMercanciaDetalle");
 
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);    // Almacen.Codigo = 8
             entity.Property(e => e.CodArticulo).HasMaxLength(15);  // Articulo.Codigo = 15
             entity.Property(e => e.CostoUnitario).HasColumnType("decimal(19, 6)");
@@ -833,6 +885,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.SalidaMercanciaDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_salida_mercancia_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_SalidaMercanciaDetalle_uom");
         });
 
         modelBuilder.Entity<Factura>(entity =>
@@ -932,6 +988,10 @@ public partial class ApiDbTestContext : DbContext
                 .HasMaxLength(20)
                 .HasDefaultValueSql("((3))");
             entity.Property(e => e.TotalLinea).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
 
             entity.HasOne(d => d.CodAlmacenNavigation).WithMany(p => p.FacturaDetalles)
                 .HasForeignKey(d => d.CodAlmacen)
@@ -940,6 +1000,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany(p => p.FacturaDetalles)
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_factura_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_FacturaDetalle_uom");
         });
 
         modelBuilder.Entity<FacturaCompra>(entity =>
@@ -1023,6 +1087,10 @@ public partial class ApiDbTestContext : DbContext
 
             entity.Property(e => e.BaseTipo).HasDefaultValueSql("((-1))");
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
@@ -1051,6 +1119,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodigoImpuestoNavigation).WithMany(p => p.FacturaCompraDetalles)
                 .HasForeignKey(d => d.CodigoImpuesto)
                 .HasConstraintName("fk_factura_compra_det_cod_impuesto");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_FacturaCompraDetalle_uom");
         });
 
         modelBuilder.Entity<NotaCredito>(entity =>
@@ -1791,6 +1863,10 @@ public partial class ApiDbTestContext : DbContext
             entity.ToTable("OrdenServicioDetalle");
 
             entity.Property(e => e.Cantidad).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.CantidadBase).HasColumnType("decimal(19, 6)");
+            entity.Property(e => e.FactorUom)
+                .HasColumnType("decimal(19, 6)")
+                .HasDefaultValueSql("((1))");
             entity.Property(e => e.CodAlmacen).HasMaxLength(8);
             entity.Property(e => e.CodArticulo).HasMaxLength(15);
             entity.Property(e => e.CodMecanico).HasMaxLength(10);
@@ -1814,6 +1890,10 @@ public partial class ApiDbTestContext : DbContext
             entity.HasOne(d => d.CodArticuloNavigation).WithMany()
                 .HasForeignKey(d => d.CodArticulo)
                 .HasConstraintName("fk_orden_servicio_det_cod_art");
+
+            entity.HasOne(d => d.UomEntryNavigation).WithMany()
+                .HasForeignKey(d => d.UomEntry)
+                .HasConstraintName("fk_OrdenServicioDetalle_uom");
         });
 
         modelBuilder.Entity<CondicionPago>(entity =>

@@ -14,7 +14,10 @@ namespace API.Domain.Interface
         decimal CantidadAbierta,
         decimal? Precio,
         string? CodAlmacen,
-        string? CodigoImpuesto);
+        string? CodigoImpuesto,
+        int? UomEntry = null,
+        string? UomCodigo = null,
+        decimal FactorUom = 1m);
 
     /// <summary>Un documento origen con al menos una línea de cantidad abierta > 0.</summary>
     public record DocumentoAbierto(

@@ -61,7 +61,8 @@ namespace API.Domain.Core
         }
 
         private sealed record Lin(int Entry, int NoLinea, int? BaseTipo, int? BaseEntry, int? BaseLinea, string? CodArticulo, string? Descripcion,
-            decimal? Cantidad, decimal? Precio, decimal? PrecioBruto, decimal? PrctjeDesc, string? CodigoImpuesto, decimal? Impuesto, string? CodAlmacen);
+            decimal? Cantidad, decimal? Precio, decimal? PrecioBruto, decimal? PrctjeDesc, string? CodigoImpuesto, decimal? Impuesto, string? CodAlmacen,
+            int? UomEntry = null, string? UomCodigo = null, decimal FactorUom = 1m, decimal? CantidadBase = null);
 
         private sealed record Consumo(int TipoDestino, int EntryDestino, int NumDocDestino, int BaseLinea, decimal Cantidad);
 
@@ -70,14 +71,14 @@ namespace API.Domain.Core
         private static Cab Mapear(Entrega h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc);
         private static Cab Mapear(Factura h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc);
 
-        private static Lin Mapear(CotizacionDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
-        private static Lin Mapear(PedidoDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
-        private static Lin Mapear(EntregaDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
-        private static Lin Mapear(FacturaDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
+        private static Lin Mapear(CotizacionDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
+        private static Lin Mapear(PedidoDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
+        private static Lin Mapear(EntregaDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
+        private static Lin Mapear(FacturaDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
 
         private static Cab Mapear(OrdenServicio h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, null, null, h.Comentario, h.Cancelado, null, h.EstadoServicio);
 
-        private static Lin Mapear(OrdenServicioDetalle d) => new(d.Entry, d.NoLinea, null, null, null, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, null, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen);
+        private static Lin Mapear(OrdenServicioDetalle d) => new(d.Entry, d.NoLinea, null, null, null, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, null, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
 
         /// <summary>Una orden de servicio solo se factura cuando está Terminada o Entregada.</summary>
         private static void ValidarOrdenFacturable(int tipoOrigen, Cab cab)
@@ -213,8 +214,10 @@ namespace API.Domain.Core
             {
                 var abierta = (l.Cantidad ?? 0m) - Consumido(consumos, l.NoLinea);
                 if (abierta <= 0m) continue;
+                var factor = l.FactorUom > 0m ? l.FactorUom : 1m;
                 abiertas.Add(new LineaAbiertaVenta(tipoOrigen, entry, l.NoLinea, l.CodArticulo, l.Descripcion,
-                    l.Cantidad ?? 0m, abierta, l.Precio, l.PrecioBruto, l.PrctjeDesc, l.CodigoImpuesto, l.Impuesto, l.CodAlmacen));
+                    l.Cantidad ?? 0m, abierta, l.Precio, l.PrecioBruto, l.PrctjeDesc, l.CodigoImpuesto, l.Impuesto, l.CodAlmacen,
+                    l.UomEntry, l.UomCodigo, factor, UnidadesLinea.CantidadBase(abierta, factor)));
             }
 
             if (abiertas.Count == 0)

@@ -15,19 +15,22 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<NumeracionDocumentoDet, int> _repoNumeracion;
         private readonly IEjecutorTransaccion _tx;
         private readonly IInventarioAsientoService _asiento;
+        private readonly IUnidadMedidaService? _unidades;
 
         public EntregaCompraDomain(
             IRepositorioGenerico<EntregaCompra, int> repoEntregaCompra,
             IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)> repoDetalle,
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoNumeracion,
             IEjecutorTransaccion tx,
-            IInventarioAsientoService asiento)
+            IInventarioAsientoService asiento,
+            IUnidadMedidaService? unidades = null)
         {
             _repoEntregaCompra = repoEntregaCompra;
             _repoDetalle = repoDetalle;
             _repoNumeracion = repoNumeracion;
             _tx = tx;
             _asiento = asiento;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -41,6 +44,16 @@ namespace API.Domain.Core
 
             if (serie.Bloqueado == "S")
                 throw new Exception("La serie está bloqueada y no se puede usar para registrar entregas de compra.");
+
+            var lineasList = lineas?.ToList() ?? new List<EntregaCompraDetalle>();
+            foreach (var linea in lineasList)
+            {
+                if ((linea.Cantidad ?? 0m) <= 0m) continue;
+                var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, linea.CodArticulo, linea.UomEntry, linea.Cantidad);
+                linea.UomEntry = uomEntry;
+                linea.FactorUom = factor;
+                linea.CantidadBase = cantBase;
+            }
 
             if (serie.Manual == "S")
             {
@@ -57,8 +70,6 @@ namespace API.Domain.Core
                 obj.NumDoc = serie.SigNumero.Value;
                 serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transacción
             }
-
-            var lineasList = lineas?.ToList() ?? new List<EntregaCompraDetalle>();
 
             return await _tx.EjecutarAsync(async () =>
             {
@@ -80,8 +91,8 @@ namespace API.Domain.Core
                         DocLinea: l.NoLinea,
                         CodArticulo: l.CodArticulo!,
                         CodAlmacen: l.CodAlmacen!,
-                        Cantidad: l.Cantidad!.Value,
-                        PrecioUnitario: l.Precio ?? 0m,
+                        Cantidad: l.CantidadBase ?? l.Cantidad!.Value,
+                        PrecioUnitario: UnidadesLinea.PrecioBase(l.Precio ?? 0m, l.FactorUom),
                         Fecha: obj.FechaDoc ?? DateTime.Now))
                     .ToList();
 

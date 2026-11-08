@@ -8,15 +8,24 @@ namespace API.Domain.Core
     public class PedidoCompraDetalleDomain : IPedidoCompraDetalleDomain
     {
         private readonly IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> _repoGenericoDet;
+        private readonly IUnidadMedidaService? _unidades;
 
-        public PedidoCompraDetalleDomain(IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> repoGenericoDet)
+        public PedidoCompraDetalleDomain(
+            IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> repoGenericoDet,
+            IUnidadMedidaService? unidades = null)
         {
             _repoGenericoDet = repoGenericoDet;
+            _unidades = unidades;
         }
 
         #region async methods
         public async Task<int> InsertarAsync(PedidoCompraDetalle obj)
         {
+            var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
+            obj.UomEntry = uomEntry;
+            obj.FactorUom = factor;
+            obj.CantidadBase = cantBase;
+
             var lineasExistentes = await ObtenerPorPedidoCompraAsync(obj.Entry);
             obj.NoLinea = lineasExistentes.Any() ? lineasExistentes.Max(x => x.NoLinea) + 1 : 1;
 
@@ -26,6 +35,11 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(int entry, int noLinea, PedidoCompraDetalle obj)
         {
+            var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
+            obj.UomEntry = uomEntry;
+            obj.FactorUom = factor;
+            obj.CantidadBase = cantBase;
+
             return await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
         }
 

@@ -173,7 +173,8 @@ namespace API.Domain.Core
 
                     lineasAbiertas.Add(new LineaAbierta(
                         linea.NoLinea, linea.CodArticulo!, linea.Descripcion, linea.Cantidad ?? 0m,
-                        abierta, linea.Precio, linea.CodAlmacen, linea.CodigoImpuesto));
+                        abierta, linea.Precio, linea.CodAlmacen, linea.CodigoImpuesto,
+                        linea.UomEntry, linea.UomEntryNavigation?.Codigo, linea.FactorUom));
                 }
                 if (lineasAbiertas.Count == 0) continue;
 

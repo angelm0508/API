@@ -49,7 +49,11 @@ namespace API.Application.Main
                         PrctjeDesc = l.PrctjeDesc,
                         CodigoImpuesto = l.CodigoImpuesto,
                         Impuesto = l.Impuesto,
-                        CodAlmacen = l.CodAlmacen
+                        CodAlmacen = l.CodAlmacen,
+                        UomEntry = l.UomEntry,
+                        UomCodigo = l.UomCodigo,
+                        FactorUom = l.FactorUom,
+                        CantidadBase = l.CantidadBase
                     }).ToList()
                 };
                 respuesta.Resultado = true;

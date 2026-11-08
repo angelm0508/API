@@ -10,13 +10,16 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)> _repoGenericoDet;
 
         private readonly IDocumentoBaseService _documentoBase;
+        private readonly IUnidadMedidaService? _unidades;
 
         public PedidoDetalleDomain(
             IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)> repoGenericoDet,
-            IDocumentoBaseService documentoBase)
+            IDocumentoBaseService documentoBase,
+            IUnidadMedidaService? unidades = null)
         {
             _repoGenericoDet = repoGenericoDet;
             _documentoBase = documentoBase;
+            _unidades = unidades;
         }
 
         #region async methods
@@ -26,6 +29,11 @@ namespace API.Domain.Core
             // únicamente al crear el documento con sus líneas (PedidoDomain.InsertarAsync(Pedido, líneas)).
             if (obj.BaseTipo > 0)
                 throw new Exception("Las líneas copiadas se definen al crear el documento.");
+
+            var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
+            obj.UomEntry = uomEntry;
+            obj.FactorUom = factor;
+            obj.CantidadBase = cantBase;
 
             var lineasExistentes = await ObtenerPorPedidoAsync(obj.Entry);
             obj.NoLinea = lineasExistentes.Any() ? lineasExistentes.Max(x => x.NoLinea) + 1 : 1;
@@ -48,8 +56,11 @@ namespace API.Domain.Core
                 {
                     if (!string.Equals(obj.CodArticulo, guardada.CodArticulo, StringComparison.Ordinal))
                         throw new Exception("El artículo de una línea copiada no se puede cambiar.");
+                    if (obj.UomEntry.HasValue && guardada.UomEntry.HasValue && obj.UomEntry != guardada.UomEntry)
+                        throw new Exception("La unidad de medida de una línea copiada no se puede cambiar.");
                     if ((obj.Cantidad ?? 0m) > (guardada.Cantidad ?? 0m))
                         throw new Exception("La cantidad de una línea copiada no puede aumentar. Cree otro documento con lo que falta.");
+                    obj.UomEntry ??= guardada.UomEntry;
                 }
 
                 obj.BaseTipo = guardada.BaseTipo;
@@ -59,6 +70,11 @@ namespace API.Domain.Core
                 obj.DocDestinoEntry = guardada.DocDestinoEntry;
                 obj.BaseRef = guardada.BaseRef;
             }
+
+            var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
+            obj.UomEntry = uomEntry;
+            obj.FactorUom = factor;
+            obj.CantidadBase = cantBase;
 
             return await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
         }

@@ -47,7 +47,8 @@ namespace API.Domain.Interface
     public sealed record LineaAbiertaVenta(
         int BaseTipo, int BaseEntry, int BaseLinea, string? CodArticulo, string? Descripcion,
         decimal CantidadOrigen, decimal CantidadAbierta, decimal? Precio, decimal? PrecioBruto, decimal? PrctjeDesc,
-        string? CodigoImpuesto, decimal? Impuesto, string? CodAlmacen);
+        string? CodigoImpuesto, decimal? Impuesto, string? CodAlmacen,
+        int? UomEntry = null, string? UomCodigo = null, decimal FactorUom = 1m, decimal? CantidadBase = null);
 
     public sealed record CabeceraBorrador(
         string? CodigoSn, string? NombreSn, string? Direccion, string? MonedaDoc,

@@ -14,17 +14,20 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<Impuesto, string> _repoImpuesto;
         private readonly IRepositorioGenerico<Mecanico, string> _repoMecanico;
         private readonly IInventarioAsientoService _asiento;
+        private readonly IUnidadMedidaService? _unidades;
 
         public OrdenServicioLineaService(
             IRepositorioGenerico<Articulo, string> repoArticulo,
             IRepositorioGenerico<Impuesto, string> repoImpuesto,
             IRepositorioGenerico<Mecanico, string> repoMecanico,
-            IInventarioAsientoService asiento)
+            IInventarioAsientoService asiento,
+            IUnidadMedidaService? unidades = null)
         {
             _repoArticulo = repoArticulo;
             _repoImpuesto = repoImpuesto;
             _repoMecanico = repoMecanico;
             _asiento = asiento;
+            _unidades = unidades;
         }
 
         private static decimal Redondear(decimal valor) => Math.Round(valor, 2, MidpointRounding.AwayFromZero);
@@ -51,6 +54,8 @@ namespace API.Domain.Core
 
                 if ((linea.Cantidad ?? 0m) <= 0m)
                     throw new Exception($"Línea {n}: la cantidad debe ser mayor que 0.");
+
+                var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, codArticulo, linea.UomEntry, linea.Cantidad);
 
                 if (linea.Precio is null)
                     throw new Exception($"Línea {n}: el precio es requerido.");
@@ -103,6 +108,9 @@ namespace API.Domain.Core
                 linea.EsInsumo = esInsumo ? "S" : "N";
                 linea.TipoObjeto = TipoObjetoOrden;
                 linea.PrctjeDesc = descuento;
+                linea.UomEntry = uomEntry;
+                linea.FactorUom = factor;
+                linea.CantidadBase = cantBase;
 
                 var bruto = Redondear(linea.Cantidad!.Value * linea.Precio!.Value);
                 var montoDesc = Redondear(bruto * descuento / 100m);
@@ -123,8 +131,8 @@ namespace API.Domain.Core
                     DocLinea: l.NoLinea,
                     CodArticulo: l.CodArticulo!,
                     CodAlmacen: l.CodAlmacen!,
-                    Cantidad: -(l.Cantidad!.Value),   // negativo = salida de stock
-                    PrecioUnitario: l.Precio ?? 0m,
+                    Cantidad: -(l.CantidadBase ?? l.Cantidad!.Value),   // negativo = salida de stock (siempre en unidad base)
+                    PrecioUnitario: UnidadesLinea.PrecioBase(l.Precio ?? 0m, l.FactorUom),
                     Fecha: fecha))
                 .ToList();
 

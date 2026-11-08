@@ -16,5 +16,6 @@ namespace API.Application.DTO.entradaMercancia
         // artículo (promedio o estándar según su método de valuación).
         public decimal? CostoUnitario { get; set; }
         public string? CodAlmacen { get; set; }
+        public int? UomEntry { get; set; }
     }
 }

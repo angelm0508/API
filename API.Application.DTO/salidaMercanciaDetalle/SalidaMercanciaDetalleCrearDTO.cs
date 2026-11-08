@@ -16,5 +16,6 @@ namespace API.Application.DTO.salidaMercancia
         // artículo); este valor se ignora. Se acepta solo por simetría con EntradaMercancia.
         public decimal? CostoUnitario { get; set; }
         public string? CodAlmacen { get; set; }
+        public int? UomEntry { get; set; }
     }
 }

@@ -23,6 +23,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<ISaldoFacturaService> _saldos = new();
         private readonly Mock<IResolutorVencimiento> _resolutor = new();
         private readonly Mock<ICreditoClienteService> _credito = new();
+        private readonly Mock<IUnidadMedidaService> _unidades = new();
         private readonly AutorizacionCreditoContexto _contexto = new();
         private readonly NumeracionDocumentoDet _serie;
         private readonly List<AutorizacionCredito> _autorizaciones = new();
@@ -35,8 +36,9 @@ namespace API.Service.WebApi.Tests.Domain
         public FacturaDomainCreditoTests()
         {
             _domain = new FacturaDomain(_repoFactura.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object,
-                _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object, _credito.Object, _contexto, _repoAutorizacion.Object);
+                _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object, _credito.Object, _contexto, _repoAutorizacion.Object, _unidades.Object);
 
+            _unidades.Setup(s => s.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>())).ReturnsAsync(new UnidadResuelta(null, null, 1m));
             _serie = new NumeracionDocumentoDet { CodigoObj = "6", Serie = 4, SigNumero = 5, Bloqueado = "N", Manual = "N", SubTipoDoc = "--", TipoSerie = "N", NombreSerie = "P" };
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(_serie);
             _resolutor.Setup(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))

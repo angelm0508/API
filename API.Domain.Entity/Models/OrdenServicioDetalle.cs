@@ -35,5 +35,13 @@ public partial class OrdenServicioDetalle
 
     public virtual Articulo? CodArticuloNavigation { get; set; }
 
+    public int? UomEntry { get; set; }
+
+    public decimal FactorUom { get; set; } = 1m;
+
+    public decimal? CantidadBase { get; set; }
+
     public virtual Almacen? CodAlmacenNavigation { get; set; }
+
+    public virtual UnidadMedidaArticulo? UomEntryNavigation { get; set; }
 }

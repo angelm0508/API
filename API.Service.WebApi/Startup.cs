@@ -317,6 +317,7 @@ namespace API.Service.WebApi
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IEjecutorTransaccion, EjecutorTransaccion>();
             services.AddTransient<IInventarioAsientoService, InventarioAsientoService>();
+            services.AddTransient<IUnidadMedidaService, UnidadMedidaService>();
             services.AddTransient<IDocumentoBaseService, DocumentoBaseService>();
             services.AddTransient<IDocumentoBaseApplication, DocumentoBaseApplication>();
 
@@ -324,6 +325,7 @@ namespace API.Service.WebApi
             services.AddTransient<IExistenciaApplication, ExistenciaApplication>();
             services.AddTransient<IArticuloAlmacenDomain, ArticuloAlmacenDomain>();
             services.AddTransient<IArticuloAlmacenApplication, ArticuloAlmacenApplication>();
+            services.AddTransient<IUnidadArticuloApplication, UnidadArticuloApplication>();
 
             services.AddTransient<IMovimientoInventarioDomain, MovimientoInventarioDomain>();
             services.AddTransient<IMovimientoInventarioApplication, MovimientoInventarioApplication>();
