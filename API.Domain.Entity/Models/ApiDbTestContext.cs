@@ -219,7 +219,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('N')");
             entity.Property(e => e.Nombre).HasMaxLength(200);
-            entity.Property(e => e.PrecioUnitario).HasColumnType("decimal(19, 0)");
+            entity.Property(e => e.PrecioUnitario).HasColumnType("decimal(19, 6)");
             entity.Property(e => e.MetodoValuacion)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('P')");

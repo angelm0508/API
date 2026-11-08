@@ -2210,3 +2210,12 @@ DEALLOCATE c;
 GO
 PRINT 'Unidades de medida en documentos aplicado.';
 SELECT t.name AS Tabla FROM sys.tables t JOIN sys.columns c ON c.object_id = t.object_id AND c.name = 'UomEntry' ORDER BY t.name;
+
+-- ===== Articulo.PrecioUnitario con 6 decimales (sql/2026-11-08-articulo-precio-unitario-decimales.sql) =====
+GO
+IF EXISTS (
+    SELECT 1 FROM sys.columns
+    WHERE object_id = OBJECT_ID('dbo.Articulo') AND name = 'PrecioUnitario'
+      AND (precision <> 19 OR scale <> 6))
+    ALTER TABLE dbo.Articulo ALTER COLUMN PrecioUnitario DECIMAL(19,6) NULL;
+GO
