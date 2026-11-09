@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\API.Application.DTO\API.Application.DTO.csproj" />
     <ProjectReference Include="..\API.Domain.Entity\API.Domain.Entity.csproj" />
+    <ProjectReference Include="..\API.Domain.Interface\API.Domain.Interface.csproj" />
   </ItemGroup>
 
 </Project>
