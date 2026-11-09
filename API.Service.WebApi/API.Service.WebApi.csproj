@@ -23,6 +23,7 @@
     <ProjectReference Include="..\API.Infraestructure.Repository\API.Infraestructure.Repository.csproj" />
     <ProjectReference Include="..\API.Transversal.Common\API.Transversal.Common.csproj" />
     <ProjectReference Include="..\API.Transversal.Mapper\API.Transversal.Mapper.csproj" />
+    <ProjectReference Include="..\API.Infraestructure.Exportacion\API.Infraestructure.Exportacion.csproj" />
   </ItemGroup>
 
 </Project>

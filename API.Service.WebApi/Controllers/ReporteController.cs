@@ -6,6 +6,7 @@ using API.Domain.Interface.Reportes;
 using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace API.Service.WebApi.Controllers
 {
@@ -20,9 +21,12 @@ namespace API.Service.WebApi.Controllers
     {
         private readonly IReporteApplication _app;
 
-        public ReporteController(IReporteApplication app)
+        private readonly IConfiguration _config;
+
+        public ReporteController(IReporteApplication app, IConfiguration config)
         {
             _app = app;
+            _config = config;
         }
 
         [HttpGet]
@@ -51,6 +55,22 @@ namespace API.Service.WebApi.Controllers
 
             var respuesta = await _app.EjecutarAsync(codigo, solicitud);
             return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        [HttpPost("{codigo}/exportar")]
+        public async Task<IActionResult> Exportar([FromRoute] string codigo, [FromQuery] string formato, [FromBody] ExportarReporteRequest request)
+        {
+            if (request is null)
+                return BadRequest(new Respuesta<ArchivoReporteDTO> { Mensaje = "La solicitud del reporte es obligatoria." });
+
+            var error = Verificar(_app.ObtenerDefinicion(codigo));
+            if (error is not null) return error;
+
+            var empresa = _config["Reportes:Empresa"] ?? "Sistema de Gestión";
+            var respuesta = await _app.ExportarAsync(codigo, request, formato, empresa, User.Identity?.Name ?? "");
+            if (!respuesta.Resultado) return BadRequest(respuesta);
+
+            return File(respuesta.Dato.Contenido, respuesta.Dato.ContentType, respuesta.Dato.NombreArchivo);
         }
 
         /// <summary>null si el reporte existe y el usuario puede verlo; si no, el 404 o el 403 que corresponde.</summary>

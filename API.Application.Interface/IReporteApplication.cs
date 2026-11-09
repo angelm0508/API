@@ -13,5 +13,8 @@ namespace API.Application.Interface
         Respuesta<ReporteDefinicion> ObtenerDefinicion(string codigo);
 
         Task<Respuesta<ResultadoReporte>> EjecutarAsync(string codigo, SolicitudReporte solicitud);
+
+        /// <summary>Ejecuta el reporte con la solicitud y lo genera en el formato pedido (xlsx, pdf o csv).</summary>
+        Task<Respuesta<ArchivoReporteDTO>> ExportarAsync(string codigo, ExportarReporteRequest request, string formato, string empresa, string usuario);
     }
 }

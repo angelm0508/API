@@ -8,6 +8,7 @@ using API.Domain.Core.Reportes.Definiciones;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Reportes;
+using API.Infraestructure.Exportacion;
 using API.Infraestructure.Interface;
 using API.Infraestructure.Repository;
 using API.Transversal.Mapper;
@@ -322,6 +323,7 @@ namespace API.Service.WebApi
             services.AddTransient<IReporte, ExistenciasValorReporte>();
             services.AddTransient<ICatalogoReportes, CatalogoReportes>();
             services.AddTransient<IReporteApplication, ReporteApplication>();
+            services.AddTransient<IExportadorReporte, CsvExportador>();
             services.AddTransient<IRepositorioGenerico<MovimientoInventario, int>, MovimientoInventarioRepositorio>();
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IEjecutorTransaccion, EjecutorTransaccion>();

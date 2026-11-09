@@ -27,6 +27,7 @@
     <ProjectReference Include="..\API.Application.Interface\API.Application.Interface.csproj" />
     <ProjectReference Include="..\API.Application.DTO\API.Application.DTO.csproj" />
     <ProjectReference Include="..\API.Transversal.Common\API.Transversal.Common.csproj" />
+    <ProjectReference Include="..\API.Infraestructure.Exportacion\API.Infraestructure.Exportacion.csproj" />
   </ItemGroup>
 
 </Project>

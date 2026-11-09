@@ -7,6 +7,7 @@ using API.Service.WebApi.Authorization;
 using API.Service.WebApi.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 
@@ -24,8 +25,8 @@ namespace API.Service.WebApi.Tests.Controllers
             return new ClaimsPrincipal(new ClaimsIdentity(claims, "Test"));
         }
 
-        private ReporteController Crear(ClaimsPrincipal? usuario = null) =>
-            new(_app.Object)
+        private ReporteController Crear(ClaimsPrincipal? usuario = null, IConfiguration? config = null) =>
+            new(_app.Object, config ?? new ConfigurationBuilder().Build())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = usuario ?? Usuario() } }
             };
@@ -172,6 +173,81 @@ namespace API.Service.WebApi.Tests.Controllers
             var r = await Crear(Usuario(superusuario: true)).Ejecutar("ventas", new SolicitudReporte());
 
             Assert.Same(mala, Assert.IsType<BadRequestObjectResult>(r.Result).Value);
+        }
+
+        // ---------- exportar ----------
+
+        private static ArchivoReporteDTO Archivo() => new() { Contenido = new byte[] { 9, 8 }, ContentType = "text/csv", NombreArchivo = "ventas-20261108-1030.csv" };
+
+        [Fact]
+        public async Task Exportar_ConPermiso_DevuelveElArchivoYUsaLaEmpresaConfigurada()
+        {
+            var req = new ExportarReporteRequest();
+            var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> { ["Reportes:Empresa"] = "Mi Empresa" }).Build();
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.ExportarAsync("ventas", req, "csv", "Mi Empresa", "tester"))
+                .ReturnsAsync(new Respuesta<ArchivoReporteDTO> { Resultado = true, Dato = Archivo() });
+
+            var r = await Crear(Usuario("ReportesVentas:V"), config).Exportar("ventas", "csv", req);
+
+            var archivo = Assert.IsType<FileContentResult>(r);
+            Assert.Equal("text/csv", archivo.ContentType);
+            Assert.Equal("ventas-20261108-1030.csv", archivo.FileDownloadName);
+            Assert.Equal(new byte[] { 9, 8 }, archivo.FileContents);
+        }
+
+        [Fact]
+        public async Task Exportar_SinEmpresaConfigurada_UsaSistemaDeGestion()
+        {
+            var req = new ExportarReporteRequest();
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.ExportarAsync("ventas", req, "csv", "Sistema de Gestión", "tester"))
+                .ReturnsAsync(new Respuesta<ArchivoReporteDTO> { Resultado = true, Dato = Archivo() });
+
+            var r = await Crear(Usuario(superusuario: true)).Exportar("ventas", "csv", req);
+
+            Assert.IsType<FileContentResult>(r);
+        }
+
+        [Fact]
+        public async Task Exportar_SinPermiso_Devuelve403YNoGeneraNada()
+        {
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+
+            var r = await Crear(Usuario("ReportesCompras:V")).Exportar("ventas", "csv", new ExportarReporteRequest());
+
+            Es403(r);
+            _app.Verify(a => a.ExportarAsync(It.IsAny<string>(), It.IsAny<ExportarReporteRequest>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Exportar_ErrorDeNegocio_DevuelveBadRequest()
+        {
+            var mala = new Respuesta<ArchivoReporteDTO> { Resultado = false, Mensaje = "El formato 'x' no es válido. Use xlsx, pdf o csv." };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.ExportarAsync("ventas", It.IsAny<ExportarReporteRequest>(), "x", It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(mala);
+
+            var r = await Crear(Usuario(superusuario: true)).Exportar("ventas", "x", new ExportarReporteRequest());
+
+            Assert.Same(mala, Assert.IsType<BadRequestObjectResult>(r).Value);
+        }
+
+        [Fact]
+        public async Task Exportar_ReporteInexistente_DevuelveNotFound()
+        {
+            _app.Setup(a => a.ObtenerDefinicion("x")).Returns(new Respuesta<ReporteDefinicion> { Resultado = false, Mensaje = "El reporte 'x' no existe." });
+
+            var r = await Crear().Exportar("x", "csv", new ExportarReporteRequest());
+
+            Assert.IsType<NotFoundObjectResult>(r);
+        }
+
+        [Fact]
+        public async Task Exportar_CuerpoNulo_DevuelveBadRequest()
+        {
+            var r = await Crear().Exportar("ventas", "csv", null!);
+
+            Assert.IsType<BadRequestObjectResult>(r);
         }
     }
 }
