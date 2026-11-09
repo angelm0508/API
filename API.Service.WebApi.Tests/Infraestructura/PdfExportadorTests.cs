@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using API.Domain.Interface.Reportes;
 using API.Infraestructure.Exportacion;
 using API.Service.WebApi.Tests.TestHelpers;
@@ -63,12 +65,29 @@ namespace API.Service.WebApi.Tests.Infraestructura
             Assert.True(con.Length > sin.Length);
         }
 
-        [Fact]
-        public void MasDeSieteColumnas_GeneraElPdfEnHorizontal()
+        private static (double Ancho, double Alto) TamanoPagina(byte[] bytes)
         {
-            var bytes = new PdfExportador().Exportar(Plano(9, 3), Def, Ctx());
+            var texto = Encoding.Latin1.GetString(bytes);
+            var m = Regex.Match(texto, @"/MediaBox\s*\[\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\]");
+            Assert.True(m.Success, "No se encontró /MediaBox legible en el PDF.");
+            var v = Enumerable.Range(1, 4).Select(i => double.Parse(m.Groups[i].Value, CultureInfo.InvariantCulture)).ToArray();
+            return (v[2] - v[0], v[3] - v[1]);
+        }
 
-            Assert.True(EsPdf(bytes));
+        [Fact]
+        public void ConSieteColumnas_LaPaginaEsVertical()
+        {
+            var (ancho, alto) = TamanoPagina(new PdfExportador().Exportar(Plano(7, 3), Def, Ctx()));
+
+            Assert.True(ancho < alto, $"Se esperaba vertical y fue {ancho}x{alto}.");
+        }
+
+        [Fact]
+        public void ConOchoColumnas_LaPaginaEsHorizontal()
+        {
+            var (ancho, alto) = TamanoPagina(new PdfExportador().Exportar(Plano(8, 3), Def, Ctx()));
+
+            Assert.True(ancho > alto, $"Se esperaba horizontal y fue {ancho}x{alto}.");
         }
 
         [Fact]
