@@ -324,6 +324,7 @@ namespace API.Service.WebApi
             services.AddTransient<ICatalogoReportes, CatalogoReportes>();
             services.AddTransient<IReporteApplication, ReporteApplication>();
             services.AddTransient<IExportadorReporte, CsvExportador>();
+            services.AddTransient<IExportadorReporte, ExcelExportador>();
             services.AddTransient<IRepositorioGenerico<MovimientoInventario, int>, MovimientoInventarioRepositorio>();
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IEjecutorTransaccion, EjecutorTransaccion>();
