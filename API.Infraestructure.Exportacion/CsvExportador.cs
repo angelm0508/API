@@ -43,7 +43,7 @@ namespace API.Infraestructure.Exportacion
         {
             foreach (var g in grupos)
             {
-                var actual = new List<string>(ruta) { g.Etiqueta };
+                var actual = new List<string>(ruta) { NeutralizarFormula(g.Etiqueta) };
                 if (g.Hijos.Count > 0)
                 {
                     Recorrer(g.Hijos, actual, niveles, columnas, sb);
@@ -85,11 +85,15 @@ namespace API.Infraestructure.Exportacion
             }
 
             var texto = valor.ToString() ?? "";
-            // Neutraliza fórmulas (=, +, -, @) en las columnas de texto: Excel las ejecutaría al abrir el archivo.
-            if (columna.Tipo == TipoColumna.Texto && texto.Length > 0 && "=+-@".Contains(texto[0]))
-                texto = "'" + texto;
-            return texto;
+            return columna.Tipo == TipoColumna.Texto ? NeutralizarFormula(texto) : texto;
         }
+
+        /// <summary>
+        /// Neutraliza fórmulas (=, +, -, @) en los valores de texto (columnas de texto y etiquetas de grupo):
+        /// Excel las ejecutaría al abrir el archivo.
+        /// </summary>
+        private static string NeutralizarFormula(string texto) =>
+            texto.Length > 0 && "=+-@".Contains(texto[0]) ? "'" + texto : texto;
 
         private static void Linea(StringBuilder sb, IEnumerable<string> celdas)
         {

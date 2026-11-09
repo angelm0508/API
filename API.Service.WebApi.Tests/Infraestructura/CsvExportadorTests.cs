@@ -122,6 +122,36 @@ namespace API.Service.WebApi.Tests.Infraestructura
         }
 
         [Fact]
+        public void ConAgrupacion_NeutralizaLasFormulasEnLasEtiquetasDeGrupo()
+        {
+            var hoja1 = new GrupoReporte { Campo = "cliente", Titulo = "Cliente", Etiqueta = "=HYPERLINK(\"x\")", Clave = "k1", Conteo = 1, Subtotales = { ["cantidad"] = 1m } };
+            var hoja2 = new GrupoReporte { Campo = "cliente", Titulo = "Cliente", Etiqueta = "+34 cajas", Clave = "k2", Conteo = 1, Subtotales = { ["cantidad"] = 2m } };
+            var r = new ResultadoReporte { Columnas = { CCant }, Grupos = { hoja1, hoja2 } };
+
+            var (_, lineas) = Generar(r);
+
+            Assert.Equal("\"'=HYPERLINK(\"\"x\"\")\",1", lineas[1]);
+            Assert.Equal("'+34 cajas,2", lineas[2]);
+        }
+
+        [Fact]
+        public void ConAgrupacionDeDosNiveles_NeutralizaLasEtiquetasDeAmbasColumnasGrupo()
+        {
+            var hoja = new GrupoReporte
+            {
+                Campo = "fecha", Titulo = "Fecha", Etiqueta = "=HYPERLINK(\"x\")", Clave = "h", Conteo = 1,
+                Filas = { Fila(new DateTime(2026, 1, 5), "A", 1m, 10m) }
+            };
+            var raiz = new GrupoReporte { Campo = "cliente", Titulo = "Cliente", Etiqueta = "+1", Clave = "r", Conteo = 1, Hijos = { hoja } };
+            var r = new ResultadoReporte { Columnas = { CFecha, CCant, CDinero }, Grupos = { raiz } };
+
+            var (_, lineas) = Generar(r);
+
+            Assert.Equal("Grupo 1,Grupo 2,Fecha,Cantidad,Importe", lineas[0]);
+            Assert.Equal("'+1,\"'=HYPERLINK(\"\"x\"\")\",2026-01-05,1,10.00", lineas[1]);
+        }
+
+        [Fact]
         public void ConAgrupacionYSoloResumen_UnaFilaPorGrupoHojaConSusSubtotales()
         {
             var hoja = new GrupoReporte
