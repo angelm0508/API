@@ -313,6 +313,7 @@ namespace API.Service.WebApi
 
             services.AddTransient<IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)>, ExistenciaArticuloRepositorio>();
             services.AddTransient<IRepositorioGenerico<ArticuloAlmacen, (string CodArticulo, string CodAlmacen)>, ArticuloAlmacenRepositorio>();
+            services.AddTransient<IRepositorioGenerico<ReporteVista, int>, ReporteVistaRepositorio>();
             services.AddTransient<IRepositorioGenerico<MovimientoInventario, int>, MovimientoInventarioRepositorio>();
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IEjecutorTransaccion, EjecutorTransaccion>();

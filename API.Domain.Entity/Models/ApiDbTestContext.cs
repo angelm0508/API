@@ -127,6 +127,8 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<ArticuloAlmacen> ArticuloAlmacens { get; set; }
 
+    public virtual DbSet<ReporteVista> ReporteVistas { get; set; }
+
     public virtual DbSet<Modulo> Modulos { get; set; }
 
     public virtual DbSet<MovimientoInventario> MovimientoInventarios { get; set; }
@@ -1661,6 +1663,29 @@ public partial class ApiDbTestContext : DbContext
                 .HasForeignKey(d => d.CodAlmacen)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_articulo_almacen_almacen");
+        });
+
+        modelBuilder.Entity<ReporteVista>(entity =>
+        {
+            entity.HasKey(e => e.Entry).HasName("pk_reporte_vista");
+
+            entity.ToTable("ReporteVista");
+
+            entity.HasIndex(e => new { e.UsuarioId, e.CodigoReporte, e.Nombre }, "uq_reporte_vista").IsUnique();
+
+            entity.Property(e => e.CodigoReporte).HasMaxLength(50);
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())");
+
+            entity.HasOne<Usuario>().WithMany()
+                .HasForeignKey(d => d.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_reporte_vista_usuario");
         });
 
         modelBuilder.Entity<MovimientoInventario>(entity =>
