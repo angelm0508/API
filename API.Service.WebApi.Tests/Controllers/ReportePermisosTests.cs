@@ -34,6 +34,9 @@ namespace API.Service.WebApi.Tests.Controllers
         [InlineData("Definicion", "GET", "{codigo}")]
         [InlineData("Ejecutar", "POST", "{codigo}/ejecutar")]
         [InlineData("Exportar", "POST", "{codigo}/exportar")]
+        [InlineData("Vistas", "GET", "{codigo}/vistas")]
+        [InlineData("GuardarVista", "POST", "{codigo}/vistas")]
+        [InlineData("EliminarVista", "DELETE", "{codigo}/vistas/{entry:int}")]
         public void LasRutasYElVerboSonLosEsperados(string accion, string verbo, string ruta)
         {
             var metodo = typeof(ReporteController).GetMethod(accion)!;

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using API.Application.DTO;
 using API.Application.DTO.reporte;
 using API.Application.Interface;
@@ -248,6 +249,101 @@ namespace API.Service.WebApi.Tests.Controllers
             var r = await Crear().Exportar("ventas", "csv", null!);
 
             Assert.IsType<BadRequestObjectResult>(r);
+        }
+
+        // ---------- vistas guardadas ----------
+
+        private static ClaimsPrincipal SinId() =>
+            new(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "tester"), new Claim("SuperUsuario", "S") }, "Test"));
+
+        [Fact]
+        public async Task Vistas_ConPermiso_ListaLasDelUsuarioDelToken()
+        {
+            var buena = new Respuesta<List<ReporteVistaDTO>> { Resultado = true, Dato = new() };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.ObtenerVistasAsync(5, "ventas")).ReturnsAsync(buena);
+
+            var r = await Crear(Usuario("ReportesVentas:V", id: "5")).Vistas("ventas");
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task Vistas_SinPermiso_Devuelve403()
+        {
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+
+            var r = await Crear(Usuario("ReportesCompras:V")).Vistas("ventas");
+
+            Es403(r.Result!);
+        }
+
+        [Fact]
+        public async Task Vistas_SinIdentificadorDeUsuario_Devuelve401()
+        {
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+
+            var r = await Crear(SinId()).Vistas("ventas");
+
+            var no = Assert.IsType<UnauthorizedObjectResult>(r.Result);
+            Assert.Equal("No se pudo identificar al usuario.", ((Respuesta<List<ReporteVistaDTO>>)no.Value!).Mensaje);
+        }
+
+        [Fact]
+        public async Task GuardarVista_Ok_DevuelveOk()
+        {
+            var vista = new GuardarVistaDTO { Nombre = "V", Configuracion = JsonDocument.Parse("{}").RootElement.Clone() };
+            var buena = new Respuesta<ReporteVistaDTO> { Resultado = true, Dato = new ReporteVistaDTO { Entry = 3 } };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.GuardarVistaAsync(5, "ventas", vista)).ReturnsAsync(buena);
+
+            var r = await Crear(Usuario("ReportesVentas:V", id: "5")).GuardarVista("ventas", vista);
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task GuardarVista_ErrorDeNegocio_DevuelveBadRequest()
+        {
+            var mala = new Respuesta<ReporteVistaDTO> { Resultado = false, Mensaje = "El nombre de la vista es obligatorio." };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.GuardarVistaAsync(It.IsAny<int>(), "ventas", It.IsAny<GuardarVistaDTO>())).ReturnsAsync(mala);
+
+            var r = await Crear(Usuario(superusuario: true)).GuardarVista("ventas", new GuardarVistaDTO());
+
+            Assert.Same(mala, Assert.IsType<BadRequestObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task GuardarVista_CuerpoNulo_DevuelveBadRequest()
+        {
+            var r = await Crear().GuardarVista("ventas", null!);
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
+        }
+
+        [Fact]
+        public async Task EliminarVista_Ok_DevuelveOk()
+        {
+            var buena = new Respuesta<bool> { Resultado = true, Dato = true };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.EliminarVistaAsync(5, "ventas", 9)).ReturnsAsync(buena);
+
+            var r = await Crear(Usuario("ReportesVentas:V", id: "5")).EliminarVista("ventas", 9);
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task EliminarVista_Inexistente_DevuelveNotFound()
+        {
+            var mala = new Respuesta<bool> { Resultado = false, Mensaje = "La vista no existe." };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.EliminarVistaAsync(It.IsAny<int>(), "ventas", 9)).ReturnsAsync(mala);
+
+            var r = await Crear(Usuario(superusuario: true)).EliminarVista("ventas", 9);
+
+            Assert.Same(mala, Assert.IsType<NotFoundObjectResult>(r.Result).Value);
         }
     }
 }

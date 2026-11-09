@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Application.DTO;
 using API.Application.DTO.reporte;
 using API.Application.Interface;
@@ -72,6 +73,49 @@ namespace API.Service.WebApi.Controllers
 
             return File(respuesta.Dato.Contenido, respuesta.Dato.ContentType, respuesta.Dato.NombreArchivo);
         }
+
+        [HttpGet("{codigo}/vistas")]
+        public async Task<ActionResult<Respuesta<List<ReporteVistaDTO>>>> Vistas([FromRoute] string codigo)
+        {
+            var error = Verificar(_app.ObtenerDefinicion(codigo));
+            if (error is not null) return error;
+            if (!TryUsuarioId(out var usuarioId)) return SinUsuario<List<ReporteVistaDTO>>();
+
+            var respuesta = await _app.ObtenerVistasAsync(usuarioId, codigo);
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        [HttpPost("{codigo}/vistas")]
+        public async Task<ActionResult<Respuesta<ReporteVistaDTO>>> GuardarVista([FromRoute] string codigo, [FromBody] GuardarVistaDTO vista)
+        {
+            if (vista is null)
+                return BadRequest(new Respuesta<ReporteVistaDTO> { Mensaje = "La vista es obligatoria." });
+
+            var error = Verificar(_app.ObtenerDefinicion(codigo));
+            if (error is not null) return error;
+            if (!TryUsuarioId(out var usuarioId)) return SinUsuario<ReporteVistaDTO>();
+
+            var respuesta = await _app.GuardarVistaAsync(usuarioId, codigo, vista);
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        [HttpDelete("{codigo}/vistas/{entry:int}")]
+        public async Task<ActionResult<Respuesta<bool>>> EliminarVista([FromRoute] string codigo, [FromRoute] int entry)
+        {
+            var error = Verificar(_app.ObtenerDefinicion(codigo));
+            if (error is not null) return error;
+            if (!TryUsuarioId(out var usuarioId)) return SinUsuario<bool>();
+
+            var respuesta = await _app.EliminarVistaAsync(usuarioId, codigo, entry);
+            if (respuesta.Resultado) return Ok(respuesta);
+            return respuesta.Mensaje.EndsWith("no existe.") ? NotFound(respuesta) : BadRequest(respuesta);
+        }
+
+        private bool TryUsuarioId(out int usuarioId) =>
+            int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out usuarioId);
+
+        private ActionResult SinUsuario<T>() =>
+            Unauthorized(new Respuesta<T> { Mensaje = "No se pudo identificar al usuario." });
 
         /// <summary>null si el reporte existe y el usuario puede verlo; si no, el 404 o el 403 que corresponde.</summary>
         private ActionResult? Verificar(Respuesta<ReporteDefinicion> definicion)

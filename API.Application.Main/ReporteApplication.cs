@@ -1,3 +1,4 @@
+using System.Text.Json;
 using API.Application.DTO;
 using API.Application.DTO.reporte;
 using API.Application.Interface;
@@ -12,11 +13,14 @@ namespace API.Application.Main
 
         private readonly IEnumerable<IExportadorReporte> _exportadores;
 
-        public ReporteApplication(ICatalogoReportes catalogo, IMotorReportes motor, IEnumerable<IExportadorReporte> exportadores)
+        private readonly IReporteVistaDomain _vistas;
+
+        public ReporteApplication(ICatalogoReportes catalogo, IMotorReportes motor, IEnumerable<IExportadorReporte> exportadores, IReporteVistaDomain vistas)
         {
             _catalogo = catalogo;
             _motor = motor;
             _exportadores = exportadores;
+            _vistas = vistas;
         }
 
         public Respuesta<List<ReporteResumenDTO>> ObtenerCatalogo(Func<string, bool> puedeVerModulo)
@@ -111,6 +115,80 @@ namespace API.Application.Main
             }
             return respuesta;
         }
+
+        public async Task<Respuesta<List<ReporteVistaDTO>>> ObtenerVistasAsync(int usuarioId, string codigo)
+        {
+            var respuesta = new Respuesta<List<ReporteVistaDTO>>();
+            try
+            {
+                ExigirReporte(codigo);
+                var vistas = await _vistas.ObtenerAsync(usuarioId, codigo);
+                respuesta.Dato = vistas.Select(AVistaDto).ToList();
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Consulta realizada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
+
+        public async Task<Respuesta<ReporteVistaDTO>> GuardarVistaAsync(int usuarioId, string codigo, GuardarVistaDTO vista)
+        {
+            var respuesta = new Respuesta<ReporteVistaDTO>();
+            try
+            {
+                ExigirReporte(codigo);
+                if (vista is null || vista.Configuracion.ValueKind != JsonValueKind.Object)
+                    throw new ReporteInvalidoException("La configuración de la vista no es válida.");
+
+                var guardada = await _vistas.GuardarAsync(usuarioId, codigo, vista.Nombre, vista.Configuracion.GetRawText());
+                respuesta.Dato = AVistaDto(guardada);
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Vista guardada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
+
+        public async Task<Respuesta<bool>> EliminarVistaAsync(int usuarioId, string codigo, int entry)
+        {
+            var respuesta = new Respuesta<bool>();
+            try
+            {
+                ExigirReporte(codigo);
+                if (!await _vistas.EliminarAsync(usuarioId, codigo, entry))
+                {
+                    respuesta.Mensaje = "La vista no existe.";
+                    return respuesta;
+                }
+                respuesta.Dato = true;
+                respuesta.Resultado = true;
+                respuesta.Mensaje = "Vista eliminada correctamente.";
+            }
+            catch (Exception ex)
+            {
+                respuesta.Mensaje = ex.Message;
+            }
+            return respuesta;
+        }
+
+        private void ExigirReporte(string codigo)
+        {
+            if (_catalogo.Buscar(codigo) is null) throw new ReporteNoExisteException(codigo);
+        }
+
+        private static ReporteVistaDTO AVistaDto(ReporteVistaDato dato) => new()
+        {
+            Entry = dato.Entry,
+            Nombre = dato.Nombre,
+            Configuracion = JsonDocument.Parse(dato.Configuracion).RootElement.Clone(),
+            FechaActualizacion = dato.FechaActualizacion
+        };
 
         private static byte[]? DecodificarGrafico(string? base64)
         {

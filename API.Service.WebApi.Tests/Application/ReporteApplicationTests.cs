@@ -1,3 +1,5 @@
+using System.Text.Json;
+using API.Application.DTO.reporte;
 using API.Application.Main;
 using API.Domain.Interface.Reportes;
 using Moq;
@@ -12,6 +14,7 @@ namespace API.Service.WebApi.Tests.Application
         private readonly Mock<IReporte> _ventas = new();
         private readonly Mock<IReporte> _stock = new();
         private readonly Mock<IExportadorReporte> _csv = new();
+        private readonly Mock<IReporteVistaDomain> _vistas = new();
         private readonly ReporteApplication _app;
 
         private static ReporteDefinicion Def(string codigo, string modulo) =>
@@ -27,7 +30,7 @@ namespace API.Service.WebApi.Tests.Application
             _csv.SetupGet(e => e.Formato).Returns("csv");
             _csv.SetupGet(e => e.ContentType).Returns("text/csv");
             _csv.SetupGet(e => e.Extension).Returns("csv");
-            _app = new ReporteApplication(_catalogo.Object, _motor.Object, new[] { _csv.Object });
+            _app = new ReporteApplication(_catalogo.Object, _motor.Object, new[] { _csv.Object }, _vistas.Object);
         }
 
         [Fact]
@@ -206,6 +209,90 @@ namespace API.Service.WebApi.Tests.Application
             var r = await _app.ExportarAsync("ventas", Pedido("data:image/png;base64," + PngDe1x1), "csv", "E", "u");
 
             Assert.True(r.Resultado);
+        }
+
+        // ---------- vistas guardadas ----------
+
+        private static JsonElement Json(string texto) => JsonDocument.Parse(texto).RootElement.Clone();
+
+        [Fact]
+        public async Task ObtenerVistas_DevuelveLaConfiguracionComoObjetoJson()
+        {
+            _vistas.Setup(v => v.ObtenerAsync(5, "ventas")).ReturnsAsync(new[]
+            {
+                new ReporteVistaDato(1, "Mi vista", "{\"columnas\":[\"a\",\"b\"]}", new DateTime(2026, 11, 8))
+            });
+
+            var r = await _app.ObtenerVistasAsync(5, "ventas");
+
+            Assert.True(r.Resultado);
+            var vista = Assert.Single(r.Dato);
+            Assert.Equal("Mi vista", vista.Nombre);
+            Assert.Equal(2, vista.Configuracion.GetProperty("columnas").GetArrayLength());
+        }
+
+        [Fact]
+        public async Task ObtenerVistas_ReporteInexistente_DiceQueNoExiste()
+        {
+            var r = await _app.ObtenerVistasAsync(5, "nada");
+
+            Assert.False(r.Resultado);
+            Assert.Equal("El reporte 'nada' no existe.", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task GuardarVista_PasaElJsonCrudoAlDominio()
+        {
+            _vistas.Setup(v => v.GuardarAsync(5, "ventas", "Mi vista", "{\"a\":1}"))
+                   .ReturnsAsync(new ReporteVistaDato(7, "Mi vista", "{\"a\":1}", new DateTime(2026, 11, 8)));
+
+            var r = await _app.GuardarVistaAsync(5, "ventas", new GuardarVistaDTO { Nombre = "Mi vista", Configuracion = Json("{\"a\":1}") });
+
+            Assert.True(r.Resultado);
+            Assert.Equal(7, r.Dato.Entry);
+        }
+
+        [Fact]
+        public async Task GuardarVista_SinConfiguracion_Rechaza()
+        {
+            var r = await _app.GuardarVistaAsync(5, "ventas", new GuardarVistaDTO { Nombre = "V" });
+
+            Assert.False(r.Resultado);
+            Assert.Equal("La configuración de la vista no es válida.", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task GuardarVista_ErrorDelDominio_DevuelveElMensaje()
+        {
+            _vistas.Setup(v => v.GuardarAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                   .ThrowsAsync(new ReporteInvalidoException("El nombre de la vista es obligatorio."));
+
+            var r = await _app.GuardarVistaAsync(5, "ventas", new GuardarVistaDTO { Nombre = "", Configuracion = Json("{}") });
+
+            Assert.False(r.Resultado);
+            Assert.Equal("El nombre de la vista es obligatorio.", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task EliminarVista_Existente_DevuelveTrue()
+        {
+            _vistas.Setup(v => v.EliminarAsync(5, "ventas", 7)).ReturnsAsync(true);
+
+            var r = await _app.EliminarVistaAsync(5, "ventas", 7);
+
+            Assert.True(r.Resultado);
+            Assert.True(r.Dato);
+        }
+
+        [Fact]
+        public async Task EliminarVista_Inexistente_DiceQueNoExiste()
+        {
+            _vistas.Setup(v => v.EliminarAsync(5, "ventas", 7)).ReturnsAsync(false);
+
+            var r = await _app.EliminarVistaAsync(5, "ventas", 7);
+
+            Assert.False(r.Resultado);
+            Assert.Equal("La vista no existe.", r.Mensaje);
         }
     }
 }
