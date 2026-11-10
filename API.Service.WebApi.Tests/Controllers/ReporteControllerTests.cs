@@ -248,7 +248,44 @@ namespace API.Service.WebApi.Tests.Controllers
         {
             var r = await Crear().Exportar("ventas", "csv", null!);
 
-            Assert.IsType<BadRequestObjectResult>(r);
+            var mala = Assert.IsType<BadRequestObjectResult>(r);
+            Assert.Equal("La solicitud del reporte es obligatoria.", ((Respuesta<ArchivoReporteDTO>)mala.Value!).Mensaje);
+        }
+
+        [Fact]
+        public async Task Exportar_SinFormato_PasaCadenaVaciaYDevuelveElMensajeEnEspanol()
+        {
+            var mala = new Respuesta<ArchivoReporteDTO> { Resultado = false, Mensaje = "El formato '' no es válido. Use xlsx, pdf o csv." };
+            _app.Setup(a => a.ObtenerDefinicion("ventas")).Returns(DefinicionOk());
+            _app.Setup(a => a.ExportarAsync("ventas", It.IsAny<ExportarReporteRequest>(), "", It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(mala);
+
+            var r = await Crear(Usuario(superusuario: true)).Exportar("ventas", null, new ExportarReporteRequest());
+
+            Assert.Same(mala, Assert.IsType<BadRequestObjectResult>(r).Value);
+        }
+
+        // El enlace de modelos del framework responde en inglés ("A non-empty request body is required" / "The formato field is required")
+        // antes de entrar a la acción. Estas pruebas fijan que los parámetros admiten cuerpo vacío y formato ausente, para que
+        // las validaciones en español de las acciones sean alcanzables.
+        [Theory]
+        [InlineData(nameof(ReporteController.Ejecutar), "solicitud")]
+        [InlineData(nameof(ReporteController.Exportar), "request")]
+        [InlineData(nameof(ReporteController.GuardarVista), "vista")]
+        public void ElCuerpoPuedeVenirVacio_ParaQueLaValidacionEnEspanolSeaAlcanzable(string accion, string parametro)
+        {
+            var p = typeof(ReporteController).GetMethod(accion)!.GetParameters().Single(x => x.Name == parametro);
+
+            var fromBody = (Microsoft.AspNetCore.Mvc.FromBodyAttribute)p.GetCustomAttributes(typeof(Microsoft.AspNetCore.Mvc.FromBodyAttribute), false).Single();
+            Assert.Equal(Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow, fromBody.EmptyBodyBehavior);
+            Assert.Equal(System.Reflection.NullabilityState.Nullable, new System.Reflection.NullabilityInfoContext().Create(p).WriteState);
+        }
+
+        [Fact]
+        public void ElFormatoPuedeFaltar_ParaQueLaValidacionEnEspanolSeaAlcanzable()
+        {
+            var p = typeof(ReporteController).GetMethod(nameof(ReporteController.Exportar))!.GetParameters().Single(x => x.Name == "formato");
+
+            Assert.Equal(System.Reflection.NullabilityState.Nullable, new System.Reflection.NullabilityInfoContext().Create(p).WriteState);
         }
 
         // ---------- vistas guardadas ----------
@@ -317,9 +354,10 @@ namespace API.Service.WebApi.Tests.Controllers
         [Fact]
         public async Task GuardarVista_CuerpoNulo_DevuelveBadRequest()
         {
-            var r = await Crear().GuardarVista("ventas", null!);
+            var r = await Crear().GuardarVista("ventas", null);
 
-            Assert.IsType<BadRequestObjectResult>(r.Result);
+            var mala = Assert.IsType<BadRequestObjectResult>(r.Result);
+            Assert.Equal("La vista es obligatoria.", ((Respuesta<ReporteVistaDTO>)mala.Value!).Mensaje);
         }
 
         [Fact]

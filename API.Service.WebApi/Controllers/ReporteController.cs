@@ -7,6 +7,7 @@ using API.Domain.Interface.Reportes;
 using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Configuration;
 
 namespace API.Service.WebApi.Controllers
@@ -46,7 +47,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost("{codigo}/ejecutar")]
-        public async Task<ActionResult<Respuesta<ResultadoReporte>>> Ejecutar([FromRoute] string codigo, [FromBody] SolicitudReporte solicitud)
+        public async Task<ActionResult<Respuesta<ResultadoReporte>>> Ejecutar([FromRoute] string codigo, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] SolicitudReporte? solicitud)
         {
             if (solicitud is null)
                 return BadRequest(new Respuesta<ResultadoReporte> { Mensaje = "La solicitud del reporte es obligatoria." });
@@ -59,7 +60,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost("{codigo}/exportar")]
-        public async Task<IActionResult> Exportar([FromRoute] string codigo, [FromQuery] string formato, [FromBody] ExportarReporteRequest request)
+        public async Task<IActionResult> Exportar([FromRoute] string codigo, [FromQuery] string? formato, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ExportarReporteRequest? request)
         {
             if (request is null)
                 return BadRequest(new Respuesta<ArchivoReporteDTO> { Mensaje = "La solicitud del reporte es obligatoria." });
@@ -68,7 +69,7 @@ namespace API.Service.WebApi.Controllers
             if (error is not null) return error;
 
             var empresa = _config["Reportes:Empresa"] ?? "Sistema de Gestión";
-            var respuesta = await _app.ExportarAsync(codigo, request, formato, empresa, User.Identity?.Name ?? "");
+            var respuesta = await _app.ExportarAsync(codigo, request, formato ?? "", empresa, User.Identity?.Name ?? "");
             if (!respuesta.Resultado) return BadRequest(respuesta);
 
             return File(respuesta.Dato.Contenido, respuesta.Dato.ContentType, respuesta.Dato.NombreArchivo);
@@ -86,7 +87,7 @@ namespace API.Service.WebApi.Controllers
         }
 
         [HttpPost("{codigo}/vistas")]
-        public async Task<ActionResult<Respuesta<ReporteVistaDTO>>> GuardarVista([FromRoute] string codigo, [FromBody] GuardarVistaDTO vista)
+        public async Task<ActionResult<Respuesta<ReporteVistaDTO>>> GuardarVista([FromRoute] string codigo, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] GuardarVistaDTO? vista)
         {
             if (vista is null)
                 return BadRequest(new Respuesta<ReporteVistaDTO> { Mensaje = "La vista es obligatoria." });
