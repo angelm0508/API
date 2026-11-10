@@ -89,11 +89,11 @@ namespace API.Infraestructure.Exportacion
         }
 
         /// <summary>
-        /// Neutraliza fórmulas (=, +, -, @) en los valores de texto (columnas de texto y etiquetas de grupo):
+        /// Neutraliza fórmulas (=, +, -, @, tabulador y retorno de carro iniciales) en los valores de texto (columnas de texto y etiquetas de grupo):
         /// Excel las ejecutaría al abrir el archivo.
         /// </summary>
         private static string NeutralizarFormula(string texto) =>
-            texto.Length > 0 && "=+-@".Contains(texto[0]) ? "'" + texto : texto;
+            texto.Length > 0 && "=+-@\t\r".Contains(texto[0]) ? "'" + texto : texto;
 
         private static void Linea(StringBuilder sb, IEnumerable<string> celdas)
         {

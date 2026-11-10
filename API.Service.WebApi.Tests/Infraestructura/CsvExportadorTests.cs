@@ -95,6 +95,18 @@ namespace API.Service.WebApi.Tests.Infraestructura
             Assert.Equal("'-5 cajas", lineas[3]);
         }
 
+        [Theory]
+        [InlineData("\tcmd", "'\tcmd")]
+        [InlineData("\rcmd", "\"'\rcmd\"")]
+        public void NeutralizaElTabuladorYElRetornoDeCarroIniciales(string texto, string esperado)
+        {
+            var r = new ResultadoReporte { Columnas = { CTexto }, Filas = { ReporteFalso.Fila(("cliente", texto)) } };
+
+            var (_, lineas) = Generar(r);
+
+            Assert.Equal(esperado, lineas[1]);
+        }
+
         [Fact]
         public void LosNumerosNegativosNoSeTocan()
         {
