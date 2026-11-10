@@ -11,6 +11,7 @@ namespace API.Infraestructure.Exportacion
     public sealed class ExcelExportador : IExportadorReporte
     {
         private const int FilaEncabezado = 6;
+        private const string TextoTruncado = "El resultado se truncó al máximo de filas: refine los filtros para ver el resto.";
 
         public string Formato => "xlsx";
         public string ContentType => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -34,6 +35,16 @@ namespace API.Infraestructure.Exportacion
             hoja.Cell(2, 1).Style.Font.Bold = true;
             hoja.Cell(3, 1).Value = contexto.FiltrosTexto;
             hoja.Cell(4, 1).Value = $"Generado por {contexto.Usuario} el {contexto.Fecha:yyyy-MM-dd HH:mm}";
+
+            var notas = resultado.Avisos.ToList();
+            if (resultado.Truncado) notas.Add(TextoTruncado);
+            if (notas.Count > 0)
+            {
+                var nota = hoja.Cell(5, 1);
+                nota.Value = string.Join(" ", notas);
+                nota.Style.Font.Italic = true;
+                nota.Style.Font.FontColor = XLColor.DarkOrange;
+            }
 
             for (var i = 0; i < resultado.Columnas.Count; i++)
             {

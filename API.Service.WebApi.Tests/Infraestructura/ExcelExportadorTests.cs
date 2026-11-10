@@ -152,6 +152,48 @@ namespace API.Service.WebApi.Tests.Infraestructura
             Assert.False(h.Cell(9, 1).HasFormula);
         }
 
+        private const string TextoTruncado = "El resultado se truncó al máximo de filas: refine los filtros para ver el resto.";
+
+        [Fact]
+        public void EscribeLosAvisosYElTruncadoEnLaFila5SinMoverLaTabla()
+        {
+            var r = new ResultadoReporte
+            {
+                Columnas = { CTexto, CImporte },
+                Filas = { ReporteFalso.Fila(("cliente", "A"), ("importe", 1m)) },
+                Truncado = true,
+                Avisos = { "El reporte mezcla monedas: los importes se muestran sin convertir." }
+            };
+
+            using var libro = Abrir(r);
+            var h = libro.Worksheet(1);
+
+            Assert.Equal("El reporte mezcla monedas: los importes se muestran sin convertir. " + TextoTruncado, h.Cell(5, 1).GetString());
+            Assert.True(h.Cell(5, 1).Style.Font.Italic);
+            Assert.Equal("Cliente", h.Cell(6, 1).GetString());
+            Assert.Equal("A", h.Cell(7, 1).GetString());
+        }
+
+        [Fact]
+        public void SoloTruncado_EscribeElTextoDeTruncado()
+        {
+            var r = new ResultadoReporte { Columnas = { CTexto }, Truncado = true };
+
+            using var libro = Abrir(r);
+
+            Assert.Equal(TextoTruncado, libro.Worksheet(1).Cell(5, 1).GetString());
+        }
+
+        [Fact]
+        public void SinAvisosNiTruncado_LaFila5QuedaVacia()
+        {
+            var r = new ResultadoReporte { Columnas = { CTexto }, Filas = { ReporteFalso.Fila(("cliente", "A")) } };
+
+            using var libro = Abrir(r);
+
+            Assert.True(libro.Worksheet(1).Cell(5, 1).IsEmpty());
+        }
+
         [Fact]
         public void ElResultadoVacioGeneraUnLibroValido()
         {
