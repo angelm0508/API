@@ -56,6 +56,28 @@ namespace API.Service.WebApi.Tests.Infraestructura
         }
 
         [Fact]
+        public void ConMasDeDiezMilFilas_LanzaElMensajeDeTopeSinGenerarNada()
+        {
+            var r = Plano(4, 3);
+            r.TotalFilas = 10001;
+
+            var ex = Assert.Throws<ReporteInvalidoException>(() => new PdfExportador().Exportar(r, Def, Ctx()));
+
+            Assert.Equal("El PDF admite hasta 10,000 filas; usa Excel o CSV o refina los filtros.", ex.Message);
+        }
+
+        [Fact]
+        public void ConExactamenteDiezMilFilas_GeneraElPdf()
+        {
+            var r = Plano(4, 10000);
+            r.TotalFilas = 10000;
+
+            var bytes = new PdfExportador().Exportar(r, Def, Ctx());
+
+            Assert.True(EsPdf(bytes));
+        }
+
+        [Fact]
         public void ConGraficoGeneraUnPdfMasGrandeQueSinEl()
         {
             var sin = new PdfExportador().Exportar(Plano(4, 5), Def, Ctx());

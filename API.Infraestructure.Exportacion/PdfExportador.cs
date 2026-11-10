@@ -12,6 +12,7 @@ namespace API.Infraestructure.Exportacion
     public sealed class PdfExportador : IExportadorReporte
     {
         private const int MaxColumnasVertical = 7;
+        private const int MaxFilasPdf = 10000;
 
         static PdfExportador()
         {
@@ -24,6 +25,9 @@ namespace API.Infraestructure.Exportacion
 
         public byte[] Exportar(ResultadoReporte resultado, ReporteDefinicion definicion, ContextoExportacion contexto)
         {
+            if (resultado.TotalFilas > MaxFilasPdf)
+                throw new ReporteInvalidoException("El PDF admite hasta 10,000 filas; usa Excel o CSV o refina los filtros.");
+
             var lineas = AplanadorResultado.Aplanar(resultado);
             var columnas = resultado.Columnas;
             var conEtiqueta = resultado.Grupos.Count > 0 || resultado.Totales.Count > 0;
