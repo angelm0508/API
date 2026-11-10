@@ -124,6 +124,17 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task Guardar_ConViolacionDeUnicidadPorCarrera_LanzaUnMensajeEnEspanol()
+        {
+            _repo.Setup(r => r.InsertarAsync(It.IsAny<ReporteVista>()))
+                 .ThrowsAsync(new Microsoft.EntityFrameworkCore.DbUpdateException("IX_ReporteVista_Usuario_Reporte_Nombre"));
+
+            var mensaje = await MensajeAsync(_domain.GuardarAsync(5, "r1", "  Mi vista ", "{}"));
+
+            Assert.Equal("Ya existe una vista llamada 'Mi vista'. Vuelve a intentarlo.", mensaje);
+        }
+
+        [Fact]
         public async Task Guardar_ElLimiteEsPorUsuario_NoAfectaAOtros()
         {
             for (var i = 0; i < ReporteVistaDomain.MaxVistasPorUsuario; i++) _datos.Add(V(i + 1, 6, "r1", "Vista " + i));

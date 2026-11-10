@@ -57,16 +57,24 @@ namespace API.Domain.Core.Reportes
             if (total >= MaxVistasPorUsuario)
                 throw new ReporteInvalidoException($"Ya tienes {MaxVistasPorUsuario} vistas guardadas. Borra alguna para crear otra.");
 
-            var creada = await _repo.InsertarAsync(new ReporteVista
+            try
             {
-                UsuarioId = usuarioId,
-                CodigoReporte = codigoReporte,
-                Nombre = nombre,
-                Configuracion = configuracionJson,
-                FechaCreacion = ahora,
-                FechaActualizacion = ahora
-            });
-            return Dato(creada);
+                var creada = await _repo.InsertarAsync(new ReporteVista
+                {
+                    UsuarioId = usuarioId,
+                    CodigoReporte = codigoReporte,
+                    Nombre = nombre,
+                    Configuracion = configuracionJson,
+                    FechaCreacion = ahora,
+                    FechaActualizacion = ahora
+                });
+                return Dato(creada);
+            }
+            catch (DbUpdateException)
+            {
+                // Dos guardados simultáneos con el mismo nombre: el índice único rechaza el segundo.
+                throw new ReporteInvalidoException($"Ya existe una vista llamada '{nombre}'. Vuelve a intentarlo.");
+            }
         }
 
         public async Task<bool> EliminarAsync(int usuarioId, string codigoReporte, int entry)
