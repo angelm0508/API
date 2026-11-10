@@ -22,11 +22,12 @@ API REST del sistema de gestión GESCOM (ventas, compras, inventario multi-almac
 - **Stock por almacén (`ArticuloAlmacen`):** mínimo, máximo (0 = sin valor, tope 9,999,999,999,999.999999) y `Bloqueado`; un artículo bloqueado en un almacén rechaza entradas y salidas. `PUT api/Articulo/{codigo}/Almacenes` **reemplaza todo**; `[]` borra la configuración, cuerpo nulo = 400.
 - **Cuentas por cobrar/pagar:** pagos recibidos/efectuados, condiciones de pago y vencimientos, estado de cuenta, antigüedad de saldos, límite de crédito por cliente (`NULL` = sin límite, `0` = solo contado; se verifica en pedido/entrega/factura; exceso → 409 y se autoriza con el permiso `AutorizarExcesoCredito`).
 - El `PUT` de socio reemplaza **todas** las columnas escalares: el cliente debe enviar siempre los valores actuales.
+- **Reportería dinámica:** catálogo de reportes con un motor genérico (`Domain.Core/Reportes/MotorReportes`). Un reporte nuevo es una clase `IReporte` en `Domain.Core/Reportes/Definiciones/` (definición de filtros y columnas + consulta EF/LINQ sin SQL libre) registrada en `Startup` con `services.AddTransient<IReporte, MiReporte>()`; cada reporte pertenece a un módulo de permiso (`ReportesVentas`, `ReportesCompras`, `ReportesInventario`, `ReportesCobrosPagos`) que se evalúa dentro de la acción de `ReporteController`. Tope de 50,000 filas, 2 niveles de agrupación, 3 criterios de orden, 50 vistas por usuario; el PDF admite hasta 10,000 filas (Excel y CSV, las 50,000). Exportadores (CSV, Excel con ClosedXML, PDF con QuestPDF Community) en `API.Infraestructure.Exportacion`. El nombre de empresa de los encabezados sale de la clave `Reportes:Empresa` (por defecto «Sistema de Gestión»). Una consulta nueva se prueba con xUnit **y** con SQL real (puede no traducirse a SQL). Solo hay 2 reportes de muestra; los otros 16 del catálogo (spec §4) son la fase 4, pendiente.
 
 ## Comandos
 ```powershell
 dotnet build API.sln
-dotnet test API.Service.WebApi.Tests --nologo -v q        # línea base: 2713 pasando, 0 fallando
+dotnet test API.Service.WebApi.Tests --nologo -v q        # línea base: 2930 pasando, 0 fallando
 dotnet test API.Service.WebApi.Tests --filter "FullyQualifiedName~NombreClase"
 ```
 Si hay una API/Web en ejecución que bloquea `bin`, compila/prueba con `-p:BaseOutputPath="<carpeta temporal>\"` (los errores MSB3021/MSB3027 son de bloqueo de archivos, no de compilación).
