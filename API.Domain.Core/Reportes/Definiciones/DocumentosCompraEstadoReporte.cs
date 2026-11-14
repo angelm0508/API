@@ -1,0 +1,158 @@
+using API.Domain.Entity.Models;
+using API.Domain.Interface.Reportes;
+using API.Infraestructure.Interface;
+using Microsoft.EntityFrameworkCore;
+
+namespace API.Domain.Core.Reportes.Definiciones
+{
+    /// <summary>
+    /// Pedidos, entregas y facturas de compra con su estado. Incluye los cancelados (es el propósito del reporte).
+    /// Estado (Ruling 8): Cancelado = 'S' gana; si no, EstadoDoc = 'C' es cerrado; si no, abierto.
+    /// Las facturas incluyen DocSubType '--' y 'DN'.
+    /// </summary>
+    public sealed class DocumentosCompraEstadoReporte : IReporte
+    {
+        public const string CodigoReporte = "documentos-compra-estado";
+
+        private readonly IRepositorioGenerico<PedidoCompra, int> _pedidos;
+        private readonly IRepositorioGenerico<EntregaCompra, int> _entregas;
+        private readonly IRepositorioGenerico<FacturaCompra, int> _facturas;
+
+        public DocumentosCompraEstadoReporte(
+            IRepositorioGenerico<PedidoCompra, int> pedidos,
+            IRepositorioGenerico<EntregaCompra, int> entregas,
+            IRepositorioGenerico<FacturaCompra, int> facturas)
+        {
+            _pedidos = pedidos;
+            _entregas = entregas;
+            _facturas = facturas;
+        }
+
+        public ReporteDefinicion Definicion { get; } = new(
+            Codigo: CodigoReporte,
+            Nombre: "Documentos de compra por estado",
+            Descripcion: "Pedidos, entregas y facturas de compra con su estado (abierto, cerrado o cancelado).",
+            Familia: "Compras",
+            Modulo: "ReportesCompras",
+            Filtros: new[]
+            {
+                new FiltroReporte("fechas", "Fechas", TipoFiltro.RangoFechas),
+                new FiltroReporte("proveedor", "Proveedor", TipoFiltro.Socio, SubTipo: "P"),
+                new FiltroReporte("tipo", "Tipo", TipoFiltro.Lista, Opciones: new[]
+                {
+                    new OpcionFiltro("PED", "Pedido de compra"),
+                    new OpcionFiltro("ENT", "Entrega de compra"),
+                    new OpcionFiltro("FAC", "Factura de compra")
+                }),
+                new FiltroReporte("estado", "Estado", TipoFiltro.Lista, Opciones: new[]
+                {
+                    new OpcionFiltro("ABIERTO", "Abierto"),
+                    new OpcionFiltro("CERRADO", "Cerrado"),
+                    new OpcionFiltro("CANCELADO", "Cancelado")
+                })
+            },
+            Columnas: new[]
+            {
+                new ColumnaReporte("tipo", "Tipo", TipoColumna.Texto, Agrupable: true),
+                new ColumnaReporte("fecha", "Fecha", TipoColumna.Fecha, Agrupable: true),
+                new ColumnaReporte("numDoc", "No.", TipoColumna.Entero),
+                new ColumnaReporte("codigoSn", "Código proveedor", TipoColumna.Texto, VisiblePorDefecto: false),
+                new ColumnaReporte("nombreSn", "Proveedor", TipoColumna.Texto, Agrupable: true),
+                new ColumnaReporte("estado", "Estado", TipoColumna.Texto, Agrupable: true),
+                new ColumnaReporte("moneda", "Moneda", TipoColumna.Texto, Agrupable: true, VisiblePorDefecto: false),
+                new ColumnaReporte("total", "Total", TipoColumna.Dinero, Totaliza: Totalizacion.Suma)
+            });
+
+        public async Task<IReadOnlyList<FilaReporte>> EjecutarAsync(FiltrosReporte filtros, int limite)
+        {
+            var criterio = new Criterio(
+                filtros.FechaDesde("fechas"), filtros.FechaHastaExclusiva("fechas"), filtros.Texto("proveedor"), filtros.Texto("estado"));
+            var tipo = filtros.Texto("tipo");
+
+            var documentos = new List<DocCompra>();
+
+            if (tipo is null or "PED")
+            {
+                var q = (await _pedidos.ObtenerTodoAsync()).Select(d => new DocCompra
+                {
+                    Tipo = "Pedido de compra", Fecha = d.FechaDoc, NumDoc = d.NumDoc, CodigoSn = d.CodigoSn, NombreSn = d.NombreSn,
+                    Cancelado = d.Cancelado, EstadoDoc = d.EstadoDoc, Moneda = d.MonedaDoc, Total = d.TotalDoc
+                });
+                documentos.AddRange(await LeerAsync(q, criterio, limite));
+            }
+
+            if (tipo is null or "ENT")
+            {
+                var q = (await _entregas.ObtenerTodoAsync()).Select(d => new DocCompra
+                {
+                    Tipo = "Entrega de compra", Fecha = d.FechaDoc, NumDoc = d.NumDoc, CodigoSn = d.CodigoSn, NombreSn = d.NombreSn,
+                    Cancelado = d.Cancelado, EstadoDoc = d.EstadoDoc, Moneda = d.MonedaDoc, Total = d.TotalDoc
+                });
+                documentos.AddRange(await LeerAsync(q, criterio, limite));
+            }
+
+            if (tipo is null or "FAC")
+            {
+                var q = (await _facturas.ObtenerTodoAsync()).Where(d => d.DocSubType == "--" || d.DocSubType == "DN").Select(d => new DocCompra
+                {
+                    Tipo = "Factura de compra", Fecha = d.FechaDoc, NumDoc = d.NumDoc, CodigoSn = d.CodigoSn, NombreSn = d.NombreSn,
+                    Cancelado = d.Cancelado, EstadoDoc = d.EstadoDoc, Moneda = d.MonedaDoc, Total = d.TotalDoc
+                });
+                documentos.AddRange(await LeerAsync(q, criterio, limite));
+            }
+
+            return documentos
+                .OrderBy(d => d.Fecha)
+                .ThenBy(d => d.Tipo, StringComparer.Ordinal)
+                .ThenBy(d => d.NumDoc)
+                .Take(limite)
+                .Select(d => new FilaReporte
+                {
+                    ["tipo"] = d.Tipo,
+                    ["fecha"] = d.Fecha,
+                    ["numDoc"] = d.NumDoc,
+                    ["codigoSn"] = d.CodigoSn,
+                    ["nombreSn"] = d.NombreSn,
+                    ["estado"] = Estado(d.Cancelado, d.EstadoDoc),
+                    ["moneda"] = d.Moneda,
+                    ["total"] = d.Total ?? 0m
+                })
+                .ToList();
+        }
+
+        /// <summary>Aplica los filtros comunes (incluido el estado, también a los cancelados) y limita cada fuente.</summary>
+        private static async Task<List<DocCompra>> LeerAsync(IQueryable<DocCompra> q, Criterio c, int limite)
+        {
+            if (c.Desde is { } desde) q = q.Where(d => d.Fecha >= desde);
+            if (c.Hasta is { } hasta) q = q.Where(d => d.Fecha < hasta);
+            if (c.Proveedor is { } proveedor) q = q.Where(d => d.CodigoSn == proveedor);
+            q = c.Estado switch
+            {
+                "CANCELADO" => q.Where(d => d.Cancelado == "S"),
+                "CERRADO" => q.Where(d => d.Cancelado != "S" && d.EstadoDoc == "C"),
+                "ABIERTO" => q.Where(d => d.Cancelado != "S" && d.EstadoDoc != "C"),
+                _ => q
+            };
+
+            return await q.OrderBy(d => d.Fecha).ThenBy(d => d.NumDoc).Take(limite).ToListAsync();
+        }
+
+        private static string Estado(string? cancelado, string? estadoDoc) =>
+            cancelado == "S" ? "Cancelado" : estadoDoc == "C" ? "Cerrado" : "Abierto";
+
+        private sealed record Criterio(DateTime? Desde, DateTime? Hasta, string? Proveedor, string? Estado);
+
+        private sealed class DocCompra
+        {
+            public string Tipo { get; set; } = "";
+            public DateTime? Fecha { get; set; }
+            public int NumDoc { get; set; }
+            public string? CodigoSn { get; set; }
+            public string? NombreSn { get; set; }
+            public string? Cancelado { get; set; }
+            public string? EstadoDoc { get; set; }
+            public string? Moneda { get; set; }
+            public decimal? Total { get; set; }
+        }
+    }
+}
