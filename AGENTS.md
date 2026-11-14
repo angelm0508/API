@@ -28,12 +28,12 @@ API REST del sistema de gestión GESCOM (ventas, compras, inventario multi-almac
   - Cobros y pagos (`ReportesCobrosPagos`): `facturas-por-cobrar`, `facturas-por-pagar`, `pagos-recibidos`, `pagos-efectuados`, `estado-cuenta-socio`, `antiguedad-saldos`.
   - Compras (`ReportesCompras`): `compras-por-documento`, `compras-por-articulo`, `documentos-compra-estado`, `historial-precios-compra`.
 
-  `ConsultaLineasVenta` (`Reportes/Compartido`) es la consulta compartida de líneas de venta con costo (la usan los reportes por artículo, período y cliente; los agregados leen hasta 200,000 líneas y, si se supera, piden acortar el rango). **Utilidad = venta neta − costo**: venta neta de la línea = `TotalLinea − Impuesto` (sin IVA), las notas de crédito restan de la venta del período (sin IVA) y los documentos cancelados no cuentan. El costo sale de `MovimientoInventario` (costo unitario neto de los movimientos de la línea de origen × cantidad base; las reversas netean solas); para facturas con base Entrega u Orden de servicio, de los movimientos de esa Entrega/Orden. Sin columna de margen %. Saldos de cobros/pagos son los actuales (la fecha de corte solo define inclusión y días de atraso) y `antiguedad-saldos` es siempre a hoy.
+  `ConsultaLineasVenta` (`Reportes/Compartido`) es la consulta compartida de líneas de venta con costo (la usan los reportes por artículo, período y cliente). El tope duro de 200,000 líneas aplica solo a los reportes agregados (más vendidos, utilidad por período, ventas por cliente y artículos sin ventas), que si lo superan piden acortar el rango; `ventas-por-articulo` y los demás detalles respetan el `limite` del motor (50,000). **Utilidad = venta neta − costo**: venta neta de la línea = `TotalLinea − Impuesto` (sin IVA), las notas de crédito restan de la venta del período y las notas de débito por concepto (`DocType = 'S'`, sin líneas de artículo) suman, ambas sin IVA y los documentos cancelados no cuentan. El costo sale de `MovimientoInventario` (costo unitario neto de los movimientos de la línea de origen × cantidad base; las reversas netean solas); para facturas con base Entrega u Orden de servicio, de los movimientos de esa Entrega/Orden. Sin columna de margen %. Saldos de cobros/pagos son los actuales (la fecha de corte solo define inclusión y días de atraso) y `antiguedad-saldos` es siempre a hoy.
 
 ## Comandos
 ```powershell
 dotnet build API.sln
-dotnet test API.Service.WebApi.Tests --nologo -v q        # línea base: 3267 pasando, 0 fallando
+dotnet test API.Service.WebApi.Tests --nologo -v q        # línea base: 3287 pasando, 0 fallando
 dotnet test API.Service.WebApi.Tests --filter "FullyQualifiedName~NombreClase"
 ```
 Si hay una API/Web en ejecución que bloquea `bin`, compila/prueba con `-p:BaseOutputPath="<carpeta temporal>\"` (los errores MSB3021/MSB3027 son de bloqueo de archivos, no de compilación).
