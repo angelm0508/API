@@ -71,7 +71,7 @@ namespace API.Domain.Core.Reportes.Definiciones
                 if (hasta is { } h1) q = q.Where(f => f.FechaDoc < h1);
                 if (cliente is not null) q = q.Where(f => f.CodigoSn == cliente);
 
-                var notas = await q.OrderBy(f => f.FechaDoc).ThenBy(f => f.Entry).Take(limite)
+                var notas = await q.OrderBy(f => f.FechaDoc).ThenBy(f => f.NumDoc).ThenBy(f => f.Entry).Take(limite)
                     .Select(f => new { f.FechaDoc, f.Serie, f.NumDoc, f.CodigoSn, f.NombreSn, f.MonedaDoc, f.TotalDoc, f.BaseTipo, f.BaseEntry })
                     .ToListAsync();
 
@@ -86,7 +86,7 @@ namespace API.Domain.Core.Reportes.Definiciones
                 if (hasta is { } h2) q = q.Where(n => n.FechaDoc < h2);
                 if (cliente is not null) q = q.Where(n => n.CodigoSn == cliente);
 
-                var notas = await q.OrderBy(n => n.FechaDoc).ThenBy(n => n.Entry).Take(limite)
+                var notas = await q.OrderBy(n => n.FechaDoc).ThenBy(n => n.NumDoc).ThenBy(n => n.Entry).Take(limite)
                     .Select(n => new { n.FechaDoc, n.Serie, n.NumDoc, n.CodigoSn, n.NombreSn, n.MonedaDoc, n.TotalDoc, n.BaseTipo, n.BaseEntry })
                     .ToListAsync();
 
