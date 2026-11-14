@@ -4,6 +4,7 @@ using API.Application.Main;
 using API.Domain.Core;
 using API.Domain.Core.Precio;
 using API.Domain.Core.Reportes;
+using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Core.Reportes.Definiciones;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
@@ -321,6 +322,10 @@ namespace API.Service.WebApi
             services.AddTransient<IMotorReportes, MotorReportes>();
             services.AddTransient<IReporte, VentasPorDocumentoReporte>();
             services.AddTransient<IReporte, ExistenciasValorReporte>();
+            services.AddTransient<ConsultaLineasVenta>();
+            services.AddTransient<IReporte, VentasPorArticuloReporte>();
+            services.AddTransient<IReporte, ArticulosMasVendidosReporte>();
+            services.AddTransient<IReporte, ArticulosSinVentasReporte>();
             services.AddTransient<ICatalogoReportes, CatalogoReportes>();
             services.AddTransient<IReporteApplication, ReporteApplication>();
             services.AddTransient<IReporteVistaDomain, ReporteVistaDomain>();
