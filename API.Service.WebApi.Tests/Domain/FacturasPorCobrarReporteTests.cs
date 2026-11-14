@@ -198,6 +198,19 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task Ejecutar_OrdenaPorDiaDeVencimientoIgnorandoLaHora()
+        {
+            // Misma emisión; la 3 vence a las 14:00 y la 9 a las 00:00 del MISMO día: decide el número, no la hora.
+            var r = Crear(
+                new[] { Fac(9, Dia1, new DateTime(2026, 1, 20, 0, 0, 0)), Fac(3, Dia1, new DateTime(2026, 1, 20, 14, 0, 0)) },
+                Pend(9), Pend(3));
+
+            var filas = await r.EjecutarAsync(ConCorte("2026-01-25"), 100);
+
+            Assert.Equal(new object?[] { 3, 9 }, filas.Select(f => f["numDoc"]).ToArray());
+        }
+
+        [Fact]
         public async Task Ejecutar_VencimientoFuturoOSaldoCeroNoTienenAtraso()
         {
             var r = Crear(

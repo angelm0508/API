@@ -115,8 +115,8 @@ namespace API.Domain.Core.Reportes.Definiciones
             }
 
             return filas
-                .OrderBy(x => x.Doc.Vencimiento)
-                .ThenBy(x => x.Doc.Fecha)
+                .OrderBy(x => x.Doc.Vencimiento?.Date)
+                .ThenBy(x => x.Doc.Fecha?.Date)
                 .ThenBy(x => x.Doc.NumDoc)
                 .ThenBy(x => x.Doc.Entry)
                 .Take(limite)
