@@ -51,12 +51,12 @@ namespace API.Domain.Core.Reportes.Definiciones
 
         public async Task<IReadOnlyList<FilaReporte>> EjecutarAsync(FiltrosReporte filtros, int limite)
         {
-            var lineas = await _consulta.ObtenerAsync(new FiltroLineasVenta(
+            var lineas = await _consulta.ObtenerLimitadoAsync(new FiltroLineasVenta(
                 filtros.FechaDesde("fechas"), filtros.FechaHastaExclusiva("fechas"),
-                filtros.Texto("cliente"), filtros.Texto("articulo"), filtros.Texto("almacen"), filtros.Texto("grupo")));
+                filtros.Texto("cliente"), filtros.Texto("articulo"), filtros.Texto("almacen"), filtros.Texto("grupo")), limite);
 
-            // La consulta ya devuelve las líneas en orden fecha, documento, línea.
-            return lineas.Take(limite).Select(l => new FilaReporte
+            // Detalle: el límite se aplica en la consulta (no hay tope de MaxLineas) y ya vienen en orden fecha, documento, línea.
+            return lineas.Select(l => new FilaReporte
             {
                 ["fecha"] = l.Fecha,
                 ["tipo"] = l.Tipo,

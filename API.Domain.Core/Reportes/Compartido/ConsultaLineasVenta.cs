@@ -51,8 +51,43 @@ namespace API.Domain.Core.Reportes.Compartido
 
         private readonly record struct Acumulado(decimal Valor, decimal Sale, decimal Entra);
 
-        public async Task<IReadOnlyList<LineaVenta>> ObtenerAsync(FiltroLineasVenta filtro)
+        private sealed record MovimientoLeido(string TipoDoc, int DocEntry, int DocLinea, decimal ValorMovimiento, decimal CantidadSale, decimal CantidadEntra);
+
+        private static async Task<IReadOnlyList<MovimientoLeido>> LeerPorLotesAsync(
+            IQueryable<MovimientoInventario> movimientos, string tipoDoc, IEnumerable<int> entries)
         {
+            var resultado = new List<MovimientoLeido>();
+            foreach (var lote in entries.Distinct().Chunk(TamanoLote))
+            {
+                var ids = lote.ToList();
+                var filas = await movimientos
+                    .Where(m => m.TipoDoc == tipoDoc && ids.Contains(m.DocEntry))
+                    .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
+                    .ToListAsync();
+                resultado.AddRange(filas.Select(m => new MovimientoLeido(m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra)));
+            }
+            return resultado;
+        }
+
+        private const int TamanoLote = 1000;
+
+        /// <summary>
+        /// Todas las líneas del filtro, en orden fecha, documento, línea. Para los reportes agregados: si hay más de
+        /// <see cref="MaxLineas"/> líneas lanza <see cref="ReporteInvalidoException"/>.
+        /// </summary>
+        public Task<IReadOnlyList<LineaVenta>> ObtenerAsync(FiltroLineasVenta filtro) => EjecutarAsync(filtro, null);
+
+        /// <summary>
+        /// Las primeras <paramref name="limite"/> líneas del filtro (orden fecha, documento, línea) con su costo. Para los reportes
+        /// de detalle: nunca lanza por exceso de líneas; los movimientos se consultan por lotes de 1,000 documentos de origen.
+        /// </summary>
+        public Task<IReadOnlyList<LineaVenta>> ObtenerLimitadoAsync(FiltroLineasVenta filtro, int limite) => EjecutarAsync(filtro, limite);
+
+        private async Task<IReadOnlyList<LineaVenta>> EjecutarAsync(FiltroLineasVenta filtro, int? limite)
+        {
+            if (limite is <= 0)
+                return Array.Empty<LineaVenta>();
+
             // 1. Facturas válidas (subconsulta, no lista materializada).
             var validas = (await _facturas.ObtenerTodoAsync())
                 .Where(f => f.Cancelado != "S" && (f.DocSubType == "--" || f.DocSubType == "ND"));
@@ -72,7 +107,7 @@ namespace API.Domain.Core.Reportes.Compartido
             // El join con las facturas válidas (en SQL equivale a la subconsulta por Entry) evita materializar listas.
             var lineas = from d in detalles join f in validas on d.Entry equals f.Entry select new { d, f };
 
-            var filas = await lineas
+            var ordenadas = lineas
                 .OrderBy(x => x.f.FechaDoc).ThenBy(x => x.d.Entry).ThenBy(x => x.d.NoLinea)
                 .Select(x => new
                 {
@@ -99,10 +134,10 @@ namespace API.Domain.Core.Reportes.Compartido
                     x.d.BaseEntry,
                     x.d.BaseLinea
                 })
-                .Take(MaxLineas + 1)
-                .ToListAsync();
+                .Take(limite ?? MaxLineas + 1);
+            var filas = await ordenadas.ToListAsync();
 
-            if (filas.Count > MaxLineas)
+            if (limite is null && filas.Count > MaxLineas)
                 throw new ReporteInvalidoException("El período tiene demasiadas líneas para este reporte. Acorta el rango de fechas.");
             if (filas.Count == 0)
                 return Array.Empty<LineaVenta>();
@@ -111,22 +146,37 @@ namespace API.Domain.Core.Reportes.Compartido
             var movimientos = await _movimientos.ObtenerTodoAsync();
             var acumulados = new Dictionary<(string TipoDoc, int DocEntry, int DocLinea), Acumulado>();
 
-            var propias = await movimientos
-                .Where(m => m.TipoDoc == TipoDocFactura
-                    && lineas.Where(x => x.d.BaseTipo != BaseEntrega && x.d.BaseTipo != BaseOrdenServicio).Select(x => x.d.Entry).Contains(m.DocEntry))
-                .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
-                .ToListAsync();
-            var deEntrega = await movimientos
-                .Where(m => m.TipoDoc == TipoDocEntrega
-                    && lineas.Where(x => x.d.BaseTipo == BaseEntrega).Select(x => x.d.BaseEntry).Contains(m.DocEntry))
-                .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
-                .ToListAsync();
-            var deOrden = await movimientos
-                .Where(m => m.TipoDoc == TipoDocOrdenServicio
-                    && lineas.Where(x => x.d.BaseTipo == BaseOrdenServicio).Select(x => x.d.BaseEntry).Contains(m.DocEntry))
-                .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
-                .ToListAsync();
-
+            IReadOnlyList<MovimientoLeido> propias, deEntrega, deOrden;
+            if (limite is null)
+            {
+                // Con tope: subconsultas sobre las líneas filtradas (el resultado cabe en MaxLineas).
+                propias = (await movimientos
+                    .Where(m => m.TipoDoc == TipoDocFactura
+                        && lineas.Where(x => x.d.BaseTipo != BaseEntrega && x.d.BaseTipo != BaseOrdenServicio).Select(x => x.d.Entry).Contains(m.DocEntry))
+                    .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
+                    .ToListAsync()).Select(m => new MovimientoLeido(m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra)).ToList();
+                deEntrega = (await movimientos
+                    .Where(m => m.TipoDoc == TipoDocEntrega
+                        && lineas.Where(x => x.d.BaseTipo == BaseEntrega).Select(x => x.d.BaseEntry).Contains(m.DocEntry))
+                    .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
+                    .ToListAsync()).Select(m => new MovimientoLeido(m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra)).ToList();
+                deOrden = (await movimientos
+                    .Where(m => m.TipoDoc == TipoDocOrdenServicio
+                        && lineas.Where(x => x.d.BaseTipo == BaseOrdenServicio).Select(x => x.d.BaseEntry).Contains(m.DocEntry))
+                    .Select(m => new { m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra })
+                    .ToListAsync()).Select(m => new MovimientoLeido(m.TipoDoc, m.DocEntry, m.DocLinea, m.ValorMovimiento, m.CantidadSale, m.CantidadEntra)).ToList();
+            }
+            else
+            {
+                // Con límite: las líneas ya están materializadas; los movimientos se piden por lotes de documentos de origen
+                // (Contains sobre una lista por lote, sin subconsultas correlacionadas con Take).
+                propias = await LeerPorLotesAsync(movimientos, TipoDocFactura,
+                    filas.Where(l => l.BaseTipo != BaseEntrega && l.BaseTipo != BaseOrdenServicio).Select(l => l.Entry));
+                deEntrega = await LeerPorLotesAsync(movimientos, TipoDocEntrega,
+                    filas.Where(l => l.BaseTipo == BaseEntrega && l.BaseEntry != null).Select(l => l.BaseEntry!.Value));
+                deOrden = await LeerPorLotesAsync(movimientos, TipoDocOrdenServicio,
+                    filas.Where(l => l.BaseTipo == BaseOrdenServicio && l.BaseEntry != null).Select(l => l.BaseEntry!.Value));
+            }
             foreach (var m in propias.Concat(deEntrega).Concat(deOrden))
             {
                 var clave = (m.TipoDoc, m.DocEntry, m.DocLinea);

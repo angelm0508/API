@@ -227,5 +227,20 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(2, filas.Count);
         }
+
+        [Fact]
+        public async Task Ejecutar_ConMasDeMaxLineasRespetaElLimiteSinLanzarYConSusCostos()
+        {
+            var lineas = new List<FacturaDetalle>(ConsultaLineasVenta.MaxLineas + 1);
+            for (var i = 1; i <= ConsultaLineasVenta.MaxLineas + 1; i++)
+                lineas.Add(Lin(1, i));
+            var movimientos = Enumerable.Range(1, 10).Select(i => Mov(1, i, 2m, -7m * i)).ToList();
+            var r = Crear(new[] { Fac(1) }, lineas, movimientos);
+
+            var filas = await r.EjecutarAsync(Filtros(), 10);
+
+            Assert.Equal(10, filas.Count);
+            Assert.Equal(Enumerable.Range(1, 10).Select(i => 7m * i), filas.Select(f => (decimal)f["costo"]!));
+        }
     }
 }

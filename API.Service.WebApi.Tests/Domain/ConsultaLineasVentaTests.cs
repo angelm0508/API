@@ -354,5 +354,96 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(ConsultaLineasVenta.MaxLineas, r.Count);
         }
+
+        [Fact]
+        public async Task Limitado_ConMasDeMaxLineas_NoLanzaYDevuelveLasPrimerasConSusCostos()
+        {
+            var lineas = new List<FacturaDetalle>(ConsultaLineasVenta.MaxLineas + 1);
+            for (var i = 1; i <= ConsultaLineasVenta.MaxLineas + 1; i++)
+                lineas.Add(Lin(1, i));
+            var movimientos = new List<MovimientoInventario>();
+            for (var i = 1; i <= 10; i++)
+                movimientos.Add(Mov("6", 1, i, sale: 2m, valor: -10m * i));
+            var c = Crear(new[] { Fac(1) }, lineas, movimientos);
+
+            var r = await c.ObtenerLimitadoAsync(SinFiltro, 10);
+
+            Assert.Equal(10, r.Count);
+            Assert.Equal(Enumerable.Range(1, 10), r.Select(x => x.NoLinea));
+            Assert.Equal(Enumerable.Range(1, 10).Select(i => 10m * i), r.Select(x => x.Costo));
+        }
+
+        [Fact]
+        public async Task SinLimite_ConMasDeMaxLineas_SigueLanzandoAunqueExistaElCaminoLimitado()
+        {
+            var lineas = new List<FacturaDetalle>(ConsultaLineasVenta.MaxLineas + 1);
+            for (var i = 1; i <= ConsultaLineasVenta.MaxLineas + 1; i++)
+                lineas.Add(Lin(1, i));
+            var c = Crear(new[] { Fac(1) }, lineas);
+
+            await Assert.ThrowsAsync<ReporteInvalidoException>(() => c.ObtenerAsync(SinFiltro));
+            Assert.Equal(5, (await c.ObtenerLimitadoAsync(SinFiltro, 5)).Count);
+        }
+
+        [Fact]
+        public async Task Limitado_CostoPorLosTresOrigenes_ConLoteDeMasDeMilEntries()
+        {
+            // 2,500 facturas de una línea cada una (3 lotes de 1,000): propia ("6"), entrega ("5") y orden de servicio ("70") por turnos.
+            const int n = 2500;
+            var facturas = new List<Factura>();
+            var detalles = new List<FacturaDetalle>();
+            var movimientos = new List<MovimientoInventario>();
+            for (var i = 1; i <= n; i++)
+            {
+                facturas.Add(Fac(i, new DateTime(2026, 1, 1).AddMinutes(i)));
+                switch (i % 3)
+                {
+                    case 0:
+                        detalles.Add(Lin(i, 1));
+                        movimientos.Add(Mov("6", i, 1, sale: 2m, valor: -2m * i));
+                        break;
+                    case 1:
+                        detalles.Add(Lin(i, 1, baseTipo: 5, baseEntry: 100000 + i, baseLinea: 4));
+                        movimientos.Add(Mov("5", 100000 + i, 4, sale: 2m, valor: -3m * i));
+                        movimientos.Add(Mov("6", i, 1, sale: 2m, valor: -999m));      // no debe contarse
+                        break;
+                    default:
+                        detalles.Add(Lin(i, 1, baseTipo: 70, baseEntry: 200000 + i, baseLinea: 2));
+                        movimientos.Add(Mov("70", 200000 + i, 2, sale: 2m, valor: -4m * i));
+                        movimientos.Add(Mov("5", 200000 + i, 2, sale: 2m, valor: -888m)); // otro tipo con el mismo entry
+                        break;
+                }
+            }
+            var c = Crear(facturas, detalles, movimientos);
+
+            var r = await c.ObtenerLimitadoAsync(SinFiltro, n);
+
+            Assert.Equal(n, r.Count);
+            foreach (var l in r)
+            {
+                var esperado = (l.DocEntry % 3) switch { 0 => 2m * l.DocEntry, 1 => 3m * l.DocEntry, _ => 4m * l.DocEntry };
+                Assert.Equal(esperado, l.Costo);
+            }
+        }
+
+        [Fact]
+        public async Task Limitado_RespetaElOrdenYLosFiltros()
+        {
+            var c = Crear(
+                new[] { Fac(1, new DateTime(2026, 3, 1)), Fac(2, new DateTime(2026, 1, 1)), Fac(3, new DateTime(2026, 1, 1), cancelado: "S") },
+                new[] { Lin(1, 1), Lin(2, 2), Lin(2, 1), Lin(3, 1) });
+
+            var r = await c.ObtenerLimitadoAsync(SinFiltro, 2);
+
+            Assert.Equal(new[] { (2, 1), (2, 2) }, r.Select(x => (x.DocEntry, x.NoLinea)).ToArray());
+        }
+
+        [Fact]
+        public async Task Limitado_ConLimiteCeroDevuelveVacio()
+        {
+            var c = Crear(new[] { Fac(1) }, new[] { Lin(1, 1) });
+
+            Assert.Empty(await c.ObtenerLimitadoAsync(SinFiltro, 0));
+        }
     }
 }
