@@ -6,7 +6,7 @@ using API.Infraestructure.Interface;
 namespace API.Domain.Core.Reportes.Definiciones
 {
     /// <summary>
-    /// Ranking de clientes por venta neta total o utilidad. Una fila por (cliente, moneda). Las notas de crédito restan;
+    /// Ranking de clientes por venta neta total o utilidad. Una fila por (cliente, moneda). Las notas de crédito restan y las de débito por concepto suman;
     /// el IVA nunca entra. Las líneas del período se agregan en memoria (tope de <see cref="ConsultaLineasVenta.MaxLineas"/> líneas).
     /// </summary>
     public sealed class VentasPorClienteReporte : IReporte
@@ -15,11 +15,13 @@ namespace API.Domain.Core.Reportes.Definiciones
 
         private readonly ConsultaLineasVenta _consulta;
         private readonly IRepositorioGenerico<NotaCredito, int> _notas;
+        private readonly IRepositorioGenerico<Factura, int> _facturas;
 
-        public VentasPorClienteReporte(ConsultaLineasVenta consulta, IRepositorioGenerico<NotaCredito, int> notas)
+        public VentasPorClienteReporte(ConsultaLineasVenta consulta, IRepositorioGenerico<NotaCredito, int> notas, IRepositorioGenerico<Factura, int> facturas)
         {
             _consulta = consulta;
             _notas = notas;
+            _facturas = facturas;
         }
 
         public ReporteDefinicion Definicion { get; } = new(
@@ -63,6 +65,7 @@ namespace API.Domain.Core.Reportes.Definiciones
 
             var lineas = await _consulta.ObtenerAsync(new FiltroLineasVenta(desde, hasta, cliente, null, null, null));
             var notas = await NotasCreditoNetas.ObtenerAsync(_notas, desde, hasta, cliente);
+            var notasDebito = await NotasDebitoConceptoNetas.ObtenerAsync(_facturas, desde, hasta, cliente);
 
             var acumulado = new Dictionary<(string? Codigo, string? Moneda), Acumulador>();
             Acumulador Obtener(string? codigo, string? nombre, string? moneda)
@@ -78,6 +81,13 @@ namespace API.Domain.Core.Reportes.Definiciones
                 a.Ventas += l.VentaNeta;
                 a.Costo += l.Costo;
                 a.Documentos.Add(l.DocEntry);
+            }
+            // Las notas de débito por concepto suman a la venta (costo cero) y cuentan como documento.
+            foreach (var nd in notasDebito)
+            {
+                var a = Obtener(nd.CodigoSn, nd.NombreSn, nd.Moneda);
+                a.Ventas += nd.Importe;
+                a.Documentos.Add(nd.Entry);
             }
             foreach (var n in notas)
                 Obtener(n.CodigoSn, n.NombreSn, n.Moneda).NotasCredito += n.Importe;

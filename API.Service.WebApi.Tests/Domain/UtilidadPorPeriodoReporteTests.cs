@@ -27,7 +27,7 @@ namespace API.Service.WebApi.Tests.Domain
             _detalles.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(detalles.AsAsyncQueryable());
             _movimientos.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync((movimientos ?? Array.Empty<MovimientoInventario>()).AsAsyncQueryable());
             _notas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync((notas ?? Array.Empty<NotaCredito>()).AsAsyncQueryable());
-            return new UtilidadPorPeriodoReporte(new ConsultaLineasVenta(_facturas.Object, _detalles.Object, _movimientos.Object), _notas.Object);
+            return new UtilidadPorPeriodoReporte(new ConsultaLineasVenta(_facturas.Object, _detalles.Object, _movimientos.Object), _notas.Object, _facturas.Object);
         }
 
         private static Factura Fac(int entry, DateTime? fecha = null, string cancelado = "N", string sn = "C001", string moneda = "GTQ") =>
@@ -43,6 +43,14 @@ namespace API.Service.WebApi.Tests.Domain
                 Entry = entry, NoLinea = noLinea, CodArticulo = art, Cantidad = 1m, CantidadBase = 1m,
                 TotalLinea = venta + impuesto, Impuesto = impuesto, CodAlmacen = "01", PrctjeDesc = 0m,
                 CodArticuloNavigation = new Articulo { Codigo = art, Nombre = "Artículo " + art }
+            };
+
+        // Nota de débito por concepto: vive en Factura (DocSubType "ND", DocType "S") y no tiene líneas con artículo.
+        private static Factura NdConcepto(int entry, DateTime fecha, decimal neto, decimal iva = 12m, string cancelado = "N", string sn = "C001", string moneda = "GTQ") =>
+            new()
+            {
+                Entry = entry, NumDoc = entry * 10, Serie = 3, Cancelado = cancelado, DocSubType = "ND", DocType = "S",
+                FechaDoc = fecha, CodigoSn = sn, NombreSn = "Cliente " + sn, MonedaDoc = moneda, TotalImp = iva, TotalDoc = neto + iva
             };
 
         private static MovimientoInventario Mov(int docEntry, int docLinea, decimal costoTotal) =>
@@ -284,6 +292,74 @@ namespace API.Service.WebApi.Tests.Domain
             foreach (var campo in new[] { "ventas", "notasCredito", "ventaNeta", "costo", "utilidad" })
                 Assert.Equal(a[campo], b[campo]);
             Assert.Equal(300m, b["utilidad"]);
+        }
+
+        [Fact]
+        public async Task Ejecutar_NotaDeDebitoPorConceptoSumaALasVentasConCostoCero()
+        {
+            var r = Crear(new[] { Fac(1), NdConcepto(2, Enero10, 50m) }, new[] { Lin(1, 1, 1000m) }, new[] { Mov(1, 1, 600m) });
+
+            var f = Assert.Single(await r.EjecutarAsync(Filtros(), 100));
+
+            Assert.Equal(1050m, f["ventas"]);
+            Assert.Equal(1050m, f["ventaNeta"]);
+            Assert.Equal(600m, f["costo"]);
+            Assert.Equal(450m, f["utilidad"]);
+        }
+
+        [Fact]
+        public async Task Ejecutar_NotaDeDebitoYNotaDeCreditoPorConceptoDelMismoMesDanVentaNetaCero()
+        {
+            var r = Crear(
+                new[] { NdConcepto(1, Enero10, 100m) }, Array.Empty<FacturaDetalle>(),
+                notas: new[] { Nc(1, Enero10, 100m) });
+
+            var f = Assert.Single(await r.EjecutarAsync(Filtros(), 100));
+
+            Assert.Equal(100m, f["ventas"]);
+            Assert.Equal(100m, f["notasCredito"]);
+            Assert.Equal(0m, f["ventaNeta"]);
+            Assert.Equal(0m, f["utilidad"]);
+        }
+
+        [Fact]
+        public async Task Ejecutar_NotaDeDebitoPorConceptoCanceladaONoConceptoNoSuma()
+        {
+            var porArticulos = NdConcepto(2, Enero10, 70m);
+            porArticulos.DocType = "I";
+            var r = Crear(new[] { NdConcepto(1, Enero10, 100m, cancelado: "S"), porArticulos }, Array.Empty<FacturaDetalle>());
+
+            Assert.Empty(await r.EjecutarAsync(Filtros(), 100));
+        }
+
+        [Fact]
+        public async Task Ejecutar_NotaDeDebitoPorConceptoRespetaFechasYCliente()
+        {
+            var r = Crear(
+                new[]
+                {
+                    NdConcepto(1, new DateTime(2025, 12, 31), 1000m), NdConcepto(2, new DateTime(2026, 1, 31), 5m),
+                    NdConcepto(3, new DateTime(2026, 2, 1), 2000m), NdConcepto(4, Enero10, 9m, sn: "C002")
+                },
+                Array.Empty<FacturaDetalle>());
+
+            var f = Assert.Single(await r.EjecutarAsync(
+                Filtros("2026-01-01", "2026-01-31", d => d["cliente"] = new FiltroValor { Valor = "C001" }), 100));
+
+            Assert.Equal(5m, f["ventas"]);
+        }
+
+        [Fact]
+        public async Task Ejecutar_ElIvaDeLaNotaDeDebitoPorConceptoNoAlteraElResultado()
+        {
+            var sinIva = Crear(new[] { NdConcepto(1, Enero10, 100m, iva: 0m) }, Array.Empty<FacturaDetalle>());
+            var conIva = Crear(new[] { NdConcepto(1, Enero10, 100m, iva: 12m) }, Array.Empty<FacturaDetalle>());
+
+            var a = Assert.Single(await sinIva.EjecutarAsync(Filtros(), 100));
+            var b = Assert.Single(await conIva.EjecutarAsync(Filtros(), 100));
+
+            Assert.Equal(100m, a["ventas"]);
+            Assert.Equal(a["ventas"], b["ventas"]);
         }
 
         [Fact]
