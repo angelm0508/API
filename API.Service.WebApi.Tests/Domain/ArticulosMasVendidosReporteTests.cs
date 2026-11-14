@@ -259,6 +259,16 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task Ejecutar_PrimerosMayorQueElLimiteSeRecortaPorElLimiteYLaPosicionSigueConsecutiva()
+        {
+            var filas = await CrearConTresArticulos().EjecutarAsync(
+                Filtros(d => d["primeros"] = new FiltroValor { Valor = "3" }), 2);
+
+            Assert.Equal(new[] { "A1", "A3" }, Articulos(filas));
+            Assert.Equal(new[] { 1, 2 }, filas.Select(f => (int)f["posicion"]!).ToArray());
+        }
+
+        [Fact]
         public async Task Ejecutar_RespetaElLimite()
         {
             var filas = await CrearConTresArticulos().EjecutarAsync(Filtros(), 2);

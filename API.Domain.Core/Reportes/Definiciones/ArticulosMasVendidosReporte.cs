@@ -54,7 +54,7 @@ namespace API.Domain.Core.Reportes.Definiciones
 
         public async Task<IReadOnlyList<FilaReporte>> EjecutarAsync(FiltrosReporte filtros, int limite)
         {
-            var primeros = LeerPrimeros(filtros);
+            var primeros = FiltroPrimeros.Leer(filtros);
             var medirPor = filtros.Texto("medirPor") ?? "cantidad";
 
             var lineas = await _consulta.ObtenerAsync(new FiltroLineasVenta(
@@ -109,15 +109,6 @@ namespace API.Domain.Core.Reportes.Definiciones
                 ["utilidad"] = a.Utilidad,
                 ["documentos"] = a.Documentos
             }).ToList();
-        }
-
-        private static int? LeerPrimeros(FiltrosReporte filtros)
-        {
-            if (filtros.Texto("primeros") is null) return null;
-            var n = filtros.Numero("primeros");
-            if (n is not { } valor || valor <= 0m || valor != decimal.Truncate(valor) || valor > int.MaxValue)
-                throw new ReporteInvalidoException("El filtro 'Mostrar los primeros' debe ser un entero mayor que cero.");
-            return (int)valor;
         }
     }
 }
