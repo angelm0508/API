@@ -113,6 +113,19 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public void Todo_reporte_con_dinero_totalizado_y_columna_moneda_la_deja_oculta_por_defecto()
+        {
+            // El motor aplica la regla multimoneda sobre `moneda`; mostrarla por defecto ensuciaría los reportes de un solo QTZ.
+            foreach (var r in TodosLosReportes())
+            {
+                var tieneDineroConSuma = r.Definicion.Columnas.Any(c => c.Tipo == TipoColumna.Dinero && c.Totaliza == Totalizacion.Suma);
+                var moneda = r.Definicion.Columnas.SingleOrDefault(c => c.Campo == "moneda");
+                if (tieneDineroConSuma && moneda is not null)
+                    Assert.False(moneda.VisiblePorDefecto, $"{r.Definicion.Codigo}: la columna 'moneda' debe tener VisiblePorDefecto = false.");
+            }
+        }
+
+        [Fact]
         public void Todas_las_clases_IReporte_de_Domain_Core_estan_registradas_en_Startup()
         {
             var startup = File.ReadAllText(Path.Combine(RaizDelRepositorio(), "API.Service.WebApi", "Startup.cs"));

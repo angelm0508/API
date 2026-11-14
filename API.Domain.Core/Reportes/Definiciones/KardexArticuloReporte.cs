@@ -68,7 +68,9 @@ namespace API.Domain.Core.Reportes.Definiciones
             if (desde is { } d1) periodo = periodo.Where(m => m.Fecha >= d1);
             if (hasta is { } h1) periodo = periodo.Where(m => m.Fecha < h1);
 
-            var movimientos = await periodo.OrderBy(m => m.Fecha).ThenBy(m => m.Entry).Take(limite)
+            // La fila «Saldo inicial» cuenta contra el límite: nunca se devuelven más de `limite` filas.
+            var topeMovimientos = Math.Max(saldo != 0m ? limite - 1 : limite, 0);
+            var movimientos = await periodo.OrderBy(m => m.Fecha).ThenBy(m => m.Entry).Take(topeMovimientos)
                 .Select(m => new
                 {
                     m.Fecha, m.TipoDoc, m.DocEntry, m.DocLinea, m.CodAlmacen, m.CantidadEntra, m.CantidadSale,

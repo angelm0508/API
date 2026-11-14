@@ -295,7 +295,7 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal(new[] { 1, 2 }, filas.Select(f => (int)f["numDoc"]!).ToArray());
             Assert.Equal("Factura de compra", filas[0]["tipo"]);
-            Assert.Equal("Nota de débito", filas[1]["tipo"]);
+            Assert.Equal("Nota de débito de compra", filas[1]["tipo"]);
         }
 
         [Fact]

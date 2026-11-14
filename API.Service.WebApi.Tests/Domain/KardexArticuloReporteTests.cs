@@ -256,14 +256,36 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task Ejecutar_ElLimiteNoCuentaLaFilaDeSaldoInicial()
+        public async Task Ejecutar_ElLimiteCuentaLaFilaDeSaldoInicial_NuncaDevuelveMasFilasQueElLimite()
         {
             var r = Crear(Mov(1, E1, entra: 100m), Mov(2, E10, entra: 5m), Mov(3, E20, entra: 7m));
 
-            var filas = await r.EjecutarAsync(Filtros(d => d["fechas"] = new FiltroValor { Desde = "2026-01-10" }), 1);
+            var filas = await r.EjecutarAsync(Filtros(d => d["fechas"] = new FiltroValor { Desde = "2026-01-10" }), 2);
 
             Assert.Equal(new[] { "Saldo inicial", "Factura / Nota de débito" }, filas.Select(f => (string)f["tipoDoc"]!).ToArray());
             Assert.Equal(new[] { 100m, 105m }, filas.Select(f => (decimal)f["saldo"]!).ToArray());
+        }
+
+        [Fact]
+        public async Task Ejecutar_ConLimiteUnoYSaldoInicialSoloSeDevuelveElSaldoInicial()
+        {
+            var r = Crear(Mov(1, E1, entra: 100m), Mov(2, E10, entra: 5m));
+
+            var filas = await r.EjecutarAsync(Filtros(d => d["fechas"] = new FiltroValor { Desde = "2026-01-10" }), 1);
+
+            var fila = Assert.Single(filas);
+            Assert.Equal("Saldo inicial", fila["tipoDoc"]);
+        }
+
+        [Fact]
+        public async Task Ejecutar_ConLimiteUnoSinSaldoInicialDevuelveUnMovimiento()
+        {
+            var r = Crear(Mov(1, E1, entra: 100m), Mov(2, E10, entra: 5m));
+
+            var filas = await r.EjecutarAsync(Filtros(), 1);
+
+            Assert.Single(filas);
+            Assert.Equal(100m, filas[0]["saldo"]);
         }
     }
 }

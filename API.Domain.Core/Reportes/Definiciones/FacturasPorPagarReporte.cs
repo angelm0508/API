@@ -123,7 +123,7 @@ namespace API.Domain.Core.Reportes.Definiciones
                 .Select(x => new FilaReporte
                 {
                     ["fecha"] = x.Doc.Fecha,
-                    ["tipo"] = x.Doc.EsNotaDebito ? "Nota de débito" : "Factura de compra",
+                    ["tipo"] = x.Doc.EsNotaDebito ? "Nota de débito de compra" : "Factura de compra",
                     ["serie"] = x.Doc.Serie,
                     ["numDoc"] = x.Doc.NumDoc,
                     ["codigoSn"] = x.Doc.CodigoSn,
