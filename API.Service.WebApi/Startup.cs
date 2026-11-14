@@ -335,6 +335,8 @@ namespace API.Service.WebApi
             services.AddTransient<IReporte, MovimientosInventarioReporte>();
             services.AddTransient<IReporte, FacturasPorCobrarReporte>();
             services.AddTransient<IReporte, FacturasPorPagarReporte>();
+            services.AddTransient<IReporte, PagosRecibidosReporte>();
+            services.AddTransient<IReporte, PagosEfectuadosReporte>();
             services.AddTransient<ICatalogoReportes, CatalogoReportes>();
             services.AddTransient<IReporteApplication, ReporteApplication>();
             services.AddTransient<IReporteVistaDomain, ReporteVistaDomain>();
