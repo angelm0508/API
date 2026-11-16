@@ -52,7 +52,7 @@ namespace API.Domain.Interface
 
     public sealed record CabeceraBorrador(
         string? CodigoSn, string? NombreSn, string? Direccion, string? MonedaDoc,
-        decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario);
+        decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario, string? Nit);
 
     public sealed record BorradorDocumentoBase(
         int OrigenTipo, int OrigenEntry, int OrigenNumDoc, CabeceraBorrador Cabecera, IReadOnlyList<LineaAbiertaVenta> Lineas);

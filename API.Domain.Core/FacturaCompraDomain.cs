@@ -47,6 +47,8 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(FacturaCompra obj, IEnumerable<FacturaCompraDetalle> lineas)
         {
+            // NIT copiado del socio: se recorta y se valida antes de numerar (un rechazo no consume consecutivo).
+            obj.Nit = NitDocumento.Normalizar(obj.Nit);
             obj.TipoObjeto = TipoObjetoFacturaCompra;
             obj.DocSubType = SubTipoFactura;
             obj.DocType = "I";

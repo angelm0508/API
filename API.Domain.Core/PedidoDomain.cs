@@ -47,6 +47,8 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(Pedido obj)
         {
+            // NIT copiado del socio: se recorta y se valida antes de numerar (un rechazo no consume consecutivo).
+            obj.Nit = NitDocumento.Normalizar(obj.Nit);
             obj.TipoObjeto = TipoObjetoPedido;
             await AsignarNumeroAsync(obj);
 
@@ -56,6 +58,8 @@ namespace API.Domain.Core
 
         public async Task<int> InsertarAsync(Pedido obj, IEnumerable<PedidoDetalle> lineas)
         {
+            // NIT copiado del socio: se recorta y se valida antes de numerar (un rechazo no consume consecutivo).
+            obj.Nit = NitDocumento.Normalizar(obj.Nit);
             obj.TipoObjeto = TipoObjetoPedido;
             // CK de la cabecera: solo BaseTipo = -1. La referencia al documento base vive únicamente en las líneas.
             obj.BaseTipo = -1;
@@ -159,6 +163,9 @@ namespace API.Domain.Core
             string? usuarioAutoriza = null;
             if (existente is not null)
             {
+                // El NIT queda fijo tras crear: la actualización reemplaza las columnas y el DTO no lo trae.
+                obj.Nit = existente.Nit;
+
                 var seCancela = existente.EstadoDoc != "C" && existente.Cancelado != "S" && (obj.EstadoDoc == "C" || obj.Cancelado == "S");
                 var cambiaSocio = !string.Equals(existente.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase);
                 if (seCancela)

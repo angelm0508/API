@@ -570,5 +570,37 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(new DateTime(2026, 3, 2), existente.FechaVencimiento);
             _resolutor.Verify(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()), Times.Never);
         }
+
+        [Theory]
+        [InlineData("  1234567-8  ", "1234567-8")]
+        [InlineData("CF", "CF")]
+        [InlineData("  123456789012345  ", "123456789012345")]
+        [InlineData("", null)]
+        [InlineData("   ", null)]
+        [InlineData(null, null)]
+        public async Task InsertarAsync_Nit_SeGuardaRecortadoYVacioEsNulo(string? nit, string? esperado)
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new FacturaCompra { Serie = 4, Nit = nit };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 10m, 25m) });
+
+            Assert.Equal(esperado, obj.Nit);
+            _repoHeader.Verify(r => r.InsertarAsync(It.Is<FacturaCompra>(e => e.Nit == esperado)), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_NitMayorA15_Lanza_YNoConsumeConsecutivo()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var obj = new FacturaCompra { Serie = 4, Nit = new string('1', 16) };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 10m, 25m) }));
+
+            Assert.Equal("El NIT no puede tener más de 15 caracteres.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el rechazo ocurre antes de numerar
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<FacturaCompra>()), Times.Never);
+        }
     }
 }

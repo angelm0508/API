@@ -355,5 +355,84 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.True(await _domain.ActualizarAsync(1, new Pedido { EstadoDoc = "A", CodigoSn = "cl-1" }));
         }
+
+        [Theory]
+        [InlineData("  1234567-8  ", "1234567-8")]
+        [InlineData("CF", "CF")]
+        [InlineData("  123456789012345  ", "123456789012345")]
+        [InlineData("", null)]
+        [InlineData("   ", null)]
+        [InlineData(null, null)]
+        public async Task InsertarAsync_Nit_SeGuardaRecortadoYVacioEsNulo(string? nit, string? esperado)
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoPedidoMock.Setup(r => r.InsertarAsync(It.IsAny<Pedido>()))
+                .ReturnsAsync((Pedido c) => { c.Entry = 99; return c; });
+            var obj = new Pedido { Serie = 4, NumDoc = 0, Nit = nit };
+
+            await _domain.InsertarAsync(obj);
+
+            Assert.Equal(esperado, obj.Nit);
+            _repoPedidoMock.Verify(r => r.InsertarAsync(It.Is<Pedido>(e => e.Nit == esperado)), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_NitMayorA15_Lanza_YNoConsumeConsecutivo()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var obj = new Pedido { Serie = 4, NumDoc = 0, Nit = new string('1', 16) };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
+
+            Assert.Equal("El NIT no puede tener más de 15 caracteres.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el rechazo ocurre antes de numerar
+            _repoPedidoMock.Verify(r => r.InsertarAsync(It.IsAny<Pedido>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ConservaElNitGuardado_AunqueElDtoNoLoTraigaOTraigaOtro()
+        {
+            _repoPedidoMock.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new Pedido { Entry = 7, CodigoSn = "C1", Nit = "1234567-8" });
+            Pedido? enviado = null;
+            _repoPedidoMock.Setup(r => r.ActualizarAsync(7, It.IsAny<Pedido>()))
+                .Callback<int, Pedido>((_, e) => enviado = e).ReturnsAsync(true);
+
+            // El DTO de actualización no trae NIT (llega nulo); aunque llegara otro, el guardado manda.
+            await _domain.ActualizarAsync(7, new Pedido { CodigoSn = "C1", Comentario = "cambio" });
+            Assert.Equal("1234567-8", enviado!.Nit);
+
+            await _domain.ActualizarAsync(7, new Pedido { CodigoSn = "C1", Nit = "OTRO" });
+            Assert.Equal("1234567-8", enviado!.Nit);
+        }
+
+        [Theory]
+        [InlineData("  1234567-8  ", "1234567-8")]
+        [InlineData("   ", null)]
+        [InlineData(null, null)]
+        public async Task InsertarConLineas_Nit_SeGuardaRecortadoYVacioEsNulo(string? nit, string? esperado)
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoPedidoMock.Setup(r => r.InsertarAsync(It.IsAny<Pedido>()))
+                .ReturnsAsync((Pedido c) => { c.Entry = 99; return c; });
+            var obj = new Pedido { Serie = 4, NumDoc = 0, Nit = nit };
+
+            await _domain.InsertarAsync(obj, new[] { LineaPedido("ART1", 1m) });
+
+            Assert.Equal(esperado, obj.Nit);
+        }
+
+        [Fact]
+        public async Task InsertarConLineas_NitMayorA15_Lanza_YNoConsumeConsecutivo()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(new Pedido { Serie = 4, Nit = new string('1', 16) }, new[] { LineaPedido("ART1", 1m) }));
+
+            Assert.Equal("El NIT no puede tener más de 15 caracteres.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);
+            _repoPedidoMock.Verify(r => r.InsertarAsync(It.IsAny<Pedido>()), Times.Never);
+        }
     }
 }

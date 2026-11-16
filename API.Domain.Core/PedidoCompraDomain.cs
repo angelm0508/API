@@ -41,6 +41,8 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(PedidoCompra obj)
         {
+            // NIT copiado del socio: se recorta y se valida antes de numerar (un rechazo no consume consecutivo).
+            obj.Nit = NitDocumento.Normalizar(obj.Nit);
             obj.TipoObjeto = TipoObjetoPedidoCompra;
 
             var serie = await _repoGenericoNumeracion.ObtenerAsync(obj.Serie)
@@ -92,6 +94,12 @@ namespace API.Domain.Core
         public async Task<bool> ActualizarAsync(int id, PedidoCompra obj)
         {
             obj.TipoObjeto = TipoObjetoPedidoCompra;
+
+            // El NIT queda fijo tras crear: la actualización reemplaza las columnas y el DTO no lo trae.
+            var existente = await _repoGenericoPedidoCompra.ObtenerAsync(id);
+            if (existente is not null)
+                obj.Nit = existente.Nit;
+
             return await _repoGenericoPedidoCompra.ActualizarAsync(id, obj);
         }
 

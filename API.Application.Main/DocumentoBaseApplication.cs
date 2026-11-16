@@ -30,6 +30,7 @@ namespace API.Application.Main
                         CodigoSn = b.Cabecera.CodigoSn,
                         NombreSn = b.Cabecera.NombreSn,
                         Direccion = b.Cabecera.Direccion,
+                        Nit = b.Cabecera.Nit,
                         MonedaDoc = b.Cabecera.MonedaDoc,
                         PrctjeDesc = b.Cabecera.PrctjeDesc,
                         PrctjeImpuesto = b.Cabecera.PrctjeImpuesto,

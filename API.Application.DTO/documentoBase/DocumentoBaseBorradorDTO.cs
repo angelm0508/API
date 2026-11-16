@@ -14,6 +14,7 @@ namespace API.Application.DTO.documentoBase
         public string? CodigoSn { get; set; }
         public string? NombreSn { get; set; }
         public string? Direccion { get; set; }
+        public string? Nit { get; set; }
         public string? MonedaDoc { get; set; }
         public decimal? PrctjeDesc { get; set; }
         public decimal? PrctjeImpuesto { get; set; }

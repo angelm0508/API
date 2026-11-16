@@ -35,6 +35,8 @@ public partial class Pedido
 
     public string? Direccion { get; set; }
 
+    public string? Nit { get; set; }
+
     public string? MonedaDoc { get; set; }
 
     public int? BaseTipo { get; set; }

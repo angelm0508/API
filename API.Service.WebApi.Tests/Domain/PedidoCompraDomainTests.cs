@@ -252,5 +252,55 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Empty(resultado);
         }
+
+        [Theory]
+        [InlineData("  1234567-8  ", "1234567-8")]
+        [InlineData("CF", "CF")]
+        [InlineData("  123456789012345  ", "123456789012345")]
+        [InlineData("", null)]
+        [InlineData("   ", null)]
+        [InlineData(null, null)]
+        public async Task InsertarAsync_Nit_SeGuardaRecortadoYVacioEsNulo(string? nit, string? esperado)
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoPedidoCompraMock.Setup(r => r.InsertarAsync(It.IsAny<PedidoCompra>()))
+                .ReturnsAsync((PedidoCompra c) => { c.Entry = 99; return c; });
+            var obj = new PedidoCompra { Serie = 4, NumDoc = 0, Nit = nit };
+
+            await _domain.InsertarAsync(obj);
+
+            Assert.Equal(esperado, obj.Nit);
+            _repoPedidoCompraMock.Verify(r => r.InsertarAsync(It.Is<PedidoCompra>(e => e.Nit == esperado)), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_NitMayorA15_Lanza_YNoConsumeConsecutivo()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var obj = new PedidoCompra { Serie = 4, NumDoc = 0, Nit = new string('1', 16) };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
+
+            Assert.Equal("El NIT no puede tener más de 15 caracteres.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el rechazo ocurre antes de numerar
+            _repoPedidoCompraMock.Verify(r => r.InsertarAsync(It.IsAny<PedidoCompra>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ConservaElNitGuardado_AunqueElDtoNoLoTraigaOTraigaOtro()
+        {
+            _repoPedidoCompraMock.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new PedidoCompra { Entry = 7, CodigoSn = "C1", Nit = "1234567-8" });
+            PedidoCompra? enviado = null;
+            _repoPedidoCompraMock.Setup(r => r.ActualizarAsync(7, It.IsAny<PedidoCompra>()))
+                .Callback<int, PedidoCompra>((_, e) => enviado = e).ReturnsAsync(true);
+
+            // El DTO de actualización no trae NIT (llega nulo); aunque llegara otro, el guardado manda.
+            await _domain.ActualizarAsync(7, new PedidoCompra { CodigoSn = "C1", Comentario = "cambio" });
+            Assert.Equal("1234567-8", enviado!.Nit);
+
+            await _domain.ActualizarAsync(7, new PedidoCompra { CodigoSn = "C1", Nit = "OTRO" });
+            Assert.Equal("1234567-8", enviado!.Nit);
+        }
     }
 }

@@ -32,6 +32,8 @@ namespace API.Domain.Core
         #region async methods
         public async Task<int> InsertarAsync(Cotizacion obj)
         {
+            // NIT copiado del socio: se recorta y se valida antes de numerar (un rechazo no consume consecutivo).
+            obj.Nit = NitDocumento.Normalizar(obj.Nit);
             obj.TipoObjeto = TipoObjetoCotizacion;
 
             var serie = await _repoGenericoNumeracion.ObtenerAsync(obj.Serie)
@@ -91,6 +93,9 @@ namespace API.Domain.Core
             var existente = await _repoGenericoCotizacion.ObtenerAsync(id);
             if (existente is not null)
             {
+                // El NIT queda fijo tras crear: la actualización reemplaza las columnas y el DTO no lo trae.
+                obj.Nit = existente.Nit;
+
                 var seCancela = existente.EstadoDoc != "C" && existente.Cancelado != "S" && (obj.EstadoDoc == "C" || obj.Cancelado == "S");
                 var cambiaSocio = !string.Equals(existente.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase);
                 if (seCancela)

@@ -163,6 +163,7 @@ namespace API.Application.Main
                     NombreSn = baseDoc.Documento.NombreSn,
                     MonedaDoc = baseDoc.Documento.MonedaDoc,
                     Direccion = baseDoc.Documento.Direccion,
+                    Nit = baseDoc.Documento.Nit,
                     // Las lineas de la factura se devuelven con su articulo y almacen: la nota por articulos
                     // las usa tal cual y la nota por concepto (Web) descarta esos dos campos.
                     Lineas = baseDoc.Lineas.Select(l => new NotaDebitoCompraDetalleCrearDTO

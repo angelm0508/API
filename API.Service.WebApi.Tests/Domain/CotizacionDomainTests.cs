@@ -192,5 +192,55 @@ namespace API.Service.WebApi.Tests.Domain
 
             _documentoBase.Verify(d => d.ValidarOrigenModificableAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
         }
+
+        [Theory]
+        [InlineData("  1234567-8  ", "1234567-8")]
+        [InlineData("CF", "CF")]
+        [InlineData("  123456789012345  ", "123456789012345")]
+        [InlineData("", null)]
+        [InlineData("   ", null)]
+        [InlineData(null, null)]
+        public async Task InsertarAsync_Nit_SeGuardaRecortadoYVacioEsNulo(string? nit, string? esperado)
+        {
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAutogenerada(sigNumero: 5));
+            _repoCotizacionMock.Setup(r => r.InsertarAsync(It.IsAny<Cotizacion>()))
+                .ReturnsAsync((Cotizacion c) => { c.Entry = 99; return c; });
+            var obj = new Cotizacion { Serie = 4, NumDoc = 0, Nit = nit };
+
+            await _domain.InsertarAsync(obj);
+
+            Assert.Equal(esperado, obj.Nit);
+            _repoCotizacionMock.Verify(r => r.InsertarAsync(It.Is<Cotizacion>(e => e.Nit == esperado)), Times.Once);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_NitMayorA15_Lanza_YNoConsumeConsecutivo()
+        {
+            var serie = SerieAutogenerada(sigNumero: 5);
+            _repoNumeracionMock.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var obj = new Cotizacion { Serie = 4, NumDoc = 0, Nit = new string('1', 16) };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
+
+            Assert.Equal("El NIT no puede tener más de 15 caracteres.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el rechazo ocurre antes de numerar
+            _repoCotizacionMock.Verify(r => r.InsertarAsync(It.IsAny<Cotizacion>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ActualizarAsync_ConservaElNitGuardado_AunqueElDtoNoLoTraigaOTraigaOtro()
+        {
+            _repoCotizacionMock.Setup(r => r.ObtenerAsync(7)).ReturnsAsync(new Cotizacion { Entry = 7, CodigoSn = "C1", Nit = "1234567-8" });
+            Cotizacion? enviado = null;
+            _repoCotizacionMock.Setup(r => r.ActualizarAsync(7, It.IsAny<Cotizacion>()))
+                .Callback<int, Cotizacion>((_, e) => enviado = e).ReturnsAsync(true);
+
+            // El DTO de actualización no trae NIT (llega nulo); aunque llegara otro, el guardado manda.
+            await _domain.ActualizarAsync(7, new Cotizacion { CodigoSn = "C1", Comentario = "cambio" });
+            Assert.Equal("1234567-8", enviado!.Nit);
+
+            await _domain.ActualizarAsync(7, new Cotizacion { CodigoSn = "C1", Nit = "OTRO" });
+            Assert.Equal("1234567-8", enviado!.Nit);
+        }
     }
 }

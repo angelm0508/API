@@ -53,7 +53,7 @@ namespace API.Domain.Core
         // ---------------------------------------------------------------------------------------------
 
         private sealed record Cab(int Entry, int NumDoc, string? CodigoSn, string? NombreSn, string? Direccion, string? MonedaDoc,
-            decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario, string? Cancelado, string? EstadoDoc, string? EstadoServicio = null)
+            decimal? PrctjeDesc, decimal? PrctjeImpuesto, string? Comentario, string? Cancelado, string? EstadoDoc, string? EstadoServicio = null, string? Nit = null)
         {
             // Un documento está activo si no está cancelado ni por Cancelado ni por EstadoDoc.
             public bool Activo => Cancelado != "S" && EstadoDoc != "C";
@@ -66,10 +66,10 @@ namespace API.Domain.Core
 
         private sealed record Consumo(int TipoDestino, int EntryDestino, int NumDocDestino, int BaseLinea, decimal Cantidad);
 
-        private static Cab Mapear(Cotizacion h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc);
-        private static Cab Mapear(Pedido h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc);
-        private static Cab Mapear(Entrega h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc);
-        private static Cab Mapear(Factura h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc);
+        private static Cab Mapear(Cotizacion h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc, Nit: h.Nit);
+        private static Cab Mapear(Pedido h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc, Nit: h.Nit);
+        private static Cab Mapear(Entrega h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc, Nit: h.Nit);
+        private static Cab Mapear(Factura h) => new(h.Entry, h.NumDoc, h.CodigoSn, h.NombreSn, h.Direccion, h.MonedaDoc, h.PrctjeDesc, h.PrctjeImpuesto, h.Comentario, h.Cancelado, h.EstadoDoc, Nit: h.Nit);
 
         private static Lin Mapear(CotizacionDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
         private static Lin Mapear(PedidoDetalle d) => new(d.Entry, d.NoLinea, d.BaseTipo, d.BaseEntry, d.BaseLinea, d.CodArticulo, d.Descripcion, d.Cantidad, d.Precio, d.PrecioBruto, d.PrctjeDesc, d.CodigoImpuesto, d.Impuesto, d.CodAlmacen, d.UomEntry, d.UomEntryNavigation?.Codigo, d.FactorUom, d.CantidadBase);
@@ -224,7 +224,7 @@ namespace API.Domain.Core
                 throw new Exception("El documento no tiene líneas abiertas.");
 
             return new BorradorDocumentoBase(tipoOrigen, entry, cab.NumDoc,
-                new CabeceraBorrador(cab.CodigoSn, cab.NombreSn, cab.Direccion, cab.MonedaDoc, cab.PrctjeDesc, cab.PrctjeImpuesto, cab.Comentario),
+                new CabeceraBorrador(cab.CodigoSn, cab.NombreSn, cab.Direccion, cab.MonedaDoc, cab.PrctjeDesc, cab.PrctjeImpuesto, cab.Comentario, cab.Nit),
                 abiertas);
         }
 

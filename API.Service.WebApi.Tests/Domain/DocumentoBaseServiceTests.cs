@@ -56,7 +56,7 @@ namespace API.Service.WebApi.Tests.Domain
 
         private Cotizacion Cot(int entry, int numDoc, string sn = "CL-1", string? estadoDoc = "A", string? cancelado = "N")
         {
-            var c = new Cotizacion { Entry = entry, NumDoc = numDoc, CodigoSn = sn, NombreSn = "Cliente", Direccion = "Dir", MonedaDoc = "QTZ",
+            var c = new Cotizacion { Entry = entry, NumDoc = numDoc, CodigoSn = sn, NombreSn = "Cliente", Direccion = "Dir", Nit = "1234567-8", MonedaDoc = "QTZ",
                 PrctjeDesc = 0m, PrctjeImpuesto = 12m, Comentario = "nota", EstadoDoc = estadoDoc, Cancelado = cancelado };
             _cotizaciones.Add(c);
             return c;
@@ -212,6 +212,7 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal((3, 1, 12), (b.OrigenTipo, b.OrigenEntry, b.OrigenNumDoc));
             Assert.Equal(("CL-1", "Cliente", "Dir", "QTZ", 12m, "nota"),
                 (b.Cabecera.CodigoSn, b.Cabecera.NombreSn, b.Cabecera.Direccion, b.Cabecera.MonedaDoc, b.Cabecera.PrctjeImpuesto, b.Cabecera.Comentario));
+            Assert.Equal("1234567-8", b.Cabecera.Nit);   // el borrador copia el NIT del documento origen
             Assert.Equal(2, b.Lineas.Count);
             Assert.Equal((3, 1, 1, "ART1", 10m, 6m, 25m, "01"),
                 (b.Lineas[0].BaseTipo, b.Lineas[0].BaseEntry, b.Lineas[0].BaseLinea, b.Lineas[0].CodArticulo,

@@ -266,6 +266,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");
@@ -366,6 +367,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");
@@ -466,6 +468,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");
@@ -570,6 +573,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");
@@ -670,6 +674,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");
@@ -908,6 +913,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.DocSubType)
                 .HasMaxLength(2)
                 .HasDefaultValueSql("('--')");
@@ -1023,6 +1029,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.DocSubType)
                 .HasMaxLength(2)
                 .HasDefaultValueSql("('--')");
@@ -1142,6 +1149,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");
@@ -1220,6 +1228,7 @@ public partial class ApiDbTestContext : DbContext
                 .HasColumnName("CodigoSN");
             entity.Property(e => e.Comentario).HasMaxLength(254);
             entity.Property(e => e.Direccion).HasMaxLength(254);
+            entity.Property(e => e.Nit).HasMaxLength(15);
             entity.Property(e => e.EstadoDoc)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('A')");

@@ -9,6 +9,7 @@ namespace API.Application.DTO.notaDebitoCompra
         public string? NombreSn { get; set; }
         public string? MonedaDoc { get; set; }
         public string? Direccion { get; set; }
+        public string? Nit { get; set; }
         public List<NotaDebitoCompraDetalleCrearDTO> Lineas { get; set; } = new();
     }
 }

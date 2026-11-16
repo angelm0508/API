@@ -185,7 +185,7 @@ namespace API.Service.WebApi.Tests.Application
         [Fact]
         public async Task ObtenerFacturaCompraBase_ConvierteLasLineasEnConceptos_YDevuelveElDisponible()
         {
-            var factura = new FacturaCompra { Entry = 12, NumDoc = 100, CodigoSn = "SN1", NombreSn = "Proveedor", MonedaDoc = "QTZ", Direccion = "Zona 1", TotalDoc = 112m };
+            var factura = new FacturaCompra { Entry = 12, NumDoc = 100, CodigoSn = "SN1", NombreSn = "Proveedor", MonedaDoc = "QTZ", Direccion = "Zona 1", Nit = "1234567-8", TotalDoc = 112m };
             var lineas = new List<FacturaCompraDetalle>
             {
                 new() { Entry = 12, NoLinea = 1, CodArticulo = "ART1", Descripcion = "Tornillo", Cantidad = 3m, Precio = 5m, PrecioBruto = 15m, PrctjeDesc = 0m, CodigoImpuesto = "IVA", Impuesto = 1.8m, TotalLinea = 16.8m },
@@ -198,6 +198,7 @@ namespace API.Service.WebApi.Tests.Application
             Assert.True(respuesta.Resultado);
             var dato = respuesta.Dato;
             Assert.Equal((12, 100, "SN1", "Proveedor", "QTZ", "Zona 1"), (dato.Entry, dato.NumDoc, dato.CodigoSn, dato.NombreSn, dato.MonedaDoc, dato.Direccion));
+            Assert.Equal("1234567-8", dato.Nit);   // el NIT de la factura base se copia a la nota
             Assert.Equal(112m, dato.TotalDoc);
             Assert.Equal(12m, dato.TotalAcreditado);
             Assert.Equal(100m, dato.Disponible);

@@ -20,7 +20,7 @@ namespace API.Service.WebApi.Tests.Application
         {
             _servicio.Setup(s => s.ObtenerBorradorAsync(3, 10, 4)).ReturnsAsync(new BorradorDocumentoBase(
                 3, 10, 12,
-                new CabeceraBorrador("CL-1", "Cliente", "Dir", "QTZ", 5m, 12m, "nota"),
+                new CabeceraBorrador("CL-1", "Cliente", "Dir", "QTZ", 5m, 12m, "nota", "1234567-8"),
                 new[] { new LineaAbiertaVenta(3, 10, 2, "ART1", "Desc", 10m, 6m, 25m, 25m, 0m, "IVA", 30m, "01") }));
 
             var r = await _app.ObtenerBorradorAsync(3, 10, 4);
@@ -30,6 +30,7 @@ namespace API.Service.WebApi.Tests.Application
             Assert.Equal(("CL-1", "Cliente", "Dir", "QTZ", 5m, 12m, "nota"),
                 (r.Dato.Cabecera.CodigoSn, r.Dato.Cabecera.NombreSn, r.Dato.Cabecera.Direccion, r.Dato.Cabecera.MonedaDoc,
                  r.Dato.Cabecera.PrctjeDesc, r.Dato.Cabecera.PrctjeImpuesto, r.Dato.Cabecera.Comentario));
+            Assert.Equal("1234567-8", r.Dato.Cabecera.Nit);
             var l = Assert.Single(r.Dato.Lineas);
             Assert.Equal((3, 10, 2, "ART1", "Desc", 10m, 6m, 25m, 25m, 0m, "IVA", 30m, "01"),
                 (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Descripcion, l.CantidadOrigen, l.CantidadAbierta,

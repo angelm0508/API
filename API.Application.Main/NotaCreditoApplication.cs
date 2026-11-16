@@ -167,6 +167,7 @@ namespace API.Application.Main
                     NombreSn = baseDoc.Documento.NombreSn,
                     MonedaDoc = baseDoc.Documento.MonedaDoc,
                     Direccion = baseDoc.Documento.Direccion,
+                    Nit = baseDoc.Documento.Nit,
                     TotalDoc = baseDoc.Documento.TotalDoc,
                     TotalAcreditado = baseDoc.TotalAcreditado,
                     TotalPagado = baseDoc.TotalPagado,
