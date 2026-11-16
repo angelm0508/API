@@ -106,7 +106,7 @@ namespace API.Domain.Core
             // Condición de pago y vencimiento: antes de numerar, así una condición inválida no consume el consecutivo.
             var (condicion, vencimiento) = await _resolutor.ResolverAsync(obj.CondicionPago, socio.CondicionPago, obj.FechaDoc);
             obj.CondicionPago = condicion;
-            obj.FechaVencimiento = vencimiento;   // el cliente no puede fijarlo: siempre se sobrescribe
+            obj.FechaVencimiento = VencimientoDocumento.Aplicar(obj.FechaVencimiento, vencimiento, obj.FechaDoc);   // la calculada es solo sugerencia: el cliente puede pedir otra (no anterior al documento)
 
             // EstadoInv siempre explicito: el DEFAULT 'A' de la base no debe decidir si la nota tiene asiento.
             obj.EstadoInv = obj.DocType == ModoArticulos ? "A" : "C";

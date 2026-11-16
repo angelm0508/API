@@ -17,31 +17,35 @@ namespace API.Service.WebApi.Tests.Application
         private readonly IMapper _mapper = new MapperConfiguration(c => c.AddProfile<PerfilMapeo>(), NullLoggerFactory.Instance).CreateMapper();
 
         [Fact]
-        public void Factura_CrearDto_MapeaLaCondicionPedidaYNoTocaVencimientoNiNavegacion()
+        public void Factura_CrearDto_MapeaCondicionYVencimientoPedidosYNoTocaLaNavegacion()
         {
-            var entidad = _mapper.Map<Factura>(new FacturaCrearDTO { Serie = 4, CodigoSn = "C001", CondicionPago = "C30" });
+            var entidad = _mapper.Map<Factura>(new FacturaCrearDTO { Serie = 4, CodigoSn = "C001", CondicionPago = "C30", FechaVencimiento = new DateTime(2026, 12, 15) });
+            var sinFecha = _mapper.Map<Factura>(new FacturaCrearDTO { Serie = 4, CodigoSn = "C001", CondicionPago = "C30" });
 
             Assert.Equal("C30", entidad.CondicionPago);
-            Assert.Null(entidad.FechaVencimiento);
+            Assert.Equal(new DateTime(2026, 12, 15), entidad.FechaVencimiento);
             Assert.Null(entidad.CondicionPagoNavigation);
+            Assert.Null(sinFecha.FechaVencimiento);   // sin valor: el dominio la calcula
         }
 
         [Fact]
-        public void NotaDebito_CrearDto_MapeaLaCondicionPedidaYNoTocaVencimientoNiNavegacion()
+        public void NotaDebito_CrearDto_MapeaCondicionYVencimientoPedidosYNoTocaLaNavegacion()
         {
-            var entidad = _mapper.Map<Factura>(new NotaDebitoCrearDTO { Serie = 4, CodigoSn = "C001", CondicionPago = "C15" });
+            var entidad = _mapper.Map<Factura>(new NotaDebitoCrearDTO { Serie = 4, CodigoSn = "C001", CondicionPago = "C15", FechaVencimiento = new DateTime(2026, 12, 15) });
+            var sinFecha = _mapper.Map<Factura>(new NotaDebitoCrearDTO { Serie = 4, CodigoSn = "C001", CondicionPago = "C15" });
 
             Assert.Equal("C15", entidad.CondicionPago);
-            Assert.Null(entidad.FechaVencimiento);
+            Assert.Equal(new DateTime(2026, 12, 15), entidad.FechaVencimiento);
             Assert.Null(entidad.CondicionPagoNavigation);
+            Assert.Null(sinFecha.FechaVencimiento);
         }
 
         [Fact]
-        public void LosDtosDeCreacionYActualizacion_NoExponenFechaVencimiento()
+        public void LosDtosDeCreacionExponenFechaVencimientoOpcional_LosDeActualizacionNo()
         {
-            // El cliente no puede fijar el vencimiento: no existe en ningún DTO de entrada.
-            Assert.Null(typeof(FacturaCrearDTO).GetProperty(nameof(Factura.FechaVencimiento)));
-            Assert.Null(typeof(NotaDebitoCrearDTO).GetProperty(nameof(Factura.FechaVencimiento)));
+            // El vencimiento se puede fijar solo al crear (opcional: sin él se calcula); al actualizar sigue fijo.
+            Assert.Equal(typeof(DateTime?), typeof(FacturaCrearDTO).GetProperty(nameof(Factura.FechaVencimiento))?.PropertyType);
+            Assert.Equal(typeof(DateTime?), typeof(NotaDebitoCrearDTO).GetProperty(nameof(Factura.FechaVencimiento))?.PropertyType);
             Assert.Null(typeof(FacturaActualizarDTO).GetProperty(nameof(Factura.FechaVencimiento)));
             Assert.Null(typeof(NotaDebitoActualizarDTO).GetProperty(nameof(Factura.FechaVencimiento)));
             Assert.Null(typeof(FacturaActualizarDTO).GetProperty(nameof(Factura.CondicionPago)));
@@ -80,30 +84,34 @@ namespace API.Service.WebApi.Tests.Application
         // ---------------- compras: facturas de compra y notas de débito de proveedor ----------------
 
         [Fact]
-        public void FacturaCompra_CrearDto_MapeaLaCondicionPedidaYNoTocaVencimientoNiNavegacion()
+        public void FacturaCompra_CrearDto_MapeaCondicionYVencimientoPedidosYNoTocaLaNavegacion()
         {
-            var entidad = _mapper.Map<FacturaCompra>(new FacturaCompraCrearDTO { Serie = 4, CodigoSn = "P001", CondicionPago = "C30" });
+            var entidad = _mapper.Map<FacturaCompra>(new FacturaCompraCrearDTO { Serie = 4, CodigoSn = "P001", CondicionPago = "C30", FechaVencimiento = new DateTime(2026, 12, 15) });
+            var sinFecha = _mapper.Map<FacturaCompra>(new FacturaCompraCrearDTO { Serie = 4, CodigoSn = "P001", CondicionPago = "C30" });
 
             Assert.Equal("C30", entidad.CondicionPago);
-            Assert.Null(entidad.FechaVencimiento);
+            Assert.Equal(new DateTime(2026, 12, 15), entidad.FechaVencimiento);
             Assert.Null(entidad.CondicionPagoNavigation);
+            Assert.Null(sinFecha.FechaVencimiento);
         }
 
         [Fact]
-        public void NotaDebitoCompra_CrearDto_MapeaLaCondicionPedidaYNoTocaVencimientoNiNavegacion()
+        public void NotaDebitoCompra_CrearDto_MapeaCondicionYVencimientoPedidosYNoTocaLaNavegacion()
         {
-            var entidad = _mapper.Map<FacturaCompra>(new NotaDebitoCompraCrearDTO { Serie = 4, CodigoSn = "P001", CondicionPago = "C15" });
+            var entidad = _mapper.Map<FacturaCompra>(new NotaDebitoCompraCrearDTO { Serie = 4, CodigoSn = "P001", CondicionPago = "C15", FechaVencimiento = new DateTime(2026, 12, 15) });
+            var sinFecha = _mapper.Map<FacturaCompra>(new NotaDebitoCompraCrearDTO { Serie = 4, CodigoSn = "P001", CondicionPago = "C15" });
 
             Assert.Equal("C15", entidad.CondicionPago);
-            Assert.Null(entidad.FechaVencimiento);
+            Assert.Equal(new DateTime(2026, 12, 15), entidad.FechaVencimiento);
             Assert.Null(entidad.CondicionPagoNavigation);
+            Assert.Null(sinFecha.FechaVencimiento);
         }
 
         [Fact]
-        public void LosDtosDeCompraDeCreacionYActualizacion_NoExponenFechaVencimiento()
+        public void LosDtosDeCompraDeCreacionExponenFechaVencimientoOpcional_LosDeActualizacionNo()
         {
-            Assert.Null(typeof(FacturaCompraCrearDTO).GetProperty(nameof(FacturaCompra.FechaVencimiento)));
-            Assert.Null(typeof(NotaDebitoCompraCrearDTO).GetProperty(nameof(FacturaCompra.FechaVencimiento)));
+            Assert.Equal(typeof(DateTime?), typeof(FacturaCompraCrearDTO).GetProperty(nameof(FacturaCompra.FechaVencimiento))?.PropertyType);
+            Assert.Equal(typeof(DateTime?), typeof(NotaDebitoCompraCrearDTO).GetProperty(nameof(FacturaCompra.FechaVencimiento))?.PropertyType);
             Assert.Null(typeof(FacturaCompraActualizarDTO).GetProperty(nameof(FacturaCompra.FechaVencimiento)));
             Assert.Null(typeof(NotaDebitoCompraActualizarDTO).GetProperty(nameof(FacturaCompra.FechaVencimiento)));
             Assert.Null(typeof(FacturaCompraActualizarDTO).GetProperty(nameof(FacturaCompra.CondicionPago)));

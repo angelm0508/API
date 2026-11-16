@@ -38,6 +38,9 @@ namespace API.Application.DTO.notaDebitoCompra
         /// <summary>Condición de pago (código). Opcional: sin ella se usa la del proveedor o CON. El vencimiento lo calcula el servidor.</summary>
         public string? CondicionPago { get; set; }
 
+        /// <summary>Fecha de vencimiento (solo el día). Opcional: sin ella la calcula el servidor (fecha del documento + días de la condición); si se envía no puede ser anterior a la fecha del documento. Solo al crear: el vencimiento no se edita después.</summary>
+        public DateTime? FechaVencimiento { get; set; }
+
         /// <summary>Lineas del documento (artículos o conceptos según DocType): se registran junto con el encabezado y no se pueden modificar despues.</summary>
         public List<NotaDebitoCompraDetalleCrearDTO> Lineas { get; set; } = new();
     }

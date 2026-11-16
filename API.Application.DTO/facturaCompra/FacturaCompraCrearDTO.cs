@@ -38,6 +38,9 @@ namespace API.Application.DTO.facturaCompra
         /// <summary>Condición de pago (código). Opcional: sin ella se usa la del proveedor o CON. El vencimiento lo calcula el servidor.</summary>
         public string? CondicionPago { get; set; }
 
+        /// <summary>Fecha de vencimiento (solo el día). Opcional: sin ella la calcula el servidor (fecha del documento + días de la condición); si se envía no puede ser anterior a la fecha del documento. Solo al crear: el vencimiento no se edita después.</summary>
+        public DateTime? FechaVencimiento { get; set; }
+
         /// <summary>
         /// Líneas del documento. Con INV-2 el documento se registra con sus líneas en una
         /// sola petición (y una sola transacción). El `Entry` de cada línea se ignora aquí

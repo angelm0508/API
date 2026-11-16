@@ -298,9 +298,8 @@ namespace API.Transversal.Mapper
 
             // FacturaCompra
             CreateMap<FacturaCompra, FacturaCompraDTO>();
-            // El vencimiento y la condición efectiva los fija FacturaCompraDomain; AutoMapper nunca llena la navegación.
+            // La condición efectiva y el vencimiento (el pedido o el calculado) los fija FacturaCompraDomain; AutoMapper nunca llena la navegación.
             CreateMap<FacturaCompraCrearDTO, FacturaCompra>()
-                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
                 .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<FacturaCompraActualizarDTO, FacturaCompra>();
 
@@ -318,9 +317,8 @@ namespace API.Transversal.Mapper
 
             // Factura
             CreateMap<Factura, FacturaDTO>();
-            // El vencimiento y la condición efectiva los fija FacturaDomain; AutoMapper nunca llena la navegación.
+            // La condición efectiva y el vencimiento (el pedido o el calculado) los fija FacturaDomain; AutoMapper nunca llena la navegación.
             CreateMap<FacturaCrearDTO, Factura>()
-                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
                 .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<FacturaActualizarDTO, Factura>();
 
@@ -341,7 +339,6 @@ namespace API.Transversal.Mapper
             // NotaDebito
             CreateMap<Factura, NotaDebitoDTO>();
             CreateMap<NotaDebitoCrearDTO, Factura>()
-                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
                 .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<NotaDebitoActualizarDTO, Factura>();
 
@@ -356,7 +353,6 @@ namespace API.Transversal.Mapper
             // NotaDebitoCompra
             CreateMap<FacturaCompra, NotaDebitoCompraDTO>();
             CreateMap<NotaDebitoCompraCrearDTO, FacturaCompra>()
-                .ForMember(d => d.FechaVencimiento, o => o.Ignore())
                 .ForMember(d => d.CondicionPagoNavigation, o => o.Ignore());
             CreateMap<NotaDebitoCompraActualizarDTO, FacturaCompra>();
 

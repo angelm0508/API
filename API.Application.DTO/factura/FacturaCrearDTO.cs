@@ -35,8 +35,11 @@ namespace API.Application.DTO.factura
         public decimal? TotalDoc { get; set; }
         public string? Comentario { get; set; }
 
-        /// <summary>Condición de pago (código). Opcional: sin ella se usa la del socio o CON. El vencimiento lo calcula el servidor.</summary>
+        /// <summary>Condición de pago (código). Opcional: sin ella se usa la del socio o CON.</summary>
         public string? CondicionPago { get; set; }
+
+        /// <summary>Fecha de vencimiento (solo el día). Opcional: sin ella la calcula el servidor (fecha del documento + días de la condición); si se envía no puede ser anterior a la fecha del documento. Solo al crear: el vencimiento no se edita después.</summary>
+        public DateTime? FechaVencimiento { get; set; }
 
         /// <summary>
         /// Líneas del documento. Con INV-3 el documento se registra con sus líneas en una

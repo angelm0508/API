@@ -741,14 +741,57 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task InsertarAsync_FechaVencimientoEnviadaPorElCliente_SeSobrescribe()
+        public async Task InsertarAsync_FechaVencimientoPedida_SeGuardaEsaYLaCondicionSeSigueGuardando()
         {
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
-            var obj = new Factura { Serie = 4, FechaDoc = new DateTime(2026, 2, 1), FechaVencimiento = new DateTime(2030, 12, 31) };
+            _resolutor.Setup(r => r.ResolverAsync("C30", null, new DateTime(2026, 2, 1)))
+                .ReturnsAsync(("C30", new DateTime(2026, 3, 3)));
+            var obj = new Factura { Serie = 4, CondicionPago = "C30", FechaDoc = new DateTime(2026, 2, 1), FechaVencimiento = new DateTime(2026, 4, 15, 13, 45, 0) };
 
             await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
 
-            Assert.Equal(new DateTime(2026, 2, 1), obj.FechaVencimiento);   // contado: la fecha del documento
+            Assert.Equal(new DateTime(2026, 4, 15), obj.FechaVencimiento);   // la pedida, solo el día
+            Assert.Equal("C30", obj.CondicionPago);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinFechaVencimiento_SeCalculaComoAntes()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            _resolutor.Setup(r => r.ResolverAsync("C30", null, new DateTime(2026, 2, 1)))
+                .ReturnsAsync(("C30", new DateTime(2026, 3, 3)));
+            var obj = new Factura { Serie = 4, CondicionPago = "C30", FechaDoc = new DateTime(2026, 2, 1), FechaVencimiento = null };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal(new DateTime(2026, 3, 3), obj.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FechaVencimientoIgualALaDelDocumento_Vale()
+        {
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(SerieAuto(sig: 5));
+            var obj = new Factura { Serie = 4, FechaDoc = new DateTime(2026, 2, 1, 15, 30, 0), FechaVencimiento = new DateTime(2026, 2, 1) };
+
+            await _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) });
+
+            Assert.Equal(new DateTime(2026, 2, 1), obj.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FechaVencimientoAnteriorALaDelDocumento_Lanza_NoAvanzaElConsecutivoNiGuarda()
+        {
+            var serie = SerieAuto(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var obj = new Factura { Serie = 4, FechaDoc = new DateTime(2026, 2, 1), FechaVencimiento = new DateTime(2026, 1, 31) };
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj, new[] { Linea("ART1", "01", 1m, 1m) }));
+
+            Assert.Equal("La fecha de vencimiento no puede ser anterior a la fecha del documento.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el consecutivo no avanzó
+            Assert.Equal(0, obj.NumDoc);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+            _repoHeader.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
         }
 
         [Fact]

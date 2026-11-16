@@ -77,7 +77,7 @@ namespace API.Domain.Core
             var socio = string.IsNullOrWhiteSpace(obj.CodigoSn) ? null : await _repoSocio.ObtenerAsync(obj.CodigoSn);
             var (condicion, vencimiento) = await _resolutor.ResolverAsync(obj.CondicionPago, socio?.CondicionPago, obj.FechaDoc);
             obj.CondicionPago = condicion;
-            obj.FechaVencimiento = vencimiento;   // el cliente no puede fijarlo: siempre se sobrescribe
+            obj.FechaVencimiento = VencimientoDocumento.Aplicar(obj.FechaVencimiento, vencimiento, obj.FechaDoc);   // la calculada es solo sugerencia: el cliente puede pedir otra (no anterior al documento)
 
             if (serie.Manual == "S")
             {

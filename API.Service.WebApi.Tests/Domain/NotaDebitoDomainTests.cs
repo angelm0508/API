@@ -606,13 +606,54 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task InsertarAsync_FechaVencimientoEnviadaPorElCliente_SeSobrescribe()
+        public async Task InsertarAsync_FechaVencimientoPedida_SeGuardaEsaYLaCondicionSeSigueGuardando()
         {
-            var nota = Nota(n => n.FechaVencimiento = new DateTime(2030, 12, 31));
+            _resolutor.Setup(r => r.ResolverAsync("C30", null, new DateTime(2026, 10, 4)))
+                .ReturnsAsync(("C30", new DateTime(2026, 11, 3)));
+            var nota = Nota(n => { n.CondicionPago = "C30"; n.FechaVencimiento = new DateTime(2026, 12, 20, 9, 15, 0); });
 
             await _domain.InsertarAsync(nota, new[] { Linea() });
 
-            Assert.Equal(new DateTime(2026, 10, 4), nota.FechaVencimiento);   // contado: la fecha del documento
+            Assert.Equal(new DateTime(2026, 12, 20), nota.FechaVencimiento);   // la pedida, solo el día
+            Assert.Equal("C30", nota.CondicionPago);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_SinFechaVencimiento_SeCalculaComoAntes()
+        {
+            _resolutor.Setup(r => r.ResolverAsync("C30", null, new DateTime(2026, 10, 4)))
+                .ReturnsAsync(("C30", new DateTime(2026, 11, 3)));
+            var nota = Nota(n => { n.CondicionPago = "C30"; n.FechaVencimiento = null; });
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.Equal(new DateTime(2026, 11, 3), nota.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FechaVencimientoIgualALaDelDocumento_Vale()
+        {
+            var nota = Nota(n => { n.FechaDoc = new DateTime(2026, 10, 4, 16, 0, 0); n.FechaVencimiento = new DateTime(2026, 10, 4); });
+
+            await _domain.InsertarAsync(nota, new[] { Linea() });
+
+            Assert.Equal(new DateTime(2026, 10, 4), nota.FechaVencimiento);
+        }
+
+        [Fact]
+        public async Task InsertarAsync_FechaVencimientoAnteriorALaDelDocumento_Lanza_NoAvanzaElConsecutivoNiGuarda()
+        {
+            var serie = CrearSerie(sig: 5);
+            _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
+            var nota = Nota(n => n.FechaVencimiento = new DateTime(2026, 10, 3));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(nota, new[] { Linea() }));
+
+            Assert.Equal("La fecha de vencimiento no puede ser anterior a la fecha del documento.", ex.Message);
+            Assert.Equal(5, serie.SigNumero);   // el consecutivo no avanzó
+            Assert.Equal(0, nota.NumDoc);
+            _tx.Verify(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>()), Times.Never);
+            _repoFactura.Verify(r => r.InsertarAsync(It.IsAny<Factura>()), Times.Never);
         }
 
         [Fact]
