@@ -49,5 +49,9 @@ namespace API.Application.DTO.articulo.articulo
         [Required(ErrorMessage = "{0} campo no debe de estar vacio.")]
         public int Serie { get; set; }
 
+        public string? CodigoBarras { get; set; }
+
+        public string MostrarEnPos { get; set; } = "N";
+
     }
 }

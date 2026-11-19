@@ -55,5 +55,10 @@ namespace API.Application.DTO.articulo.articulo
         public decimal CostoEstandar { get; set; }
 
         public string? MetodoValuacion { get; set; }
+
+        // POS: código de barras (único, opcional) y marca para mostrar el artículo en los accesos rápidos del POS (S/N).
+        public string? CodigoBarras { get; set; }
+
+        public string MostrarEnPos { get; set; } = "N";
     }
 }

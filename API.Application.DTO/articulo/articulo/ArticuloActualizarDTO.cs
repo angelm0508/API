@@ -47,5 +47,9 @@ namespace API.Application.DTO.articulo.articulo
         public string? Comentarios { get; set; }
 
         public int Serie { get; set; }
+
+        public string? CodigoBarras { get; set; }
+
+        public string MostrarEnPos { get; set; } = "N";
     }
 }

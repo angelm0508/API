@@ -57,6 +57,10 @@ public partial class Articulo
 
     public decimal ValorInventario { get; set; }
 
+    public string? CodigoBarras { get; set; }
+
+    public string MostrarEnPos { get; set; } = "N";
+
     public virtual Almacen? AlmacenDefectoNavigation { get; set; }
 
     public virtual ICollection<CotizacionDetalle> CotizacionDetalles { get; set; } = new List<CotizacionDetalle>();

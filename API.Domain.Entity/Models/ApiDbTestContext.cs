@@ -129,6 +129,8 @@ public partial class ApiDbTestContext : DbContext
 
     public virtual DbSet<ReporteVista> ReporteVistas { get; set; }
 
+    public virtual DbSet<PosConfiguracion> PosConfiguracions { get; set; }
+
     public virtual DbSet<Modulo> Modulos { get; set; }
 
     public virtual DbSet<MovimientoInventario> MovimientoInventarios { get; set; }
@@ -206,6 +208,10 @@ public partial class ApiDbTestContext : DbContext
             entity.Property(e => e.CantDisponible).HasColumnType("decimal(21, 6)");
             entity.Property(e => e.CantPedida).HasColumnType("decimal(21, 6)");
             entity.Property(e => e.Comentarios).HasMaxLength(1000);
+            entity.Property(e => e.CodigoBarras).HasMaxLength(50);
+            entity.Property(e => e.MostrarEnPos)
+                .HasMaxLength(1)
+                .HasDefaultValueSql("('N')");
             entity.Property(e => e.GestLote)
                 .HasMaxLength(1)
                 .HasDefaultValueSql("('N')");
@@ -1695,6 +1701,48 @@ public partial class ApiDbTestContext : DbContext
                 .HasForeignKey(d => d.UsuarioId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("fk_reporte_vista_usuario");
+        });
+
+        modelBuilder.Entity<PosConfiguracion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_PosConfiguracion");
+
+            entity.ToTable("PosConfiguracion");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CodAlmacen).HasMaxLength(8);
+            entity.Property(e => e.CodigoImpuesto).HasMaxLength(8);
+            entity.Property(e => e.ClienteDefecto).HasMaxLength(15);
+            entity.Property(e => e.FormaPagoEfectivo).HasMaxLength(10);
+            entity.Property(e => e.MonedaDoc).HasMaxLength(3);
+
+            entity.HasOne<NumeracionDocumentoDet>().WithMany()
+                .HasForeignKey(d => d.SeriePago)
+                .HasConstraintName("fk_pos_configuracion_serie_pago");
+
+            entity.HasOne<NumeracionDocumentoDet>().WithMany()
+                .HasForeignKey(d => d.SerieFactura)
+                .HasConstraintName("fk_pos_configuracion_serie_factura");
+
+            entity.HasOne<Almacen>().WithMany()
+                .HasForeignKey(d => d.CodAlmacen)
+                .HasConstraintName("fk_pos_configuracion_almacen");
+
+            entity.HasOne<Impuesto>().WithMany()
+                .HasForeignKey(d => d.CodigoImpuesto)
+                .HasConstraintName("fk_pos_configuracion_impuesto");
+
+            entity.HasOne<SocioNegocio>().WithMany()
+                .HasForeignKey(d => d.ClienteDefecto)
+                .HasConstraintName("fk_pos_configuracion_cliente");
+
+            entity.HasOne<FormaPago>().WithMany()
+                .HasForeignKey(d => d.FormaPagoEfectivo)
+                .HasConstraintName("fk_pos_configuracion_forma_pago");
+
+            entity.HasOne<Monedum>().WithMany()
+                .HasForeignKey(d => d.MonedaDoc)
+                .HasConstraintName("fk_pos_configuracion_moneda");
         });
 
         modelBuilder.Entity<MovimientoInventario>(entity =>
