@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Application.DTO;
 using API.Application.Interface;
 using API.Domain.Interface;
@@ -6,21 +7,29 @@ using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Configuration;
 
 namespace API.Service.WebApi.Controllers
 {
-    /// <summary>Punto de venta (facturación rápida). Configuración y catálogo; la venta llega en tareas posteriores.</summary>
+    /// <summary>Punto de venta (facturación rápida): configuración, catálogo, venta, ticket y ventas del día.</summary>
     [Authorize]
     [ApiController]
     [Route("api/Pos")]
     public class PosController : ControllerBase
     {
-        private readonly IPosApplication _app;
+        /// <summary>Convenio del proyecto: un mensaje que dice que algo «no existe» se responde con 404 (p. ej. «La venta no existe.»).</summary>
+        private const string NoExiste = "no existe";
 
-        public PosController(IPosApplication app)
+        private readonly IPosApplication _app;
+        private readonly IConfiguration _config;
+
+        public PosController(IPosApplication app, IConfiguration config)
         {
             _app = app;
+            _config = config;
         }
+
+        private string Empresa => _config["Reportes:Empresa"] ?? "Sistema de Gestión";
 
         /// <summary>La leen el cajero (Pos.Ver) y quien administra la configuración (PosConfiguracion.Ver); se evalúa dentro de la acción.</summary>
         [HttpGet("Configuracion")]
@@ -72,6 +81,48 @@ namespace API.Service.WebApi.Controllers
         public async Task<ActionResult<Respuesta<IReadOnlyList<ArticuloPos>>>> ObtenerRapidos()
         {
             var respuesta = await _app.ObtenerRapidosAsync();
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        /// <summary>Cobra la venta (factura de contado + cobro en una sola transacción) y devuelve el ticket.</summary>
+        [HttpPost("Venta")]
+        [RequierePermiso("Pos", Accion.Agregar)]
+        public async Task<ActionResult<Respuesta<TicketPos>>> Vender([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] VentaPosSolicitud? solicitud)
+        {
+            if (solicitud is null)
+                return BadRequest(new Respuesta<TicketPos> { Mensaje = "La venta es obligatoria." });
+
+            var cajero = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrWhiteSpace(cajero))
+                return BadRequest(new Respuesta<TicketPos> { Mensaje = "No se pudo identificar al cajero." });
+
+            var respuesta = await _app.VenderAsync(solicitud, cajero);
+            if (!respuesta.Resultado)
+                return BadRequest(respuesta);
+
+            respuesta.Dato = respuesta.Dato! with { Empresa = Empresa };
+            return Ok(respuesta);
+        }
+
+        /// <summary>Ticket (reimpresión) de una venta POS; 404 si no existe o no es venta POS.</summary>
+        [HttpGet("Ticket/{facturaEntry}")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<TicketPos>>> ObtenerTicket(int facturaEntry)
+        {
+            var respuesta = await _app.ObtenerTicketAsync(facturaEntry);
+            if (!respuesta.Resultado)
+                return respuesta.Mensaje?.Contains(NoExiste, StringComparison.OrdinalIgnoreCase) == true ? NotFound(respuesta) : BadRequest(respuesta);
+
+            respuesta.Dato = respuesta.Dato! with { Empresa = Empresa };
+            return Ok(respuesta);
+        }
+
+        /// <summary>Ventas POS de hoy, más recientes primero.</summary>
+        [HttpGet("VentasDelDia")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<IReadOnlyList<VentaPosDelDia>>>> ObtenerVentasDelDia()
+        {
+            var respuesta = await _app.ObtenerVentasDelDiaAsync();
             return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
         }
     }

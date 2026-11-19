@@ -49,7 +49,15 @@ namespace API.Service.WebApi.Tests.Domain
             _domain = new PosDomain(_repoConfig.Object, _repoSerie.Object, _repoAlmacen.Object, _repoImpuesto.Object,
                 _repoSocio.Object, _repoFormaPago.Object, _repoMoneda.Object,
                 _repoArticulo.Object, _repoExistencia.Object, _precios.Object,
-                new ConsultaLineasVenta(_facturas.Object, _detalles.Object, _movimientos.Object));
+                new ConsultaLineasVenta(_facturas.Object, _detalles.Object, _movimientos.Object),
+                new Mock<IFacturaDomain>().Object,
+                new Mock<IPagoRecibidoDomain>().Object,
+                new Mock<IEjecutorTransaccion>().Object,
+                _facturas.Object,
+                _detalles.Object,
+                new Mock<IRepositorioGenerico<PagoRecibido, int>>().Object,
+                new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
+                new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object);
         }
 
         private void Articulos(params Articulo[] articulos) =>

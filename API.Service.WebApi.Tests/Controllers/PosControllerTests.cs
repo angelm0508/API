@@ -9,6 +9,7 @@ using API.Service.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;
 
@@ -18,8 +19,8 @@ namespace API.Service.WebApi.Tests.Controllers
     {
         private readonly Mock<IPosApplication> _app = new();
 
-        private PosController Crear(ClaimsPrincipal? usuario = null) =>
-            new(_app.Object)
+        private PosController Crear(ClaimsPrincipal? usuario = null, IConfiguration? config = null) =>
+            new(_app.Object, config ?? new ConfigurationBuilder().Build())
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = usuario ?? ReporteControllerTests.Usuario() } }
             };
@@ -207,6 +208,148 @@ namespace API.Service.WebApi.Tests.Controllers
         [InlineData(nameof(PosController.ObtenerArticuloPorCodigo), "Articulos/porCodigo/{codigo}")]
         [InlineData(nameof(PosController.ObtenerRapidos), "Rapidos")]
         public void Catalogo_LlevaElPermisoVerDePosYLaRutaEsperada(string metodo, string ruta)
+        {
+            var m = typeof(PosController).GetMethod(metodo)!;
+            Assert.Equal(ruta, m.GetCustomAttribute<HttpGetAttribute>()!.Template);
+            var atributo = Assert.Single(m.GetCustomAttributes<RequierePermisoAttribute>());
+            Assert.Equal(("Pos", Accion.Ver), Permiso(atributo));
+        }
+
+        // ---------- Venta, ticket y ventas del día ----------
+
+        private static readonly VentaPosSolicitud Solicitud = new(null, null,
+            new List<VentaPosLinea> { new("A1", 1m) }, new List<VentaPosPago> { new("EFE", 50m, null, null, null) });
+
+        private static TicketPos Ticket() => new(501, 10, "POS", 77, DateTime.Today, "tester", "C1", "Cliente", "CF",
+            Array.Empty<TicketPosLinea>(), 10m, 1.2m, 11.2m, Array.Empty<TicketPosPago>(), 50m, 38.8m, "GTQ", string.Empty);
+
+        private static IConfiguration ConEmpresa(string empresa) =>
+            new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> { ["Reportes:Empresa"] = empresa }).Build();
+
+        private static ClaimsPrincipal UsuarioSinNombre(string? nombre)
+        {
+            var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, "5"), new("perm", "Pos:A") };
+            if (nombre is not null) claims.Add(new Claim(ClaimTypes.Name, nombre));
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, "Test"));
+        }
+
+        [Fact]
+        public async Task Vender_Exito_PasaElCajeroDelToken_YCompletaLaEmpresaDeLaConfiguracion()
+        {
+            _app.Setup(a => a.VenderAsync(Solicitud, "tester"))
+                .ReturnsAsync(new Respuesta<TicketPos> { Resultado = true, Mensaje = "ok", Dato = Ticket() });
+
+            var r = await Crear(config: ConEmpresa("Mi Empresa")).Vender(Solicitud);
+
+            var ok = (Respuesta<TicketPos>)Assert.IsType<OkObjectResult>(r.Result).Value!;
+            Assert.True(ok.Resultado);
+            Assert.Equal("Mi Empresa", ok.Dato!.Empresa);
+            Assert.Equal(501, ok.Dato.FacturaEntry);
+        }
+
+        [Fact]
+        public async Task Vender_SinEmpresaConfigurada_UsaSistemaDeGestion()
+        {
+            _app.Setup(a => a.VenderAsync(Solicitud, "tester"))
+                .ReturnsAsync(new Respuesta<TicketPos> { Resultado = true, Mensaje = "ok", Dato = Ticket() });
+
+            var r = await Crear().Vender(Solicitud);
+
+            Assert.Equal("Sistema de Gestión", ((Respuesta<TicketPos>)Assert.IsType<OkObjectResult>(r.Result).Value!).Dato!.Empresa);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task Vender_SinCajeroEnElToken_Devuelve400SinTocarLaAplicacion(string? nombre)
+        {
+            var r = await Crear(UsuarioSinNombre(nombre)).Vender(Solicitud);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(r.Result);
+            Assert.Equal("No se pudo identificar al cajero.", ((Respuesta<TicketPos>)bad.Value!).Mensaje);
+            _app.Verify(a => a.VenderAsync(It.IsAny<VentaPosSolicitud>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Vender_CuerpoNulo_Devuelve400SinTocarLaAplicacion()
+        {
+            var r = await Crear().Vender(null);
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
+            _app.Verify(a => a.VenderAsync(It.IsAny<VentaPosSolicitud>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Vender_ConError_Devuelve400ConElMensaje()
+        {
+            _app.Setup(a => a.VenderAsync(Solicitud, "tester"))
+                .ReturnsAsync(new Respuesta<TicketPos> { Mensaje = "El pago (50.00) no cubre el total (60.00)." });
+
+            var r = await Crear().Vender(Solicitud);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(r.Result);
+            Assert.Equal("El pago (50.00) no cubre el total (60.00).", ((Respuesta<TicketPos>)bad.Value!).Mensaje);
+        }
+
+        [Fact]
+        public async Task Ticket_Exito_CompletaLaEmpresa()
+        {
+            _app.Setup(a => a.ObtenerTicketAsync(501))
+                .ReturnsAsync(new Respuesta<TicketPos> { Resultado = true, Mensaje = "ok", Dato = Ticket() });
+
+            var r = await Crear(config: ConEmpresa("Taller XYZ")).ObtenerTicket(501);
+
+            Assert.Equal("Taller XYZ", ((Respuesta<TicketPos>)Assert.IsType<OkObjectResult>(r.Result).Value!).Dato!.Empresa);
+        }
+
+        [Fact]
+        public async Task Ticket_Inexistente_Devuelve404()
+        {
+            _app.Setup(a => a.ObtenerTicketAsync(9)).ReturnsAsync(new Respuesta<TicketPos> { Mensaje = "La venta no existe." });
+
+            var r = await Crear().ObtenerTicket(9);
+
+            var nf = Assert.IsType<NotFoundObjectResult>(r.Result);
+            Assert.Equal("La venta no existe.", ((Respuesta<TicketPos>)nf.Value!).Mensaje);
+        }
+
+        [Fact]
+        public async Task Ticket_OtroError_Devuelve400()
+        {
+            _app.Setup(a => a.ObtenerTicketAsync(9)).ReturnsAsync(new Respuesta<TicketPos> { Mensaje = "fallo" });
+
+            var r = await Crear().ObtenerTicket(9);
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
+        }
+
+        [Fact]
+        public async Task VentasDelDia_Exito_Devuelve200_YConError400()
+        {
+            var buena = new Respuesta<IReadOnlyList<VentaPosDelDia>> { Resultado = true, Mensaje = "ok", Dato = Array.Empty<VentaPosDelDia>() };
+            _app.Setup(a => a.ObtenerVentasDelDiaAsync()).ReturnsAsync(buena);
+
+            var r = await Crear().ObtenerVentasDelDia();
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+
+            _app.Setup(a => a.ObtenerVentasDelDiaAsync()).ReturnsAsync(new Respuesta<IReadOnlyList<VentaPosDelDia>> { Mensaje = "fallo" });
+            Assert.IsType<BadRequestObjectResult>((await Crear().ObtenerVentasDelDia()).Result);
+        }
+
+        [Fact]
+        public void Venta_LlevaElPermisoAgregarDePos_YEsPost()
+        {
+            var m = typeof(PosController).GetMethod(nameof(PosController.Vender))!;
+            Assert.Equal("Venta", m.GetCustomAttribute<HttpPostAttribute>()!.Template);
+            var atributo = Assert.Single(m.GetCustomAttributes<RequierePermisoAttribute>());
+            Assert.Equal(("Pos", Accion.Agregar), Permiso(atributo));
+        }
+
+        [Theory]
+        [InlineData(nameof(PosController.ObtenerTicket), "Ticket/{facturaEntry}")]
+        [InlineData(nameof(PosController.ObtenerVentasDelDia), "VentasDelDia")]
+        public void TicketYVentasDelDia_LlevanElPermisoVerDePos(string metodo, string ruta)
         {
             var m = typeof(PosController).GetMethod(metodo)!;
             Assert.Equal(ruta, m.GetCustomAttribute<HttpGetAttribute>()!.Template);

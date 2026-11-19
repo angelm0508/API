@@ -29,7 +29,15 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IPrecioListaDomain>().Object,
                 new ConsultaLineasVenta(new Mock<IRepositorioGenerico<Factura, int>>().Object,
                     new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
-                    new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object));
+                    new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object),
+                new Mock<IFacturaDomain>().Object,
+                new Mock<IPagoRecibidoDomain>().Object,
+                new Mock<IEjecutorTransaccion>().Object,
+                new Mock<IRepositorioGenerico<Factura, int>>().Object,
+                new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
+                new Mock<IRepositorioGenerico<PagoRecibido, int>>().Object,
+                new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
+                new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object);
         }
 
         private static NumeracionDocumentoDet Serie(int serie, string codigoObj, string subTipo = "--", string? manual = "N", string? bloqueado = "N") => new()
@@ -323,13 +331,5 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         // ---------- Métodos de la Tarea 6 ----------
-
-        [Fact]
-        public async Task LosDemasMetodos_AunNoEstanImplementados()
-        {
-            await Assert.ThrowsAsync<NotImplementedException>(() => _domain.VenderAsync(new VentaPosSolicitud(null, null, new(), new()), "c"));
-            await Assert.ThrowsAsync<NotImplementedException>(() => _domain.ObtenerTicketAsync(1));
-            await Assert.ThrowsAsync<NotImplementedException>(() => _domain.ObtenerVentasDelDiaAsync());
-        }
     }
 }

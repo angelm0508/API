@@ -1,3 +1,4 @@
+using System.Data;
 using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
@@ -8,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Domain.Core.Pos
 {
     /// <summary>
-    /// Casos de uso del POS. Esta parte implementa la configuración y el catálogo; la venta y el ticket llegan en la Tarea 6.
+    /// Casos de uso del POS: configuración, catálogo, venta atómica (factura + cobro en una sola transacción), ticket y
+    /// ventas del día.
     /// </summary>
     public class PosDomain : IPosDomain
     {
@@ -36,6 +38,20 @@ namespace API.Domain.Core.Pos
         private readonly IPrecioListaDomain _precios;
         private readonly ConsultaLineasVenta _consultaLineas;
 
+        // Venta, ticket y ventas del día
+        private const int MaximoVentasDelDia = 200;
+        private const string CondicionContado = "CON";
+        private const string TipoObjetoFactura = "6";
+
+        private readonly IFacturaDomain _facturaDomain;
+        private readonly IPagoRecibidoDomain _pagoDomain;
+        private readonly IEjecutorTransaccion _tx;
+        private readonly IRepositorioGenerico<Factura, int> _repoFactura;
+        private readonly IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> _repoDetalle;
+        private readonly IRepositorioGenerico<PagoRecibido, int> _repoPago;
+        private readonly IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)> _repoPagoFactura;
+        private readonly IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> _repoMedio;
+
         public PosDomain(
             IRepositorioGenerico<PosConfiguracion, int> repoConfiguracion,
             IRepositorioGenerico<NumeracionDocumentoDet, int> repoSerie,
@@ -47,8 +63,24 @@ namespace API.Domain.Core.Pos
             IRepositorioGenerico<Articulo, string> repoArticulo,
             IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)> repoExistencia,
             IPrecioListaDomain precios,
-            ConsultaLineasVenta consultaLineas)
+            ConsultaLineasVenta consultaLineas,
+            IFacturaDomain facturaDomain,
+            IPagoRecibidoDomain pagoDomain,
+            IEjecutorTransaccion tx,
+            IRepositorioGenerico<Factura, int> repoFactura,
+            IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> repoDetalle,
+            IRepositorioGenerico<PagoRecibido, int> repoPago,
+            IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)> repoPagoFactura,
+            IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> repoMedio)
         {
+            _facturaDomain = facturaDomain;
+            _pagoDomain = pagoDomain;
+            _tx = tx;
+            _repoFactura = repoFactura;
+            _repoDetalle = repoDetalle;
+            _repoPago = repoPago;
+            _repoPagoFactura = repoPagoFactura;
+            _repoMedio = repoMedio;
             _repoArticulo = repoArticulo;
             _repoExistencia = repoExistencia;
             _precios = precios;
@@ -298,15 +330,246 @@ namespace API.Domain.Core.Pos
                 .ToList();
         }
 
-        // ---------- Pendientes (Tarea 6) ----------
+        // ---------- Venta ----------
 
-        public Task<TicketPos> VenderAsync(VentaPosSolicitud solicitud, string cajero) =>
-            throw new NotImplementedException();
+        /// <summary>
+        /// Registra la venta: valida todo antes de numerar y luego crea la factura de contado y su cobro dentro de UNA
+        /// transacción exterior (Serializable: el pago la pide para su chequeo de saldo y, al anidarse, rige la del
+        /// exterior). Las excepciones de las operaciones anidadas se dejan propagar: el exterior revierte todo.
+        /// </summary>
+        public async Task<TicketPos> VenderAsync(VentaPosSolicitud solicitud, string cajero)
+        {
+            // 1. Configuración completa.
+            var vista = await ObtenerConfiguracionAsync();
+            if (vista.Faltantes.Count > 0)
+                throw new InvalidOperationException($"El POS no está configurado: falta {string.Join(", ", vista.Faltantes)}.");
+            var config = vista.Configuracion;
 
-        public Task<TicketPos> ObtenerTicketAsync(int facturaEntry) =>
-            throw new NotImplementedException();
+            // 2. Cliente: el indicado o el de la configuración; existe, es cliente y no está inactivo.
+            var codigoCliente = Texto(solicitud.CodigoCliente) ?? config.ClienteDefecto!;
+            var socio = await _repoSocio.ObtenerAsync(codigoCliente);
+            if (socio is null || socio.TipoSn != "C" || socio.Activo == "N")
+                throw new InvalidOperationException("El cliente no existe o no es un cliente.");
 
-        public Task<IReadOnlyList<VentaPosDelDia>> ObtenerVentasDelDiaAsync() =>
-            throw new NotImplementedException();
+            // 3. Líneas: al menos una, cantidad > 0, repetidos sumados (orden de primera aparición).
+            var solicitadas = solicitud.Lineas ?? new List<VentaPosLinea>();
+            if (solicitadas.Count == 0)
+                throw new InvalidOperationException("Agrega al menos un artículo a la venta.");
+
+            var agrupadas = new List<(string Codigo, decimal Cantidad)>();
+            var indice = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            foreach (var linea in solicitadas)
+            {
+                var codigo = (linea.CodArticulo ?? string.Empty).Trim();
+                if (linea.Cantidad <= 0m)
+                    throw new InvalidOperationException($"La cantidad de {codigo} debe ser mayor que cero.");
+                if (indice.TryGetValue(codigo, out var i))
+                    agrupadas[i] = (agrupadas[i].Codigo, agrupadas[i].Cantidad + linea.Cantidad);
+                else
+                {
+                    indice[codigo] = agrupadas.Count;
+                    agrupadas.Add((codigo, linea.Cantidad));
+                }
+            }
+
+            // 4. Artículos vendibles y precio de la lista del cliente (se ignora cualquier precio del cliente).
+            var tasa = (await _repoImpuesto.ObtenerAsync(config.CodigoImpuesto!))?.Tasa ?? 0m;
+            var calculadas = new List<LineaPosCalculada>();
+            var articulos = new List<Articulo>();
+            foreach (var (codigo, cantidad) in agrupadas)
+            {
+                var articulo = codigo.Length == 0 ? null : await _repoArticulo.ObtenerAsync(codigo);
+                var precio = articulo is null || articulo.Activo != "S" || articulo.ArticuloVenta != "S"
+                    ? 0m
+                    : (await _precios.ResolverAsync(articulo.Codigo, socio.NumLstPrecio)).PrecioLista;
+                if (precio <= 0m)
+                    throw new InvalidOperationException($"El artículo {codigo} no se puede vender en el POS.");
+
+                articulos.Add(articulo!);
+                calculadas.Add(PosCalculadora.Linea(articulo!.Codigo, cantidad, precio, tasa));
+            }
+            var totales = PosCalculadora.Totales(calculadas);
+            if (totales.Total <= 0m)
+                throw new InvalidOperationException("El total de la venta debe ser mayor que cero.");
+
+            // 5. Pagos: códigos normalizados contra el catálogo; luego total, cambio y efectivo.
+            var formas = await (await _repoFormaPago.ObtenerTodoAsync()).ToListAsync();
+            var porCodigo = formas
+                .GroupBy(f => f.Codigo.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            var pagos = new List<VentaPosPago>();
+            foreach (var pago in solicitud.Pagos ?? new List<VentaPosPago>())
+            {
+                var codigo = pago.CodFormaPago?.Trim();
+                if (string.IsNullOrEmpty(codigo))
+                {
+                    pagos.Add(pago);   // la calculadora responde «La forma de pago es requerida.»
+                    continue;
+                }
+                if (!porCodigo.TryGetValue(codigo, out var forma) || forma.Activo != "S")
+                    throw new InvalidOperationException($"La forma de pago {codigo} no existe o está inactiva.");
+                pagos.Add(pago with { CodFormaPago = forma.Codigo });
+            }
+            var efectivo = porCodigo.TryGetValue(config.FormaPagoEfectivo!, out var formaEfectivo) ? formaEfectivo.Codigo : config.FormaPagoEfectivo;
+            var cobro = PosCalculadora.ValidarPagos(totales.Total, pagos, efectivo);
+
+            var medios = cobro.Medios
+                .Select(m => new PagoRecibidoMedio { CodFormaPago = m.CodFormaPago, Monto = m.Monto, Referencia = m.Referencia, Banco = m.Banco, FechaCheque = m.FechaCheque })
+                .ToList();
+            // Mismas reglas que aplicará el pago (datos de cheque, transferencia, tarjeta), pero antes de numerar.
+            await ValidadorMediosPago.ValidarAsync(medios, c => Task.FromResult<FormaPago?>(porCodigo.TryGetValue(c, out var f) ? f : null));
+
+            // 6. NIT: el enviado, el del cliente o CF.
+            var nit = NitDocumento.Normalizar(solicitud.Nit) ?? NitDocumento.Normalizar(socio.Nit) ?? "CF";
+
+            // 7. Factura y cobro en una sola transacción exterior.
+            var hoy = DateTime.Today;
+            var comentario = PosMarca.Comentario(cajero);
+            var factura = new Factura
+            {
+                Serie = config.SerieFactura!.Value,
+                NumManual = "N",
+                Imprimido = "N",
+                EstadoDoc = "A",
+                TipoObjeto = TipoObjetoFactura,
+                FechaDoc = hoy,
+                FechaEmision = DateTime.Now,
+                CodigoSn = socio.Codigo,
+                NombreSn = socio.Nombre,
+                Direccion = null,
+                Nit = nit,
+                MonedaDoc = config.MonedaDoc,
+                CondicionPago = CondicionContado,
+                Comentario = comentario,
+                PrctjeImpuesto = tasa,
+                PrctjeDesc = 0m,
+                TotalBruto = totales.Bruto,
+                TotalDesc = 0m,
+                TotalImp = totales.Impuesto,
+                TotalDoc = totales.Total,
+                PagoInmediato = totales.Total
+            };
+            var lineas = calculadas
+                .Select((l, i) => new FacturaDetalle
+                {
+                    CodArticulo = l.CodArticulo,
+                    Descripcion = articulos[i].Nombre ?? l.CodArticulo,
+                    Cantidad = l.Cantidad,
+                    Precio = l.PrecioNeto,
+                    PrecioBruto = l.PrecioNeto,
+                    PrctjeDesc = 0m,
+                    CodigoImpuesto = config.CodigoImpuesto,
+                    Impuesto = l.Impuesto,
+                    TotalLinea = l.TotalLinea,
+                    CodAlmacen = config.CodAlmacen,
+                    TipoObjeto = TipoObjetoFactura
+                })
+                .ToList();
+
+            // Sin try/catch: un fallo anidado debe llegar al exterior para que revierta todo.
+            var facturaEntry = await _tx.EjecutarAsync(async () =>
+            {
+                var entry = await _facturaDomain.InsertarAsync(factura, lineas);
+
+                var pago = new PagoRecibido
+                {
+                    Serie = config.SeriePago!.Value,
+                    CodigoSn = socio.Codigo,
+                    NombreSn = socio.Nombre,
+                    FechaDoc = hoy,
+                    Comentario = comentario
+                };
+                var aplicadas = new List<PagoRecibidoFactura> { new() { FacturaEntry = entry, MontoAplicado = totales.Total } };
+                await _pagoDomain.InsertarAsync(pago, aplicadas, medios);
+
+                return entry;
+            }, IsolationLevel.Serializable);
+
+            var nombreSerie = (await _repoSerie.ObtenerAsync(factura.Serie))?.NombreSerie ?? string.Empty;
+            return new TicketPos(
+                facturaEntry, factura.Serie, nombreSerie, factura.NumDoc, factura.FechaEmision ?? hoy, cajero,
+                socio.Codigo, socio.Nombre ?? socio.Codigo, nit,
+                calculadas.Select((l, i) => new TicketPosLinea(l.CodArticulo, lineas[i].Descripcion!, l.Cantidad, l.PrecioNeto, l.TotalLinea)).ToList(),
+                totales.Bruto, totales.Impuesto, totales.Total,
+                pagos.Select(p => new TicketPosPago(p.CodFormaPago, NombreForma(porCodigo, p.CodFormaPago), PosCalculadora.Redondear(p.Monto))).ToList(),
+                cobro.Pagado, cobro.Cambio, config.MonedaDoc!, string.Empty);
+        }
+
+        private static string NombreForma(IReadOnlyDictionary<string, FormaPago> formas, string codigo) =>
+            formas.TryGetValue(codigo, out var f) ? f.Nombre : codigo;
+
+        // ---------- Ticket y ventas del día ----------
+
+        /// <summary>
+        /// Ticket de una venta POS (también de una cancelada). Los medios son los de los cobros vigentes aplicados a la
+        /// factura; el cambio no se persiste, así que sale en 0.
+        /// </summary>
+        public async Task<TicketPos> ObtenerTicketAsync(int facturaEntry)
+        {
+            var factura = await _repoFactura.ObtenerAsync(facturaEntry);
+            if (factura is null || factura.DocSubType != "--" || !PosMarca.EsVentaPos(factura.Comentario))
+                throw new InvalidOperationException("La venta no existe.");
+
+            var lineas = await (await _repoDetalle.ObtenerTodoAsync())
+                .Where(d => d.Entry == facturaEntry)
+                .OrderBy(d => d.NoLinea)
+                .ToListAsync();
+
+            var pagosAplicados = await (await _repoPagoFactura.ObtenerTodoAsync())
+                .Where(p => p.FacturaEntry == facturaEntry)
+                .Select(p => p.Entry)
+                .ToListAsync();
+            var vigentes = pagosAplicados.Count == 0
+                ? new List<int>()
+                : await (await _repoPago.ObtenerTodoAsync())
+                    .Where(p => pagosAplicados.Contains(p.Entry) && p.Cancelado != "S")
+                    .Select(p => p.Entry)
+                    .ToListAsync();
+            var medios = vigentes.Count == 0
+                ? new List<PagoRecibidoMedio>()
+                : await (await _repoMedio.ObtenerTodoAsync())
+                    .Where(m => vigentes.Contains(m.Entry))
+                    .OrderBy(m => m.Entry).ThenBy(m => m.NoLinea)
+                    .ToListAsync();
+
+            var formas = medios.Count == 0
+                ? new Dictionary<string, FormaPago>(StringComparer.OrdinalIgnoreCase)
+                : (await (await _repoFormaPago.ObtenerTodoAsync()).ToListAsync())
+                    .GroupBy(f => f.Codigo, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+            var nombreSerie = (await _repoSerie.ObtenerAsync(factura.Serie))?.NombreSerie ?? string.Empty;
+            var pagos = medios.Select(m => new TicketPosPago(m.CodFormaPago, NombreForma(formas, m.CodFormaPago), m.Monto)).ToList();
+
+            return new TicketPos(
+                factura.Entry, factura.Serie, nombreSerie, factura.NumDoc, factura.FechaEmision ?? factura.FechaDoc ?? DateTime.MinValue,
+                PosMarca.Cajero(factura.Comentario),
+                factura.CodigoSn ?? string.Empty, factura.NombreSn ?? string.Empty, factura.Nit ?? string.Empty,
+                lineas.Select(l => new TicketPosLinea(l.CodArticulo ?? string.Empty, l.Descripcion ?? string.Empty,
+                    l.Cantidad ?? 0m, l.Precio ?? 0m, l.TotalLinea ?? 0m)).ToList(),
+                factura.TotalBruto ?? 0m, factura.TotalImp ?? 0m, factura.TotalDoc ?? 0m,
+                pagos, pagos.Sum(p => p.Monto), 0m, factura.MonedaDoc ?? string.Empty, string.Empty);
+        }
+
+        /// <summary>Ventas POS (factura con la marca) con fecha de hoy, más recientes primero; a lo sumo 200.</summary>
+        public async Task<IReadOnlyList<VentaPosDelDia>> ObtenerVentasDelDiaAsync()
+        {
+            var desde = DateTime.Today;
+            var hasta = desde.AddDays(1);
+            var filas = await (await _repoFactura.ObtenerTodoAsync())
+                .Where(f => f.DocSubType == "--"
+                    && f.Comentario != null && f.Comentario.StartsWith(PosMarca.Prefijo)
+                    && f.FechaDoc >= desde && f.FechaDoc < hasta)
+                .OrderByDescending(f => f.Entry)
+                .Take(MaximoVentasDelDia)
+                .Select(f => new { f.Entry, f.Serie, f.NumDoc, f.FechaEmision, f.FechaDoc, f.CodigoSn, f.NombreSn, f.TotalDoc, f.Cancelado, f.Comentario })
+                .ToListAsync();
+
+            return filas
+                .Where(f => PosMarca.EsVentaPos(f.Comentario))   // la marca distingue mayúsculas aunque la intercalación de SQL no
+                .Select(f => new VentaPosDelDia(f.Entry, f.Serie, f.NumDoc, f.FechaEmision ?? f.FechaDoc ?? desde,
+                    f.CodigoSn ?? string.Empty, f.NombreSn ?? string.Empty, f.TotalDoc ?? 0m, f.Cancelado == "S"))
+                .ToList();
+        }
     }
 }

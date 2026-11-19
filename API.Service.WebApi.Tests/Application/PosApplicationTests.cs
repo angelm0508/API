@@ -130,6 +130,44 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
+        public async Task Vender_ConExcepcionDeNegocio_DevuelveResultadoFalsoConElMensaje()
+        {
+            var solicitud = new VentaPosSolicitud(null, null, new(), new());
+            _domain.Setup(d => d.VenderAsync(solicitud, "ana")).ThrowsAsync(new Exception("Agrega al menos un artículo a la venta."));
+
+            var r = await _app.VenderAsync(solicitud, "ana");
+
+            Assert.False(r.Resultado);
+            Assert.Null(r.Dato);
+            Assert.Equal("Agrega al menos un artículo a la venta.", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task Vender_Exito_MensajeDeVentaRegistrada()
+        {
+            var solicitud = new VentaPosSolicitud(null, null, new(), new());
+            var ticket = new TicketPos(1, 1, "S", 1, DateTime.Today, "ana", "C1", "N", "CF", Array.Empty<TicketPosLinea>(), 0, 0, 0, Array.Empty<TicketPosPago>(), 0, 0, "GTQ", "");
+            _domain.Setup(d => d.VenderAsync(solicitud, "ana")).ReturnsAsync(ticket);
+
+            var r = await _app.VenderAsync(solicitud, "ana");
+
+            Assert.True(r.Resultado);
+            Assert.Same(ticket, r.Dato);
+            Assert.Equal("Venta registrada correctamente.", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task Ticket_LaVentaNoExiste_DevuelveResultadoFalsoConElMensaje()
+        {
+            _domain.Setup(d => d.ObtenerTicketAsync(9)).ThrowsAsync(new Exception("La venta no existe."));
+
+            var r = await _app.ObtenerTicketAsync(9);
+
+            Assert.False(r.Resultado);
+            Assert.Equal("La venta no existe.", r.Mensaje);
+        }
+
+        [Fact]
         public async Task BuscarObtenerPorCodigoYVender_DelegaEnElDominio()
         {
             var articulos = new List<ArticuloPos> { new("A1", null, "Art", 5m, 3m, true) };
