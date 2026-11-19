@@ -20,6 +20,8 @@ namespace API.Service.WebApi.Tests.Domain
             public int Llamadas { get; private set; }
             public IsolationLevel? Nivel { get; private set; }
             public bool Dentro { get; private set; }
+            /// <summary>Si se indica, se lanza al terminar la operación (como un interbloqueo que revierte la transacción al confirmar).</summary>
+            public Exception? FalloAlTerminar { get; set; }
 
             public Task<T> EjecutarAsync<T>(Func<Task<T>> operacion) => Ejecutar(operacion, null);
 
@@ -30,7 +32,12 @@ namespace API.Service.WebApi.Tests.Domain
                 Llamadas++;
                 Nivel = nivel;
                 Dentro = true;
-                try { return await operacion(); }
+                try
+                {
+                    var resultado = await operacion();
+                    if (FalloAlTerminar is not null) throw FalloAlTerminar;
+                    return resultado;
+                }
                 finally { Dentro = false; }
             }
         }
@@ -376,6 +383,75 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal("Stock insuficiente.", ex.Message);
             _pagoDomain.Verify(d => d.InsertarAsync(It.IsAny<PagoRecibido>(), It.IsAny<IEnumerable<PagoRecibidoFactura>>(), It.IsAny<IEnumerable<PagoRecibidoMedio>>()), Times.Never);
+        }
+
+        // ---------- Interbloqueo de SQL Server ----------
+
+        /// <summary>Imita a Microsoft.Data.SqlClient.SqlException (mismo nombre de tipo y propiedad Number).</summary>
+        private sealed class SqlException : Exception
+        {
+            public SqlException(int number) : base("Transaction was deadlocked.") { Number = number; }
+            public int Number { get; }
+        }
+
+        private const string MensajeOtraCaja = "Otra caja está registrando una venta en este momento; intenta cobrar de nuevo.";
+
+        [Theory]
+        [InlineData(1205)]
+        [InlineData(1222)]
+        public async Task Vender_InterbloqueoAlTerminarLaTransaccion_SeTraduceAMensajeEnEspanol(int numero)
+        {
+            _tx.FalloAlTerminar = new Exception("Error al guardar.", new SqlException(numero));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Equal(MensajeOtraCaja, ex.Message);
+            Assert.Equal(1, _tx.Llamadas);
+        }
+
+        [Fact]
+        public async Task Vender_InterbloqueoLanzadoPorLaFactura_SeTraduceAlSalirDelEjecutorExterior()
+        {
+            _facturaDomain.Setup(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()))
+                .ThrowsAsync(new Exception("Error al guardar.", new SqlException(1205)));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Equal(MensajeOtraCaja, ex.Message);
+            _pagoDomain.Verify(d => d.InsertarAsync(It.IsAny<PagoRecibido>(), It.IsAny<IEnumerable<PagoRecibidoFactura>>(), It.IsAny<IEnumerable<PagoRecibidoMedio>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Vender_ErrorSqlQueNoEsInterbloqueo_SePropagaSinCambiarElMensaje()
+        {
+            var original = new Exception("Error al guardar.", new SqlException(547));
+            _tx.FalloAlTerminar = original;
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Same(original, ex);
+            Assert.Equal("Error al guardar.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Vender_ExcepcionCualquiera_SePropagaSinCambiarElMensaje()
+        {
+            _tx.FalloAlTerminar = new InvalidOperationException("Falla cualquiera.");
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Equal("Falla cualquiera.", ex.Message);
+        }
+
+        [Fact]
+        public async Task Vender_FalloDeNegocio_NoSeTraduce()
+        {
+            _facturaDomain.Setup(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()))
+                .ThrowsAsync(new InvalidOperationException("Stock insuficiente de A1."));
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Equal("Stock insuficiente de A1.", ex.Message);
         }
 
         // ---------- Ticket ----------

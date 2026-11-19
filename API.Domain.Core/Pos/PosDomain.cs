@@ -477,24 +477,34 @@ namespace API.Domain.Core.Pos
                 })
                 .ToList();
 
-            // Sin try/catch: un fallo anidado debe llegar al exterior para que revierta todo.
-            var facturaEntry = await _tx.EjecutarAsync(async () =>
+            // Sin try/catch dentro de la operación: un fallo anidado debe llegar al ejecutor exterior para que revierta todo.
+            // El try/catch envuelve al ejecutor, ya revertido: dos cajas sobre la misma serie pueden interbloquearse
+            // (SQL Server elige una víctima, error 1205) y el cajero debe recibir un mensaje claro en vez del técnico de EF.
+            int facturaEntry;
+            try
             {
-                var entry = await _facturaDomain.InsertarAsync(factura, lineas);
-
-                var pago = new PagoRecibido
+                facturaEntry = await _tx.EjecutarAsync(async () =>
                 {
-                    Serie = config.SeriePago!.Value,
-                    CodigoSn = socio.Codigo,
-                    NombreSn = socio.Nombre,
-                    FechaDoc = hoy,
-                    Comentario = comentario
-                };
-                var aplicadas = new List<PagoRecibidoFactura> { new() { FacturaEntry = entry, MontoAplicado = totales.Total } };
-                await _pagoDomain.InsertarAsync(pago, aplicadas, medios);
+                    var entry = await _facturaDomain.InsertarAsync(factura, lineas);
 
-                return entry;
-            }, IsolationLevel.Serializable);
+                    var pago = new PagoRecibido
+                    {
+                        Serie = config.SeriePago!.Value,
+                        CodigoSn = socio.Codigo,
+                        NombreSn = socio.Nombre,
+                        FechaDoc = hoy,
+                        Comentario = comentario
+                    };
+                    var aplicadas = new List<PagoRecibidoFactura> { new() { FacturaEntry = entry, MontoAplicado = totales.Total } };
+                    await _pagoDomain.InsertarAsync(pago, aplicadas, medios);
+
+                    return entry;
+                }, IsolationLevel.Serializable);
+            }
+            catch (Exception ex) when (ErrorSqlTransitorio.EsInterbloqueo(ex))
+            {
+                throw new Exception("Otra caja está registrando una venta en este momento; intenta cobrar de nuevo.", ex);
+            }
 
             var nombreSerie = (await _repoSerie.ObtenerAsync(factura.Serie))?.NombreSerie ?? string.Empty;
             return new TicketPos(
