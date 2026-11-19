@@ -363,5 +363,115 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Empty(await _domain.ObtenerRapidosAsync());
         }
+
+        // ---------- Ajustes 5b ----------
+
+        [Fact]
+        public async Task Buscar_ElTopeDe100CandidatosEsDuro_SiLos100PrimerosNoTienenPrecioElCandidato101SeIgnora()
+        {
+            Config();
+            // 130 coincidencias por nombre: los 100 primeros (P000..P099) sin precio; P100..P129 sí lo tienen, pero la consulta
+            // solo trae 100 filas, así que no se llega a ellos (comportamiento documentado: una búsqueda demasiado amplia no los ve).
+            var lista = Enumerable.Range(0, 130).Select(i => Art("P" + i.ToString("000"), "Pieza " + i.ToString("000"))).ToArray();
+            foreach (var a in lista.Take(100)) _precioBase[a.Codigo] = 0m;
+            Articulos(lista);
+
+            var r = await _domain.BuscarArticulosAsync("pieza", null);
+
+            Assert.Empty(r);
+            _precios.Verify(p => p.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>()), Times.Exactly(100));
+            _precios.Verify(p => p.ResolverAsync("P100", It.IsAny<int?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Rapidos_RespaldoMasVendidos_UsaUnaSegundaTandaDe50CodigosSiLaPrimeraNoAlcanza()
+        {
+            Config();
+            // 60 artículos vendidos con cantidades decrecientes (M00 el que más). La primera tanda (M00..M49) solo tiene
+            // un vendible (M10); el resto se completa con la segunda tanda (M50..M59).
+            var lineas = Enumerable.Range(0, 60).Select(i => ("M" + i.ToString("00"), (decimal)(100 - i))).ToArray();
+            VentasRecientes(lineas);
+            Articulos(lineas.Select(l => Art(l.Item1, "Art " + l.Item1)).ToArray());
+            for (var i = 0; i < 50; i++)
+                if (i != 10) _precioBase["M" + i.ToString("00")] = 0m;
+
+            var r = await _domain.ObtenerRapidosAsync();
+
+            Assert.Equal(new[] { "M10" }.Concat(Enumerable.Range(50, 10).Select(i => "M" + i)).ToArray(), Codigos(r));
+        }
+
+        [Fact]
+        public async Task Rapidos_ExistenciasCeroSinFilaEnElAlmacenPos()
+        {
+            Config(almacen: "ALM1");
+            Articulos(Art("A1", "Aceite", pos: "S"), Art("A2", "Bujía", pos: "S"));
+            Existencias(
+                new ExistenciaArticulo { CodArticulo = "A1", CodAlmacen = "ALM1", Disponible = 8m },
+                new ExistenciaArticulo { CodArticulo = "A2", CodAlmacen = "ALM2", Disponible = 99m });
+
+            var r = await _domain.ObtenerRapidosAsync();
+
+            Assert.Equal(8m, r.Single(a => a.Codigo == "A1").Existencias);
+            Assert.Equal(0m, r.Single(a => a.Codigo == "A2").Existencias);
+        }
+
+        [Fact]
+        public async Task PorCodigo_SinFilaDeExistenciasEnElAlmacenPos_DevuelveExistenciasCero()
+        {
+            Config(almacen: "ALM1");
+            Articulos(Art("A1", "Aceite", barras: "999"));
+            Existencias(new ExistenciaArticulo { CodArticulo = "A1", CodAlmacen = "ALM2", Disponible = 50m });
+
+            var r = await _domain.ObtenerArticuloPorCodigoAsync("999", null);
+
+            Assert.Equal(0m, r!.Existencias);
+        }
+
+        [Fact]
+        public async Task PorCodigo_SiDosArticulosCompartenBarras_ElegidoEsElDeMenorCodigo()
+        {
+            Config();
+            // Datos antiguos con barras repetidas: el resultado no debe depender del orden físico.
+            Articulos(Art("Z9", "Zeta", barras: "777"), Art("B2", "Beta", barras: "777"), Art("M5", "Mu", barras: "777"));
+
+            var r = await _domain.ObtenerArticuloPorCodigoAsync("777", null);
+
+            Assert.Equal("B2", r!.Codigo);
+        }
+
+        [Fact]
+        public async Task Rapidos_ConMarcadosPeroNingunoVendible_TambienUsaElRespaldoDeMasVendidos()
+        {
+            Config();
+            _precioBase["MARC"] = 0m;
+            VentasRecientes(("V1", 5m), ("V2", 9m));
+            Articulos(Art("MARC", "Marcado sin precio", pos: "S"), Art("V1", "Vendido uno"), Art("V2", "Vendido dos"));
+
+            var r = await _domain.ObtenerRapidosAsync();
+
+            // Comportamiento actual: marcados no vendibles no impiden el respaldo.
+            Assert.Equal(new[] { "V2", "V1" }, Codigos(r));
+        }
+
+        [Fact]
+        public async Task Rapidos_SiLaConsultaDeVentasExcedeElTope_DevuelveListaVaciaSinLanzar()
+        {
+            Config();
+            var hoy = DateTime.Today;
+            _facturas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[]
+            {
+                new Factura { Entry = 1, NumDoc = 1, Serie = 1, Cancelado = "N", DocSubType = "--", FechaDoc = hoy.AddDays(-5), CodigoSn = "C1", NombreSn = "C", MonedaDoc = "GTQ" }
+            }.AsAsyncQueryable());
+            var detalles = new List<FacturaDetalle>(ConsultaLineasVenta.MaxLineas + 1);
+            for (var i = 1; i <= ConsultaLineasVenta.MaxLineas + 1; i++)
+                detalles.Add(new FacturaDetalle { Entry = 1, NoLinea = i, CodArticulo = "A", Cantidad = 1m, CantidadBase = 1m, TotalLinea = 1m, Impuesto = 0m, PrctjeDesc = 0m });
+            _detalles.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(detalles.AsAsyncQueryable());
+            Articulos(Art("A", "Art A"));
+
+            // «Acorta el rango de fechas» no le sirve al cajero: sin ventas que contar, no hay rápidos.
+            var r = await _domain.ObtenerRapidosAsync();
+
+            Assert.Empty(r);
+        }
     }
 }

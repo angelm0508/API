@@ -3,6 +3,7 @@ using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Pos;
+using API.Domain.Interface.Reportes;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -216,7 +217,7 @@ namespace API.Domain.Core.Pos
 
             var articulos = await _repoArticulo.ObtenerTodoAsync();
             // El código escaneado identifica un artículo: primero por barras y, si no hay, por código; después se valida si es vendible.
-            var articulo = await articulos.Where(a => a.CodigoBarras != null && a.CodigoBarras.ToLower() == c).FirstOrDefaultAsync()
+            var articulo = await articulos.Where(a => a.CodigoBarras != null && a.CodigoBarras.ToLower() == c).OrderBy(a => a.Codigo).FirstOrDefaultAsync()
                 ?? await articulos.Where(a => a.Codigo.ToLower() == c).FirstOrDefaultAsync();
             if (articulo is null || articulo.Activo != "S" || articulo.ArticuloVenta != "S")
                 return null;
@@ -249,7 +250,17 @@ namespace API.Domain.Core.Pos
         private async Task<List<(Articulo Articulo, decimal Precio)>> MasVendidosAsync(int? lista)
         {
             var hoy = DateTime.Today;
-            var lineas = await _consultaLineas.ObtenerAsync(new FiltroLineasVenta(hoy.AddDays(-DiasMasVendidos), hoy.AddDays(1), null, null, null, null));
+            IReadOnlyList<LineaVenta> lineas;
+            try
+            {
+                lineas = await _consultaLineas.ObtenerAsync(new FiltroLineasVenta(hoy.AddDays(-DiasMasVendidos), hoy.AddDays(1), null, null, null, null));
+            }
+            catch (ReporteInvalidoException)
+            {
+                // Demasiadas líneas en el período: el mensaje del reporte («Acorta el rango de fechas») no le sirve al
+                // cajero; el respaldo es solo una comodidad, así que simplemente no hay rápidos.
+                return new List<(Articulo Articulo, decimal Precio)>();
+            }
 
             var ordenados = lineas
                 .GroupBy(l => l.CodArticulo)
