@@ -28,7 +28,10 @@ namespace API.Infraestructure.Repository
         /// Ejecuta la operación en una transacción. Si ya hay una activa en el contexto (p. ej. la venta POS, que compone
         /// factura y cobro), la operación corre DENTRO de ella: se guardan sus cambios pero no se confirma ni se revierte
         /// aquí; eso lo hace el nivel exterior. El nivel de aislamiento pedido por una operación anidada se ignora: rige el
-        /// de la transacción exterior.
+        /// de la transacción exterior (el aislamiento lo fija el exterior; si una operación anidada necesita, p. ej.,
+        /// Serializable, el exterior debe abrirse con ese nivel).
+        /// El exterior no debe atrapar excepciones de operaciones anidadas; debe dejarlas propagarse: una operación anidada
+        /// fallida no revierte ni limpia el ChangeTracker, y continuar dejaría en la transacción sus cambios a medias.
         /// </summary>
         public static async Task<T> EjecutarConAnidamientoAsync<T>(DbContext context, Func<Task<T>> operacion, System.Data.IsolationLevel? nivel)
         {

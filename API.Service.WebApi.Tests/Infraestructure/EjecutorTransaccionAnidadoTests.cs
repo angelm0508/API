@@ -85,6 +85,7 @@ namespace API.Service.WebApi.Tests.Infraestructure
             using var ctx = NuevoContexto();
             string? idAntes = null, idDespues = null;
             var anidadaCorrio = false;
+            var fila = new Fila { Texto = "B" };
 
             await EjecutorTransaccion.EjecutarConAnidamientoAsync(ctx, async () =>
             {
@@ -92,9 +93,11 @@ namespace API.Service.WebApi.Tests.Infraestructure
                 await EjecutorTransaccion.EjecutarConAnidamientoAsync(ctx, async () =>
                 {
                     anidadaCorrio = true;
-                    return await Agregar(ctx, "B", 1);
+                    ctx.Filas.Add(fila);
+                    return await Task.FromResult(1);
                 }, null);
-                // La interior guardó sus cambios pero no cerró la transacción: sigue la misma.
+                // La interior guardó sus cambios (su SaveChanges ya asignó la clave) pero no cerró la transacción: sigue la misma.
+                Assert.NotEqual(0, fila.Id);
                 Assert.NotNull(ctx.Database.CurrentTransaction);
                 idDespues = ctx.Database.CurrentTransaction!.TransactionId.ToString();
                 return 0;
