@@ -37,7 +37,8 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibido, int>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
-                new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object);
+                new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object,
+                new Mock<IBloqueoSeries>().Object);
         }
 
         private static NumeracionDocumentoDet Serie(int serie, string codigoObj, string subTipo = "--", string? manual = "N", string? bloqueado = "N") => new()

@@ -52,6 +52,7 @@ namespace API.Domain.Core.Pos
         private readonly IRepositorioGenerico<PagoRecibido, int> _repoPago;
         private readonly IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)> _repoPagoFactura;
         private readonly IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> _repoMedio;
+        private readonly IBloqueoSeries _bloqueoSeries;
 
         public PosDomain(
             IRepositorioGenerico<PosConfiguracion, int> repoConfiguracion,
@@ -72,8 +73,10 @@ namespace API.Domain.Core.Pos
             IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)> repoDetalle,
             IRepositorioGenerico<PagoRecibido, int> repoPago,
             IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)> repoPagoFactura,
-            IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> repoMedio)
+            IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> repoMedio,
+            IBloqueoSeries bloqueoSeries)
         {
+            _bloqueoSeries = bloqueoSeries;
             _facturaDomain = facturaDomain;
             _pagoDomain = pagoDomain;
             _tx = tx;
@@ -478,13 +481,19 @@ namespace API.Domain.Core.Pos
                 .ToList();
 
             // Sin try/catch dentro de la operación: un fallo anidado debe llegar al ejecutor exterior para que revierta todo.
-            // El try/catch envuelve al ejecutor, ya revertido: dos cajas sobre la misma serie pueden interbloquearse
-            // (SQL Server elige una víctima, error 1205) y el cajero debe recibir un mensaje claro en vez del técnico de EF.
+            // El try/catch envuelve al ejecutor, ya revertido: si aun así hubiera un interbloqueo (SQL Server elige una
+            // víctima, error 1205), el cajero debe recibir un mensaje claro en vez del técnico de EF.
             int facturaEntry;
             try
             {
                 facturaEntry = await _tx.EjecutarAsync(async () =>
                 {
+                    // Candado de actualización sobre las dos series, siempre en el mismo orden (factura, luego pagos) y
+                    // antes de leerlas para numerar: las cajas simultáneas se ponen en fila en vez de interbloquearse
+                    // (bajo SERIALIZABLE, leer la serie con candado compartido y luego actualizarla las interbloqueaba).
+                    await _bloqueoSeries.BloquearAsync(config.SerieFactura!.Value);
+                    await _bloqueoSeries.BloquearAsync(config.SeriePago!.Value);
+
                     var entry = await _facturaDomain.InsertarAsync(factura, lineas);
 
                     var pago = new PagoRecibido

@@ -357,6 +357,7 @@ namespace API.Service.WebApi
             services.AddTransient<IRepositorioGenerico<MovimientoInventario, int>, MovimientoInventarioRepositorio>();
             services.AddTransient<IValuacionInventario, ValuacionInventario>();
             services.AddTransient<IEjecutorTransaccion, EjecutorTransaccion>();
+            services.AddTransient<IBloqueoSeries, BloqueoSeries>();
             services.AddTransient<IInventarioAsientoService, InventarioAsientoService>();
             services.AddTransient<IUnidadMedidaService, UnidadMedidaService>();
             services.AddTransient<IDocumentoBaseService, DocumentoBaseService>();

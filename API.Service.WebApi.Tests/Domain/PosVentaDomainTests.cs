@@ -57,7 +57,11 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<PagoRecibido, int>> _repoPago = new();
         private readonly Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>> _repoPagoFactura = new();
         private readonly Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>> _repoMedio = new();
+        private readonly Mock<IBloqueoSeries> _bloqueo = new();
         private readonly PosDomain _domain;
+
+        /// <summary>Orden de las llamadas con efecto: «bloqueo:serie:dentroDeTx», «factura», «pago».</summary>
+        private readonly List<string> _orden = new();
 
         private readonly Dictionary<string, decimal> _precioLista = new() { ["A1"] = 45m, ["A2"] = 22m, ["Z0"] = 0m };
 
@@ -109,6 +113,7 @@ namespace API.Service.WebApi.Tests.Domain
                 .Callback((Factura f, IEnumerable<FacturaDetalle> l) =>
                 {
                     _facturaDentroDeTx = _tx.Dentro;
+                    _orden.Add("factura");
                     _factura = f;
                     _lineas = l.ToList();
                     f.NumDoc = 77;
@@ -119,11 +124,16 @@ namespace API.Service.WebApi.Tests.Domain
                 .Callback((PagoRecibido p, IEnumerable<PagoRecibidoFactura> f, IEnumerable<PagoRecibidoMedio> m) =>
                 {
                     _pagoDentroDeTx = _tx.Dentro;
+                    _orden.Add("pago");
                     _pago = p;
                     _pagoFacturas = f.ToList();
                     _medios = m.ToList();
                 })
                 .ReturnsAsync(900);
+
+            _bloqueo.Setup(b => b.BloquearAsync(It.IsAny<int>()))
+                .Callback((int serie) => _orden.Add($"bloqueo:{serie}:{_tx.Dentro}"))
+                .Returns(Task.CompletedTask);
 
             var vacioFacturas = new Mock<IRepositorioGenerico<Factura, int>>();
             vacioFacturas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<Factura>().AsAsyncQueryable());
@@ -136,7 +146,8 @@ namespace API.Service.WebApi.Tests.Domain
                 new ConsultaLineasVenta(vacioFacturas.Object, new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
                     new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object),
                 _facturaDomain.Object, _pagoDomain.Object, _tx,
-                _repoFactura.Object, _repoDetalle.Object, _repoPago.Object, _repoPagoFactura.Object, _repoMedio.Object);
+                _repoFactura.Object, _repoDetalle.Object, _repoPago.Object, _repoPagoFactura.Object, _repoMedio.Object,
+                _bloqueo.Object);
         }
 
         private static Articulo Art(string codigo, string nombre, string activo = "S", string venta = "S") => new()
@@ -157,6 +168,8 @@ namespace API.Service.WebApi.Tests.Domain
             _facturaDomain.Verify(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()), Times.Never);
             _pagoDomain.Verify(d => d.InsertarAsync(It.IsAny<PagoRecibido>(), It.IsAny<IEnumerable<PagoRecibidoFactura>>(), It.IsAny<IEnumerable<PagoRecibidoMedio>>()), Times.Never);
             Assert.Equal(0, _tx.Llamadas);
+            // Un rechazo previo a la transacción no toma candados de serie.
+            _bloqueo.Verify(b => b.BloquearAsync(It.IsAny<int>()), Times.Never);
         }
 
         // ---------- Venta feliz ----------
@@ -383,6 +396,42 @@ namespace API.Service.WebApi.Tests.Domain
 
             Assert.Equal("Stock insuficiente.", ex.Message);
             _pagoDomain.Verify(d => d.InsertarAsync(It.IsAny<PagoRecibido>(), It.IsAny<IEnumerable<PagoRecibidoFactura>>(), It.IsAny<IEnumerable<PagoRecibidoMedio>>()), Times.Never);
+        }
+
+        // ---------- Candado de series (cajas simultáneas) ----------
+
+        [Fact]
+        public async Task Vender_BloqueaLaSerieDeFacturaYLuegoLaDePagos_DentroDeLaTransaccion_AntesDeFacturaYPago()
+        {
+            await _domain.VenderAsync(Feliz(), "ana");
+
+            // Orden fijo (factura 10, luego pagos 20), ambos dentro de la transacción exterior y antes de numerar.
+            Assert.Equal(new[] { "bloqueo:10:True", "bloqueo:20:True", "factura", "pago" }, _orden);
+            _bloqueo.Verify(b => b.BloquearAsync(It.IsAny<int>()), Times.Exactly(2));
+        }
+
+        [Fact]
+        public async Task Vender_FallaElCandadoDeLaSerieDeFactura_NoSeBloqueaLaDePagos_NiSeRegistraNada()
+        {
+            _bloqueo.Setup(b => b.BloquearAsync(10)).ThrowsAsync(new Exception("Error de bloqueo."));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Equal("Error de bloqueo.", ex.Message);
+            _bloqueo.Verify(b => b.BloquearAsync(20), Times.Never);
+            _facturaDomain.Verify(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()), Times.Never);
+            _pagoDomain.Verify(d => d.InsertarAsync(It.IsAny<PagoRecibido>(), It.IsAny<IEnumerable<PagoRecibidoFactura>>(), It.IsAny<IEnumerable<PagoRecibidoMedio>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Vender_InterbloqueoAlTomarElCandado_SeTraduceAMensajeEnEspanol()
+        {
+            _bloqueo.Setup(b => b.BloquearAsync(20)).ThrowsAsync(new Exception("Error.", new SqlException(1205)));
+
+            var ex = await Assert.ThrowsAsync<Exception>(() => _domain.VenderAsync(Feliz(), "ana"));
+
+            Assert.Equal(MensajeOtraCaja, ex.Message);
+            _facturaDomain.Verify(d => d.InsertarAsync(It.IsAny<Factura>(), It.IsAny<IEnumerable<FacturaDetalle>>()), Times.Never);
         }
 
         // ---------- Interbloqueo de SQL Server ----------
