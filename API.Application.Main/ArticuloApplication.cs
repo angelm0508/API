@@ -34,7 +34,8 @@ namespace API.Application.Main
             }
             catch (Exception ex)
             {
-                respuseta.Mensaje = $"{ex.Message} / {ex.InnerException}";
+                // Mensaje literal del dominio (p. ej. código de barras duplicado), sin el texto técnico de la excepción interna.
+                respuseta.Mensaje = ex.Message;
             }
             return respuseta;
         }
