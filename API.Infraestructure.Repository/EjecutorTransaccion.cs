@@ -16,30 +16,43 @@ namespace API.Infraestructure.Repository
         public Task<T> EjecutarAsync<T>(Func<Task<T>> operacion)
         {
             // Nivel por defecto de la conexión (READ COMMITTED): comportamiento histórico.
-            return EjecutarInternoAsync(operacion, null);
+            return EjecutarConAnidamientoAsync(_context, operacion, null);
         }
 
         public Task<T> EjecutarAsync<T>(Func<Task<T>> operacion, System.Data.IsolationLevel nivel)
         {
-            return EjecutarInternoAsync(operacion, nivel);
+            return EjecutarConAnidamientoAsync(_context, operacion, nivel);
         }
 
-        private async Task<T> EjecutarInternoAsync<T>(Func<Task<T>> operacion, System.Data.IsolationLevel? nivel)
+        /// <summary>
+        /// Ejecuta la operación en una transacción. Si ya hay una activa en el contexto (p. ej. la venta POS, que compone
+        /// factura y cobro), la operación corre DENTRO de ella: se guardan sus cambios pero no se confirma ni se revierte
+        /// aquí; eso lo hace el nivel exterior. El nivel de aislamiento pedido por una operación anidada se ignora: rige el
+        /// de la transacción exterior.
+        /// </summary>
+        public static async Task<T> EjecutarConAnidamientoAsync<T>(DbContext context, Func<Task<T>> operacion, System.Data.IsolationLevel? nivel)
         {
+            if (context.Database.CurrentTransaction is not null)
+            {
+                var anidado = await operacion();
+                await context.SaveChangesAsync();
+                return anidado;
+            }
+
             await using var tx = nivel.HasValue
-                ? await _context.Database.BeginTransactionAsync(nivel.Value)
-                : await _context.Database.BeginTransactionAsync();
+                ? await context.Database.BeginTransactionAsync(nivel.Value)
+                : await context.Database.BeginTransactionAsync();
             try
             {
                 var resultado = await operacion();
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
                 await tx.CommitAsync();
                 return resultado;
             }
             catch
             {
                 await tx.RollbackAsync();
-                _context.ChangeTracker.Clear(); // el contexto scoped queda con mutaciones parciales tras el rollback
+                context.ChangeTracker.Clear(); // el contexto scoped queda con mutaciones parciales tras el rollback
                 throw;
             }
         }
