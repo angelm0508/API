@@ -40,6 +40,7 @@ Script nuevo `sql/2026-11-19-pos.sql` (idempotente), el mismo bloque al final de
 |---|---|---|
 | `Id` | int PK | siempre 1 |
 | `SerieFactura` | int NULL | FK a `NumeracionDocumentoDet(Serie)`: serie de facturas (`CodigoObj = '6'`, `SubTipoDoc = '--'`), no manual ni bloqueada |
+| `SeriePago` | int NULL | FK a `NumeracionDocumentoDet(Serie)`: serie de pagos recibidos (`CodigoObj = '24'`), no manual ni bloqueada. *(Añadida al leer `PagoRecibidoDomain`, que exige una serie de pagos.)* |
 | `CodAlmacen` | nvarchar NULL | FK a `Almacen` |
 | `CodigoImpuesto` | nvarchar NULL | FK a `Impuesto` (IVA por defecto de todas las líneas) |
 | `ClienteDefecto` | nvarchar NULL | FK a `SocioNegocio`, de tipo cliente (`TipoSn = 'C'`) |
@@ -94,6 +95,8 @@ Cuerpo: `{ codigoCliente?, nit?, lineas: [{ codArticulo, cantidad }], pagos: [{ 
 **Transacciones anidables.** Hoy `EjecutorTransaccion.EjecutarAsync` abre siempre una transacción propia, y EF no permite anidarlas. Cambio: si ya hay una transacción activa en el contexto (`Database.CurrentTransaction`), la operación se ejecuta dentro de esa (con su `SaveChanges`) sin confirmar ni revertir por su cuenta; confirmar y revertir lo hace solo el nivel exterior, que también limpia el `ChangeTracker` ante una excepción. Sin transacción activa, el comportamiento actual no cambia (todas las pruebas existentes deben seguir pasando).
 
 **Control de crédito.** La venta es de contado y llega con `PagoInmediato = total`, por lo que el control de crédito existente no la bloquea. El plan verifica que clientes con límite 0 («solo contado») puedan comprar por el POS.
+
+**Cajero y marca POS.** La factura no guarda quién cobra. La venta POS escribe en `Factura.Comentario` el texto `Venta POS - Cajero: <usuario>` (el usuario es `ClaimTypes.Name` del token, que el controlador pasa al dominio como parámetro). Esa marca es lo que identifica una factura como venta POS para el ticket, la reimpresión y «Ventas del día» (así siguen siendo localizables aunque la serie POS de la configuración cambie después).
 
 ## 6. Ticket
 
