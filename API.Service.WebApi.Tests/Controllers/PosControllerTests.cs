@@ -115,6 +115,105 @@ namespace API.Service.WebApi.Tests.Controllers
             _app.Verify(a => a.GuardarConfiguracionAsync(It.IsAny<PosConfiguracionDato>()), Times.Never);
         }
 
+        // ---------- Catálogo ----------
+
+        private static readonly ArticuloPos Art1 = new("A1", "123", "Aceite", 50m, 12m, true);
+
+        private static Respuesta<IReadOnlyList<ArticuloPos>> Lista() => new()
+        {
+            Resultado = true, Mensaje = "ok", Dato = new List<ArticuloPos> { Art1 }
+        };
+
+        [Fact]
+        public async Task BuscarArticulos_Exito_Devuelve200YPasaTextoYCliente()
+        {
+            var buena = Lista();
+            _app.Setup(a => a.BuscarArticulosAsync("ace", "C1")).ReturnsAsync(buena);
+
+            var r = await Crear().BuscarArticulos("ace", "C1");
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task BuscarArticulos_ConError_Devuelve400()
+        {
+            _app.Setup(a => a.BuscarArticulosAsync("ace", null))
+                .ReturnsAsync(new Respuesta<IReadOnlyList<ArticuloPos>> { Mensaje = "fallo" });
+
+            var r = await Crear().BuscarArticulos("ace", null);
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
+        }
+
+        [Fact]
+        public async Task ObtenerArticuloPorCodigo_Existe_Devuelve200()
+        {
+            var buena = new Respuesta<ArticuloPos?> { Resultado = true, Mensaje = "ok", Dato = Art1 };
+            _app.Setup(a => a.ObtenerArticuloPorCodigoAsync("123", "C1")).ReturnsAsync(buena);
+
+            var r = await Crear().ObtenerArticuloPorCodigo("123", "C1");
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task ObtenerArticuloPorCodigo_NoExisteONoVendible_Devuelve404()
+        {
+            _app.Setup(a => a.ObtenerArticuloPorCodigoAsync("999", null))
+                .ReturnsAsync(new Respuesta<ArticuloPos?> { Resultado = true, Mensaje = "ok", Dato = null });
+
+            var r = await Crear().ObtenerArticuloPorCodigo("999", null);
+
+            var nf = Assert.IsType<NotFoundObjectResult>(r.Result);
+            Assert.False(((Respuesta<ArticuloPos?>)nf.Value!).Resultado);
+            Assert.Equal("El artículo 999 no existe o no está disponible para la venta.", ((Respuesta<ArticuloPos?>)nf.Value!).Mensaje);
+        }
+
+        [Fact]
+        public async Task ObtenerArticuloPorCodigo_ConError_Devuelve400()
+        {
+            _app.Setup(a => a.ObtenerArticuloPorCodigoAsync("1", null))
+                .ReturnsAsync(new Respuesta<ArticuloPos?> { Mensaje = "fallo" });
+
+            var r = await Crear().ObtenerArticuloPorCodigo("1", null);
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
+        }
+
+        [Fact]
+        public async Task ObtenerRapidos_Exito_Devuelve200()
+        {
+            var buena = Lista();
+            _app.Setup(a => a.ObtenerRapidosAsync()).ReturnsAsync(buena);
+
+            var r = await Crear().ObtenerRapidos();
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task ObtenerRapidos_ConError_Devuelve400()
+        {
+            _app.Setup(a => a.ObtenerRapidosAsync()).ReturnsAsync(new Respuesta<IReadOnlyList<ArticuloPos>> { Mensaje = "fallo" });
+
+            var r = await Crear().ObtenerRapidos();
+
+            Assert.IsType<BadRequestObjectResult>(r.Result);
+        }
+
+        [Theory]
+        [InlineData(nameof(PosController.BuscarArticulos), "Articulos")]
+        [InlineData(nameof(PosController.ObtenerArticuloPorCodigo), "Articulos/porCodigo/{codigo}")]
+        [InlineData(nameof(PosController.ObtenerRapidos), "Rapidos")]
+        public void Catalogo_LlevaElPermisoVerDePosYLaRutaEsperada(string metodo, string ruta)
+        {
+            var m = typeof(PosController).GetMethod(metodo)!;
+            Assert.Equal(ruta, m.GetCustomAttribute<HttpGetAttribute>()!.Template);
+            var atributo = Assert.Single(m.GetCustomAttributes<RequierePermisoAttribute>());
+            Assert.Equal(("Pos", Accion.Ver), Permiso(atributo));
+        }
+
         // ---------- forma del controlador ----------
 
         [Fact]

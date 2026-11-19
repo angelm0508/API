@@ -1,5 +1,7 @@
 using API.Domain.Core.Pos;
+using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
+using API.Domain.Interface;
 using API.Domain.Interface.Pos;
 using API.Infraestructure.Interface;
 using Moq;
@@ -21,7 +23,13 @@ namespace API.Service.WebApi.Tests.Domain
         public PosConfiguracionDomainTests()
         {
             _domain = new PosDomain(_repoConfig.Object, _repoSerie.Object, _repoAlmacen.Object, _repoImpuesto.Object,
-                _repoSocio.Object, _repoFormaPago.Object, _repoMoneda.Object);
+                _repoSocio.Object, _repoFormaPago.Object, _repoMoneda.Object,
+                new Mock<IRepositorioGenerico<Articulo, string>>().Object,
+                new Mock<IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)>>().Object,
+                new Mock<IPrecioListaDomain>().Object,
+                new ConsultaLineasVenta(new Mock<IRepositorioGenerico<Factura, int>>().Object,
+                    new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
+                    new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object));
         }
 
         private static NumeracionDocumentoDet Serie(int serie, string codigoObj, string subTipo = "--", string? manual = "N", string? bloqueado = "N") => new()
@@ -314,14 +322,11 @@ namespace API.Service.WebApi.Tests.Domain
             await AssertRechaza(Completa, "La moneda no existe.");
         }
 
-        // ---------- Métodos de las Tareas 5 y 6 ----------
+        // ---------- Métodos de la Tarea 6 ----------
 
         [Fact]
         public async Task LosDemasMetodos_AunNoEstanImplementados()
         {
-            await Assert.ThrowsAsync<NotImplementedException>(() => _domain.BuscarArticulosAsync(null, null));
-            await Assert.ThrowsAsync<NotImplementedException>(() => _domain.ObtenerArticuloPorCodigoAsync("x", null));
-            await Assert.ThrowsAsync<NotImplementedException>(() => _domain.ObtenerRapidosAsync());
             await Assert.ThrowsAsync<NotImplementedException>(() => _domain.VenderAsync(new VentaPosSolicitud(null, null, new(), new()), "c"));
             await Assert.ThrowsAsync<NotImplementedException>(() => _domain.ObtenerTicketAsync(1));
             await Assert.ThrowsAsync<NotImplementedException>(() => _domain.ObtenerVentasDelDiaAsync());

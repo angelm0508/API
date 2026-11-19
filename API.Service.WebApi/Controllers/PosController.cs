@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace API.Service.WebApi.Controllers
 {
-    /// <summary>Punto de venta (facturación rápida). Por ahora solo la configuración; la venta y el catálogo llegan en tareas posteriores.</summary>
+    /// <summary>Punto de venta (facturación rápida). Configuración y catálogo; la venta llega en tareas posteriores.</summary>
     [Authorize]
     [ApiController]
     [Route("api/Pos")]
@@ -41,6 +41,37 @@ namespace API.Service.WebApi.Controllers
                 return BadRequest(new Respuesta<PosConfiguracionVista> { Mensaje = "La configuración del POS es obligatoria." });
 
             var respuesta = await _app.GuardarConfiguracionAsync(dato);
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        /// <summary>Búsqueda por texto (código, código de barras o nombre; mínimo 2 caracteres). <c>cliente</c> define la lista de precios.</summary>
+        [HttpGet("Articulos")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<IReadOnlyList<ArticuloPos>>>> BuscarArticulos([FromQuery] string? texto, [FromQuery] string? cliente)
+        {
+            var respuesta = await _app.BuscarArticulosAsync(texto, cliente);
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        /// <summary>Código exacto (lector de barras): 404 si no existe o no se puede vender.</summary>
+        [HttpGet("Articulos/porCodigo/{codigo}")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<ArticuloPos?>>> ObtenerArticuloPorCodigo(string codigo, [FromQuery] string? cliente)
+        {
+            var respuesta = await _app.ObtenerArticuloPorCodigoAsync(codigo, cliente);
+            if (!respuesta.Resultado)
+                return BadRequest(respuesta);
+            if (respuesta.Dato is null)
+                return NotFound(new Respuesta<ArticuloPos?> { Mensaje = $"El artículo {codigo} no existe o no está disponible para la venta." });
+            return Ok(respuesta);
+        }
+
+        /// <summary>Artículos de la cuadrícula rápida: los marcados «Mostrar en POS» o, si no hay, los más vendidos.</summary>
+        [HttpGet("Rapidos")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<IReadOnlyList<ArticuloPos>>>> ObtenerRapidos()
+        {
+            var respuesta = await _app.ObtenerRapidosAsync();
             return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
         }
     }

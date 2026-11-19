@@ -85,6 +85,51 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
+        public async Task Catalogo_Rapidos_Exito_DevuelveLosArticulos()
+        {
+            var articulos = new List<ArticuloPos> { new("A1", null, "Art", 5m, 3m, true) };
+            _domain.Setup(d => d.ObtenerRapidosAsync()).ReturnsAsync(articulos);
+
+            var r = await _app.ObtenerRapidosAsync();
+
+            Assert.True(r.Resultado);
+            Assert.Same(articulos, r.Dato);
+        }
+
+        [Fact]
+        public async Task Catalogo_Buscar_ConExcepcion_DevuelveResultadoFalsoConElMensaje()
+        {
+            _domain.Setup(d => d.BuscarArticulosAsync("ab", "C1")).ThrowsAsync(new InvalidOperationException("sin conexión"));
+
+            var r = await _app.BuscarArticulosAsync("ab", "C1");
+
+            Assert.False(r.Resultado);
+            Assert.Equal("sin conexión", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task Catalogo_PorCodigo_SinArticulo_EsConsultaCorrectaConDatoNulo()
+        {
+            _domain.Setup(d => d.ObtenerArticuloPorCodigoAsync("X", null)).ReturnsAsync((ArticuloPos?)null);
+
+            var r = await _app.ObtenerArticuloPorCodigoAsync("X", null);
+
+            Assert.True(r.Resultado);
+            Assert.Null(r.Dato);
+        }
+
+        [Fact]
+        public async Task Catalogo_PorCodigo_ConExcepcion_DevuelveResultadoFalsoConElMensaje()
+        {
+            _domain.Setup(d => d.ObtenerArticuloPorCodigoAsync("X", null)).ThrowsAsync(new Exception("falló"));
+
+            var r = await _app.ObtenerArticuloPorCodigoAsync("X", null);
+
+            Assert.False(r.Resultado);
+            Assert.Equal("falló", r.Mensaje);
+        }
+
+        [Fact]
         public async Task BuscarObtenerPorCodigoYVender_DelegaEnElDominio()
         {
             var articulos = new List<ArticuloPos> { new("A1", null, "Art", 5m, 3m, true) };
