@@ -4,6 +4,7 @@ using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Pos;
 using API.Infraestructure.Interface;
+using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
 using Xunit;
 
@@ -18,6 +19,7 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IRepositorioGenerico<SocioNegocio, string>> _repoSocio = new();
         private readonly Mock<IRepositorioGenerico<FormaPago, string>> _repoFormaPago = new();
         private readonly Mock<IRepositorioGenerico<Monedum, string>> _repoMoneda = new();
+        private readonly Mock<IRepositorioGenerico<NumeracionDocumento, string>> _repoNumeracion = new();
         private readonly PosDomain _domain;
 
         public PosConfiguracionDomainTests()
@@ -38,7 +40,18 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IRepositorioGenerico<PagoRecibido, int>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object,
-                new Mock<IBloqueoSeries>().Object);
+                new Mock<IBloqueoSeries>().Object,
+                _repoNumeracion.Object);
+
+            // Encabezados de numeración: la serie por defecto de facturas es la 11, la de notas de débito la 33 y la de
+            // pagos recibidos la 21 (las de la configuración «Completa», 10 y 20, son exclusivas del POS).
+            _repoNumeracion.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[]
+            {
+                new NumeracionDocumento { CodigoObj = "6", SubTipoDoc = "--", DocAlias = "Factura", SerieDfct = 11 },
+                new NumeracionDocumento { CodigoObj = "6", SubTipoDoc = "ND", DocAlias = "Nota Debito Cliente", SerieDfct = 33 },
+                new NumeracionDocumento { CodigoObj = "24", SubTipoDoc = "--", DocAlias = "Pago recibido", SerieDfct = 21 },
+                new NumeracionDocumento { CodigoObj = "13", SubTipoDoc = "--", DocAlias = "Factura de compra", SerieDfct = 20 }
+            }.AsAsyncQueryable());
         }
 
         private static NumeracionDocumentoDet Serie(int serie, string codigoObj, string subTipo = "--", string? manual = "N", string? bloqueado = "N") => new()
@@ -193,6 +206,38 @@ namespace API.Service.WebApi.Tests.Domain
             TodoValido();
             _repoSerie.Setup(r => r.ObtenerAsync(20)).ReturnsAsync(Serie(20, "6"));
             await AssertRechaza(Completa, MsgSeriePago);
+        }
+
+        private const string MsgFacturaPorDefecto = "La serie de factura POS es la serie por defecto de facturas: usa una serie exclusiva para el POS.";
+        private const string MsgPagoPorDefecto = "La serie de pagos es la serie por defecto de pagos recibidos: usa una serie exclusiva para el POS.";
+
+        [Fact]
+        public async Task Guardar_SerieFacturaQueEsLaPorDefectoDeFacturas_Rechaza()
+        {
+            TodoValido();
+            _repoSerie.Setup(r => r.ObtenerAsync(11)).ReturnsAsync(Serie(11, "6"));
+            await AssertRechaza(Completa with { SerieFactura = 11 }, MsgFacturaPorDefecto);
+        }
+
+        [Fact]
+        public async Task Guardar_SeriePagoQueEsLaPorDefectoDePagosRecibidos_Rechaza()
+        {
+            TodoValido();
+            _repoSerie.Setup(r => r.ObtenerAsync(21)).ReturnsAsync(Serie(21, "24"));
+            await AssertRechaza(Completa with { SeriePago = 21 }, MsgPagoPorDefecto);
+        }
+
+        [Fact]
+        public async Task Guardar_SeriePorDefectoDeOtroDocumento_NoImpideGuardar()
+        {
+            // La 20 es la serie por defecto de las facturas de compra (13), no la de pagos recibidos: se acepta.
+            TodoValido();
+            _repoConfig.Setup(r => r.ObtenerAsync(1)).ReturnsAsync(new PosConfiguracion { Id = 1 });
+            _repoConfig.Setup(r => r.ActualizarAsync(1, It.IsAny<PosConfiguracion>())).ReturnsAsync(true);
+
+            await _domain.GuardarConfiguracionAsync(Completa);
+
+            _repoConfig.Verify(r => r.ActualizarAsync(1, It.IsAny<PosConfiguracion>()), Times.Once);
         }
 
         [Fact]

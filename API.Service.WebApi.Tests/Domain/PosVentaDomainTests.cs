@@ -147,7 +147,8 @@ namespace API.Service.WebApi.Tests.Domain
                     new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object),
                 _facturaDomain.Object, _pagoDomain.Object, _tx,
                 _repoFactura.Object, _repoDetalle.Object, _repoPago.Object, _repoPagoFactura.Object, _repoMedio.Object,
-                _bloqueo.Object);
+                _bloqueo.Object,
+                new Mock<IRepositorioGenerico<NumeracionDocumento, string>>().Object);
         }
 
         private static Articulo Art(string codigo, string nombre, string activo = "S", string venta = "S") => new()

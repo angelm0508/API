@@ -24,6 +24,7 @@ namespace API.Domain.Core.Pos
         private readonly IRepositorioGenerico<SocioNegocio, string> _repoSocio;
         private readonly IRepositorioGenerico<FormaPago, string> _repoFormaPago;
         private readonly IRepositorioGenerico<Monedum, string> _repoMoneda;
+        private readonly IRepositorioGenerico<NumeracionDocumento, string> _repoNumeracion;
 
         // Catálogo
         private const int LongitudMinimaBusqueda = 2;
@@ -75,9 +76,11 @@ namespace API.Domain.Core.Pos
             IRepositorioGenerico<PagoRecibido, int> repoPago,
             IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)> repoPagoFactura,
             IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> repoMedio,
-            IBloqueoSeries bloqueoSeries)
+            IBloqueoSeries bloqueoSeries,
+            IRepositorioGenerico<NumeracionDocumento, string> repoNumeracion)
         {
             _bloqueoSeries = bloqueoSeries;
+            _repoNumeracion = repoNumeracion;
             _facturaDomain = facturaDomain;
             _pagoDomain = pagoDomain;
             _tx = tx;
@@ -132,8 +135,16 @@ namespace API.Domain.Core.Pos
             if (dato.SerieFactura is int serieFactura && !await SerieValidaAsync(serieFactura, "6", exigeSubTipoBase: true))
                 throw new InvalidOperationException("La serie de factura POS no es válida: debe ser una serie automática y activa de facturas.");
 
+            // FacturaDomain y PagoRecibidoDomain numeran fuera de su transacción y sin candado: la serie por defecto de su
+            // documento (la que usan las facturas y pagos normales) no puede ser también la del POS.
+            if (dato.SerieFactura is int serieFacturaDefecto && await EsSeriePorDefectoAsync(serieFacturaDefecto, "6"))
+                throw new InvalidOperationException("La serie de factura POS es la serie por defecto de facturas: usa una serie exclusiva para el POS.");
+
             if (dato.SeriePago is int seriePago && !await SerieValidaAsync(seriePago, "24", exigeSubTipoBase: false))
                 throw new InvalidOperationException("La serie de pagos no es válida: debe ser una serie automática y activa de pagos recibidos.");
+
+            if (dato.SeriePago is int seriePagoDefecto && await EsSeriePorDefectoAsync(seriePagoDefecto, "24"))
+                throw new InvalidOperationException("La serie de pagos es la serie por defecto de pagos recibidos: usa una serie exclusiva para el POS.");
 
             if (almacen is not null && await _repoAlmacen.ObtenerAsync(almacen) is null)
                 throw new InvalidOperationException("El almacén no existe.");
@@ -178,6 +189,10 @@ namespace API.Domain.Core.Pos
                 && s.Manual != "S"
                 && s.Bloqueado != "S";
         }
+
+        /// <summary>La serie es la por defecto (<c>SerieDfct</c>) de algún encabezado de numeración del documento indicado.</summary>
+        private async Task<bool> EsSeriePorDefectoAsync(int serie, string codigoObj) =>
+            await (await _repoNumeracion.ObtenerTodoAsync()).AnyAsync(n => n.CodigoObj == codigoObj && n.SerieDfct == serie);
 
         private static string? Texto(string? valor) => string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
 
