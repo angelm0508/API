@@ -99,7 +99,7 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task Buscar_PorCodigoPorCodigoDeBarrasYPorNombre_SinDistinguirMayusculas()
+        public async Task Buscar_PorCodigoPorCodigoDeBarrasYPorNombre()
         {
             Config();
             Articulos(
@@ -108,11 +108,27 @@ namespace API.Service.WebApi.Tests.Domain
                 Art("Z9", "Aceite sintético 5W30"),
                 Art("N0", "Otra cosa"));
 
-            Assert.Equal(new[] { "ACE-01" }, Codigos(await _domain.BuscarArticulosAsync("ace-0", null)));
+            Assert.Equal(new[] { "ACE-01" }, Codigos(await _domain.BuscarArticulosAsync("ACE-0", null)));
             Assert.Equal(new[] { "X100" }, Codigos(await _domain.BuscarArticulosAsync("012345", null)));
-            Assert.Equal(new[] { "Z9" }, Codigos(await _domain.BuscarArticulosAsync("SINTÉTICO", null)));
-            // «ac» está en el código de uno y en el nombre del otro; salen por nombre («Aceite…» antes que «Filtro…»).
-            Assert.Equal(new[] { "Z9", "ACE-01" }, Codigos(await _domain.BuscarArticulosAsync("Ac", null)));
+            Assert.Equal(new[] { "Z9" }, Codigos(await _domain.BuscarArticulosAsync("sintético", null)));
+            // «Ac» está en el nombre de uno; «AC» en el código del otro.
+            Assert.Equal(new[] { "Z9" }, Codigos(await _domain.BuscarArticulosAsync("Ac", null)));
+            Assert.Equal(new[] { "ACE-01" }, Codigos(await _domain.BuscarArticulosAsync("AC", null)));
+        }
+
+        [Fact]
+        public async Task Buscar_YPorCodigo_ComparanLasColumnasSinToLower_LaInsensibilidadAMayusculasLaDaLaBase()
+        {
+            // Las columnas se comparan tal cual (sin ToLower) para que SQL Server use el índice único de CodigoBarras y la
+            // llave primaria de Codigo; la intercalación de la base (CI) ignora las mayúsculas. El repositorio en memoria de
+            // estas pruebas (LINQ a objetos) SÍ las distingue: aquí «ace-01» no encuentra «ACE-01», en SQL real sí.
+            Config();
+            Articulos(Art("ACE-01", "Filtro de aire", barras: "ABC-999"));
+
+            Assert.Empty(await _domain.BuscarArticulosAsync("ace-01", null));
+            Assert.Null(await _domain.ObtenerArticuloPorCodigoAsync("ace-01", null));
+            Assert.Null(await _domain.ObtenerArticuloPorCodigoAsync("abc-999", null));
+            Assert.Equal("ACE-01", (await _domain.ObtenerArticuloPorCodigoAsync("ABC-999", null))!.Codigo);
         }
 
         [Fact]
@@ -120,12 +136,12 @@ namespace API.Service.WebApi.Tests.Domain
         {
             Config();
             Articulos(
-                Art("X1", "Alfa ab"),
+                Art("X1", "Alfa AB"),
                 Art("AB", "Zeta"),
-                Art("X2", "Beta", barras: "ab"),
-                Art("X3", "Cobre ab"));
+                Art("X2", "Beta", barras: "AB"),
+                Art("X3", "Cobre AB"));
 
-            var r = await _domain.BuscarArticulosAsync("Ab", null);
+            var r = await _domain.BuscarArticulosAsync("AB", null);
 
             // Exactos (barras X2 «Beta», código AB «Zeta») por nombre, luego los demás por nombre.
             Assert.Equal(new[] { "X2", "AB", "X1", "X3" }, Codigos(r));
@@ -142,7 +158,7 @@ namespace API.Service.WebApi.Tests.Domain
                 Art("NOV", "Tornillo no de venta", venta: "N"),
                 Art("SIN", "Tornillo sin precio"));
 
-            var r = await _domain.BuscarArticulosAsync("tornillo", null);
+            var r = await _domain.BuscarArticulosAsync("Tornillo", null);
 
             Assert.Equal(new[] { "ok1" }, Codigos(r));
         }
@@ -157,7 +173,7 @@ namespace API.Service.WebApi.Tests.Domain
             for (var i = 0; i < 30; i++) lista.Add(Art("T" + i, "Tuerca " + (10 + i)));
             Articulos(lista.ToArray());
 
-            var r = await _domain.BuscarArticulosAsync("tuerca", null);
+            var r = await _domain.BuscarArticulosAsync("Tuerca", null);
 
             Assert.Equal(20, r.Count);
             Assert.Equal("T0", r[0].Codigo);
@@ -172,7 +188,7 @@ namespace API.Service.WebApi.Tests.Domain
             var lista = Enumerable.Range(0, 130).Select(i => Art("P" + i.ToString("000"), "Pieza " + i.ToString("000"))).ToArray();
             Articulos(lista);
 
-            var r = await _domain.BuscarArticulosAsync("pieza", null);
+            var r = await _domain.BuscarArticulosAsync("Pieza", null);
 
             Assert.Equal(20, r.Count);
             _precios.Verify(p => p.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>()), Times.Exactly(20));
@@ -186,9 +202,9 @@ namespace API.Service.WebApi.Tests.Domain
             _repoSocio.Setup(r => r.ObtenerAsync("C0")).ReturnsAsync(new SocioNegocio { Codigo = "C0", NumLstPrecio = null });
             Articulos(Art("A1", "Aceite"));
 
-            var conLista = await _domain.BuscarArticulosAsync("aceite", "C3");
-            var sinLista = await _domain.BuscarArticulosAsync("aceite", "C0");
-            var sinCliente = await _domain.BuscarArticulosAsync("aceite", null);
+            var conLista = await _domain.BuscarArticulosAsync("Aceite", "C3");
+            var sinLista = await _domain.BuscarArticulosAsync("Aceite", "C0");
+            var sinCliente = await _domain.BuscarArticulosAsync("Aceite", null);
 
             Assert.Equal(50m, Assert.Single(conLista).Precio);
             Assert.Equal(40m, Assert.Single(sinLista).Precio);
@@ -204,7 +220,7 @@ namespace API.Service.WebApi.Tests.Domain
             _repoSocio.Setup(r => r.ObtenerAsync("C3")).ReturnsAsync(new SocioNegocio { Codigo = "C3", NumLstPrecio = 3 });
             Articulos(Art("A1", "Aceite"));
 
-            var r = await _domain.BuscarArticulosAsync("aceite", "  ");
+            var r = await _domain.BuscarArticulosAsync("Aceite", "  ");
 
             Assert.Equal(50m, Assert.Single(r).Precio);
         }
@@ -219,7 +235,7 @@ namespace API.Service.WebApi.Tests.Domain
                 new ExistenciaArticulo { CodArticulo = "A1", CodAlmacen = "ALM2", Disponible = 99m },
                 new ExistenciaArticulo { CodArticulo = "A3", CodAlmacen = "ALM2", Disponible = 7m });
 
-            var r = await _domain.BuscarArticulosAsync("aceite", null);
+            var r = await _domain.BuscarArticulosAsync("Aceite", null);
 
             // Por nombre: dos, tres, uno.
             Assert.Equal(new ArticuloPos("A2", null, "Aceite dos", 40m, 0m, false), r[0]);
@@ -227,7 +243,7 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(new ArticuloPos("A1", null, "Aceite uno", 40m, 12m, true), r[2]);
 
             Config(almacen: null);
-            var sinAlmacen = await _domain.BuscarArticulosAsync("aceite", null);
+            var sinAlmacen = await _domain.BuscarArticulosAsync("Aceite", null);
             Assert.All(sinAlmacen, a => Assert.Equal(0m, a.Existencias));
         }
 
@@ -246,12 +262,12 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task PorCodigo_CaeAlCodigoSinDistinguirMayusculasYExigeCoincidenciaExacta()
+        public async Task PorCodigo_CaeAlCodigoYExigeCoincidenciaExacta()
         {
             Config();
             Articulos(Art("ABC-1", "Uno"), Art("ABC-10", "Diez"));
 
-            Assert.Equal("ABC-1", (await _domain.ObtenerArticuloPorCodigoAsync("abc-1", null))!.Codigo);
+            Assert.Equal("ABC-1", (await _domain.ObtenerArticuloPorCodigoAsync(" ABC-1 ", null))!.Codigo);
             Assert.Null(await _domain.ObtenerArticuloPorCodigoAsync("ABC", null));
         }
 
@@ -378,7 +394,7 @@ namespace API.Service.WebApi.Tests.Domain
             foreach (var a in lista.Take(100)) _precioBase[a.Codigo] = 0m;
             Articulos(lista);
 
-            var r = await _domain.BuscarArticulosAsync("pieza", null);
+            var r = await _domain.BuscarArticulosAsync("Pieza", null);
 
             Assert.Empty(r);
             _precios.Verify(p => p.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>()), Times.Exactly(100));

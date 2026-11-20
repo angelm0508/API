@@ -102,9 +102,10 @@ namespace API.Domain.Core
                 if (barras.Length > LongitudMaximaCodigoBarras)
                     throw new Exception("El código de barras no puede tener más de 50 caracteres.");
 
-                var minuscula = barras.ToLower();
+                // Igualdad directa sobre la columna (sin ToLower) para usar su índice único; la intercalación de SQL Server
+                // ignora mayúsculas, así que «abc» y «ABC» siguen siendo duplicados.
                 var todos = await _repoGenericoArticulo.ObtenerTodoAsync();
-                var existe = await todos.AnyAsync(a => a.CodigoBarras != null && a.CodigoBarras.ToLower() == minuscula
+                var existe = await todos.AnyAsync(a => a.CodigoBarras == barras
                     && (codigoPropio == null || a.Codigo != codigoPropio));
                 if (existe)
                     throw new Exception($"Ya existe un artículo con el código de barras {barras}.");

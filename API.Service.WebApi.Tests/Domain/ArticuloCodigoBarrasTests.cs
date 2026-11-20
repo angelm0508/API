@@ -93,16 +93,30 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task Insertar_CodigoDeBarrasDeOtroArticulo_Lanza_SinDistinguirMayusculas_YNoNumera()
+        public async Task Insertar_CodigoDeBarrasDeOtroArticulo_Lanza_YNoNumera()
         {
             Existentes(Otro("ART-0001", "ABC-123"));
-            var obj = new Articulo { Serie = 7, CodigoBarras = " abc-123 " };
+            var obj = new Articulo { Serie = 7, CodigoBarras = " ABC-123 " };
 
             var ex = await Assert.ThrowsAsync<Exception>(() => _domain.InsertarAsync(obj));
 
-            Assert.Equal("Ya existe un artículo con el código de barras abc-123.", ex.Message);
+            Assert.Equal("Ya existe un artículo con el código de barras ABC-123.", ex.Message);
             Assert.Equal(5, _serie.SigNumero);
             _repoArticulo.Verify(r => r.InsertarAsync(It.IsAny<Articulo>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Insertar_ElDuplicadoSeComparaSinToLower_LaInsensibilidadAMayusculasLaDaLaBase()
+        {
+            // La columna se compara tal cual para que SQL Server use el índice único de CodigoBarras; su intercalación (CI)
+            // trata «abc-123» y «ABC-123» como iguales (y el índice único también). El repositorio en memoria de esta prueba
+            // SÍ distingue mayúsculas, así que aquí no se detecta el duplicado: en SQL real sí.
+            Existentes(Otro("ART-0001", "ABC-123"));
+            var obj = new Articulo { Serie = 7, CodigoBarras = "abc-123" };
+
+            await _domain.InsertarAsync(obj);
+
+            Assert.Equal("abc-123", obj.CodigoBarras);
         }
 
         [Fact]
@@ -218,11 +232,11 @@ namespace API.Service.WebApi.Tests.Domain
         public async Task Actualizar_CodigoDeBarrasDeOtroArticulo_Lanza_SinActualizar()
         {
             Existentes(Otro("A1", "111"), Otro("A2", "ABC-9"));
-            var obj = new Articulo { Codigo = "A1", CodigoBarras = "abc-9" };
+            var obj = new Articulo { Codigo = "A1", CodigoBarras = "ABC-9" };
 
             var ex = await Assert.ThrowsAsync<Exception>(() => _domain.ActualizarAsync("A1", obj));
 
-            Assert.Equal("Ya existe un artículo con el código de barras abc-9.", ex.Message);
+            Assert.Equal("Ya existe un artículo con el código de barras ABC-9.", ex.Message);
             _repoArticulo.Verify(r => r.ActualizarAsync(It.IsAny<string>(), It.IsAny<Articulo>()), Times.Never);
         }
 

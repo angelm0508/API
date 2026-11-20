@@ -258,19 +258,20 @@ namespace API.Domain.Core.Pos
         /// </summary>
         public async Task<IReadOnlyList<ArticuloPos>> BuscarArticulosAsync(string? texto, string? codigoCliente)
         {
-            var t = Texto(texto)?.ToLowerInvariant();
+            var t = Texto(texto);
             if (t is null || t.Length < LongitudMinimaBusqueda)
                 return Array.Empty<ArticuloPos>();
 
             var config = await _repoConfiguracion.ObtenerAsync(IdConfiguracion);
             var lista = await ListaPreciosAsync(codigoCliente, config);
 
+            // Columnas sin ToLower: la intercalación de SQL Server ya ignora mayúsculas.
             var candidatos = await (await _repoArticulo.ObtenerTodoAsync())
                 .Where(a => a.Activo == "S" && a.ArticuloVenta == "S"
-                    && (a.Codigo.ToLower().Contains(t)
-                        || (a.CodigoBarras != null && a.CodigoBarras.ToLower().Contains(t))
-                        || (a.Nombre != null && a.Nombre.ToLower().Contains(t))))
-                .OrderBy(a => a.Codigo.ToLower() == t || (a.CodigoBarras != null && a.CodigoBarras.ToLower() == t) ? 0 : 1)
+                    && (a.Codigo.Contains(t)
+                        || (a.CodigoBarras != null && a.CodigoBarras.Contains(t))
+                        || (a.Nombre != null && a.Nombre.Contains(t))))
+                .OrderBy(a => a.Codigo == t || (a.CodigoBarras != null && a.CodigoBarras == t) ? 0 : 1)
                 .ThenBy(a => a.Nombre)
                 .ThenBy(a => a.Codigo)
                 .Take(TopeCandidatos)
@@ -283,14 +284,16 @@ namespace API.Domain.Core.Pos
         /// <summary>Coincidencia exacta por código de barras y, si no hay, por código. Null si no existe o no se puede vender.</summary>
         public async Task<ArticuloPos?> ObtenerArticuloPorCodigoAsync(string codigo, string? codigoCliente)
         {
-            var c = Texto(codigo)?.ToLowerInvariant();
+            var c = Texto(codigo);
             if (c is null)
                 return null;
 
             var articulos = await _repoArticulo.ObtenerTodoAsync();
             // El código escaneado identifica un artículo: primero por barras y, si no hay, por código; después se valida si es vendible.
-            var articulo = await articulos.Where(a => a.CodigoBarras != null && a.CodigoBarras.ToLower() == c).OrderBy(a => a.Codigo).FirstOrDefaultAsync()
-                ?? await articulos.Where(a => a.Codigo.ToLower() == c).FirstOrDefaultAsync();
+            // Igualdad directa sobre la columna (sin ToLower) para usar el índice único de CodigoBarras y la llave primaria;
+            // la intercalación de SQL Server ignora mayúsculas. OrderBy(Codigo) deja determinista el caso de barras repetidas.
+            var articulo = await articulos.Where(a => a.CodigoBarras == c).OrderBy(a => a.Codigo).FirstOrDefaultAsync()
+                ?? await articulos.Where(a => a.Codigo == c).FirstOrDefaultAsync();
             if (articulo is null || articulo.Activo != "S" || articulo.ArticuloVenta != "S")
                 return null;
 
