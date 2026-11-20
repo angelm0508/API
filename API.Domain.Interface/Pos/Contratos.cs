@@ -6,6 +6,21 @@ namespace API.Domain.Interface.Pos
 
     public sealed record PosConfiguracionVista(PosConfiguracionDato Configuracion, IReadOnlyList<string> Faltantes);
 
+    /// <summary>Forma de pago activa tal como la necesita la pantalla del POS.</summary>
+    public sealed record FormaPagoPos(string Codigo, string Nombre, string TipoDato);
+
+    /// <summary>
+    /// Todo lo que la pantalla del POS necesita al cargar, bajo el permiso Pos.Ver (sin pedir permisos de otros módulos):
+    /// la configuración con sus faltantes, las formas de pago activas, la tasa del impuesto configurado (0 si no hay) y el
+    /// nombre y NIT del cliente por defecto (nulos si no hay o no existe).
+    /// </summary>
+    public sealed record PosContexto(
+        PosConfiguracionVista Configuracion, IReadOnlyList<FormaPagoPos> FormasPago, decimal TasaImpuesto,
+        string? NombreCliente, string? NitCliente);
+
+    /// <summary>Cliente para «Cambiar cliente» del POS (la lista de precios se resuelve en el servidor con <c>cliente=</c>).</summary>
+    public sealed record ClientePos(string Codigo, string Nombre, string? Nit, int? NumLstPrecio);
+
     public sealed record ArticuloPos(
         string Codigo, string? CodigoBarras, string Nombre, decimal Precio, decimal Existencias, bool Inventariable);
 

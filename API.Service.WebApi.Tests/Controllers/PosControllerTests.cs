@@ -83,6 +83,45 @@ namespace API.Service.WebApi.Tests.Controllers
             Assert.IsType<BadRequestObjectResult>(r.Result);
         }
 
+        // ---------- GET Contexto y Clientes ----------
+
+        [Fact]
+        public async Task ObtenerContexto_Exito200_YConError400()
+        {
+            var buena = new Respuesta<PosContexto>
+            {
+                Resultado = true, Mensaje = "ok",
+                Dato = new PosContexto(new PosConfiguracionVista(Dato, Array.Empty<string>()), Array.Empty<FormaPagoPos>(), 12m, "C", "CF")
+            };
+            _app.Setup(a => a.ObtenerContextoAsync()).ReturnsAsync(buena);
+            Assert.Same(buena, Assert.IsType<OkObjectResult>((await Crear().ObtenerContexto()).Result).Value);
+
+            _app.Setup(a => a.ObtenerContextoAsync()).ReturnsAsync(new Respuesta<PosContexto> { Mensaje = "fallo" });
+            Assert.IsType<BadRequestObjectResult>((await Crear().ObtenerContexto()).Result);
+        }
+
+        [Fact]
+        public async Task BuscarClientes_PasaElTexto_Exito200_YConError400()
+        {
+            var buena = new Respuesta<IReadOnlyList<ClientePos>> { Resultado = true, Mensaje = "ok", Dato = new[] { new ClientePos("C1", "Juan", null, null) } };
+            _app.Setup(a => a.BuscarClientesAsync("ju")).ReturnsAsync(buena);
+            Assert.Same(buena, Assert.IsType<OkObjectResult>((await Crear().BuscarClientes("ju")).Result).Value);
+
+            _app.Setup(a => a.BuscarClientesAsync("xx")).ReturnsAsync(new Respuesta<IReadOnlyList<ClientePos>> { Mensaje = "fallo" });
+            Assert.IsType<BadRequestObjectResult>((await Crear().BuscarClientes("xx")).Result);
+        }
+
+        [Theory]
+        [InlineData(nameof(PosController.ObtenerContexto), "Contexto")]
+        [InlineData(nameof(PosController.BuscarClientes), "Clientes")]
+        public void ContextoYClientes_LlevanSoloElPermisoVerDePos(string metodo, string ruta)
+        {
+            var m = typeof(PosController).GetMethod(metodo)!;
+            Assert.Equal(ruta, m.GetCustomAttribute<HttpGetAttribute>()!.Template);
+            var atributo = Assert.Single(m.GetCustomAttributes<RequierePermisoAttribute>());
+            Assert.Equal(("Pos", Accion.Ver), Permiso(atributo));
+        }
+
         // ---------- PUT Configuracion ----------
 
         [Fact]

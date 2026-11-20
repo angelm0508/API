@@ -53,6 +53,27 @@ namespace API.Service.WebApi.Controllers
             return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
         }
 
+        /// <summary>
+        /// Datos de carga de la pantalla del POS: configuración y faltantes, formas de pago activas, tasa del impuesto y
+        /// cliente por defecto. Solo pide Pos.Ver: el cajero no necesita permisos de formas de pago, impuestos ni socios.
+        /// </summary>
+        [HttpGet("Contexto")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<PosContexto>>> ObtenerContexto()
+        {
+            var respuesta = await _app.ObtenerContextoAsync();
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        /// <summary>Clientes para «Cambiar cliente»: hasta 10 activos cuyo código o nombre contengan el texto (mínimo 2 caracteres).</summary>
+        [HttpGet("Clientes")]
+        [RequierePermiso("Pos", Accion.Ver)]
+        public async Task<ActionResult<Respuesta<IReadOnlyList<ClientePos>>>> BuscarClientes([FromQuery] string? texto)
+        {
+            var respuesta = await _app.BuscarClientesAsync(texto);
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
         /// <summary>Búsqueda por texto (código, código de barras o nombre; mínimo 2 caracteres). <c>cliente</c> define la lista de precios.</summary>
         [HttpGet("Articulos")]
         [RequierePermiso("Pos", Accion.Ver)]

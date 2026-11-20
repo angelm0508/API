@@ -28,6 +28,7 @@ namespace API.Domain.Core.Pos
         // Catálogo
         private const int LongitudMinimaBusqueda = 2;
         private const int MaximoBusqueda = 20;
+        private const int MaximoClientes = 10;
         private const int TopeCandidatos = 100;
         private const int MaximoRapidosMarcados = 24;
         private const int MaximoMasVendidos = 12;
@@ -179,6 +180,59 @@ namespace API.Domain.Core.Pos
         }
 
         private static string? Texto(string? valor) => string.IsNullOrWhiteSpace(valor) ? null : valor.Trim();
+
+        // ---------- Contexto de la pantalla y clientes (todo bajo Pos.Ver) ----------
+
+        /// <summary>
+        /// Lo que la pantalla del POS necesita al cargar, sin pedir permisos de otros módulos: configuración y faltantes,
+        /// formas de pago activas (por código), tasa del impuesto configurado (0 si no hay o no tiene) y nombre y NIT del
+        /// cliente por defecto (nulos si no hay o no existe). Con la configuración incompleta no lanza: devuelve los faltantes.
+        /// </summary>
+        public async Task<PosContexto> ObtenerContextoAsync()
+        {
+            var vista = await ObtenerConfiguracionAsync();
+            var config = vista.Configuracion;
+
+            var formas = await (await _repoFormaPago.ObtenerTodoAsync())
+                .Where(f => f.Activo == "S")
+                .OrderBy(f => f.Codigo)
+                .Select(f => new FormaPagoPos(f.Codigo, f.Nombre, f.TipoDato))
+                .ToListAsync();
+
+            var tasa = config.CodigoImpuesto is null ? 0m : (await _repoImpuesto.ObtenerAsync(config.CodigoImpuesto))?.Tasa ?? 0m;
+
+            string? nombre = null, nit = null;
+            if (config.ClienteDefecto is not null && await _repoSocio.ObtenerAsync(config.ClienteDefecto) is { } cliente)
+            {
+                nombre = string.IsNullOrWhiteSpace(cliente.Nombre) ? cliente.Codigo : cliente.Nombre;
+                nit = Texto(cliente.Nit);
+            }
+
+            return new PosContexto(vista, formas, tasa, nombre, nit);
+        }
+
+        /// <summary>
+        /// Hasta <see cref="MaximoClientes"/> clientes (tipo C, no inactivos) cuyo código o nombre contengan el texto (mínimo
+        /// 2 caracteres; la intercalación de SQL Server no distingue mayúsculas). Filtra, ordena (nombre, código) y corta en SQL.
+        /// </summary>
+        public async Task<IReadOnlyList<ClientePos>> BuscarClientesAsync(string? texto)
+        {
+            var t = Texto(texto);
+            if (t is null || t.Length < LongitudMinimaBusqueda)
+                return Array.Empty<ClientePos>();
+
+            var filas = await (await _repoSocio.ObtenerTodoAsync())
+                .Where(s => s.TipoSn == "C" && s.Activo != "N"
+                    && (s.Codigo.Contains(t) || (s.Nombre != null && s.Nombre.Contains(t))))
+                .OrderBy(s => s.Nombre).ThenBy(s => s.Codigo)
+                .Take(MaximoClientes)
+                .Select(s => new { s.Codigo, s.Nombre, s.Nit, s.NumLstPrecio })
+                .ToListAsync();
+
+            return filas
+                .Select(s => new ClientePos(s.Codigo, string.IsNullOrWhiteSpace(s.Nombre) ? s.Codigo : s.Nombre, Texto(s.Nit), s.NumLstPrecio))
+                .ToList();
+        }
 
         // ---------- Catálogo ----------
 

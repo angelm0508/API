@@ -31,6 +31,35 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
+        public async Task ObtenerContexto_Exito_DevuelveElContexto_YExcepcionDevuelveElMensaje()
+        {
+            var contexto = new PosContexto(new PosConfiguracionVista(Dato, Array.Empty<string>()),
+                new[] { new FormaPagoPos("EFE", "Efectivo", "N") }, 12m, "Consumidor", "CF");
+            _domain.Setup(d => d.ObtenerContextoAsync()).ReturnsAsync(contexto);
+
+            var r = await _app.ObtenerContextoAsync();
+            Assert.True(r.Resultado);
+            Assert.Same(contexto, r.Dato);
+
+            _domain.Setup(d => d.ObtenerContextoAsync()).ThrowsAsync(new InvalidOperationException("boom"));
+            var e = await _app.ObtenerContextoAsync();
+            Assert.False(e.Resultado);
+            Assert.Equal("boom", e.Mensaje);
+        }
+
+        [Fact]
+        public async Task BuscarClientes_PasaElTextoYDevuelveLaLista()
+        {
+            IReadOnlyList<ClientePos> lista = new[] { new ClientePos("C1", "Juan", "123", 3) };
+            _domain.Setup(d => d.BuscarClientesAsync("ju")).ReturnsAsync(lista);
+
+            var r = await _app.BuscarClientesAsync("ju");
+
+            Assert.True(r.Resultado);
+            Assert.Same(lista, r.Dato);
+        }
+
+        [Fact]
         public async Task ObtenerConfiguracion_Excepcion_DevuelveResultadoFalsoConElMensaje()
         {
             _domain.Setup(d => d.ObtenerConfiguracionAsync()).ThrowsAsync(new InvalidOperationException("boom"));

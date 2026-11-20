@@ -25,6 +25,12 @@ namespace API.Application.Main
                 return await _domain.ObtenerConfiguracionAsync();
             }, "Configuración del POS guardada correctamente.");
 
+        public Task<Respuesta<PosContexto>> ObtenerContextoAsync() =>
+            Ejecutar(() => _domain.ObtenerContextoAsync(), ConsultaCorrecta);
+
+        public Task<Respuesta<IReadOnlyList<ClientePos>>> BuscarClientesAsync(string? texto) =>
+            Ejecutar(() => _domain.BuscarClientesAsync(texto), ConsultaCorrecta);
+
         public Task<Respuesta<IReadOnlyList<ArticuloPos>>> BuscarArticulosAsync(string? texto, string? codigoCliente) =>
             Ejecutar(() => _domain.BuscarArticulosAsync(texto, codigoCliente), ConsultaCorrecta);
 
