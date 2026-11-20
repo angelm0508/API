@@ -1,5 +1,4 @@
 using API.Domain.Core.Pos;
-using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Pos;
@@ -24,7 +23,6 @@ namespace API.Service.WebApi.Tests.Domain
         private readonly Mock<IPrecioListaDomain> _precios = new();
         private readonly Mock<IRepositorioGenerico<Factura, int>> _facturas = new();
         private readonly Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>> _detalles = new();
-        private readonly Mock<IRepositorioGenerico<MovimientoInventario, int>> _movimientos = new();
         private readonly PosDomain _domain;
 
         /// <summary>Precio base por código; la lista 3 vale 10 más (el resolvedor simulado devuelve 40 y 50 para el artículo normal).</summary>
@@ -42,14 +40,12 @@ namespace API.Service.WebApi.Tests.Domain
 
             _facturas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<Factura>().AsAsyncQueryable());
             _detalles.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<FacturaDetalle>().AsAsyncQueryable());
-            _movimientos.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<MovimientoInventario>().AsAsyncQueryable());
             _repoExistencia.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<ExistenciaArticulo>().AsAsyncQueryable());
             _repoArticulo.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<Articulo>().AsAsyncQueryable());
 
             _domain = new PosDomain(_repoConfig.Object, _repoSerie.Object, _repoAlmacen.Object, _repoImpuesto.Object,
                 _repoSocio.Object, _repoFormaPago.Object, _repoMoneda.Object,
                 _repoArticulo.Object, _repoExistencia.Object, _precios.Object,
-                new ConsultaLineasVenta(_facturas.Object, _detalles.Object, _movimientos.Object),
                 new Mock<IFacturaDomain>().Object,
                 new Mock<IPagoRecibidoDomain>().Object,
                 new Mock<IEjecutorTransaccion>().Object,
@@ -402,11 +398,11 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task Rapidos_RespaldoMasVendidos_UsaUnaSegundaTandaDe50CodigosSiLaPrimeraNoAlcanza()
+        public async Task Rapidos_RespaldoMasVendidos_SoloConsideraLos50CodigosMasVendidos()
         {
             Config();
-            // 60 artículos vendidos con cantidades decrecientes (M00 el que más). La primera tanda (M00..M49) solo tiene
-            // un vendible (M10); el resto se completa con la segunda tanda (M50..M59).
+            // 60 artículos vendidos con cantidades decrecientes (M00 el que más). La consulta agrupada trae solo los 50
+            // primeros (M00..M49) y de ellos solo M10 es vendible: M50..M59 no se consideran (es una comodidad, no un catálogo).
             var lineas = Enumerable.Range(0, 60).Select(i => ("M" + i.ToString("00"), (decimal)(100 - i))).ToArray();
             VentasRecientes(lineas);
             Articulos(lineas.Select(l => Art(l.Item1, "Art " + l.Item1)).ToArray());
@@ -415,7 +411,46 @@ namespace API.Service.WebApi.Tests.Domain
 
             var r = await _domain.ObtenerRapidosAsync();
 
-            Assert.Equal(new[] { "M10" }.Concat(Enumerable.Range(50, 10).Select(i => "M" + i)).ToArray(), Codigos(r));
+            Assert.Equal(new[] { "M10" }, Codigos(r));
+            _precios.Verify(p => p.ResolverAsync("M50", It.IsAny<int?>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Rapidos_RespaldoMasVendidos_SoloFacturasYNotasDeDebitoNoCanceladasDeLosUltimos30Dias()
+        {
+            Config();
+            var hoy = DateTime.Today;
+            Factura F(int entry, DateTime fecha, string cancelado = "N", string subTipo = "--") =>
+                new() { Entry = entry, NumDoc = entry, Serie = 1, Cancelado = cancelado, DocSubType = subTipo, FechaDoc = fecha, CodigoSn = "C1", NombreSn = "C", MonedaDoc = "GTQ" };
+            _facturas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[]
+            {
+                F(1, hoy),                              // hoy: cuenta
+                F(2, hoy.AddDays(-30)),                 // límite de 30 días: cuenta
+                F(3, hoy.AddDays(-31)),                 // fuera del período
+                F(4, hoy.AddDays(-1), cancelado: "S"),  // cancelada
+                F(5, hoy.AddDays(-2), subTipo: "ND"),   // nota de débito: cuenta
+                F(6, hoy.AddDays(-2), subTipo: "XX"),   // otro subtipo
+                F(7, hoy.AddDays(1)),                   // mañana: fuera (HastaExclusiva = hoy + 1)
+                new Factura { Entry = 8, NumDoc = 8, Serie = 1, Cancelado = null, DocSubType = "--", FechaDoc = hoy, CodigoSn = "C1", NombreSn = "C", MonedaDoc = "GTQ" }
+            }.AsAsyncQueryable());
+            FacturaDetalle D(int entry, string articulo, decimal? cantidad, decimal? cantidadBase) =>
+                new() { Entry = entry, NoLinea = 1, CodArticulo = articulo, Cantidad = cantidad, CantidadBase = cantidadBase, TotalLinea = 1m, Impuesto = 0m, PrctjeDesc = 0m };
+            _detalles.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[]
+            {
+                D(1, "HOY", 10m, 10m),
+                D(2, "LIMITE", 30m, 30m),
+                D(3, "VIEJO", 900m, 900m),
+                D(4, "CANCELADO", 900m, 900m),
+                D(5, "ND", 3m, 20m),        // cuenta la cantidad base (20), no la de la línea
+                D(6, "OTRO", 900m, 900m),
+                D(7, "FUTURO", 900m, 900m),
+                D(8, "SINBASE", 5m, null)   // sin cantidad base usa la cantidad (y Cancelado nulo cuenta)
+            }.AsAsyncQueryable());
+            Articulos(new[] { "HOY", "LIMITE", "VIEJO", "CANCELADO", "ND", "OTRO", "FUTURO", "SINBASE" }.Select(c => Art(c, "Art " + c)).ToArray());
+
+            var r = await _domain.ObtenerRapidosAsync();
+
+            Assert.Equal(new[] { "LIMITE", "ND", "HOY", "SINBASE" }, Codigos(r));
         }
 
         [Fact]
@@ -472,24 +507,24 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task Rapidos_SiLaConsultaDeVentasExcedeElTope_DevuelveListaVaciaSinLanzar()
+        public async Task Rapidos_ConMasDe200MilLineasEnElPeriodo_IgualDevuelveLosMasVendidos()
         {
+            // El respaldo ya no usa la consulta de líneas de los reportes (tope de 200,000 líneas): agrupa en SQL.
             Config();
             var hoy = DateTime.Today;
             _facturas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(new[]
             {
                 new Factura { Entry = 1, NumDoc = 1, Serie = 1, Cancelado = "N", DocSubType = "--", FechaDoc = hoy.AddDays(-5), CodigoSn = "C1", NombreSn = "C", MonedaDoc = "GTQ" }
             }.AsAsyncQueryable());
-            var detalles = new List<FacturaDetalle>(ConsultaLineasVenta.MaxLineas + 1);
-            for (var i = 1; i <= ConsultaLineasVenta.MaxLineas + 1; i++)
+            var detalles = new List<FacturaDetalle>(200_001);
+            for (var i = 1; i <= 200_001; i++)
                 detalles.Add(new FacturaDetalle { Entry = 1, NoLinea = i, CodArticulo = "A", Cantidad = 1m, CantidadBase = 1m, TotalLinea = 1m, Impuesto = 0m, PrctjeDesc = 0m });
             _detalles.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(detalles.AsAsyncQueryable());
             Articulos(Art("A", "Art A"));
 
-            // «Acorta el rango de fechas» no le sirve al cajero: sin ventas que contar, no hay rápidos.
             var r = await _domain.ObtenerRapidosAsync();
 
-            Assert.Empty(r);
+            Assert.Equal(new[] { "A" }, Codigos(r));
         }
     }
 }

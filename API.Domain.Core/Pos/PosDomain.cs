@@ -1,9 +1,7 @@
 using System.Data;
-using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Pos;
-using API.Domain.Interface.Reportes;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,12 +32,11 @@ namespace API.Domain.Core.Pos
         private const int MaximoRapidosMarcados = 24;
         private const int MaximoMasVendidos = 12;
         private const int DiasMasVendidos = 30;
-        private const int TamanoTanda = 50;
+        private const int CandidatosMasVendidos = 50;
 
         private readonly IRepositorioGenerico<Articulo, string> _repoArticulo;
         private readonly IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)> _repoExistencia;
         private readonly IPrecioListaDomain _precios;
-        private readonly ConsultaLineasVenta _consultaLineas;
 
         // Venta, ticket y ventas del día
         private const int MaximoVentasDelDia = 200;
@@ -67,7 +64,6 @@ namespace API.Domain.Core.Pos
             IRepositorioGenerico<Articulo, string> repoArticulo,
             IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)> repoExistencia,
             IPrecioListaDomain precios,
-            ConsultaLineasVenta consultaLineas,
             IFacturaDomain facturaDomain,
             IPagoRecibidoDomain pagoDomain,
             IEjecutorTransaccion tx,
@@ -92,7 +88,6 @@ namespace API.Domain.Core.Pos
             _repoArticulo = repoArticulo;
             _repoExistencia = repoExistencia;
             _precios = precios;
-            _consultaLineas = consultaLineas;
             _repoConfiguracion = repoConfiguracion;
             _repoSerie = repoSerie;
             _repoAlmacen = repoAlmacen;
@@ -324,44 +319,37 @@ namespace API.Domain.Core.Pos
 
         private async Task<List<(Articulo Articulo, decimal Precio)>> MasVendidosAsync(int? lista)
         {
+            // Agrupa en SQL las líneas de facturas y notas de débito no canceladas de los últimos 30 días (hoy incluido) y trae
+            // solo los códigos candidatos más vendidos: no se leen las líneas a memoria.
             var hoy = DateTime.Today;
-            IReadOnlyList<LineaVenta> lineas;
-            try
-            {
-                lineas = await _consultaLineas.ObtenerAsync(new FiltroLineasVenta(hoy.AddDays(-DiasMasVendidos), hoy.AddDays(1), null, null, null, null));
-            }
-            catch (ReporteInvalidoException)
-            {
-                // Demasiadas líneas en el período: el mensaje del reporte («Acorta el rango de fechas») no le sirve al
-                // cajero; el respaldo es solo una comodidad, así que simplemente no hay rápidos.
-                return new List<(Articulo Articulo, decimal Precio)>();
-            }
+            var desde = hoy.AddDays(-DiasMasVendidos);
+            var hastaExclusiva = hoy.AddDays(1);
 
-            var ordenados = lineas
-                .GroupBy(l => l.CodArticulo)
-                .Select(g => (Codigo: g.Key, Cantidad: g.Sum(l => l.CantidadBase)))
+            var facturas = (await _repoFactura.ObtenerTodoAsync())
+                .Where(f => f.Cancelado != "S" && (f.DocSubType == "--" || f.DocSubType == "ND")
+                    && f.FechaDoc >= desde && f.FechaDoc < hastaExclusiva);
+            var codigos = await (await _repoDetalle.ObtenerTodoAsync())
+                .Where(d => d.CodArticulo != null)
+                .Join(facturas, d => d.Entry, f => f.Entry, (d, f) => d)
+                .GroupBy(d => d.CodArticulo!)
+                .Select(g => new { Codigo = g.Key, Cantidad = g.Sum(d => d.CantidadBase ?? d.Cantidad ?? 0m) })
                 .Where(x => x.Cantidad > 0m)
-                .OrderByDescending(x => x.Cantidad).ThenBy(x => x.Codigo, StringComparer.Ordinal)
+                .OrderByDescending(x => x.Cantidad).ThenBy(x => x.Codigo)
+                .Take(CandidatosMasVendidos)
                 .Select(x => x.Codigo)
-                .ToList();
+                .ToListAsync();
+            if (codigos.Count == 0)
+                return new List<(Articulo Articulo, decimal Precio)>();
 
-            var resultado = new List<(Articulo, decimal)>();
-            var articulos = await _repoArticulo.ObtenerTodoAsync();
-            // Por tandas pequeñas de códigos en orden de ventas: no se leen todos los artículos vendidos si las primeras tandas bastan.
-            foreach (var tanda in ordenados.Chunk(TamanoTanda))
-            {
-                var codigos = tanda.ToList();
-                var filas = await articulos
-                    .Where(a => a.Activo == "S" && a.ArticuloVenta == "S" && codigos.Contains(a.Codigo))
-                    .ToListAsync();
-                var porCodigo = filas.ToDictionary(a => a.Codigo, StringComparer.Ordinal);
-                var enOrden = codigos.Where(porCodigo.ContainsKey).Select(c => porCodigo[c]).ToList();
+            var filas = await (await _repoArticulo.ObtenerTodoAsync())
+                .Where(a => a.Activo == "S" && a.ArticuloVenta == "S" && codigos.Contains(a.Codigo))
+                .ToListAsync();
+            var porCodigo = filas
+                .GroupBy(a => a.Codigo, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            var enOrden = codigos.Where(porCodigo.ContainsKey).Select(c => porCodigo[c]).ToList();
 
-                resultado.AddRange(await SeleccionarVendiblesAsync(enOrden, lista, MaximoMasVendidos - resultado.Count));
-                if (resultado.Count >= MaximoMasVendidos)
-                    break;
-            }
-            return resultado;
+            return await SeleccionarVendiblesAsync(enOrden, lista, MaximoMasVendidos);
         }
 
         /// <summary>Lista de precios del cliente indicado o, si no hay, del cliente por defecto; nula = precio base.</summary>

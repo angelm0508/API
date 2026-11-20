@@ -1,6 +1,5 @@
 using System.Data;
 using API.Domain.Core.Pos;
-using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Pos;
@@ -135,16 +134,11 @@ namespace API.Service.WebApi.Tests.Domain
                 .Callback((int serie) => _orden.Add($"bloqueo:{serie}:{_tx.Dentro}"))
                 .Returns(Task.CompletedTask);
 
-            var vacioFacturas = new Mock<IRepositorioGenerico<Factura, int>>();
-            vacioFacturas.Setup(r => r.ObtenerTodoAsync()).ReturnsAsync(Array.Empty<Factura>().AsAsyncQueryable());
-
             _domain = new PosDomain(_repoConfig.Object, _repoSerie.Object, new Mock<IRepositorioGenerico<Almacen, string>>().Object,
                 _repoImpuesto.Object, _repoSocio.Object, _repoFormaPago.Object, new Mock<IRepositorioGenerico<Monedum, string>>().Object,
                 _repoArticulo.Object,
                 new Mock<IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)>>().Object,
                 _precios.Object,
-                new ConsultaLineasVenta(vacioFacturas.Object, new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
-                    new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object),
                 _facturaDomain.Object, _pagoDomain.Object, _tx,
                 _repoFactura.Object, _repoDetalle.Object, _repoPago.Object, _repoPagoFactura.Object, _repoMedio.Object,
                 _bloqueo.Object,

@@ -1,5 +1,4 @@
 using API.Domain.Core.Pos;
-using API.Domain.Core.Reportes.Compartido;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
 using API.Domain.Interface.Pos;
@@ -29,9 +28,6 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IRepositorioGenerico<Articulo, string>>().Object,
                 new Mock<IRepositorioGenerico<ExistenciaArticulo, (string CodArticulo, string CodAlmacen)>>().Object,
                 new Mock<IPrecioListaDomain>().Object,
-                new ConsultaLineasVenta(new Mock<IRepositorioGenerico<Factura, int>>().Object,
-                    new Mock<IRepositorioGenerico<FacturaDetalle, (int Entry, int NoLinea)>>().Object,
-                    new Mock<IRepositorioGenerico<MovimientoInventario, int>>().Object),
                 new Mock<IFacturaDomain>().Object,
                 new Mock<IPagoRecibidoDomain>().Object,
                 new Mock<IEjecutorTransaccion>().Object,
