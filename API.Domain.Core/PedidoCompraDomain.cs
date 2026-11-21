@@ -1,5 +1,6 @@
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)> _repoEntregaCompraDetalle;
         private readonly IRepositorioGenerico<FacturaCompra, int> _repoFacturaCompra;
         private readonly IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> _repoFacturaCompraDetalle;
+        private readonly IExistenciaCompromisoService _compromisos;
 
         public PedidoCompraDomain(
             IRepositorioGenerico<PedidoCompra, int> repoGenericoPedidoCompra,
@@ -27,7 +29,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<EntregaCompra, int> repoEntregaCompra,
             IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)> repoEntregaCompraDetalle,
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
-            IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> repoFacturaCompraDetalle)
+            IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> repoFacturaCompraDetalle,
+            IExistenciaCompromisoService compromisos)
         {
             _repoGenericoPedidoCompra = repoGenericoPedidoCompra;
             _repoGenericoDetalle = repoGenericoDetalle;
@@ -36,6 +39,7 @@ namespace API.Domain.Core
             _repoEntregaCompraDetalle = repoEntregaCompraDetalle;
             _repoFacturaCompra = repoFacturaCompra;
             _repoFacturaCompraDetalle = repoFacturaCompraDetalle;
+            _compromisos = compromisos;
         }
 
         #region async methods
@@ -100,11 +104,20 @@ namespace API.Domain.Core
             if (existente is not null)
                 obj.Nit = existente.Nit;
 
-            return await _repoGenericoPedidoCompra.ActualizarAsync(id, obj);
+            var actualizado = await _repoGenericoPedidoCompra.ActualizarAsync(id, obj);
+
+            // Pedido (existencias): cancelar, reabrir o cualquier edición ya guardada (idempotente). Va después de
+            // guardar y como último paso; si no se guardó nada no se avisa. El aviso nunca lanza.
+            if (actualizado)
+                await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.PedidoCompra, id);
+            return actualizado;
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
+            // Existencias: los pares artículo/almacén se leen ANTES de borrar (después las líneas ya no existen).
+            var pares = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.PedidoCompra, id);
+
             // No existe FK/cascada entre PedidoCompraDetalle.Entry y PedidoCompra.Entry en la base
             // de datos, así que las líneas de detalle se borran a mano antes que el encabezado.
             var detalles = await _repoGenericoDetalle.ObtenerTodoAsync();
@@ -114,7 +127,10 @@ namespace API.Domain.Core
                 await _repoGenericoDetalle.EliminarAsync((linea.Entry, linea.NoLinea));
             }
 
-            return await _repoGenericoPedidoCompra.EliminarAsync(id);
+            var eliminado = await _repoGenericoPedidoCompra.EliminarAsync(id);
+            if (eliminado)
+                await _compromisos.NotificarParesAsync(pares);
+            return eliminado;
         }
 
         public async Task<PedidoCompra> ObtenerAsync(int id)
