@@ -365,6 +365,8 @@ namespace API.Service.WebApi
             services.AddTransient<IUnidadMedidaService, UnidadMedidaService>();
             services.AddTransient<IDocumentoBaseService, DocumentoBaseService>();
             services.AddTransient<IDocumentoBaseApplication, DocumentoBaseApplication>();
+            services.AddTransient<IDocumentoBaseCompraService, DocumentoBaseCompraService>();
+            services.AddTransient<IDocumentoBaseCompraApplication, DocumentoBaseCompraApplication>();
 
             services.AddTransient<IExistenciaDomain, ExistenciaDomain>();
             services.AddTransient<IExistenciaApplication, ExistenciaApplication>();
