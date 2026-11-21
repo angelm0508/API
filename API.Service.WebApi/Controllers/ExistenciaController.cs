@@ -2,6 +2,7 @@ using API.Application.DTO;
 using API.Application.DTO.inventario;
 using API.Application.Interface;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Service.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,14 @@ namespace API.Service.WebApi.Controllers
         public async Task<ActionResult<Respuesta<IEnumerable<ExistenciaArticuloDTO>>>> ObtenerPorArticulo([FromRoute] string codArticulo)
         {
             var r = await _app.ObtenerPorArticuloAsync(codArticulo);
+            return r.Resultado ? Ok(r) : BadRequest(r);
+        }
+
+        [RequierePermiso("Existencias", Accion.Actualizar)]
+        [HttpPost("RecalcularCompromisos")]
+        public async Task<ActionResult<Respuesta<ResultadoRecalculo>>> RecalcularCompromisos()
+        {
+            var r = await _app.RecalcularCompromisosAsync();
             return r.Resultado ? Ok(r) : BadRequest(r);
         }
     }

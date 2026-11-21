@@ -2,6 +2,7 @@ using API.Application.DTO;
 using API.Application.DTO.inventario;
 using API.Application.Interface;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using AutoMapper;
 
 namespace API.Application.Main
@@ -11,12 +12,26 @@ namespace API.Application.Main
         private readonly IExistenciaDomain _domain;
         private readonly IMapper _mapper;
         private readonly IArticuloAlmacenDomain _configuracion;
+        private readonly IExistenciaCompromisoService _compromiso;
 
-        public ExistenciaApplication(IExistenciaDomain domain, IMapper mapper, IArticuloAlmacenDomain configuracion)
+        public ExistenciaApplication(IExistenciaDomain domain, IMapper mapper, IArticuloAlmacenDomain configuracion, IExistenciaCompromisoService compromiso)
         {
             _domain = domain;
             _mapper = mapper;
             _configuracion = configuracion;
+            _compromiso = compromiso;
+        }
+
+        public async Task<Respuesta<ResultadoRecalculo>> RecalcularCompromisosAsync()
+        {
+            var respuesta = new Respuesta<ResultadoRecalculo>();
+            try
+            {
+                respuesta.Dato = await _compromiso.RecalcularTodoAsync();
+                respuesta.Resultado = true;
+            }
+            catch (Exception ex) { respuesta.Mensaje = ex.Message; }
+            return respuesta;
         }
 
         public async Task<Respuesta<IEnumerable<ExistenciaArticuloDTO>>> ObtenerTodoAsync(string? articulo, string? almacen)

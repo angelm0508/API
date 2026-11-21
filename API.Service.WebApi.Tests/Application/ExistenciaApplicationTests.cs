@@ -2,6 +2,7 @@ using API.Application.DTO.inventario;
 using API.Application.Main;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Transversal.Mapper;
 using AutoMapper;
 using AutoMapper.Internal;
@@ -15,12 +16,13 @@ namespace API.Service.WebApi.Tests.Application
     {
         private readonly Mock<IExistenciaDomain> _domain = new();
         private readonly Mock<IArticuloAlmacenDomain> _config = new();
+        private readonly Mock<IExistenciaCompromisoService> _compromiso = new();
         private readonly IMapper _mapper = new MapperConfiguration(c => c.AddProfile<PerfilMapeo>(), NullLoggerFactory.Instance).CreateMapper();
         private readonly ExistenciaApplication _app;
 
         public ExistenciaApplicationTests()
         {
-            _app = new ExistenciaApplication(_domain.Object, _mapper, _config.Object);
+            _app = new ExistenciaApplication(_domain.Object, _mapper, _config.Object, _compromiso.Object);
         }
 
         private static ExistenciaArticulo Existencia(string art, string alm, decimal disponible) =>
@@ -189,6 +191,31 @@ namespace API.Service.WebApi.Tests.Application
 
             Assert.False(r.Resultado);
             Assert.Equal("falla", r.Mensaje);
+        }
+
+        [Fact]
+        public async Task RecalcularCompromisosAsync_Exito_DevuelveFilasYCorregidas()
+        {
+            _compromiso.Setup(s => s.RecalcularTodoAsync()).ReturnsAsync(new ResultadoRecalculo(10, 3));
+
+            var r = await _app.RecalcularCompromisosAsync();
+
+            Assert.True(r.Resultado);
+            Assert.NotNull(r.Dato);
+            Assert.Equal(10, r.Dato!.Filas);
+            Assert.Equal(3, r.Dato.Corregidas);
+            _compromiso.Verify(s => s.RecalcularTodoAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task RecalcularCompromisosAsync_CuandoElServicioLanza_DevuelveResultadoFalsoConElMensaje()
+        {
+            _compromiso.Setup(s => s.RecalcularTodoAsync()).ThrowsAsync(new Exception("falla al recalcular"));
+
+            var r = await _app.RecalcularCompromisosAsync();
+
+            Assert.False(r.Resultado);
+            Assert.Equal("falla al recalcular", r.Mensaje);
         }
     }
 }
