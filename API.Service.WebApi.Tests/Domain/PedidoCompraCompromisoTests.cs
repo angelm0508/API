@@ -199,68 +199,123 @@ namespace API.Service.WebApi.Tests.Domain
             SinNotificaciones();
         }
 
-        [Fact]
-        public async Task Detalle_Actualizar_NotificaUnaVez_DespuesDeGuardar()
+        // Tras guardar no se puede reconstruir el par viejo de la línea (borrada o con artículo/almacén cambiado):
+        // los pares se leen ANTES de guardar y se avisan además de los del documento ya guardado.
+        private void SinAvisos()
         {
-            _repoDetalle.Setup(r => r.ActualizarAsync(It.IsAny<(int Entry, int NoLinea)>(), It.IsAny<PedidoCompraDetalle>())).Callback(() => _orden.Add("guardar")).ReturnsAsync(true);
-
-            Assert.True(await _detalle.ActualizarAsync(5, 2, new PedidoCompraDetalle { Entry = 5, NoLinea = 2 }));
-
-            _compromisos.Verify(c => c.NotificarDocumentoAsync(TipoDocCompromiso.PedidoCompra, 5), Times.Once);
-            _compromisos.Verify(c => c.NotificarDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            Assert.Equal(new[] { "guardar", "notificar:11:5" }, _orden);
+            _compromisos.Verify(c => c.NotificarDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            _compromisos.Verify(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()), Times.Never);
         }
 
         [Fact]
-        public async Task Detalle_Actualizar_DevuelveFalse_NoNotifica()
+        public async Task Detalle_Actualizar_LeeParesAntes_YAvisaParesViejosYDocumentoDespuesDeGuardar()
+        {
+            _repoDetalle.Setup(r => r.ActualizarAsync(It.IsAny<(int Entry, int NoLinea)>(), It.IsAny<PedidoCompraDetalle>())).Callback(() => _orden.Add("actualizar-linea")).ReturnsAsync(true);
+            IReadOnlyCollection<ParExistencia>? recibidos = null;
+            _compromisos.Setup(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()))
+                .Callback<IReadOnlyCollection<ParExistencia>>(p => { recibidos = p; _orden.Add("notificar-pares"); }).Returns(Task.CompletedTask);
+
+            Assert.True(await _detalle.ActualizarAsync(5, 2, new PedidoCompraDetalle { Entry = 5, NoLinea = 2 }));
+
+            Assert.Equal(new[] { "obtener:11:5", "actualizar-linea", "notificar-pares", "notificar:11:5" }, _orden);
+            Assert.Same(Pares, recibidos);
+            _compromisos.Verify(c => c.ObtenerParesAsync(TipoDocCompromiso.PedidoCompra, 5), Times.Once);
+            _compromisos.Verify(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()), Times.Once);
+            _compromisos.Verify(c => c.NotificarDocumentoAsync(TipoDocCompromiso.PedidoCompra, 5), Times.Once);
+            _compromisos.Verify(c => c.NotificarDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Detalle_Actualizar_CambiaDeArticulo_ElParViejoSeAvisa()
+        {
+            // Fake con estado: ObtenerPares devuelve los pares de las líneas tal como están en ese instante.
+            var lineas = new List<ParExistencia> { new("A", "01") };
+            _compromisos.Setup(c => c.ObtenerParesAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(() => (IReadOnlyList<ParExistencia>)lineas.ToList());
+            _repoDetalle.Setup(r => r.ActualizarAsync(It.IsAny<(int Entry, int NoLinea)>(), It.IsAny<PedidoCompraDetalle>()))
+                .Callback(() => { lineas.Clear(); lineas.Add(new("B", "01")); }).ReturnsAsync(true);
+            IReadOnlyCollection<ParExistencia>? recibidos = null;
+            _compromisos.Setup(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()))
+                .Callback<IReadOnlyCollection<ParExistencia>>(p => recibidos = p).Returns(Task.CompletedTask);
+
+            Assert.True(await _detalle.ActualizarAsync(5, 2, new PedidoCompraDetalle { Entry = 5, NoLinea = 2, CodArticulo = "B" }));
+
+            Assert.Equal(new[] { new ParExistencia("A", "01") }, recibidos);
+        }
+
+        [Fact]
+        public async Task Detalle_Actualizar_DevuelveFalse_NoAvisa()
         {
             _repoDetalle.Setup(r => r.ActualizarAsync(It.IsAny<(int Entry, int NoLinea)>(), It.IsAny<PedidoCompraDetalle>())).ReturnsAsync(false);
 
             Assert.False(await _detalle.ActualizarAsync(5, 2, new PedidoCompraDetalle()));
 
-            SinNotificaciones();
+            SinAvisos();
         }
 
         [Fact]
-        public async Task Detalle_Actualizar_Lanza_NoNotifica()
+        public async Task Detalle_Actualizar_Lanza_NoAvisa()
         {
             _repoDetalle.Setup(r => r.ActualizarAsync(It.IsAny<(int Entry, int NoLinea)>(), It.IsAny<PedidoCompraDetalle>())).ThrowsAsync(new Exception("fallo al guardar"));
 
             await Assert.ThrowsAsync<Exception>(() => _detalle.ActualizarAsync(5, 2, new PedidoCompraDetalle()));
 
-            SinNotificaciones();
+            SinAvisos();
         }
 
         [Fact]
-        public async Task Detalle_Eliminar_NotificaUnaVez_DespuesDeBorrar()
+        public async Task Detalle_Eliminar_LeeParesAntesDeBorrar_YAvisaEsosParesDespues()
         {
-            _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).Callback(() => _orden.Add("borrar")).ReturnsAsync(true);
+            _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).Callback(() => _orden.Add("borrar-linea")).ReturnsAsync(true);
+            IReadOnlyCollection<ParExistencia>? recibidos = null;
+            _compromisos.Setup(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()))
+                .Callback<IReadOnlyCollection<ParExistencia>>(p => { recibidos = p; _orden.Add("notificar-pares"); }).Returns(Task.CompletedTask);
 
             Assert.True(await _detalle.EliminarAsync(5, 2));
 
-            _compromisos.Verify(c => c.NotificarDocumentoAsync(TipoDocCompromiso.PedidoCompra, 5), Times.Once);
-            _compromisos.Verify(c => c.NotificarDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
-            Assert.Equal(new[] { "borrar", "notificar:11:5" }, _orden);
+            Assert.Equal(new[] { "obtener:11:5", "borrar-linea", "notificar-pares" }, _orden);
+            Assert.Same(Pares, recibidos);
+            _compromisos.Verify(c => c.ObtenerParesAsync(TipoDocCompromiso.PedidoCompra, 5), Times.Once);
+            _compromisos.Verify(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()), Times.Once);
+            _compromisos.Verify(c => c.NotificarDocumentoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
 
         [Fact]
-        public async Task Detalle_Eliminar_DevuelveFalse_NoNotifica()
+        public async Task Detalle_Eliminar_UnicaLineaDelPar_ElParBorradoSeAvisa()
+        {
+            // Fake con estado: ObtenerPares devuelve los pares de las líneas tal como están en ese instante.
+            var lineas = new List<ParExistencia> { new("A", "01") };
+            _compromisos.Setup(c => c.ObtenerParesAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(() => (IReadOnlyList<ParExistencia>)lineas.ToList());
+            _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).Callback(() => lineas.Clear()).ReturnsAsync(true);
+            IReadOnlyCollection<ParExistencia>? recibidos = null;
+            _compromisos.Setup(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()))
+                .Callback<IReadOnlyCollection<ParExistencia>>(p => recibidos = p).Returns(Task.CompletedTask);
+
+            Assert.True(await _detalle.EliminarAsync(5, 2));
+
+            Assert.Empty(lineas);
+            Assert.Equal(new[] { new ParExistencia("A", "01") }, recibidos);
+        }
+
+        [Fact]
+        public async Task Detalle_Eliminar_DevuelveFalse_NoAvisa()
         {
             _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).ReturnsAsync(false);
 
             Assert.False(await _detalle.EliminarAsync(5, 2));
 
-            SinNotificaciones();
+            SinAvisos();
         }
 
         [Fact]
-        public async Task Detalle_Eliminar_Lanza_NoNotifica()
+        public async Task Detalle_Eliminar_Lanza_NoAvisa()
         {
             _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).ThrowsAsync(new Exception("fallo al borrar"));
 
             await Assert.ThrowsAsync<Exception>(() => _detalle.EliminarAsync(5, 2));
 
-            SinNotificaciones();
+            SinAvisos();
         }
     }
 }

@@ -83,19 +83,30 @@ namespace API.Domain.Core
             obj.FactorUom = factor;
             obj.CantidadBase = cantBase;
 
+            // Comprometido: los pares se leen ANTES de guardar; si la línea cambia de artículo o almacén,
+            // el par viejo ya no se puede deducir del documento guardado y quedaría inflado.
+            var paresAntes = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.Pedido, entry);
+
             var actualizado = await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
             if (actualizado)
+            {
+                // Pares viejos + pares del documento ya guardado (los avisos nunca lanzan; van al final).
+                await _compromisos.NotificarParesAsync(paresAntes);
                 await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, entry);
+            }
             return actualizado;
         }
 
         public async Task<bool> EliminarAsync(int entry, int noLinea)
         {
             await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoVenta.Pedido, entry, noLinea, "eliminar");
+            // Comprometido: los pares (incluido el de la línea que se borra) se leen ANTES de borrar; después
+            // la línea ya no existe y, si era la única de su artículo/almacén, ese par nunca se recalcularía.
+            var pares = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.Pedido, entry);
+
             var eliminado = await _repoGenericoDet.EliminarAsync((entry, noLinea));
-            // El pedido sigue existiendo: el recálculo deja en 0 lo que aportaba la línea borrada.
             if (eliminado)
-                await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, entry);
+                await _compromisos.NotificarParesAsync(pares);
             return eliminado;
         }
 
