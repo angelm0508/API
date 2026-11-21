@@ -141,6 +141,10 @@ namespace API.Domain.Core
             // Cancelación: Cancelado pasa a 'S'.
             if (obj.Cancelado == "S")
             {
+                // Copiar a en compras: con facturas destino activas no se cancela. Antes de la transacción: un rechazo no revierte
+                // inventario ni avisa.
+                await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoCompra.EntregaCompra, id, "cancelar el documento");
+
                 var cancelada = await _tx.EjecutarAsync(async () =>
                 {
                     await _asiento.RevertirAsync(TipoObjetoEntregaCompra, id);

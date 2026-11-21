@@ -1,5 +1,6 @@
 using API.Domain.Core;
 using API.Domain.Entity.Models;
+using API.Domain.Interface;
 using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
@@ -32,7 +33,7 @@ namespace API.Service.WebApi.Tests.Domain
                 _repoPedidoCompraMock.Object, _repoDetalleMock.Object, _repoNumeracionMock.Object,
                 _repoEntregaCompraMock.Object, _repoEntregaCompraDetalleMock.Object,
                 _repoFacturaCompraMock.Object, _repoFacturaCompraDetalleMock.Object,
-                Mock.Of<IExistenciaCompromisoService>());
+                Mock.Of<IExistenciaCompromisoService>(), Mock.Of<IDocumentoBaseCompraService>());
         }
 
         private static NumeracionDocumentoDet SerieAutogenerada(int? sigNumero = 5, int? finNumero = null, string bloqueado = "N") => new()

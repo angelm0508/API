@@ -21,6 +21,7 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<FacturaCompra, int> _repoFacturaCompra;
         private readonly IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> _repoFacturaCompraDetalle;
         private readonly IExistenciaCompromisoService _compromisos;
+        private readonly IDocumentoBaseCompraService _documentoBase;
 
         public PedidoCompraDomain(
             IRepositorioGenerico<PedidoCompra, int> repoGenericoPedidoCompra,
@@ -30,7 +31,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<EntregaCompraDetalle, (int Entry, int NoLinea)> repoEntregaCompraDetalle,
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
             IRepositorioGenerico<FacturaCompraDetalle, (int Entry, int NoLinea)> repoFacturaCompraDetalle,
-            IExistenciaCompromisoService compromisos)
+            IExistenciaCompromisoService compromisos,
+            IDocumentoBaseCompraService documentoBase)
         {
             _repoGenericoPedidoCompra = repoGenericoPedidoCompra;
             _repoGenericoDetalle = repoGenericoDetalle;
@@ -40,6 +42,7 @@ namespace API.Domain.Core
             _repoFacturaCompra = repoFacturaCompra;
             _repoFacturaCompraDetalle = repoFacturaCompraDetalle;
             _compromisos = compromisos;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -102,7 +105,20 @@ namespace API.Domain.Core
             // El NIT queda fijo tras crear: la actualización reemplaza las columnas y el DTO no lo trae.
             var existente = await _repoGenericoPedidoCompra.ObtenerAsync(id);
             if (existente is not null)
+            {
                 obj.Nit = existente.Nit;
+
+                // Copiar a en compras: con documentos destino activos no se cancela ni se cambia de proveedor. Va antes de guardar
+                // y de cualquier aviso de existencias; un rechazo no deja rastro. Un pedido ya cancelado que se guarda otra vez
+                // cancelado no se revalida.
+                var seCancela = existente.EstadoDoc != "C" && existente.Cancelado != "S"
+                    && (obj.EstadoDoc == "C" || obj.Cancelado == "S");
+                var cambiaProveedor = !string.Equals(existente.CodigoSn, obj.CodigoSn, StringComparison.OrdinalIgnoreCase);
+                if (seCancela)
+                    await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoCompra.PedidoCompra, id, "cancelar el documento");
+                else if (cambiaProveedor)
+                    await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoCompra.PedidoCompra, id, "cambiar el proveedor");
+            }
 
             var actualizado = await _repoGenericoPedidoCompra.ActualizarAsync(id, obj);
 
@@ -115,6 +131,9 @@ namespace API.Domain.Core
 
         public async Task<bool> EliminarAsync(int id)
         {
+            // Copiar a en compras: con documentos destino activos no se elimina. Primero de todo: un rechazo no lee pares ni borra ni avisa.
+            await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoCompra.PedidoCompra, id, "eliminar el documento");
+
             // Existencias: los pares artículo/almacén se leen ANTES de borrar (después las líneas ya no existen).
             var pares = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.PedidoCompra, id);
 

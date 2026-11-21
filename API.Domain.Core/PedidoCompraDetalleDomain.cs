@@ -11,15 +11,18 @@ namespace API.Domain.Core
         private readonly IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> _repoGenericoDet;
         private readonly IUnidadMedidaService? _unidades;
         private readonly IExistenciaCompromisoService _compromisos;
+        private readonly IDocumentoBaseCompraService _documentoBase;
 
         public PedidoCompraDetalleDomain(
             IRepositorioGenerico<PedidoCompraDetalle, (int Entry, int NoLinea)> repoGenericoDet,
             IUnidadMedidaService? unidades,
-            IExistenciaCompromisoService compromisos)
+            IExistenciaCompromisoService compromisos,
+            IDocumentoBaseCompraService documentoBase)
         {
             _repoGenericoDet = repoGenericoDet;
             _unidades = unidades;
             _compromisos = compromisos;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -42,6 +45,10 @@ namespace API.Domain.Core
 
         public async Task<bool> ActualizarAsync(int entry, int noLinea, PedidoCompraDetalle obj)
         {
+            // Copiar a en compras: una línea con documentos destino activos no se modifica. Primero de todo: un rechazo no resuelve
+            // unidades, no lee pares, no guarda ni avisa.
+            await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoCompra.PedidoCompra, entry, noLinea, "modificar");
+
             var (uomEntry, factor, cantBase) = await UnidadesLinea.ResolverLineaAsync(_unidades, obj.CodArticulo, obj.UomEntry, obj.Cantidad);
             obj.UomEntry = uomEntry;
             obj.FactorUom = factor;
@@ -63,6 +70,9 @@ namespace API.Domain.Core
 
         public async Task<bool> EliminarAsync(int entry, int noLinea)
         {
+            // Copiar a en compras: una línea con documentos destino activos no se elimina. Primero de todo: un rechazo no lee pares ni borra ni avisa.
+            await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoCompra.PedidoCompra, entry, noLinea, "eliminar");
+
             // Pedido (existencias): los pares (incluido el de la línea que se borra) se leen ANTES de borrar; después
             // la línea ya no existe y, si era la única de su artículo/almacén, ese par nunca se recalcularía.
             var pares = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.PedidoCompra, entry);
