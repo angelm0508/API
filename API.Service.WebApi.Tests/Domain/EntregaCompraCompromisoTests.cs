@@ -33,7 +33,7 @@ namespace API.Service.WebApi.Tests.Domain
 
         public EntregaCompraCompromisoTests()
         {
-            _domain = new EntregaCompraDomain(_repoEntrega.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, null, _compromisos.Object);
+            _domain = new EntregaCompraDomain(_repoEntrega.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, null, _compromisos.Object, Mock.Of<IDocumentoBaseCompraService>());
 
             var serie = new NumeracionDocumentoDet { CodigoObj = "12", Serie = 4, SigNumero = 5, Bloqueado = "N", Manual = "N", SubTipoDoc = "--", TipoSerie = "N", NombreSerie = "P" };
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);

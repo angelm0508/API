@@ -23,6 +23,7 @@ namespace API.Domain.Core
         private readonly IResolutorVencimiento _resolutor;
         private readonly IUnidadMedidaService? _unidades;
         private readonly IExistenciaCompromisoService _compromisos;
+        private readonly IDocumentoBaseCompraService _documentoBase;
 
         public FacturaCompraDomain(
             IRepositorioGenerico<FacturaCompra, int> repoFacturaCompra,
@@ -34,7 +35,8 @@ namespace API.Domain.Core
             IRepositorioGenerico<SocioNegocio, string> repoSocio,
             IResolutorVencimiento resolutor,
             IUnidadMedidaService? unidades,
-            IExistenciaCompromisoService compromisos)
+            IExistenciaCompromisoService compromisos,
+            IDocumentoBaseCompraService documentoBase)
         {
             _repoFacturaCompra = repoFacturaCompra;
             _repoDetalle = repoDetalle;
@@ -46,6 +48,7 @@ namespace API.Domain.Core
             _resolutor = resolutor;
             _unidades = unidades;
             _compromisos = compromisos;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -58,6 +61,10 @@ namespace API.Domain.Core
             obj.DocType = "I";
             obj.EstadoInv = "A";
 
+            // CK de la cabecera: la referencia al documento base vive únicamente en las líneas.
+            obj.BaseTipo = -1;
+            obj.BaseEntry = null;
+
             var serie = await _repoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
@@ -69,6 +76,13 @@ namespace API.Domain.Core
 
             var lineasList = lineas?.ToList() ?? new List<FacturaCompraDetalle>();
             ValidarLineas(lineasList); // antes de numerar: un error de línea no debe avanzar el consecutivo
+
+            // Líneas copiadas de un pedido o de una entrega de compra: se validan antes de numerar, así un error no avanza el
+            // consecutivo (ver DocumentoBaseCompraService.ValidarLineasAsync).
+            var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
+            if (basadas.Count > 0)
+                await _documentoBase.ValidarLineasAsync(TipoDocumentoCompra.FacturaCompra, obj.CodigoSn, basadas);
+
             foreach (var linea in lineasList)
             {
                 if ((linea.Cantidad ?? 0m) <= 0m) continue;
@@ -113,8 +127,10 @@ namespace API.Domain.Core
                     await _repoDetalle.AgregarSinGuardarAsync(linea);
                 }
 
+                // Las líneas que copian una entrega de compra (BaseTipo 12) no asientan: la entrega ya registró la entrada
+                // de inventario. BaseTipo nulo, -1 o de un pedido de compra (11) sí asientan.
                 var movimientos = lineasList
-                    .Where(l => (l.Cantidad ?? 0m) > 0m)
+                    .Where(l => (l.Cantidad ?? 0m) > 0m && l.BaseTipo != TipoDocumentoCompra.EntregaCompra)
                     .Select(l => new MovimientoRequest(
                         TipoDoc: TipoObjetoFacturaCompra,
                         DocEntry: obj.Entry,

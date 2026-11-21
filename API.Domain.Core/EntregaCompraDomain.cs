@@ -18,6 +18,7 @@ namespace API.Domain.Core
         private readonly IInventarioAsientoService _asiento;
         private readonly IUnidadMedidaService? _unidades;
         private readonly IExistenciaCompromisoService _compromisos;
+        private readonly IDocumentoBaseCompraService _documentoBase;
 
         public EntregaCompraDomain(
             IRepositorioGenerico<EntregaCompra, int> repoEntregaCompra,
@@ -26,7 +27,8 @@ namespace API.Domain.Core
             IEjecutorTransaccion tx,
             IInventarioAsientoService asiento,
             IUnidadMedidaService? unidades,
-            IExistenciaCompromisoService compromisos)
+            IExistenciaCompromisoService compromisos,
+            IDocumentoBaseCompraService documentoBase)
         {
             _repoEntregaCompra = repoEntregaCompra;
             _repoDetalle = repoDetalle;
@@ -35,6 +37,7 @@ namespace API.Domain.Core
             _asiento = asiento;
             _unidades = unidades;
             _compromisos = compromisos;
+            _documentoBase = documentoBase;
         }
 
         #region async methods
@@ -45,6 +48,10 @@ namespace API.Domain.Core
             obj.TipoObjeto = TipoObjetoEntregaCompra;
             obj.EstadoInv = "A";
 
+            // CK de la cabecera: la referencia al documento base vive únicamente en las líneas.
+            obj.BaseTipo = -1;
+            obj.BaseEntry = null;
+
             var serie = await _repoNumeracion.ObtenerAsync(obj.Serie)
                 ?? throw new Exception("La serie no existe.");
 
@@ -52,6 +59,13 @@ namespace API.Domain.Core
                 throw new Exception("La serie está bloqueada y no se puede usar para registrar entregas de compra.");
 
             var lineasList = lineas?.ToList() ?? new List<EntregaCompraDetalle>();
+
+            // Líneas copiadas de un pedido de compra: se validan antes de numerar, así un error no avanza el consecutivo
+            // (ver DocumentoBaseCompraService.ValidarLineasAsync).
+            var basadas = LineasBase.Extraer(lineasList.Select(l => (l.BaseTipo, l.BaseEntry, l.BaseLinea, l.CodArticulo, l.Cantidad)));
+            if (basadas.Count > 0)
+                await _documentoBase.ValidarLineasAsync(TipoDocumentoCompra.EntregaCompra, obj.CodigoSn, basadas);
+
             foreach (var linea in lineasList)
             {
                 if ((linea.Cantidad ?? 0m) <= 0m) continue;

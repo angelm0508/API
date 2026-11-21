@@ -22,7 +22,7 @@ namespace API.Service.WebApi.Tests.Domain
 
         public EntregaCompraDomainTests()
         {
-            _domain = new EntregaCompraDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, null, Mock.Of<IExistenciaCompromisoService>());
+            _domain = new EntregaCompraDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, null, Mock.Of<IExistenciaCompromisoService>(), Mock.Of<IDocumentoBaseCompraService>());
             // El doble del ejecutor corre el Func directo (sin transacción ni save).
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<int>>>())).Returns<Func<Task<int>>>(f => f());
             _tx.Setup(t => t.EjecutarAsync(It.IsAny<Func<Task<bool>>>())).Returns<Func<Task<bool>>>(f => f());

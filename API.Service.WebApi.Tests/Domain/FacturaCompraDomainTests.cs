@@ -26,7 +26,7 @@ namespace API.Service.WebApi.Tests.Domain
 
         public FacturaCompraDomainTests()
         {
-            _domain = new FacturaCompraDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object, null, Mock.Of<IExistenciaCompromisoService>());
+            _domain = new FacturaCompraDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object, null, Mock.Of<IExistenciaCompromisoService>(), Mock.Of<IDocumentoBaseCompraService>());
             // Por defecto: contado (el vencimiento es la fecha del documento) y ningún socio en el repositorio.
             _resolutor.Setup(r => r.ResolverAsync(It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<DateTime?>()))
                 .ReturnsAsync((string? _, string? _, DateTime? f) => ("CON", (f ?? DateTime.Today).Date));

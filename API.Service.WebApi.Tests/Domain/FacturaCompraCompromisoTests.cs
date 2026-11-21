@@ -38,7 +38,7 @@ namespace API.Service.WebApi.Tests.Domain
         public FacturaCompraCompromisoTests()
         {
             _domain = new FacturaCompraDomain(_repoFactura.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object,
-                _saldos.Object, _repoSocio.Object, _resolutor.Object, null, _compromisos.Object);
+                _saldos.Object, _repoSocio.Object, _resolutor.Object, null, _compromisos.Object, Mock.Of<IDocumentoBaseCompraService>());
 
             var serie = new NumeracionDocumentoDet { CodigoObj = "13", Serie = 4, SigNumero = 5, Bloqueado = "N", Manual = "N", SubTipoDoc = "--", TipoSerie = "N", NombreSerie = "P" };
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(serie);
