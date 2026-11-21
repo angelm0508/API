@@ -1,5 +1,6 @@
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,15 +12,18 @@ namespace API.Domain.Core
 
         private readonly IDocumentoBaseService _documentoBase;
         private readonly IUnidadMedidaService? _unidades;
+        private readonly IExistenciaCompromisoService _compromisos;
 
         public PedidoDetalleDomain(
             IRepositorioGenerico<PedidoDetalle, (int Entry, int NoLinea)> repoGenericoDet,
             IDocumentoBaseService documentoBase,
-            IUnidadMedidaService? unidades = null)
+            IUnidadMedidaService? unidades,
+            IExistenciaCompromisoService compromisos)
         {
             _repoGenericoDet = repoGenericoDet;
             _documentoBase = documentoBase;
             _unidades = unidades;
+            _compromisos = compromisos;
         }
 
         #region async methods
@@ -39,6 +43,9 @@ namespace API.Domain.Core
             obj.NoLinea = lineasExistentes.Any() ? lineasExistentes.Max(x => x.NoLinea) + 1 : 1;
 
             var insertado = await _repoGenericoDet.InsertarAsync(obj);
+
+            // Comprometido: tras guardar la línea y como último paso (el aviso nunca lanza).
+            await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, obj.Entry);
             return insertado.NoLinea;
         }
 
@@ -76,13 +83,20 @@ namespace API.Domain.Core
             obj.FactorUom = factor;
             obj.CantidadBase = cantBase;
 
-            return await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
+            var actualizado = await _repoGenericoDet.ActualizarAsync((entry, noLinea), obj);
+            if (actualizado)
+                await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, entry);
+            return actualizado;
         }
 
         public async Task<bool> EliminarAsync(int entry, int noLinea)
         {
             await _documentoBase.ValidarLineaModificableAsync(TipoDocumentoVenta.Pedido, entry, noLinea, "eliminar");
-            return await _repoGenericoDet.EliminarAsync((entry, noLinea));
+            var eliminado = await _repoGenericoDet.EliminarAsync((entry, noLinea));
+            // El pedido sigue existiendo: el recálculo deja en 0 lo que aportaba la línea borrada.
+            if (eliminado)
+                await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, entry);
+            return eliminado;
         }
 
         public async Task<PedidoDetalle> ObtenerAsync(int entry, int noLinea)

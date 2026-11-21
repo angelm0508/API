@@ -1,6 +1,7 @@
 using API.Domain.Core;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
@@ -30,7 +31,7 @@ namespace API.Service.WebApi.Tests.Domain
         public PedidoDomainCreditoTests()
         {
             _domain = new PedidoDomain(_repoPedido.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object,
-                _documentoBase.Object, _credito.Object, _contexto, _repoAutorizacion.Object);
+                _documentoBase.Object, _credito.Object, _contexto, _repoAutorizacion.Object, null, Mock.Of<IExistenciaCompromisoService>());
 
             _serie = new NumeracionDocumentoDet { CodigoObj = "4", Serie = 4, SigNumero = 5, Bloqueado = "N", Manual = "N", SubTipoDoc = "--", TipoSerie = "N", NombreSerie = "P" };
             _repoNumeracion.Setup(r => r.ObtenerAsync(4)).ReturnsAsync(_serie);

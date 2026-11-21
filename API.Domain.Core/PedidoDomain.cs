@@ -1,5 +1,6 @@
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ namespace API.Domain.Core
         private readonly IAutorizacionCreditoContexto _autorizacionCredito;
         private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
         private readonly IUnidadMedidaService? _unidades;
+        private readonly IExistenciaCompromisoService _compromisos;
 
         public PedidoDomain(
             IRepositorioGenerico<Pedido, int> repoGenericoPedido,
@@ -31,7 +33,8 @@ namespace API.Domain.Core
             ICreditoClienteService credito,
             IAutorizacionCreditoContexto autorizacionCredito,
             IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito,
-            IUnidadMedidaService? unidades = null)
+            IUnidadMedidaService? unidades,
+            IExistenciaCompromisoService compromisos)
         {
             _repoGenericoPedido = repoGenericoPedido;
             _repoGenericoDetalle = repoGenericoDetalle;
@@ -42,6 +45,7 @@ namespace API.Domain.Core
             _autorizacionCredito = autorizacionCredito;
             _repoAutorizacionCredito = repoAutorizacionCredito;
             _unidades = unidades;
+            _compromisos = compromisos;
         }
 
         #region async methods
@@ -88,7 +92,7 @@ namespace API.Domain.Core
 
             await AsignarNumeroAsync(obj);
 
-            return await _tx.EjecutarAsync(async () =>
+            var entry = await _tx.EjecutarAsync(async () =>
             {
                 var creado = await _repoGenericoPedido.InsertarAsync(obj); // Save #1: asigna Entry
 
@@ -107,6 +111,10 @@ namespace API.Domain.Core
                 return creado.Entry;
             });
             // EjecutarAsync: Save #2 (líneas + consecutivo) + Commit
+
+            // Comprometido: solo con el pedido ya confirmado y como último paso (el aviso nunca lanza).
+            await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, entry);
+            return entry;
         }
 
         /// <summary>Valida la serie y asigna el número de documento (manual o el consecutivo de la serie).</summary>
@@ -220,21 +228,38 @@ namespace API.Domain.Core
             {
                 // Autorizado por exceso: la actualización y la fila de autorización se guardan juntas.
                 var registro = AutorizacionCreditoRegistro.Crear(TipoDocumentoVenta.Pedido, id, obj.CodigoSn!, usuarioAutoriza, resultadoCredito);
-                return await _tx.EjecutarAsync(async () =>
+                var guardado = await _tx.EjecutarAsync(async () =>
                 {
                     var actualizado = await _repoGenericoPedido.ActualizarAsync(id, obj);
                     if (actualizado)
                         await _repoAutorizacionCredito.AgregarSinGuardarAsync(registro);
                     return actualizado;
                 });
+                await NotificarSiGuardadoAsync(guardado, id);
+                return guardado;
             }
 
-            return await _repoGenericoPedido.ActualizarAsync(id, obj);
+            var resultado = await _repoGenericoPedido.ActualizarAsync(id, obj);
+            await NotificarSiGuardadoAsync(resultado, id);
+            return resultado;
+        }
+
+        /// <summary>
+        /// Comprometido: cancelar, cerrar, reabrir o cualquier otra edición ya guardada (idempotente). Va después de
+        /// guardar y como último paso; si no se guardó nada no se avisa. El aviso nunca lanza.
+        /// </summary>
+        private async Task NotificarSiGuardadoAsync(bool guardado, int id)
+        {
+            if (guardado)
+                await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, id);
         }
 
         public async Task<bool> EliminarAsync(int id)
         {
             await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Pedido, id, "eliminar el documento");
+
+            // Comprometido: los pares artículo/almacén se leen ANTES de borrar (después las líneas ya no existen).
+            var pares = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.Pedido, id);
 
             // No existe FK/cascada entre PedidoDetalle.Entry y Pedido.Entry en la base de datos,
             // así que las líneas de detalle se borran a mano antes que el encabezado.
@@ -245,7 +270,10 @@ namespace API.Domain.Core
                 await _repoGenericoDetalle.EliminarAsync((linea.Entry, linea.NoLinea));
             }
 
-            return await _repoGenericoPedido.EliminarAsync(id);
+            var eliminado = await _repoGenericoPedido.EliminarAsync(id);
+            if (eliminado)
+                await _compromisos.NotificarParesAsync(pares);
+            return eliminado;
         }
 
         public async Task<Pedido> ObtenerAsync(int id)

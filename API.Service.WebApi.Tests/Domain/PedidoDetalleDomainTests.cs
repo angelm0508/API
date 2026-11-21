@@ -1,6 +1,7 @@
 using API.Domain.Core;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
@@ -16,7 +17,7 @@ namespace API.Service.WebApi.Tests.Domain
 
         public PedidoDetalleDomainTests()
         {
-            _domain = new PedidoDetalleDomain(_repoDet.Object, _documentoBase.Object);
+            _domain = new PedidoDetalleDomain(_repoDet.Object, _documentoBase.Object, null, Mock.Of<IExistenciaCompromisoService>());
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 using API.Domain.Core;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
@@ -73,7 +74,7 @@ namespace API.Service.WebApi.Tests.Domain
             var docBase = new Mock<IDocumentoBaseService>();
             var unidades = CrearUnidadesMock();
 
-            var domain = new PedidoDetalleDomain(repo.Object, docBase.Object, unidades.Object);
+            var domain = new PedidoDetalleDomain(repo.Object, docBase.Object, unidades.Object, Mock.Of<IExistenciaCompromisoService>());
 
             var intentoCambioUom = new PedidoDetalle
             {
