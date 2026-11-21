@@ -23,6 +23,7 @@ namespace API.Domain.Core.Pos
         private readonly IRepositorioGenerico<FormaPago, string> _repoFormaPago;
         private readonly IRepositorioGenerico<Monedum, string> _repoMoneda;
         private readonly IRepositorioGenerico<NumeracionDocumento, string> _repoNumeracion;
+        private readonly ISocioNegocioDomain _socios;
 
         // Catálogo
         private const int LongitudMinimaBusqueda = 2;
@@ -73,8 +74,10 @@ namespace API.Domain.Core.Pos
             IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)> repoPagoFactura,
             IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)> repoMedio,
             IBloqueoSeries bloqueoSeries,
-            IRepositorioGenerico<NumeracionDocumento, string> repoNumeracion)
+            IRepositorioGenerico<NumeracionDocumento, string> repoNumeracion,
+            ISocioNegocioDomain socios)
         {
+            _socios = socios;
             _bloqueoSeries = bloqueoSeries;
             _repoNumeracion = repoNumeracion;
             _facturaDomain = facturaDomain;
@@ -222,7 +225,7 @@ namespace API.Domain.Core.Pos
         }
 
         /// <summary>
-        /// Hasta <see cref="MaximoClientes"/> clientes (tipo C, no inactivos) cuyo código o nombre contengan el texto (mínimo
+        /// Hasta <see cref="MaximoClientes"/> clientes (tipo C, no inactivos) cuyo código, nombre o NIT contengan el texto (mínimo
         /// 2 caracteres; la intercalación de SQL Server no distingue mayúsculas). Filtra, ordena (nombre, código) y corta en SQL.
         /// </summary>
         public async Task<IReadOnlyList<ClientePos>> BuscarClientesAsync(string? texto)
@@ -233,7 +236,7 @@ namespace API.Domain.Core.Pos
 
             var filas = await (await _repoSocio.ObtenerTodoAsync())
                 .Where(s => s.TipoSn == "C" && s.Activo != "N"
-                    && (s.Codigo.Contains(t) || (s.Nombre != null && s.Nombre.Contains(t))))
+                    && (s.Codigo.Contains(t) || (s.Nombre != null && s.Nombre.Contains(t)) || (s.Nit != null && s.Nit.Contains(t))))
                 .OrderBy(s => s.Nombre).ThenBy(s => s.Codigo)
                 .Take(MaximoClientes)
                 .Select(s => new { s.Codigo, s.Nombre, s.Nit, s.NumLstPrecio })
@@ -242,6 +245,83 @@ namespace API.Domain.Core.Pos
             return filas
                 .Select(s => new ClientePos(s.Codigo, string.IsNullOrWhiteSpace(s.Nombre) ? s.Codigo : s.Nombre, Texto(s.Nit), s.NumLstPrecio))
                 .ToList();
+        }
+
+        /// <summary>Ancho de <c>SocioNegocio.Nombre</c> en el modelo EF (una prueba verifica que coincidan).</summary>
+        public const int LongitudMaximaNombreCliente = 200;
+
+        private const string CodigoObjSocio = "1";
+        private const string SubTipoCliente = "C";
+        private const string NitConsumidorFinal = "CF";
+
+        /// <summary>
+        /// «Cliente nuevo» rápido del POS: nombre y NIT obligatorios, NIT no repetido entre clientes (salvo CF) y la serie por
+        /// defecto de clientes (<c>SerieDfct</c> del encabezado 1/C) automática y no bloqueada. Todo se valida ANTES de llamar a
+        /// <see cref="ISocioNegocioDomain.InsertarAsync"/>, que es quien numera: un rechazo no consume consecutivo. El cliente se
+        /// crea activo y de contado (límite de crédito 0, sin bloqueo por vencido ni condición de pago), sin grupo, contacto
+        /// ni dirección.
+        /// </summary>
+        public async Task<ClientePos> CrearClienteAsync(NuevoClientePos solicitud)
+        {
+            var nombre = Texto(solicitud.Nombre)
+                ?? throw new InvalidOperationException("El nombre del cliente es obligatorio.");
+            if (nombre.Length > LongitudMaximaNombreCliente)
+                throw new InvalidOperationException($"El nombre del cliente no puede tener más de {LongitudMaximaNombreCliente} caracteres.");
+
+            var nit = NitDocumento.Normalizar(solicitud.Nit)
+                ?? throw new InvalidOperationException("El NIT es obligatorio (escribe CF si es consumidor final).");
+            var esConsumidorFinal = string.Equals(nit, NitConsumidorFinal, StringComparison.OrdinalIgnoreCase);
+            if (esConsumidorFinal)
+                nit = NitConsumidorFinal;
+
+            if (!esConsumidorFinal)
+            {
+                // La intercalación de SQL Server no distingue mayúsculas (p. ej. «…-k» y «…-K»).
+                var existente = await (await _repoSocio.ObtenerTodoAsync())
+                    .Where(s => s.TipoSn == "C" && s.Nit != null && s.Nit.Trim() == nit)
+                    .OrderBy(s => s.Codigo)
+                    .Select(s => new { s.Codigo, s.Nombre })
+                    .FirstOrDefaultAsync();
+                if (existente is not null)
+                    throw new InvalidOperationException(
+                        $"Ya existe un cliente con el NIT {nit}: {existente.Codigo} - {(string.IsNullOrWhiteSpace(existente.Nombre) ? existente.Codigo : existente.Nombre)}. Búscalo por NIT.");
+            }
+
+            var serie = await SerieClientesAsync()
+                ?? throw new InvalidOperationException("No hay una serie automática por defecto para clientes: configúrala en Numeración de documentos.");
+
+            var socio = new SocioNegocio
+            {
+                Codigo = string.Empty,
+                Nombre = nombre,
+                Nit = nit,
+                TipoSn = "C",
+                Activo = "S",
+                Serie = serie,
+                LimiteCredito = 0m,
+                BloquearSiVencido = "N",
+                CondicionPago = null,
+                GrupoSn = null
+            };
+            var codigo = await _socios.InsertarAsync(socio);
+
+            return new ClientePos(codigo, nombre, nit, null);
+        }
+
+        /// <summary>Serie por defecto de clientes si existe, es de socios-clientes, automática y no bloqueada; si no, null.</summary>
+        private async Task<int?> SerieClientesAsync()
+        {
+            var serie = await (await _repoNumeracion.ObtenerTodoAsync())
+                .Where(n => n.CodigoObj == CodigoObjSocio && n.SubTipoDoc == SubTipoCliente)
+                .Select(n => n.SerieDfct)
+                .FirstOrDefaultAsync();
+            if (serie is not int numero || numero <= 0)
+                return null;
+
+            var s = await _repoSerie.ObtenerAsync(numero);
+            return s is not null && s.CodigoObj == CodigoObjSocio && s.SubTipoDoc == SubTipoCliente && s.Manual != "S" && s.Bloqueado != "S"
+                ? numero
+                : null;
         }
 
         // ---------- Catálogo ----------

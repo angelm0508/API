@@ -55,7 +55,8 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object,
                 new Mock<IBloqueoSeries>().Object,
-                new Mock<IRepositorioGenerico<NumeracionDocumento, string>>().Object);
+                new Mock<IRepositorioGenerico<NumeracionDocumento, string>>().Object,
+                new Mock<ISocioNegocioDomain>().Object);
         }
 
         private void Articulos(params Articulo[] articulos) =>

@@ -6,6 +6,7 @@ namespace API.Domain.Interface.Pos
         Task GuardarConfiguracionAsync(PosConfiguracionDato dato);
         Task<PosContexto> ObtenerContextoAsync();
         Task<IReadOnlyList<ClientePos>> BuscarClientesAsync(string? texto);
+        Task<ClientePos> CrearClienteAsync(NuevoClientePos solicitud);
         Task<IReadOnlyList<ArticuloPos>> BuscarArticulosAsync(string? texto, string? codigoCliente);
         Task<ArticuloPos?> ObtenerArticuloPorCodigoAsync(string codigo, string? codigoCliente);
         Task<IReadOnlyList<ArticuloPos>> ObtenerRapidosAsync();

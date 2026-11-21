@@ -13,8 +13,11 @@ namespace API.Application.Interface
         /// <summary>Datos de carga de la pantalla del POS (configuración, formas de pago, tasa y cliente por defecto).</summary>
         Task<Respuesta<PosContexto>> ObtenerContextoAsync();
 
-        /// <summary>Hasta 10 clientes activos cuyo código o nombre contengan el texto (mínimo 2 caracteres).</summary>
+        /// <summary>Hasta 10 clientes activos cuyo código, nombre o NIT contengan el texto (mínimo 2 caracteres).</summary>
         Task<Respuesta<IReadOnlyList<ClientePos>>> BuscarClientesAsync(string? texto);
+
+        /// <summary>Cliente nuevo rápido (nombre y NIT), de contado, en la serie automática por defecto de clientes.</summary>
+        Task<Respuesta<ClientePos>> CrearClienteAsync(NuevoClientePos solicitud);
 
         Task<Respuesta<IReadOnlyList<ArticuloPos>>> BuscarArticulosAsync(string? texto, string? codigoCliente);
 

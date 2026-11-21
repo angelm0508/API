@@ -65,12 +65,27 @@ namespace API.Service.WebApi.Controllers
             return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
         }
 
-        /// <summary>Clientes para «Cambiar cliente»: hasta 10 activos cuyo código o nombre contengan el texto (mínimo 2 caracteres).</summary>
+        /// <summary>Clientes para «Cambiar cliente»: hasta 10 activos cuyo código, nombre o NIT contengan el texto (mínimo 2 caracteres).</summary>
         [HttpGet("Clientes")]
         [RequierePermiso("Pos", Accion.Ver)]
         public async Task<ActionResult<Respuesta<IReadOnlyList<ClientePos>>>> BuscarClientes([FromQuery] string? texto)
         {
             var respuesta = await _app.BuscarClientesAsync(texto);
+            return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
+        }
+
+        /// <summary>
+        /// Cliente nuevo rápido desde el POS (nombre y NIT; de contado, en la serie automática por defecto de clientes). Pide
+        /// Pos.Agregar: el cajero no necesita permisos de Socios de negocio.
+        /// </summary>
+        [HttpPost("Clientes")]
+        [RequierePermiso("Pos", Accion.Agregar)]
+        public async Task<ActionResult<Respuesta<ClientePos>>> CrearCliente([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] NuevoClientePos? solicitud)
+        {
+            if (solicitud is null)
+                return BadRequest(new Respuesta<ClientePos> { Mensaje = "Los datos del cliente son obligatorios." });
+
+            var respuesta = await _app.CrearClienteAsync(solicitud);
             return respuesta.Resultado ? Ok(respuesta) : BadRequest(respuesta);
         }
 

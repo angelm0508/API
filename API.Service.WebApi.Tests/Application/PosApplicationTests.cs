@@ -60,6 +60,25 @@ namespace API.Service.WebApi.Tests.Application
         }
 
         [Fact]
+        public async Task CrearCliente_Exito_DevuelveElCliente_YExcepcionDevuelveElMensaje()
+        {
+            var solicitud = new NuevoClientePos("Juan", "1234567-8");
+            var cliente = new ClientePos("CLI-1", "Juan", "1234567-8", null);
+            _domain.Setup(d => d.CrearClienteAsync(solicitud)).ReturnsAsync(cliente);
+
+            var r = await _app.CrearClienteAsync(solicitud);
+            Assert.True(r.Resultado);
+            Assert.Same(cliente, r.Dato);
+            Assert.Equal("Cliente creado correctamente.", r.Mensaje);
+
+            _domain.Setup(d => d.CrearClienteAsync(solicitud)).ThrowsAsync(new Exception("El nombre del cliente es obligatorio."));
+            var e = await _app.CrearClienteAsync(solicitud);
+            Assert.False(e.Resultado);
+            Assert.Null(e.Dato);
+            Assert.Equal("El nombre del cliente es obligatorio.", e.Mensaje);
+        }
+
+        [Fact]
         public async Task ObtenerConfiguracion_Excepcion_DevuelveResultadoFalsoConElMensaje()
         {
             _domain.Setup(d => d.ObtenerConfiguracionAsync()).ThrowsAsync(new InvalidOperationException("boom"));

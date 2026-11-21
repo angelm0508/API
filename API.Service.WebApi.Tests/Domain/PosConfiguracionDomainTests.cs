@@ -37,7 +37,8 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object,
                 new Mock<IBloqueoSeries>().Object,
-                _repoNumeracion.Object);
+                _repoNumeracion.Object,
+                new Mock<ISocioNegocioDomain>().Object);
 
             // Encabezados de numeración: la serie por defecto de facturas es la 11, la de notas de débito la 33 y la de
             // pagos recibidos la 21 (las de la configuración «Completa», 10 y 20, son exclusivas del POS).

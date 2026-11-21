@@ -21,6 +21,12 @@ namespace API.Domain.Interface.Pos
     /// <summary>Cliente para «Cambiar cliente» del POS (la lista de precios se resuelve en el servidor con <c>cliente=</c>).</summary>
     public sealed record ClientePos(string Codigo, string Nombre, string? Nit, int? NumLstPrecio);
 
+    /// <summary>
+    /// «Cliente nuevo» rápido del POS (<c>POST api/Pos/Clientes</c>): solo nombre y NIT (CF si es consumidor final). Se crea
+    /// de contado (límite de crédito 0) en la serie automática por defecto de clientes.
+    /// </summary>
+    public sealed record NuevoClientePos(string? Nombre, string? Nit);
+
     public sealed record ArticuloPos(
         string Codigo, string? CodigoBarras, string Nombre, decimal Precio, decimal Existencias, bool Inventariable);
 

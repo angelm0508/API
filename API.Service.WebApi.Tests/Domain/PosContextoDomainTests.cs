@@ -43,7 +43,8 @@ namespace API.Service.WebApi.Tests.Domain
                 new Mock<IRepositorioGenerico<PagoRecibidoFactura, (int Entry, int NoLinea)>>().Object,
                 new Mock<IRepositorioGenerico<PagoRecibidoMedio, (int Entry, int NoLinea)>>().Object,
                 new Mock<IBloqueoSeries>().Object,
-                new Mock<IRepositorioGenerico<NumeracionDocumento, string>>().Object);
+                new Mock<IRepositorioGenerico<NumeracionDocumento, string>>().Object,
+                new Mock<ISocioNegocioDomain>().Object);
         }
 
         private void ConfigCompleta() =>
@@ -155,6 +156,26 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(10, r.Count);
             Assert.Equal("K14", r[0].Codigo);   // «Cliente 00»
             Assert.Equal("K05", r[9].Codigo);   // «Cliente 09»
+        }
+
+        [Fact]
+        public async Task Clientes_PorNit_ParcialYCompleto_SoloClientesActivos()
+        {
+            Socios(
+                Socio("C-100", "Ana López", nit: "1234567-8"),
+                Socio("C-200", "Pedro Ramos", nit: "765432K"),
+                Socio("C-300", "Sin NIT", nit: null),
+                Socio("P-100", "Proveedor", tipo: "P", nit: "1234567-8"),
+                Socio("C-400", "Inactivo", activo: "N", nit: "1234567-8"));
+
+            var completo = await _domain.BuscarClientesAsync("1234567-8");
+            Assert.Equal(new ClientePos("C-100", "Ana López", "1234567-8", null), Assert.Single(completo));
+
+            var parcial = await _domain.BuscarClientesAsync(" 2K ");
+            Assert.Equal("C-200", Assert.Single(parcial).Codigo);
+
+            // «45» está en el NIT de C-100 (no en códigos ni nombres) y solo sale el cliente activo.
+            Assert.Equal(new[] { "C-100" }, (await _domain.BuscarClientesAsync("45")).Select(c => c.Codigo).ToArray());
         }
 
         [Fact]

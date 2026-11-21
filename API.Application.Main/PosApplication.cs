@@ -31,6 +31,9 @@ namespace API.Application.Main
         public Task<Respuesta<IReadOnlyList<ClientePos>>> BuscarClientesAsync(string? texto) =>
             Ejecutar(() => _domain.BuscarClientesAsync(texto), ConsultaCorrecta);
 
+        public Task<Respuesta<ClientePos>> CrearClienteAsync(NuevoClientePos solicitud) =>
+            Ejecutar(() => _domain.CrearClienteAsync(solicitud), "Cliente creado correctamente.");
+
         public Task<Respuesta<IReadOnlyList<ArticuloPos>>> BuscarArticulosAsync(string? texto, string? codigoCliente) =>
             Ejecutar(() => _domain.BuscarArticulosAsync(texto, codigoCliente), ConsultaCorrecta);
 

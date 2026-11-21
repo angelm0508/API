@@ -122,6 +122,52 @@ namespace API.Service.WebApi.Tests.Controllers
             Assert.Equal(("Pos", Accion.Ver), Permiso(atributo));
         }
 
+        // ---------- POST Clientes (cliente nuevo rápido) ----------
+
+        [Fact]
+        public async Task CrearCliente_Exito200_ConElCliente()
+        {
+            var solicitud = new NuevoClientePos("Juan", "CF");
+            var buena = new Respuesta<ClientePos> { Resultado = true, Mensaje = "ok", Dato = new ClientePos("CLI-1", "Juan", "CF", null) };
+            _app.Setup(a => a.CrearClienteAsync(solicitud)).ReturnsAsync(buena);
+
+            var r = await Crear().CrearCliente(solicitud);
+
+            Assert.Same(buena, Assert.IsType<OkObjectResult>(r.Result).Value);
+        }
+
+        [Fact]
+        public async Task CrearCliente_ConError_Devuelve400ConElMensaje()
+        {
+            var solicitud = new NuevoClientePos("Juan", "1");
+            _app.Setup(a => a.CrearClienteAsync(solicitud))
+                .ReturnsAsync(new Respuesta<ClientePos> { Mensaje = "Ya existe un cliente con el NIT 1: C-9 - Ana. Búscalo por NIT." });
+
+            var r = await Crear().CrearCliente(solicitud);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(r.Result);
+            Assert.Equal("Ya existe un cliente con el NIT 1: C-9 - Ana. Búscalo por NIT.", ((Respuesta<ClientePos>)bad.Value!).Mensaje);
+        }
+
+        [Fact]
+        public async Task CrearCliente_CuerpoNulo_Devuelve400SinTocarLaAplicacion()
+        {
+            var r = await Crear().CrearCliente(null);
+
+            var bad = Assert.IsType<BadRequestObjectResult>(r.Result);
+            Assert.Equal("Los datos del cliente son obligatorios.", ((Respuesta<ClientePos>)bad.Value!).Mensaje);
+            _app.Verify(a => a.CrearClienteAsync(It.IsAny<NuevoClientePos>()), Times.Never);
+        }
+
+        [Fact]
+        public void CrearCliente_EsPostAClientes_ConSoloElPermisoAgregarDePos()
+        {
+            var m = typeof(PosController).GetMethod(nameof(PosController.CrearCliente))!;
+            Assert.Equal("Clientes", m.GetCustomAttribute<HttpPostAttribute>()!.Template);
+            var atributo = Assert.Single(m.GetCustomAttributes<RequierePermisoAttribute>());
+            Assert.Equal(("Pos", Accion.Agregar), Permiso(atributo));
+        }
+
         // ---------- PUT Configuracion ----------
 
         [Fact]
