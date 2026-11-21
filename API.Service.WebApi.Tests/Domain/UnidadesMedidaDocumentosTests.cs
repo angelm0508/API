@@ -191,7 +191,7 @@ namespace API.Service.WebApi.Tests.Domain
             var repoEc = new Mock<IRepositorioGenerico<EntregaCompra, int>>();
             repoEc.Setup(r => r.InsertarAsync(It.IsAny<EntregaCompra>())).Callback<EntregaCompra>(e => e.Entry = 70).ReturnsAsync((EntregaCompra e) => e);
             var repoEcDet = new Mock<IRepositorioGenerico<EntregaCompraDetalle, (int, int)>>();
-            var ecDomain = new EntregaCompraDomain(repoEc.Object, repoEcDet.Object, repoNum.Object, tx.Object, asiento.Object, unidades.Object);
+            var ecDomain = new EntregaCompraDomain(repoEc.Object, repoEcDet.Object, repoNum.Object, tx.Object, asiento.Object, unidades.Object, Mock.Of<IExistenciaCompromisoService>());
 
             var lineaEc = new EntregaCompraDetalle { CodArticulo = "ART-1", CodAlmacen = "01", Cantidad = 3m, UomEntry = Caja, Precio = 240m };
             await ecDomain.InsertarAsync(new EntregaCompra { Serie = 1, CodigoSn = "PROV-1" }, new[] { lineaEc });
@@ -212,7 +212,7 @@ namespace API.Service.WebApi.Tests.Domain
 
             var fcDomain = new FacturaCompraDomain(
                 repoFc.Object, repoFcDet.Object, repoNum.Object, tx.Object, asiento.Object,
-                saldos.Object, repoSocio.Object, resolutor.Object, unidades.Object);
+                saldos.Object, repoSocio.Object, resolutor.Object, unidades.Object, Mock.Of<IExistenciaCompromisoService>());
 
             var lineaFc = new FacturaCompraDetalle { CodArticulo = "ART-1", CodAlmacen = "01", Cantidad = 2m, UomEntry = Caja, Precio = 180m };
             await fcDomain.InsertarAsync(new FacturaCompra { Serie = 1, CodigoSn = "PROV-1" }, new[] { lineaFc });
