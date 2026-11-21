@@ -256,6 +256,60 @@ namespace API.Service.WebApi.Tests.Domain
             Assert.Equal(24m, Fila("A1", "01")!.Comprometido);
         }
 
+        [Fact]
+        public async Task FactorCeroONegativo_SeTrataComoUno()
+        {
+            Pedido(1); LinPedido(1, 1, 5m, factor: 0m); LinPedido(1, 2, 2m, factor: -3m);
+            Exist("A1", "01");
+
+            await _svc.RecalcularAsync(new[] { A1_01 });
+
+            Assert.Equal(7m, Fila("A1", "01")!.Comprometido);
+        }
+
+        [Fact]
+        public async Task LineaSobreconsumida_AporteCero_YNoRestaALasDemas()
+        {
+            Pedido(1); LinPedido(1, 1, 10m);
+            Pedido(2); LinPedido(2, 1, 4m);
+            Exist("A1", "01");
+            Entrega(1); LinEntrega(1, 1, 8m, 1, 1);
+            Factura(1); LinFactura(1, 1, 4m, 1, 1);   // 12 consumidos de 10
+
+            await _svc.RecalcularAsync(new[] { A1_01 });
+
+            Assert.Equal(4m, Fila("A1", "01")!.Comprometido);
+        }
+
+        [Fact]
+        public async Task ConsumoDeVentasYComprasNoSeMezclan()
+        {
+            Pedido(1); LinPedido(1, 1, 10m);
+            PedidoC(1); LinPedidoC(1, 1, 10m);
+            Exist("A1", "01");
+            // una entrega de compra con BaseTipo 4 y una entrega de venta con BaseTipo 11 no consumen nada
+            EntregaC(1); LinEntregaC(1, 1, 3m, 1, 1, baseTipo: 4);
+            Entrega(1); LinEntrega(1, 1, 3m, 1, 1, baseTipo: 11);
+
+            await _svc.RecalcularAsync(new[] { A1_01 });
+
+            var f = Fila("A1", "01")!;
+            Assert.Equal(10m, f.Comprometido);
+            Assert.Equal(10m, f.Pedido);
+        }
+
+        [Fact]
+        public async Task EntregaDeCompraConEstadoDocC_SiConsume_PorLaReglaDeCompras()
+        {
+            PedidoC(1); LinPedidoC(1, 1, 20m);
+            Exist("A1", "01");
+            EntregaC(1, estadoDoc: "C"); LinEntregaC(1, 1, 5m, 1, 1);
+
+            await _svc.RecalcularAsync(new[] { A1_01 });
+
+            Assert.Equal(15m, Fila("A1", "01")!.Pedido);
+        }
+
         // ---------- 7: lo que no compromete ----------
 
         [Fact]
@@ -414,15 +468,34 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
-        public async Task MasDe1000Pedidos_AgrupaPorLotes()
+        public async Task MasDe1000Pedidos_ElConsumoSeSumaEnUnaSolaConsulta()
         {
             for (var i = 1; i <= 1201; i++) { Pedido(i); LinPedido(i, 1, 1m); }
             Entrega(1); LinEntrega(1, 1, 1m, 1201, 1);
+            Factura(1); LinFactura(1, 1, 1m, 1200, 1);
             Exist("A1", "01");
 
             await _svc.RecalcularAsync(new[] { A1_01 });
 
-            Assert.Equal(1200m, Fila("A1", "01")!.Comprometido);
+            Assert.Equal(1199m, Fila("A1", "01")!.Comprometido);
+            // El consumo va dentro de la misma consulta de las lineas (subconsulta), no en listas de entries por lotes.
+            _entDet.Verify(r => r.ObtenerTodoAsync(), Times.Once);
+            _facDet.Verify(r => r.ObtenerTodoAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task RecalcularTodo_ConHistorialConsumido_SoloSumaLoAbierto()
+        {
+            // Historial de pedidos totalmente entregados y sin cerrar: no comprometen nada; una sola linea abierta.
+            for (var i = 1; i <= 1500; i++) { Pedido(i); LinPedido(i, 1, 2m); Entrega(i); LinEntrega(i, 1, 2m, i, 1); }
+            Pedido(2000); LinPedido(2000, 1, 7m);
+            Exist("A1", "01", comp: 99m);
+
+            var r = await _svc.RecalcularTodoAsync();
+
+            Assert.Equal(new ResultadoRecalculo(1, 1), r);
+            Assert.Equal(7m, Fila("A1", "01")!.Comprometido);
+            _entDet.Verify(x => x.ObtenerTodoAsync(), Times.Once);
         }
 
         // ---------- 11: recalcular todo ----------

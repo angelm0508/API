@@ -70,10 +70,8 @@ namespace API.Domain.Core.Existencias
         }
 
         // Filas ya proyectadas (solo las columnas necesarias).
-        private sealed record LineaRaw(int Entry, int NoLinea, string CodArticulo, string CodAlmacen, decimal Cantidad, decimal FactorUom);
         private sealed record LineaDoc(string? CodArticulo, string? CodAlmacen, int? BaseTipo, int? BaseEntry, int? BaseLinea);
         private sealed record LineaPedidoRef(int Entry, int NoLinea, string? CodArticulo, string? CodAlmacen);
-        private sealed record ConsumoRaw(int BaseEntry, int BaseLinea, decimal Cantidad);
 
         // ---------------------------------------------------------------------------------------------
         // API pública
@@ -272,61 +270,34 @@ namespace API.Domain.Core.Existencias
         }
 
         // ---------------------------------------------------------------------------------------------
-        // Sumas de líneas abiertas (ventas = pedidos de venta; compras = pedidos de compra)
+        // Sumas de lo abierto (ventas = pedidos de venta; compras = pedidos de compra). El consumo se calcula en SQL: por cada línea
+        // de pedido activa de un artículo de inventario se resta el consumo (subconsulta correlacionada sobre entregas y facturas
+        // activas) y solo vuelven las líneas con cantidad abierta; la suma por (artículo, almacén) la hace CompromisoCalculadora.
+        // (La suma agrupada dentro de SQL no se puede traducir: SQL Server no admite un agregado sobre una subconsulta.)
         // ---------------------------------------------------------------------------------------------
 
+        private sealed record LineaAbierta(string? CodArticulo, string? CodAlmacen, decimal Cantidad, decimal Consumido, decimal Factor);
+
         private Task<Dictionary<ParExistencia, decimal>> SumasVentasAsync(IReadOnlyCollection<ParExistencia>? pares) =>
-            SumarAsync(pares, ConsultarLineasVentaAsync, ConsultarConsumoVentaAsync);
+            SumarAsync(pares, ConsultarAbiertoVentaAsync);
 
         private Task<Dictionary<ParExistencia, decimal>> SumasComprasAsync(IReadOnlyCollection<ParExistencia>? pares) =>
-            SumarAsync(pares, ConsultarLineasCompraAsync, ConsultarConsumoCompraAsync);
-
-        private async Task<Dictionary<ParExistencia, decimal>> SumarAsync(
-            IReadOnlyCollection<ParExistencia>? pares,
-            Func<List<string>?, List<string>?, Task<List<LineaRaw>>> consultarLineas,
-            Func<List<int>, Task<List<ConsumoRaw>>> consultarConsumo)
-        {
-            var vacio = new Dictionary<ParExistencia, decimal>(CompromisoCalculadora.Comparador);
-
-            // 1) Líneas de pedidos activos (solo los pares pedidos, o todas en el recálculo total).
-            var lineas = await ObtenerLineasAsync(pares, consultarLineas);
-            if (lineas.Count == 0) return vacio;
-
-            // 2) Solo artículos de inventario.
-            var inventariables = await InventariablesAsync(lineas.Select(l => l.CodArticulo));
-            lineas = lineas.Where(l => inventariables.Contains(l.CodArticulo)).ToList();
-            if (lineas.Count == 0) return vacio;
-
-            // 3) Consumo SOLO de los pedidos que quedaron (por lotes de 1,000 entries).
-            var entries = lineas.Select(l => l.Entry).Distinct().ToList();
-            var consumos = new Dictionary<(int Entry, int NoLinea), decimal>();
-            foreach (var lote in entries.Chunk(Lote))
-            {
-                foreach (var c in await consultarConsumo(lote.ToList()))
-                {
-                    var clave = (c.BaseEntry, c.BaseLinea);
-                    consumos[clave] = consumos.TryGetValue(clave, out var actual) ? actual + c.Cantidad : c.Cantidad;
-                }
-            }
-
-            return CompromisoCalculadora.SumarPorPar(lineas.Select(l =>
-                new LineaPedidoAbierta(l.CodArticulo, l.CodAlmacen, l.Cantidad, consumos.TryGetValue((l.Entry, l.NoLinea), out var cons) ? cons : 0m, l.FactorUom)));
-        }
+            SumarAsync(pares, ConsultarAbiertoCompraAsync);
 
         /// <summary>
-        /// Trae las líneas de pedidos activos. Con pares: consulta por lotes de artículos (y filtra por almacén) y deja solo los pares
-        /// pedidos; sin pares (null): todas. Devuelve los códigos recortados y sin vacíos.
+        /// Con pares: consulta por lotes de artículos (y filtra por almacén) y deja solo los pares pedidos; sin pares (null): todos
+        /// los que tienen líneas abiertas. Los códigos salen recortados y sin duplicados (sin distinguir mayúsculas).
         /// </summary>
-        private static async Task<List<LineaRaw>> ObtenerLineasAsync(
+        private static async Task<Dictionary<ParExistencia, decimal>> SumarAsync(
             IReadOnlyCollection<ParExistencia>? pares,
-            Func<List<string>?, List<string>?, Task<List<LineaRaw>>> consultar)
+            Func<List<string>?, List<string>?, Task<List<LineaAbierta>>> consultar)
         {
-            var crudas = new List<LineaRaw>();
+            var filas = new List<LineaAbierta>();
             HashSet<ParExistencia>? solicitados = null;
 
             if (pares is null)
             {
-                crudas.AddRange(await consultar(null, null));
+                filas.AddRange(await consultar(null, null));
             }
             else
             {
@@ -335,99 +306,103 @@ namespace API.Domain.Core.Existencias
                 var almacenes = pares.Select(p => p.CodAlmacen).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var filtroAlmacenes = almacenes.Count <= Lote ? almacenes : null; // si son demasiados, se filtra en memoria
                 foreach (var lote in articulos.Chunk(Lote))
-                    crudas.AddRange(await consultar(lote.ToList(), filtroAlmacenes));
+                    filas.AddRange(await consultar(lote.ToList(), filtroAlmacenes));
             }
 
-            var resultado = new List<LineaRaw>();
-            foreach (var l in crudas)
+            var abiertas = new List<LineaPedidoAbierta>();
+            foreach (var f in filas)
             {
-                var par = ParDe(l.CodArticulo, l.CodAlmacen);
+                var par = ParDe(f.CodArticulo, f.CodAlmacen);
                 if (par is null) continue;
                 if (solicitados is not null && !solicitados.Contains(par)) continue;
-                resultado.Add(l with { CodArticulo = par.CodArticulo, CodAlmacen = par.CodAlmacen });
+                abiertas.Add(new LineaPedidoAbierta(par.CodArticulo, par.CodAlmacen, f.Cantidad, f.Consumido, f.Factor));
             }
-            return resultado;
+            return CompromisoCalculadora.SumarPorPar(abiertas);
         }
 
-        // Pedido de venta activo = Cancelado != "S" y EstadoDoc != "C" (como DocumentoBaseService).
-        private async Task<List<LineaRaw>> ConsultarLineasVentaAsync(List<string>? articulos, List<string>? almacenes)
+        // Pedido de venta activo = Cancelado != "S" y EstadoDoc != "C" (como DocumentoBaseService). Consumo = cantidad de líneas de
+        // entregas y facturas activas (Cancelado != "S" y EstadoDoc != "C") con BaseTipo 4 que apuntan a esa línea.
+        // abierto = máx(0, cantidad - consumido) × factor (factor <= 0 se trata como 1); solo artículos de inventario.
+        private async Task<List<LineaAbierta>> ConsultarAbiertoVentaAsync(List<string>? articulos, List<string>? almacenes)
         {
             var detalle = (await _pedidoDet.ObtenerTodoAsync())
                 .Where(d => d.CodArticulo != null && d.CodArticulo != "" && d.CodAlmacen != null && d.CodAlmacen != "");
             if (articulos is not null) detalle = detalle.Where(d => articulos.Contains(d.CodArticulo!));
             if (almacenes is not null) detalle = detalle.Where(d => almacenes.Contains(d.CodAlmacen!));
             var activos = (await _pedido.ObtenerTodoAsync()).Where(p => p.Cancelado != "S" && p.EstadoDoc != "C");
+            var inventariables = (await _articulo.ObtenerTodoAsync()).Where(a => a.ArticuloInventario == "S");
 
-            var filas = await (from d in detalle
-                               join p in activos on d.Entry equals p.Entry
-                               select new { d.Entry, d.NoLinea, d.CodArticulo, d.CodAlmacen, d.Cantidad, d.FactorUom })
-                .ToListAsync();
-            return filas.Select(f => new LineaRaw(f.Entry, f.NoLinea, f.CodArticulo!, f.CodAlmacen!, f.Cantidad ?? 0m, f.FactorUom)).ToList();
+            var entregas = (await _entrega.ObtenerTodoAsync()).Where(h => h.Cancelado != "S" && h.EstadoDoc != "C");
+            var facturas = (await _factura.ObtenerTodoAsync()).Where(h => h.Cancelado != "S" && h.EstadoDoc != "C");
+            var lineasEntrega = (await _entregaDet.ObtenerTodoAsync()).Where(c => c.BaseTipo == TipoDocCompromiso.Pedido);
+            var lineasFactura = (await _facturaDet.ObtenerTodoAsync()).Where(c => c.BaseTipo == TipoDocCompromiso.Pedido);
+
+            var lineas = from d in detalle
+                         join p in activos on d.Entry equals p.Entry
+                         join a in inventariables on d.CodArticulo equals a.Codigo
+                         select new
+                         {
+                             Articulo = d.CodArticulo,
+                             Almacen = d.CodAlmacen,
+                             Cantidad = d.Cantidad ?? 0m,
+                             Factor = d.FactorUom,
+                             Consumido =
+                                 (from c in lineasEntrega
+                                  join h in entregas on c.Entry equals h.Entry
+                                  where c.BaseEntry == d.Entry && c.BaseLinea == d.NoLinea
+                                  select c.Cantidad ?? 0m).Sum()
+                                 + (from c in lineasFactura
+                                    join h in facturas on c.Entry equals h.Entry
+                                    where c.BaseEntry == d.Entry && c.BaseLinea == d.NoLinea
+                                    select c.Cantidad ?? 0m).Sum()
+                         };
+
+            // Solo vuelven las líneas con cantidad abierta: el historial totalmente consumido no se materializa.
+            var filas = await lineas.Where(x => x.Cantidad > x.Consumido).ToListAsync();
+            return filas.Select(f => new LineaAbierta(f.Articulo, f.Almacen, f.Cantidad, f.Consumido, f.Factor)).ToList();
         }
 
-        // Pedido de compra activo = Cancelado != "S" y EstadoDoc != "C".
-        private async Task<List<LineaRaw>> ConsultarLineasCompraAsync(List<string>? articulos, List<string>? almacenes)
+        // Pedido de compra activo = Cancelado != "S" y EstadoDoc != "C". Consumo = cantidad de líneas de entregas y facturas de compra
+        // con encabezado no cancelado (Cancelado != "S", sin mirar EstadoDoc: como PedidoCompraDomain) y BaseTipo 11.
+        private async Task<List<LineaAbierta>> ConsultarAbiertoCompraAsync(List<string>? articulos, List<string>? almacenes)
         {
             var detalle = (await _pedidoCompraDet.ObtenerTodoAsync())
                 .Where(d => d.CodArticulo != null && d.CodArticulo != "" && d.CodAlmacen != null && d.CodAlmacen != "");
             if (articulos is not null) detalle = detalle.Where(d => articulos.Contains(d.CodArticulo!));
             if (almacenes is not null) detalle = detalle.Where(d => almacenes.Contains(d.CodAlmacen!));
             var activos = (await _pedidoCompra.ObtenerTodoAsync()).Where(p => p.Cancelado != "S" && p.EstadoDoc != "C");
+            var inventariables = (await _articulo.ObtenerTodoAsync()).Where(a => a.ArticuloInventario == "S");
 
-            var filas = await (from d in detalle
-                               join p in activos on d.Entry equals p.Entry
-                               select new { d.Entry, d.NoLinea, d.CodArticulo, d.CodAlmacen, d.Cantidad, d.FactorUom })
-                .ToListAsync();
-            return filas.Select(f => new LineaRaw(f.Entry, f.NoLinea, f.CodArticulo!, f.CodAlmacen!, f.Cantidad ?? 0m, f.FactorUom)).ToList();
-        }
-
-        // Consumo de ventas: líneas de entregas y facturas activas (Cancelado != "S" y EstadoDoc != "C") con BaseTipo 4.
-        private async Task<List<ConsumoRaw>> ConsultarConsumoVentaAsync(List<int> entries)
-        {
-            var entregas = (await _entrega.ObtenerTodoAsync()).Where(h => h.Cancelado != "S" && h.EstadoDoc != "C");
-            var facturas = (await _factura.ObtenerTodoAsync()).Where(h => h.Cancelado != "S" && h.EstadoDoc != "C");
-            var detEntrega = (await _entregaDet.ObtenerTodoAsync())
-                .Where(d => d.BaseTipo == TipoDocCompromiso.Pedido && d.BaseEntry != null && d.BaseLinea != null && entries.Contains(d.BaseEntry.Value));
-            var detFactura = (await _facturaDet.ObtenerTodoAsync())
-                .Where(d => d.BaseTipo == TipoDocCompromiso.Pedido && d.BaseEntry != null && d.BaseLinea != null && entries.Contains(d.BaseEntry.Value));
-
-            var deEntregas = await (from d in detEntrega
-                                    join h in entregas on d.Entry equals h.Entry
-                                    select new { BaseEntry = d.BaseEntry!.Value, BaseLinea = d.BaseLinea!.Value, d.Cantidad })
-                .ToListAsync();
-            var deFacturas = await (from d in detFactura
-                                    join h in facturas on d.Entry equals h.Entry
-                                    select new { BaseEntry = d.BaseEntry!.Value, BaseLinea = d.BaseLinea!.Value, d.Cantidad })
-                .ToListAsync();
-
-            return deEntregas.Select(x => new ConsumoRaw(x.BaseEntry, x.BaseLinea, x.Cantidad ?? 0m))
-                .Concat(deFacturas.Select(x => new ConsumoRaw(x.BaseEntry, x.BaseLinea, x.Cantidad ?? 0m)))
-                .ToList();
-        }
-
-        // Consumo de compras: líneas de entregas y facturas de compra con encabezado no cancelado (Cancelado != "S") y BaseTipo 11.
-        private async Task<List<ConsumoRaw>> ConsultarConsumoCompraAsync(List<int> entries)
-        {
             var entregas = (await _entregaCompra.ObtenerTodoAsync()).Where(h => h.Cancelado != "S");
             var facturas = (await _facturaCompra.ObtenerTodoAsync()).Where(h => h.Cancelado != "S");
-            var detEntrega = (await _entregaCompraDet.ObtenerTodoAsync())
-                .Where(d => d.BaseTipo == TipoDocCompromiso.PedidoCompra && d.BaseEntry != null && d.BaseLinea != null && entries.Contains(d.BaseEntry.Value));
-            var detFactura = (await _facturaCompraDet.ObtenerTodoAsync())
-                .Where(d => d.BaseTipo == TipoDocCompromiso.PedidoCompra && d.BaseEntry != null && d.BaseLinea != null && entries.Contains(d.BaseEntry.Value));
+            var lineasEntrega = (await _entregaCompraDet.ObtenerTodoAsync()).Where(c => c.BaseTipo == TipoDocCompromiso.PedidoCompra);
+            var lineasFactura = (await _facturaCompraDet.ObtenerTodoAsync()).Where(c => c.BaseTipo == TipoDocCompromiso.PedidoCompra);
 
-            var deEntregas = await (from d in detEntrega
-                                    join h in entregas on d.Entry equals h.Entry
-                                    select new { BaseEntry = d.BaseEntry!.Value, BaseLinea = d.BaseLinea!.Value, d.Cantidad })
-                .ToListAsync();
-            var deFacturas = await (from d in detFactura
-                                    join h in facturas on d.Entry equals h.Entry
-                                    select new { BaseEntry = d.BaseEntry!.Value, BaseLinea = d.BaseLinea!.Value, d.Cantidad })
-                .ToListAsync();
+            var lineas = from d in detalle
+                         join p in activos on d.Entry equals p.Entry
+                         join a in inventariables on d.CodArticulo equals a.Codigo
+                         select new
+                         {
+                             Articulo = d.CodArticulo,
+                             Almacen = d.CodAlmacen,
+                             Cantidad = d.Cantidad ?? 0m,
+                             Factor = d.FactorUom,
+                             Consumido =
+                                 (from c in lineasEntrega
+                                  join h in entregas on c.Entry equals h.Entry
+                                  where c.BaseEntry == d.Entry && c.BaseLinea == d.NoLinea
+                                  select c.Cantidad ?? 0m).Sum()
+                                 + (from c in lineasFactura
+                                    join h in facturas on c.Entry equals h.Entry
+                                    where c.BaseEntry == d.Entry && c.BaseLinea == d.NoLinea
+                                    select c.Cantidad ?? 0m).Sum()
+                         };
 
-            return deEntregas.Select(x => new ConsumoRaw(x.BaseEntry, x.BaseLinea, x.Cantidad ?? 0m))
-                .Concat(deFacturas.Select(x => new ConsumoRaw(x.BaseEntry, x.BaseLinea, x.Cantidad ?? 0m)))
-                .ToList();
+            // Solo vuelven las líneas con cantidad abierta: el historial totalmente consumido no se materializa.
+            var filas = await lineas.Where(x => x.Cantidad > x.Consumido).ToListAsync();
+            return filas.Select(f => new LineaAbierta(f.Articulo, f.Almacen, f.Cantidad, f.Consumido, f.Factor)).ToList();
         }
+
 
         // ---------------------------------------------------------------------------------------------
         // Pares de un documento
