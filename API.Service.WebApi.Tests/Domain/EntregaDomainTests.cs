@@ -2,6 +2,7 @@ using API.Domain.Core;
 using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
@@ -25,7 +26,7 @@ namespace API.Service.WebApi.Tests.Domain
         public EntregaDomainTests()
         {
             _domain = new EntregaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object,
-                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object);
+                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object, null, Mock.Of<IExistenciaCompromisoService>());
             // Sin límite de crédito en estas pruebas: toda verificación resulta permitida.
             _credito.Setup(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>())).ReturnsAsync(new ResultadoCredito(true, null, null, 0m, 0m));
             // El doble del ejecutor corre el Func directo (sin transacción ni save).

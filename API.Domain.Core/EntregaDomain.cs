@@ -1,5 +1,6 @@
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ namespace API.Domain.Core
         private readonly IAutorizacionCreditoContexto _autorizacionCredito;
         private readonly IRepositorioGenerico<AutorizacionCredito, int> _repoAutorizacionCredito;
         private readonly IUnidadMedidaService? _unidades;
+        private readonly IExistenciaCompromisoService _compromisos;
 
         public EntregaDomain(
             IRepositorioGenerico<Entrega, int> repoEntrega,
@@ -31,7 +33,8 @@ namespace API.Domain.Core
             ICreditoClienteService credito,
             IAutorizacionCreditoContexto autorizacionCredito,
             IRepositorioGenerico<AutorizacionCredito, int> repoAutorizacionCredito,
-            IUnidadMedidaService? unidades = null)
+            IUnidadMedidaService? unidades,
+            IExistenciaCompromisoService compromisos)
         {
             _credito = credito;
             _autorizacionCredito = autorizacionCredito;
@@ -43,6 +46,7 @@ namespace API.Domain.Core
             _asiento = asiento;
             _documentoBase = documentoBase;
             _unidades = unidades;
+            _compromisos = compromisos;
         }
 
         #region async methods
@@ -104,7 +108,7 @@ namespace API.Domain.Core
                 serie.SigNumero = serie.SigNumero.Value + 1; // rastreada por el mismo contexto; se persiste en el Save de la transacción
             }
 
-            return await _tx.EjecutarAsync(async () =>
+            var entry = await _tx.EjecutarAsync(async () =>
             {
                 await _repoEntrega.InsertarAsync(obj); // Save #1: asigna obj.Entry
 
@@ -138,6 +142,11 @@ namespace API.Domain.Core
                 return obj.Entry;
             });
             // EjecutarAsync: Save #2 (líneas + inventario) + Commit
+
+            // Comprometido: solo con la entrega ya confirmada y como último paso (el aviso nunca lanza). Sin líneas de
+            // pedido base el servicio retorna sin hacer nada.
+            await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Entrega, entry);
+            return entry;
         }
 
         public async Task<bool> ActualizarAsync(int id, Entrega obj)
@@ -155,7 +164,7 @@ namespace API.Domain.Core
                 // Una entrega que ya se facturó (total o parcialmente) no se cancela: primero se cancela la factura.
                 await _documentoBase.ValidarOrigenModificableAsync(TipoDocumentoVenta.Entrega, id, "cancelar el documento");
 
-                return await _tx.EjecutarAsync(async () =>
+                var cancelada = await _tx.EjecutarAsync(async () =>
                 {
                     await _asiento.RevertirAsync(TipoObjetoEntrega, id);
                     existente.Cancelado = "S";
@@ -168,6 +177,12 @@ namespace API.Domain.Core
                         existente.Comentario = obj.Comentario;
                     return true;
                 });
+
+                // Comprometido: lo que la entrega consumía del pedido vuelve a quedar abierto. Tras confirmar y como último
+                // paso (el aviso nunca lanza). Una entrega cancelada no se reabre, y editar el comentario no cambia nada.
+                if (cancelada)
+                    await _compromisos.NotificarDocumentoAsync(TipoDocCompromiso.Entrega, id);
+                return cancelada;
             }
 
             // Edición inocua: solo el comentario (replace-semantics: enviar vacío lo borra).
@@ -187,8 +202,11 @@ namespace API.Domain.Core
             if (existente.EstadoInv == "A" && existente.Cancelado != "S")
                 throw new Exception("Cancele el documento (Cancelado='S') antes de eliminarlo.");
 
+            // Comprometido: los pares artículo/almacén se leen ANTES de borrar (después las líneas ya no existen).
+            var pares = await _compromisos.ObtenerParesAsync(TipoDocCompromiso.Entrega, id);
+
             // Documento cancelado (inventario ya revertido) o sin asiento: borrar líneas y encabezado.
-            return await _tx.EjecutarAsync(async () =>
+            var eliminada = await _tx.EjecutarAsync(async () =>
             {
                 var detalles = await _repoDetalle.ObtenerTodoAsync();
                 var lineas = await detalles.Where(d => d.Entry == id).ToListAsync();
@@ -197,6 +215,10 @@ namespace API.Domain.Core
 
                 return await _repoEntrega.EliminarAsync(id);
             });
+
+            if (eliminada)
+                await _compromisos.NotificarParesAsync(pares);
+            return eliminada;
         }
 
         public async Task<Entrega> ObtenerAsync(int id)

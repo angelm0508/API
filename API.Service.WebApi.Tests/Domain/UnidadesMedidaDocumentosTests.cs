@@ -109,7 +109,7 @@ namespace API.Service.WebApi.Tests.Domain
 
             var domain = new EntregaDomain(
                 repoHead.Object, repoDet.Object, repoNum.Object, tx.Object, asiento.Object,
-                docBase.Object, credito.Object, autCtx.Object, repoAut.Object, unidades.Object);
+                docBase.Object, credito.Object, autCtx.Object, repoAut.Object, unidades.Object, Mock.Of<IExistenciaCompromisoService>());
 
             var linea = new EntregaDetalle { CodArticulo = "ART-1", CodAlmacen = "01", Cantidad = 2m, UomEntry = Caja, Precio = 120m };
             await domain.InsertarAsync(new Entrega { Serie = 1, CodigoSn = "CLI-1", TotalDoc = 240m }, new[] { linea });

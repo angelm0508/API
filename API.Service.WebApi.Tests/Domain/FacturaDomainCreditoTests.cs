@@ -3,6 +3,7 @@ using API.Domain.Core;
 using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using Moq;
 using Xunit;
@@ -36,7 +37,7 @@ namespace API.Service.WebApi.Tests.Domain
         public FacturaDomainCreditoTests()
         {
             _domain = new FacturaDomain(_repoFactura.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object,
-                _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object, _credito.Object, _contexto, _repoAutorizacion.Object, _unidades.Object);
+                _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object, _credito.Object, _contexto, _repoAutorizacion.Object, _unidades.Object, Mock.Of<IExistenciaCompromisoService>());
 
             _unidades.Setup(s => s.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>())).ReturnsAsync(new UnidadResuelta(null, null, 1m));
             _serie = new NumeracionDocumentoDet { CodigoObj = "6", Serie = 4, SigNumero = 5, Bloqueado = "N", Manual = "N", SubTipoDoc = "--", TipoSerie = "N", NombreSerie = "P" };

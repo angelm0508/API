@@ -3,6 +3,7 @@ using API.Domain.Core;
 using API.Domain.Core.Inventario;
 using API.Domain.Entity.Models;
 using API.Domain.Interface;
+using API.Domain.Interface.Existencias;
 using API.Infraestructure.Interface;
 using API.Service.WebApi.Tests.TestHelpers;
 using Moq;
@@ -30,7 +31,7 @@ namespace API.Service.WebApi.Tests.Domain
         public FacturaDomainTests()
         {
             _domain = new FacturaDomain(_repoHeader.Object, _repoDetalle.Object, _repoNumeracion.Object, _tx.Object, _asiento.Object, _documentoBase.Object, _saldos.Object, _repoSocio.Object, _resolutor.Object,
-                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object, _unidades.Object);
+                _credito.Object, new AutorizacionCreditoContexto(), new Mock<IRepositorioGenerico<AutorizacionCredito, int>>().Object, _unidades.Object, Mock.Of<IExistenciaCompromisoService>());
             _unidades.Setup(s => s.ResolverAsync(It.IsAny<string>(), It.IsAny<int?>())).ReturnsAsync(new UnidadResuelta(null, null, 1m));
             // Sin límite de crédito en estas pruebas: toda verificación resulta permitida.
             _credito.Setup(c => c.VerificarAsync(It.IsAny<string?>(), It.IsAny<decimal>())).ReturnsAsync(new ResultadoCredito(true, null, null, 0m, 0m));
