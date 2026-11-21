@@ -60,7 +60,7 @@ namespace API.Domain.Interface
     /// <summary>Documento destino activo que consume (en todo o en parte) un documento origen.</summary>
     public sealed record DocumentoDerivado(int Tipo, int Entry, int NumDoc, int BaseLinea)
     {
-        public string Etiqueta => $"{TipoDocumentoVenta.Nombre(Tipo)} {NumDoc}";
+        public string Etiqueta => $"{NombreDocumento.De(Tipo)} {NumDoc}";
     }
 
     public static class LineasBase

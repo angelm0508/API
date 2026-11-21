@@ -62,6 +62,53 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public void Compras_DestinosDe_PedidoEsEntregaYFactura()
+        {
+            Assert.Equal(new[] { 12, 13 }, TipoDocumentoCompra.DestinosDe(TipoDocumentoCompra.PedidoCompra));
+            Assert.Equal(new[] { 13 }, TipoDocumentoCompra.DestinosDe(TipoDocumentoCompra.EntregaCompra));
+            Assert.Empty(TipoDocumentoCompra.DestinosDe(TipoDocumentoCompra.FacturaCompra));
+            Assert.Empty(TipoDocumentoCompra.DestinosDe(4));
+        }
+
+        [Theory]
+        [InlineData(11, 12, true)]
+        [InlineData(11, 13, true)]
+        [InlineData(12, 13, true)]
+        [InlineData(12, 12, false)]
+        [InlineData(13, 12, false)]
+        [InlineData(12, 11, false)]
+        public void Compras_EsCombinacionValida_SoloLaCadenaHaciaAdelante(int origen, int destino, bool esperado)
+        {
+            Assert.Equal(esperado, TipoDocumentoCompra.EsCombinacionValida(origen, destino));
+        }
+
+        [Theory]
+        [InlineData(11, "Pedido de compra")]
+        [InlineData(12, "Entrega de compra")]
+        [InlineData(13, "Factura de compra")]
+        public void Compras_Nombre_DevuelveElNombreEnEspanol(int tipo, string esperado)
+        {
+            Assert.Equal(esperado, TipoDocumentoCompra.Nombre(tipo));
+        }
+
+        [Theory]
+        [InlineData(4, "Pedido")]
+        [InlineData(6, "Factura")]
+        [InlineData(11, "Pedido de compra")]
+        [InlineData(13, "Factura de compra")]
+        public void NombreDocumento_De_ResuelveVentasYCompras(int tipo, string esperado)
+        {
+            Assert.Equal(esperado, NombreDocumento.De(tipo));
+        }
+
+        [Fact]
+        public void DocumentoDerivado_Etiqueta_VentasSinCambioYComprasConSuNombre()
+        {
+            Assert.Equal("Factura 2", new DocumentoDerivado(6, 1, 2, 1).Etiqueta);
+            Assert.Equal("Factura de compra 2", new DocumentoDerivado(13, 1, 2, 1).Etiqueta);
+        }
+
+        [Fact]
         public void Extraer_IgnoraLineasSinBase()
         {
             var lineas = new (int?, int?, int?, string?, decimal?)[]
