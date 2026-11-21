@@ -122,13 +122,16 @@ namespace API.Domain.Core
             // de datos, así que las líneas de detalle se borran a mano antes que el encabezado.
             var detalles = await _repoGenericoDetalle.ObtenerTodoAsync();
             var lineas = await detalles.Where(d => d.Entry == id).ToListAsync();
+            var algunaLineaBorrada = false;
             foreach (var linea in lineas)
             {
-                await _repoGenericoDetalle.EliminarAsync((linea.Entry, linea.NoLinea));
+                if (await _repoGenericoDetalle.EliminarAsync((linea.Entry, linea.NoLinea)))
+                    algunaLineaBorrada = true;
             }
 
             var eliminado = await _repoGenericoPedidoCompra.EliminarAsync(id);
-            if (eliminado)
+            // Si ya se borraron líneas, los pares previos cambiaron aunque el encabezado no se haya podido borrar (los borrados no son atómicos).
+            if (eliminado || algunaLineaBorrada)
                 await _compromisos.NotificarParesAsync(pares);
             return eliminado;
         }

@@ -161,6 +161,35 @@ namespace API.Service.WebApi.Tests.Domain
         }
 
         [Fact]
+        public async Task Eliminar_LineasBorradasYCabeceraDevuelveFalse_NotificaLosParesPrevios()
+        {
+            ConPedidoGuardado("N", Linea("A"), Linea("B"));
+            _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).Callback(() => _orden.Add("borrar-linea")).ReturnsAsync(true);
+            _repoPedido.Setup(r => r.EliminarAsync(1)).Callback(() => _orden.Add("borrar-cabecera")).ReturnsAsync(false);
+            IReadOnlyCollection<ParExistencia>? recibidos = null;
+            _compromisos.Setup(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()))
+                .Callback<IReadOnlyCollection<ParExistencia>>(p => { recibidos = p; _orden.Add("notificar-pares"); }).Returns(Task.CompletedTask);
+
+            Assert.False(await _pedido.EliminarAsync(1));
+
+            Assert.Equal(new[] { "obtener:11:1", "borrar-linea", "borrar-linea", "borrar-cabecera", "notificar-pares" }, _orden);
+            Assert.Same(Pares, recibidos);
+            _compromisos.Verify(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Eliminar_CabeceraLanza_DespuesDeBorrarLineas_PropagaYNoNotifica()
+        {
+            ConPedidoGuardado("N", Linea("A"));
+            _repoDetalle.Setup(r => r.EliminarAsync(It.IsAny<(int Entry, int NoLinea)>())).ReturnsAsync(true);
+            _repoPedido.Setup(r => r.EliminarAsync(1)).ThrowsAsync(new Exception("fallo al borrar"));
+
+            await Assert.ThrowsAsync<Exception>(() => _pedido.EliminarAsync(1));
+
+            _compromisos.Verify(c => c.NotificarParesAsync(It.IsAny<IReadOnlyCollection<ParExistencia>>()), Times.Never);
+        }
+
+        [Fact]
         public async Task Eliminar_FallaElBorrado_Lanza_YNoNotifica()
         {
             ConPedidoGuardado("N", Linea());
