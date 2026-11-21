@@ -625,6 +625,56 @@ namespace API.Service.WebApi.Tests.Domain
             _log.Verify(l => l.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Never);
         }
 
+        // ---------- limpieza del rastreador tras una escritura fallida ----------
+
+        [Fact]
+        public async Task NotificarPares_SiFallaElInsert_NoLanzaDescartaPendientesYRegistra()
+        {
+            Pedido(1); LinPedido(1, 1, 10m);
+            _exi.Setup(r => r.InsertarAsync(It.IsAny<ExistenciaArticulo>())).ThrowsAsync(new InvalidOperationException("llave duplicada"));
+
+            await _svc.NotificarParesAsync(new[] { A1_01 });
+
+            _exi.Verify(r => r.DescartarCambiosPendientes(), Times.Once);
+            VerificarErrorRegistrado();
+        }
+
+        [Fact]
+        public async Task NotificarDocumento_SiFallaElUpdate_NoLanzaDescartaPendientesYRegistra()
+        {
+            Pedido(1); LinPedido(1, 1, 10m);
+            Exist("A1", "01", disp: 5m);
+            _exi.Setup(r => r.ActualizarAsync(It.IsAny<(string, string)>(), It.IsAny<ExistenciaArticulo>())).ThrowsAsync(new InvalidOperationException("concurrencia"));
+
+            await _svc.NotificarDocumentoAsync(TipoDocCompromiso.Pedido, 1);
+
+            _exi.Verify(r => r.DescartarCambiosPendientes(), Times.Once);
+            VerificarErrorRegistrado();
+        }
+
+        [Fact]
+        public async Task Recalcular_SiFallaLaEscritura_DescartaPendientesYRelanza()
+        {
+            Pedido(1); LinPedido(1, 1, 10m);
+            _exi.Setup(r => r.InsertarAsync(It.IsAny<ExistenciaArticulo>())).ThrowsAsync(new InvalidOperationException("llave duplicada"));
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _svc.RecalcularAsync(new[] { A1_01 }));
+
+            _exi.Verify(r => r.DescartarCambiosPendientes(), Times.Once);
+        }
+
+        [Fact]
+        public async Task NoDescartaPendientes_CuandoLaEscrituraTieneExito()
+        {
+            Pedido(1); LinPedido(1, 1, 10m);
+            Exist("A1", "01");
+
+            await _svc.NotificarParesAsync(new[] { A1_01 });
+            await _svc.RecalcularTodoAsync();
+
+            _exi.Verify(r => r.DescartarCambiosPendientes(), Times.Never);
+        }
+
         private void _articulosNoConsultados() => _art.Verify(r => r.ObtenerTodoAsync(), Times.Never);
 
         private void VerificarErrorRegistrado() =>

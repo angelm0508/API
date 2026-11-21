@@ -93,5 +93,14 @@ namespace API.Infraestructure.Repository
         {
             await DbSet.AddAsync(entity);
         }
+
+        public virtual void DescartarCambiosPendientes()
+        {
+            var pendientes = Contexto.ChangeTracker.Entries<TEntity>()
+                .Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
+                .ToList();
+            foreach (var entrada in pendientes)
+                entrada.State = EntityState.Detached;
+        }
     }
 }

@@ -14,5 +14,12 @@ namespace API.Infraestructure.Interface
         /// en una sola transacción implícita). Usado por el servicio de asiento de inventario.
         /// </summary>
         Task AgregarSinGuardarAsync(TEntity entity);
+
+        /// <summary>
+        /// Deja de rastrear las entidades de este tipo que quedaron pendientes (nuevas, modificadas o eliminadas) en el contexto,
+        /// para que un guardado fallido no se vuelva a intentar en un SaveChanges posterior de la misma petición.
+        /// No toca la base de datos ni las entidades de otros tipos.
+        /// </summary>
+        void DescartarCambiosPendientes();
     }
 }

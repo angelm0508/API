@@ -184,6 +184,21 @@ namespace API.Domain.Core.Existencias
         /// <summary>Escribe los valores calculados si hace falta. Devuelve true si creó o cambió la fila.</summary>
         private async Task<bool> AplicarAsync(ParExistencia par, ExistenciaArticulo? existente, decimal comprometido, decimal pedido)
         {
+            try
+            {
+                return await EscribirAsync(par, existente, comprometido, pedido);
+            }
+            catch
+            {
+                // Un guardado fallido (concurrencia, llave duplicada) deja la fila Added/Modified en el rastreador del contexto de la
+                // petición y cualquier SaveChanges posterior la reintentaría y fallaría: se descarta antes de propagar el error.
+                _existencia.DescartarCambiosPendientes();
+                throw;
+            }
+        }
+
+        private async Task<bool> EscribirAsync(ParExistencia par, ExistenciaArticulo? existente, decimal comprometido, decimal pedido)
+        {
             if (existente is null)
             {
                 if (comprometido == 0m && pedido == 0m) return false;
